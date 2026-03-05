@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depth & Complexity Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --aged: #e8dfc8;
+    --sepia: #c4a882;
+    --rust: #8b3a2a;
+    --gold: #c9973a;
+    --muted: #7a6e62;
+    --light-muted: #b8aea0;
+    --accent: #2d4a3e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px;
+    background-image: 
+      radial-gradient(ellipse at 20% 0%, rgba(196,168,130,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(139,58,42,0.08) 0%, transparent 60%);
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--sepia);
+    position: relative;
+  }
+
+  header::after {
+    content: '◆';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper);
+    padding: 0 8px;
+    color: var(--sepia);
+    font-size: 12px;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .control-group.full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  select, button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    border: 1px solid var(--sepia);
+    background: var(--aged);
+    color: var(--ink);
+    padding: 9px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 2px;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6e62'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  select:hover, select:focus {
+    border-color: var(--gold);
+    outline: none;
+    background-color: #ede5d0;
+  }
+
+  .generate-btn {
+    grid-column: 1 / -1;
+    background: var(--accent);
+    color: var(--paper);
+    border: none;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .generate-btn:hover {
+    background: #1e3429;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45,74,62,0.2);
+  }
+
+  .generate-btn:active {
+    transform: translateY(0);
+  }
+
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(245,240,232,0.3);
+    border-top-color: var(--paper);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .prompt-icon {
+    font-size: 15px;
+  }
+
+  .output-section {
+    min-height: 200px;
+  }
+
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: var(--light-muted);
+    text-align: center;
+    padding: 40px 20px;
+    border: 1px dashed var(--sepia);
+    border-radius: 2px;
+    background: rgba(232,223,200,0.3);
+  }
+
+  .placeholder-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .placeholder p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  .prompt-card {
+    background: white;
+    border: 1px solid var(--sepia);
+    border-radius: 2px;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease;
+    box-shadow: 0 2px 16px rgba(26,20,16,0.06);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--aged);
+  }
+
+  .element-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 1px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .card-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .card-body {
+    padding: 20px 18px;
+  }
+
+  .main-prompt {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .prompt-scaffolds {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .scaffold-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 10px;
+    background: var(--paper);
+    border-radius: 2px;
+    border-left: 2px solid var(--sepia);
+  }
+
+  .scaffold-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .scaffold-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #3a3028;
+  }
+
+  .card-footer {
+    padding: 12px 18px;
+    background: var(--paper);
+    border-top: 1px solid var(--aged);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .tip {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    flex: 1;
+  }
+
+  .tip strong {
+    color: var(--rust);
+    font-style: normal;
+  }
+
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    background: var(--aged);
+    border: 1px solid var(--sepia);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 1px;
+  }
+
+  .copy-btn:hover {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+
+  .multi-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    gap: 12px;
+    color: var(--muted);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--aged);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .error-card {
+    padding: 20px;
+    background: #fdf0ee;
+    border: 1px solid #e8b8b0;
+    border-radius: 2px;
+    color: var(--rust);
+    font-size: 13px;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+  }
+
+  /* Element colour coding */
+  .depth-language { background: #e8f0eb; color: #2d4a3e; border: 1px solid #b8d4bf; }
+  .depth-details { background: #f0ebe8; color: #5a3020; border: 1px solid #d4b8a8; }
+  .depth-patterns { background: #e8eaf0; color: #202d5a; border: 1px solid #a8b0d4; }
+  .depth-trends { background: #f0ece8; color: #5a4020; border: 1px solid #d4c0a8; }
+  .depth-unanswered { background: #f0e8eb; color: #5a2030; border: 1px solid #d4a8b0; }
+  .depth-rules { background: #ebe8f0; color: #3a2d5a; border: 1px solid #b8a8d4; }
+  .depth-ethics { background: #f0eee8; color: #5a4a20; border: 1px solid #d4caa8; }
+  .depth-bigideas { background: #e8f0ee; color: #204a3a; border: 1px solid #a8d4c8; }
+  .complex-perspectives { background: #e8ede8; color: #1e3c1e; border: 1px solid #a0c4a0; }
+  .complex-relationships { background: #ede8e8; color: #3c1e1e; border: 1px solid #c4a0a0; }
+  .complex-change { background: #e8e8ed; color: #1e1e3c; border: 1px solid #a0a0c4; }
+  .complex-origins { background: #ede8e4; color: #3c2c1e; border: 1px solid #c4b0a0; }
+  .complex-paradox { background: #ede8ed; color: #2c1e3c; border: 1px solid #c0a0c4; }
+  .complex-contributing { background: #e4ede8; color: #1e3c2c; border: 1px solid #a0c4b0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="eyebrow">Kaplan's Framework</div>
+    <h1>Depth & Complexity</h1>
+    <div class="subtitle">An Artist of the Floating World — Literary Analysis</div>
+  </header>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Depth/Complexity Element</label>
+      <select id="elementSelect">
+        <optgroup label="— Depth —">
+          <option value="language">Language of the Discipline</option>
+          <option value="details">Details</option>
+          <option value="patterns">Patterns</option>
+          <option value="trends">Trends</option>
+          <option value="unanswered">Unanswered Questions</option>
+          <option value="rules">Rules</option>
+          <option value="ethics">Ethics</option>
+          <option value="bigideas">Big Ideas</option>
+        </optgroup>
+        <optgroup label="— Complexity —">
+          <option value="perspectives">Multiple Perspectives</option>
+          <option value="relationships">Relationships Across Time</option>
+          <option value="change">Change Over Time</option>
+          <option value="origins">Origins / Influences</option>
+          <option value="paradox">Paradox / Contradictions</option>
+          <option value="contributing">Contributing Factors</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Focus Vignette / Theme</label>
+      <select id="topicSelect">
+        <option value="hypocrisy">Ono's Hypocrisy & Blindness</option>
+        <option value="superiority">Need to Assert Superiority</option>
+        <option value="shintaro">Critique of Shintaro</option>
+        <option value="setting">Setting & Change (Mrs Kawakami)</option>
+        <option value="nostalgia">Nostalgia & the Past</option>
+        <option value="propaganda">Propaganda & War Responsibility</option>
+        <option value="irony">Unreliable Narrator & Irony</option>
+        <option value="projection">Projection onto Others</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Thinking Level</label>
+      <select id="levelSelect">
+        <option value="scaffold">Scaffolded (step-by-step)</option>
+        <option value="open">Open-ended challenge</option>
+        <option value="essay">Essay paragraph focus</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Output Mode</label>
+      <select id="modeSelect">
+        <option value="single">Single focused prompt</option>
+        <option value="set">Set of 3 prompts</option>
+      </select>
+    </div>
+
+    <button class="generate-btn" onclick="generatePrompts()">
+      <span class="spinner" id="spinner"></span>
+      <span id="btnText">Generate Prompt</span>
+    </button>
+  </div>
+
+  <div class="output-section" id="output">
+    <div class="placeholder">
+      <div class="placeholder-icon">⌀</div>
+      <p>Select your parameters and generate a prompt<br>to begin your analysis.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const elementMeta = {
+  language: {
+    label: "Language of the Discipline",
+    css: "depth-language",
+    icon: "𝓛",
+    tip: "Use precise literary and historical terminology throughout your response."
+  },
+  details: {
+    label: "Details",
+    css: "depth-details",
+    icon: "◎",
+    tip: "Ground your analysis in specific, concrete textual details rather than generalisations."
+  },
+  patterns: {
+    label: "Patterns",
+    css: "depth-patterns",
+    icon: "⌖",
+    tip: "A pattern must appear at least twice to be meaningful — identify your second example."
+  },
+  trends: {
+    label: "Trends",
+    css: "depth-trends",
+    icon: "↗",
+    tip: "Trends shift across time — track how this idea evolves across the novel's vignettes."
+  },
+  unanswered: {
+    label: "Unanswered Questions",
+    css: "depth-unanswered",
+    icon: "?",
+    tip: "The best unanswered questions cannot be resolved — they sit at the heart of the text's ambiguity."
+  },
+  rules: {
+    label: "Rules",
+    css: "depth-rules",
+    icon: "⊞",
+    tip: "Rules operate both as explicit codes and as unspoken social norms — consider both."
+  },
+  ethics: {
+    label: "Ethics",
+    css: "depth-ethics",
+    icon: "⚖",
+    tip: "Ethical analysis requires you to name the competing values in tension, not just label behaviour 'wrong'."
+  },
+  bigideas: {
+    label: "Big Ideas",
+    css: "depth-bigideas",
+    icon: "◈",
+    tip: "A big idea can be stated without naming the text — test yours by removing the title."
+  },
+  perspectives: {
+    label: "Multiple Perspectives",
+    css: "complex-perspectives",
+    icon: "⊛",
+    tip: "Perspectives must be genuinely different — avoid repeating the same view in different words."
+  },
+  relationships: {
+    label: "Relationships Across Time",
+    css: "complex-relationships",
+    icon: "⟷",
+    tip: "Focus on how the relationship between ideas changes, not just that it exists."
+  },
+  change: {
+    label: "Change Over Time",
+    css: "complex-change",
+    icon: "⟳",
+    tip: "Name what changes, what triggers the change, and what remains surprisingly constant."
+  },
+  origins: {
+    label: "Origins & Influences",
+    css: "complex-origins",
+    icon: "⊙",
+    tip: "Trace influences back to Ishiguro's historical context — post-war Japan's culture of shame."
+  },
+  paradox: {
+    label: "Paradox & Contradictions",
+    css: "complex-paradox",
+    icon: "∞",
+    tip: "A true paradox cannot be resolved — name why these two ideas cannot be reconciled."
+  },
+  contributing: {
+    label: "Contributing Factors",
+    css: "complex-contributing",
+    icon: "⊕",
+    tip: "Rank your factors — which is most significant, and why?"
+  }
+};
+
+const promptData = {
+  language: {
+    hypocrisy: {
+      scaffold: {
+        main: "What specialised literary and psychological terms does Ishiguro embed in this extract to expose Ono's hypocrisy — and how do those terms betray his blindness to himself?",
+        steps: [
+          "List three precise literary or analytical terms relevant to this extract (e.g. dramatic irony, unreliable narrator, projection, cognitive dissonance).",
+          "Choose one term and explain exactly how it applies to Ono's voice in this passage.",
+          "Now explain how Ono's use of language — the vocabulary he chooses — unconsciously reveals the very trait he is criticising in Shintaro.",
+          "Write a sentence using at least two of your chosen terms together in an analytical claim."
+        ]
+      },
+      open: {
+        main: "Ishiguro arms Ono with the language of moral authority while simultaneously undermining it. How does the discipline-specific language of literary criticism illuminate what Ono cannot see about himself?",
+        steps: []
+      },
+      essay: {
+        main: "Using precise literary terminology, construct a paragraph arguing that Ono's vocabulary of condemnation is also a vocabulary of self-exposure.",
+        steps: ["Topic sentence naming the technique.", "Embedded quotation with analysis of specific word choice.", "Link to the theme of hypocrisy in post-war Japan."]
+      }
+    },
+    shintaro: {
+      scaffold: {
+        main: "What is the precise literary term for the gap between what Ono intends and what the reader understands when he critiques Shintaro — and why does this terminology matter for your analysis?",
+        steps: [
+          "Define 'dramatic irony' and 'dramatic monologue' in your own words.",
+          "Apply one of these terms to a specific moment in the Shintaro extract.",
+          "Explain why naming the technique with precision changes the weight of your argument.",
+          "Write one sentence that uses the term correctly embedded within your own syntax."
+        ]
+      },
+      open: {
+        main: "The literary critic's vocabulary — irony, unreliable narrator, dramatic monologue — becomes particularly charged when applied to Ono's attack on Shintaro. Select two terms and show how they interact in this passage.",
+        steps: []
+      },
+      essay: {
+        main: "Write a TEEL paragraph in which you deploy at least two literary terms to analyse how Ishiguro uses Ono's critique of Shintaro to implicate Ono himself.",
+        steps: ["Topic sentence.", "Evidence (embedded quotation).", "Explanation using literary terminology.", "Link to the novel's broader concern with self-deception."]
+      }
+    },
+    setting: {
+      scaffold: {
+        main: "What literary devices are at work in the Mrs Kawakami bar scene, and how does naming them precisely change the depth of your reading?",
+        steps: [
+          "Identify the specific device used to present the bar (e.g. pathetic fallacy, juxtaposition, symbolism).",
+          "Write a definition of your chosen device.",
+          "Apply it to a specific detail in the extract — name the detail and explain the effect.",
+          "Use the device's name in a sentence that forms the basis of a topic sentence."
+        ]
+      },
+      open: {
+        main: "The language of literary criticism provides a lens for the setting. Use at least two precise terms to argue what the Kawakami bar scene reveals about Ono's relationship to change.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph in which you analyse the setting of the bar using precise literary terminology, arguing that the physical space functions as an externalisation of Ono's internal conflict.",
+        steps: []
+      }
+    },
+    nostalgia: {
+      scaffold: {
+        main: "What literary and historical terms most precisely describe Ono's attitude to the past — and how does choosing 'nostalgia' over 'sentimentality' or 'melancholy' shift the analysis?",
+        steps: [
+          "Distinguish between nostalgia, sentimentality and melancholy as critical terms.",
+          "Decide which best fits Ono's voice in this extract and justify your choice.",
+          "Find a quotation that supports your chosen term.",
+          "Write a sentence using the term analytically, not descriptively."
+        ]
+      },
+      open: {
+        main: "The precise critical vocabulary we bring to Ono's nostalgia — whether we call it 'nostalgia,' 'denial,' or 'revisionism' — fundamentally shapes the argument we make. How does your choice of term position you as a reader?",
+        steps: []
+      },
+      essay: {
+        main: "Construct a topic sentence that uses a precise literary or psychological term to name Ono's relationship to memory, then develop it with embedded evidence.",
+        steps: []
+      }
+    },
+    propaganda: {
+      scaffold: {
+        main: "What specific historical and literary vocabulary should an analyst use when discussing propaganda art and artistic complicity in pre-war Japan — and how do these terms enrich a reading of Ono?",
+        steps: [
+          "Define 'complicity', 'propaganda' and 'revisionism' as they apply to wartime art.",
+          "Apply one term to Ono's implied past as a propaganda artist.",
+          "Explain how Ono's own vocabulary in the Shintaro passage avoids these terms — and what that avoidance reveals.",
+          "Write an analytical sentence that names his avoidance with precision."
+        ]
+      },
+      open: {
+        main: "Ono's critique of Shintaro carefully avoids the vocabulary of his own complicity. How does attention to the language of propaganda history expose the silences in Ono's self-narrative?",
+        steps: []
+      },
+      essay: {
+        main: "Using the vocabulary of propaganda analysis, write a paragraph arguing that Ono's silence about his own work is itself a rhetorical strategy.",
+        steps: []
+      }
+    },
+    superiority: {
+      scaffold: {
+        main: "What specific critical terms describe Ono's rhetorical performance of superiority — and how do those terms help a reader identify the technique beneath the surface?",
+        steps: [
+          "Consider terms such as 'condescension', 'self-aggrandisement', 'deflection' or 'projection'. Define two.",
+          "Apply each term to a moment in the extract.",
+          "Explain why using a precise term is more analytically powerful than writing 'Ono feels superior'.",
+          "Draft a topic sentence using one of your chosen terms."
+        ]
+      },
+      open: {
+        main: "The vocabulary of psychology and rhetoric — deflection, projection, self-aggrandisement — opens up Ono's performance of superiority in ways that purely literary terms cannot. Make the case using evidence from the text.",
+        steps: []
+      },
+      essay: {
+        main: "Using precise critical terminology, argue in one paragraph that Ono's assertions of superiority over Shintaro function as a form of self-protection.",
+        steps: []
+      }
+    },
+    irony: {
+      scaffold: {
+        main: "Dramatic irony, structural irony and verbal irony are all operating in these extracts. Can you distinguish between them and identify which operates most powerfully?",
+        steps: [
+          "Define all three types of irony.",
+          "Identify one example of each from the extracts.",
+          "Argue which type is most central to Ishiguro's presentation of Ono.",
+          "Write an analytical sentence that names the specific type of irony and explains its effect."
+        ]
+      },
+      open: {
+        main: "The unreliable narrator is a technical device with critical implications. Using precise terminology, argue that Ono's unreliability is not merely a narrative trick but a moral and historical statement.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph deploying the term 'dramatic irony' with precision to argue what effect Ishiguro creates for a reader who reads against the grain of Ono's narration.",
+        steps: []
+      }
+    },
+    projection: {
+      scaffold: {
+        main: "The psychological term 'projection' is useful here. How does applying it precisely to Ono's behaviour produce a more convincing analytical argument than a purely literary reading?",
+        steps: [
+          "Define psychological projection.",
+          "Identify a moment in the extract where Ono appears to project his own traits onto Shintaro.",
+          "Explain why this reading is supported by the textual evidence.",
+          "Write a sentence using the term 'projection' analytically within your own syntax."
+        ]
+      },
+      open: {
+        main: "Ono accuses others of the very behaviours he enacts. Using precise critical vocabulary drawn from both psychology and literary analysis, argue how this pattern of projection functions in the novel.",
+        steps: []
+      },
+      essay: {
+        main: "In one TEEL paragraph, use the vocabulary of both psychology and literary criticism to argue that Ono's projections onto Shintaro expose the architecture of his own guilt.",
+        steps: []
+      }
+    }
+  },
+  patterns: {
+    hypocrisy: {
+      scaffold: {
+        main: "What recurring patterns of language or behaviour mark Ono as a hypocrite across the novel's vignettes — and what does identifying this pattern reveal about Ishiguro's purpose?",
+        steps: [
+          "Identify the specific behaviour pattern: what exactly does Ono repeat?",
+          "Find at least two examples of this pattern — one from the extract, one from elsewhere in the novel.",
+          "Explain what the pattern reveals about Ono's character.",
+          "Argue why Ishiguro repeats it: what does the repetition do for the reader?"
+        ]
+      },
+      open: {
+        main: "Patterns require at least two instances to become meaningful. Identify the structural pattern that governs Ono's self-justifications and argue what its repetition reveals about the novel's design.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph that identifies a specific pattern in Ono's rhetoric of self-justification, supports it with evidence from two different vignettes, and argues its thematic significance.",
+        steps: []
+      }
+    },
+    shintaro: {
+      scaffold: {
+        main: "Ono's critique of Shintaro forms part of a broader pattern of judgement throughout the novel. What is the pattern — and what does it expose when examined across multiple vignettes?",
+        steps: [
+          "Name the pattern precisely: Ono judging others for what he himself has done.",
+          "Find a second moment in the novel where this same pattern appears.",
+          "Explain why the pattern becomes more damning the more it repeats.",
+          "Write a claim about what the pattern reveals about Ono's psychological state."
+        ]
+      },
+      open: {
+        main: "The pattern of Ono's judgements in the Shintaro extract mirrors earlier and later vignettes. Trace this pattern and argue what its persistence reveals about both character and historical context.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the pattern of Ono's condemnation of Shintaro is not an isolated moment but a structural feature of his narration — with evidence from two points in the novel.",
+        steps: []
+      }
+    },
+    setting: {
+      scaffold: {
+        main: "The physical settings of the novel — bar, garden, city — follow a pattern of decay and reconstruction. How does this pattern function as a structural argument about post-war Japan?",
+        steps: [
+          "Identify the pattern in setting across the Kawakami extract and at least one other scene.",
+          "Name what each setting represents symbolically.",
+          "Explain how the pattern as a whole creates meaning beyond any individual scene.",
+          "Write a sentence expressing the thematic significance of the pattern."
+        ]
+      },
+      open: {
+        main: "Ishiguro's settings form a pattern of erasure and rebuilding. Identify this pattern across at least two scenes and argue what it says about post-war Japan's relationship to its past.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph analysing the pattern of decaying interiors in the novel as a structural commentary on the relationship between personal memory and national history.",
+        steps: []
+      }
+    },
+    nostalgia: {
+      scaffold: {
+        main: "Ono's nostalgia follows a pattern: he mourns, then qualifies, then distances. How does identifying this three-stage pattern change how you read any single moment of nostalgia?",
+        steps: [
+          "Find the three-stage pattern in the Mrs Kawakami passage.",
+          "Find the same pattern in another scene from the novel.",
+          "Explain what the regularity of this pattern suggests about the nature of Ono's nostalgia.",
+          "Write a claim about whether this pattern suggests genuine grief or managed self-presentation."
+        ]
+      },
+      open: {
+        main: "Nostalgia in Ono's narrative is never simple grief — it follows a pattern of disclosure and retraction. Map this pattern and argue its significance for how we interpret his reliability.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph that traces the pattern of Ono's nostalgic disclosures across two or more scenes, arguing that the pattern itself is Ishiguro's most powerful critique of his narrator.",
+        steps: []
+      }
+    },
+    propaganda: {
+      scaffold: {
+        main: "Is there a pattern in how Ono approaches the topic of his wartime work — what does he say, what does he avoid, how does he frame others?",
+        steps: [
+          "Identify the rhetorical moves Ono makes when the subject of propaganda arises.",
+          "Find a second instance where these same moves appear.",
+          "Explain what the consistency of the pattern reveals.",
+          "Argue whether this pattern is conscious evasion or unconscious self-deception."
+        ]
+      },
+      open: {
+        main: "Ono's evasions around his propaganda work follow a recognisable pattern of deflection, comparison and minimisation. Identify this pattern and argue whether it constitutes deliberate dishonesty or something more complex.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph identifying the rhetorical pattern Ono uses to discuss wartime responsibility, supported by evidence from at least two vignettes.",
+        steps: []
+      }
+    },
+    superiority: {
+      scaffold: {
+        main: "Ono's need to assert superiority appears across many vignettes. What is the consistent pattern of this behaviour — and what triggers it each time?",
+        steps: [
+          "Identify what Ono does when he feels his authority challenged.",
+          "Find two examples of this trigger-response pattern.",
+          "Explain what the trigger reveals about Ono's underlying anxieties.",
+          "Write a claim about what this pattern suggests regarding his post-war psychological state."
+        ]
+      },
+      open: {
+        main: "The pattern of Ono's superiority claims is not random — it is triggered by specific threats. Map the pattern and argue what it reveals about the sources of his insecurity.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph that maps the pattern of Ono's superiority assertions across two vignettes and argues what the consistency of this pattern reveals about post-war masculine identity in Japan.",
+        steps: []
+      }
+    },
+    irony: {
+      scaffold: {
+        main: "The irony in Ono's narration is not random — it follows a structural pattern related to the vignette arrangement. How does the placement of scenes create irony as a structural effect?",
+        steps: [
+          "Identify two moments placed in proximity (or contrast) that create irony through arrangement.",
+          "Explain how the placement — not just the words — generates the ironic effect.",
+          "Find a third moment where the same structural technique appears.",
+          "Write a claim about the pattern of structural irony as a deliberate authorial choice."
+        ]
+      },
+      open: {
+        main: "Ishiguro's irony is embedded at the structural level through the arrangement of vignettes. Identify this pattern and argue how it implicates the reader as a co-creator of meaning.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the structural irony created by the arrangement of vignettes is more powerful than any single instance of verbal irony, using specific evidence to support your claim.",
+        steps: []
+      }
+    },
+    projection: {
+      scaffold: {
+        main: "Ono's projection onto others follows a pattern. What does he project, onto whom, and under what circumstances — and what does the regularity of this pattern tell us?",
+        steps: [
+          "Identify what Ono consistently projects onto other characters.",
+          "Name at least two characters who become recipients of this projection.",
+          "Explain what the pattern reveals about Ono's unspoken guilt.",
+          "Argue whether the pattern is more revealing about Ono or about post-war Japan."
+        ]
+      },
+      open: {
+        main: "Ono projects his own failings onto Shintaro, his daughters, and others. Identify the pattern of this projection and argue what it collectively reveals about the psychology of post-war guilt.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph identifying the pattern of Ono's projections onto other characters and arguing that this pattern is Ishiguro's central technique for revealing the architecture of guilt.",
+        steps: []
+      }
+    }
+  },
+  ethics: {
+    hypocrisy: {
+      scaffold: {
+        main: "Is Ono morally responsible for his hypocrisy, or does the post-war context of shame culture complicate a straightforward ethical judgement? What competing values are in tension here?",
+        steps: [
+          "Name the two competing ethical positions: judging Ono as morally culpable vs. contextualising his behaviour.",
+          "Identify the specific value each position prioritises (e.g. honesty vs. self-preservation).",
+          "Explain how the post-war Japanese context of shame and face complicates the judgement.",
+          "Write a sentence that names the ethical tension without resolving it — and argue why that ambiguity is Ishiguro's point."
+        ]
+      },
+      open: {
+        main: "The ethics of Ono's hypocrisy are complicated by context, intention and outcome. Make a nuanced argument about his moral culpability that goes beyond labelling him simply 'hypocritical'.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph making an ethical argument about Ono's hypocrisy that acknowledges competing values and arrives at a position that a reasonable reader could challenge.",
+        steps: []
+      }
+    },
+    shintaro: {
+      scaffold: {
+        main: "Ono condemns Shintaro for avoiding the war. Is this condemnation ethically just — or does it expose a deeper ethical failure in Ono himself? What values are in competition?",
+        steps: [
+          "Articulate Ono's ethical position: why does he feel Shintaro is in the wrong?",
+          "Articulate the counterposition: what might justify Shintaro's choices?",
+          "Identify the irony: what is the ethical problem with Ono as the person making this judgement?",
+          "Write a sentence naming the ethical paradox without collapsing it."
+        ]
+      },
+      open: {
+        main: "The ethics of war participation, avoidance and complicity are impossibly entangled in Ono's critique of Shintaro. Make a sustained ethical argument about who carries the greater moral burden.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph making a debatable ethical claim about Ono's condemnation of Shintaro, using evidence from the extract and contextualising your argument within post-war Japanese society.",
+        steps: []
+      }
+    },
+    nostalgia: {
+      scaffold: {
+        main: "Is it ethically responsible for Ono to qualify his nostalgia by suggesting the old world was 'perhaps not always for the best'? What are the competing ethical demands on a figure like Ono?",
+        steps: [
+          "Identify the ethical obligation Ono faces: to acknowledge the past honestly.",
+          "Identify the competing obligation: to protect himself and others from the full weight of that past.",
+          "Explain why the word 'perhaps' is ethically loaded.",
+          "Write a sentence arguing whether Ono's partial acknowledgement is a moral step forward or a continuation of self-deception."
+        ]
+      },
+      open: {
+        main: "Ono's qualified nostalgia raises questions about the ethics of memory and responsibility. Does partial acknowledgement constitute moral progress, or is it a more sophisticated form of evasion?",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing an ethical position on Ono's use of qualification and hedging when speaking of the past, connecting your argument to the broader ethics of post-war reckoning in Japan.",
+        steps: []
+      }
+    },
+    propaganda: {
+      scaffold: {
+        main: "What ethical obligation did propaganda artists like Ono have in wartime Japan — and how does Ishiguro position the reader to judge Ono's failure to acknowledge this?",
+        steps: [
+          "State the ethical obligation of an artist in a society heading towards war.",
+          "Describe the competing pressures that complicated this obligation in wartime Japan.",
+          "Explain how Ono's silence about his own work constitutes an ethical failure.",
+          "Write a sentence making a debatable ethical claim about artistic responsibility."
+        ]
+      },
+      open: {
+        main: "Art in service of the state raises fundamental ethical questions about individual responsibility. Make a nuanced ethical argument about the culpability of propaganda artists in the context of pre-war Japan.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph making an ethical argument about Ono's responsibility as a propaganda artist, acknowledging the historical pressures involved but arriving at a clear — if contested — moral position.",
+        steps: []
+      }
+    },
+    setting: {
+      scaffold: {
+        main: "Ono advises Mrs Kawakami to abandon her bar. Is this ethical advice, self-interested counsel, or something more ambiguous? What competing values shape the exchange?",
+        steps: [
+          "Identify what Ono claims to value: pragmatism, progress, Mrs Kawakami's wellbeing.",
+          "Identify what Ono might actually be seeking: endorsement of his own attitude to the past.",
+          "Explain the ethical tension between advising change and erasing memory.",
+          "Write a sentence making a debatable claim about the ethics of Ono's advice."
+        ]
+      },
+      open: {
+        main: "Ono's advice to Mrs Kawakami is framed as practical but carries ethical weight. Make an argument about the ethics of encouraging others to abandon spaces that hold collective memory.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph making an ethical argument about Ono's advice in the Kawakami scene, connecting it to wider questions about whether erasing the physical traces of the past is a form of moral evasion.",
+        steps: []
+      }
+    },
+    superiority: {
+      scaffold: {
+        main: "Is Ono's need to assert superiority over others an ethical failing, a psychological defence mechanism, or both — and how does Ishiguro position the reader to judge it?",
+        steps: [
+          "Name the ethical objection to Ono's behaviour.",
+          "Offer a contextual explanation that complicates the objection.",
+          "Argue how the reader is positioned to feel rather than simply to judge.",
+          "Write a sentence making a nuanced ethical claim about Ono's behaviour."
+        ]
+      },
+      open: {
+        main: "Ono's performance of superiority is both ethically problematic and psychologically explicable. Make an argument that refuses to collapse this tension.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph making an ethical claim about Ono's need for superiority, acknowledging what complicates a simple judgement and connecting the argument to the novel's broader ethical landscape.",
+        steps: []
+      }
+    },
+    irony: {
+      scaffold: {
+        main: "Ishiguro uses irony to position the reader as a moral judge of Ono. Is this a legitimate ethical strategy for a novelist — and does it produce genuine moral reflection or merely moral comfort?",
+        steps: [
+          "Describe the effect of irony on the reader: it makes us feel superior to Ono.",
+          "Identify the ethical risk of this effect: does it let the reader off the hook too easily?",
+          "Argue whether irony is a morally responsible narrative technique when dealing with themes of wartime guilt.",
+          "Write a sentence making a debatable claim about the ethics of irony in historical fiction."
+        ]
+      },
+      open: {
+        main: "The ethical implications of using irony to judge a character who is blind to his own complicity are complex. Does Ishiguro's technique produce genuine moral reflection in the reader, or a comfortable sense of superiority?",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph making an ethical argument about Ishiguro's use of dramatic irony as a technique for engaging the reader with questions of war guilt.",
+        steps: []
+      }
+    },
+    projection: {
+      scaffold: {
+        main: "Is it ethically fair to read Ono's projections as deliberate dishonesty — or might projection be an unconscious process that complicates our moral judgement of him?",
+        steps: [
+          "Define the ethical significance of the distinction between conscious and unconscious self-deception.",
+          "Apply this distinction to Ono's projections onto Shintaro.",
+          "Argue which reading makes for a more ethically interesting novel.",
+          "Write a sentence naming the ethical tension between judging and understanding Ono."
+        ]
+      },
+      open: {
+        main: "The ethics of judging Ono require us to distinguish between deliberate dishonesty and unconscious self-protection. Make an argument about where on this spectrum Ono's projections fall — and what hangs on the answer.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph making a nuanced ethical argument about whether Ono's projection onto others constitutes moral failure or psychological self-preservation — or an irreducible combination of both.",
+        steps: []
+      }
+    }
+  },
+  perspectives: {
+    hypocrisy: {
+      scaffold: {
+        main: "Ono's hypocrisy looks very different depending on whose perspective you occupy. How does reading the same evidence through Ono's perspective, Shintaro's perspective, and a post-war Japanese reader's perspective produce three distinct interpretations?",
+        steps: [
+          "Articulate Ono's perspective on his own behaviour.",
+          "Articulate Shintaro's likely perspective on the same behaviour.",
+          "Articulate the perspective of a reader shaped by knowledge of post-war Japan.",
+          "Explain which perspective most powerfully positions us as readers — and why that might be Ishiguro's design."
+        ]
+      },
+      open: {
+        main: "The same hypocrisy reads as self-deception, survival strategy, or cultural norm depending on the perspective you inhabit. Make an argument for which perspective Ishiguro most wants the reader to occupy — and why.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph demonstrating two competing perspectives on Ono's hypocrisy, using pivoting language to acknowledge both before arguing which perspective is most supported by the text.",
+        steps: []
+      }
+    },
+    shintaro: {
+      scaffold: {
+        main: "Ono condemns Shintaro. Mrs Kawakami defends him. The reader sees both. How do these competing perspectives within the text shape how the reader judges Ono's critique?",
+        steps: [
+          "Articulate Ono's position on Shintaro, using evidence.",
+          "Articulate Mrs Kawakami's implied counter-position.",
+          "Explain what the reader knows that neither character fully acknowledges.",
+          "Write a sentence naming the relationship between these three perspectives."
+        ]
+      },
+      open: {
+        main: "Three perspectives converge on Shintaro — Ono's condemnation, Mrs Kawakami's defence, and the reader's ironic awareness. Make an argument about how the collision of these perspectives produces the novel's ethical complexity.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph demonstrating how two distinct perspectives on Shintaro — Ono's and the reader's — produce two entirely different readings of the same evidence.",
+        steps: []
+      }
+    },
+    setting: {
+      scaffold: {
+        main: "The Kawakami bar means different things to Ono and to Mrs Kawakami. How do their contrasting perspectives on the same physical space produce two competing readings of the past?",
+        steps: [
+          "Describe what the bar represents to Mrs Kawakami.",
+          "Describe what the bar represents to Ono.",
+          "Explain how these two perspectives produce a 'perspective collision' in the extract.",
+          "Write a sentence arguing what the collision of these perspectives reveals about how people relate to shared histories."
+        ]
+      },
+      open: {
+        main: "The bar setting is simultaneously a symbol of belonging and a relic of complicity, depending on whose perspective you occupy. Make an argument about how Ishiguro uses the collision of perspectives to complicate any simple reading of nostalgia.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph demonstrating how two contrasting perspectives on the bar setting produce different — and irreconcilable — readings of Ono's advice to Mrs Kawakami.",
+        steps: []
+      }
+    },
+    nostalgia: {
+      scaffold: {
+        main: "Nostalgia in this novel is not a shared emotion — it is differently shaped by complicity and innocence. How do Ono's and Mrs Kawakami's perspectives on 'the old district' produce entirely different nostalgias?",
+        steps: [
+          "Describe Mrs Kawakami's nostalgia: what is she grieving?",
+          "Describe Ono's nostalgia: what does he need to be grieving, and what can he not afford to acknowledge?",
+          "Explain how the difference between their perspectives complicates the reader's response.",
+          "Write a sentence naming what is at stake in the gap between their perspectives."
+        ]
+      },
+      open: {
+        main: "Mrs Kawakami's nostalgia is clean grief; Ono's is entangled with guilt. Make an argument about how these contrasting nostalgias function as a structural commentary on the different experiences of post-war Japan.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph using the contrast between Mrs Kawakami's and Ono's perspectives on the past to argue that nostalgia in the novel is not universal but is shaped by degrees of complicity.",
+        steps: []
+      }
+    },
+    propaganda: {
+      scaffold: {
+        main: "How does the perspective of a wartime propaganda artist differ fundamentally from the perspective of a citizen who simply lived through the war — and how does this difference illuminate Ono's situation?",
+        steps: [
+          "Articulate the perspective of someone who experienced the war as a civilian.",
+          "Articulate the perspective of someone whose art contributed to the war effort.",
+          "Explain why Ono's position makes his critique of Shintaro especially charged.",
+          "Write a sentence naming the ethical asymmetry between these perspectives."
+        ]
+      },
+      open: {
+        main: "The perspective of the propaganda artist who helped create the conditions for war is fundamentally different from the perspective of the citizen who suffered it. Make an argument about how this asymmetry of perspective is Ishiguro's central concern.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing how the collision of Ono's perspective as a former propaganda artist and the perspectives of those he criticises produces the novel's most profound irony.",
+        steps: []
+      }
+    },
+    superiority: {
+      scaffold: {
+        main: "Ono's need for superiority reads differently depending on whether you occupy his perspective, the perspective of those he judges, or the perspective of a post-war reader. How do these competing readings coexist?",
+        steps: [
+          "Describe how Ono perceives his own need for superiority.",
+          "Describe how someone like Shintaro might perceive the same behaviour.",
+          "Describe how a post-war reader, knowing the context of Japan's defeat, might read it.",
+          "Write a sentence explaining what the three-way tension between these perspectives reveals."
+        ]
+      },
+      open: {
+        main: "Ono's superiority is a pose that looks very different from inside and outside. Make an argument about how the gap between self-perception and external perception is the structural engine of the novel.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph demonstrating how the gap between Ono's self-perception and the reader's perception of him functions as the primary source of the novel's irony and its ethical force.",
+        steps: []
+      }
+    },
+    irony: {
+      scaffold: {
+        main: "The reader occupies a perspective that Ono cannot access. How does this asymmetry of knowledge between narrator and reader shape the experience of irony in the novel?",
+        steps: [
+          "Name what the reader knows that Ono does not.",
+          "Explain how this knowledge gap produces dramatic irony.",
+          "Argue whether the reader's perspective is itself 'innocent' — or whether the reader is also implicated.",
+          "Write a sentence naming the ethical dimension of the reader's privileged perspective."
+        ]
+      },
+      open: {
+        main: "The reader's perspective is privileged but also ethically complex — we enjoy our superiority to Ono while possibly failing to examine our own blind spots. Make an argument about what Ishiguro demands of the reader through his use of irony.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that Ishiguro's use of dramatic irony not only critiques Ono but implicates the reader in the very act of judgement that the novel questions.",
+        steps: []
+      }
+    },
+    projection: {
+      scaffold: {
+        main: "Ono's projections produce a situation in which every character becomes a mirror. How do the perspectives of those he projects onto — Shintaro, his daughters, Mrs Kawakami — offer a counter-narrative to his own?",
+        steps: [
+          "Identify one character whose perspective implicitly challenges Ono's self-presentation.",
+          "Explain how Ishiguro signals that character's alternative perspective without ever giving them full narrative voice.",
+          "Argue how this technique forces the reader to construct a counter-narrative.",
+          "Write a sentence naming the relationship between Ono's projection and the reader's reconstruction."
+        ]
+      },
+      open: {
+        main: "The characters Ono projects onto are never given full narrative voice, yet their perspective is everywhere implied. Make an argument about how Ishiguro uses these suppressed perspectives to undermine Ono's authority as a narrator.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the suppressed perspectives of Ono's interlocutors function as the novel's most powerful tool for destabilising his authority as a narrator.",
+        steps: []
+      }
+    }
+  },
+  paradox: {
+    hypocrisy: {
+      scaffold: {
+        main: "Ono is most hypocritical in the very moments he presents himself as most honest. How does this paradox sit at the heart of the novel — and why can it not be resolved?",
+        steps: [
+          "Name the paradox precisely: Ono's self-presentation as honest is itself a form of dishonesty.",
+          "Find an example from the extract that captures this paradox.",
+          "Explain why the paradox cannot be resolved by simply calling Ono a liar.",
+          "Write a sentence that holds both sides of the paradox in tension."
+        ]
+      },
+      open: {
+        main: "The deepest paradox of Ono's character is that his self-exposure is simultaneously a form of self-concealment. Make an argument about how this unresolvable tension is Ishiguro's most significant achievement in characterisation.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph articulating the central paradox of Ono's narration — that his confessions are also evasions — and argue how this paradox functions as the structural spine of the novel.",
+        steps: []
+      }
+    },
+    nostalgia: {
+      scaffold: {
+        main: "Ono's nostalgia for a past he helped to corrupt is a profound paradox. How does the novel refuse to let this paradox collapse into simple guilt or simple grief?",
+        steps: [
+          "Name the paradox: Ono mourns what he helped destroy.",
+          "Find evidence in the extract of this paradox operating.",
+          "Explain why calling this 'hypocritical' is insufficient — why is paradox a more precise term?",
+          "Write a sentence holding both sides of the paradox without resolving it."
+        ]
+      },
+      open: {
+        main: "Ono's nostalgia is paradoxical because the world he mourns is one he helped to ruin. Make an argument about how Ishiguro uses this paradox to generate a more complex ethical response than simple condemnation.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the paradox of Ono's nostalgia — mourning what he helped destroy — is the novel's most emotionally complex and ethically demanding idea.",
+        steps: []
+      }
+    },
+    change: {
+      scaffold: {
+        main: "Ono accepts the need for change intellectually while resisting it emotionally. How does this paradox manifest in his advice to Mrs Kawakami — and why can it not be resolved?",
+        steps: [
+          "Identify the moment where Ono advocates for change.",
+          "Identify the moment where his resistance to that same change is implied.",
+          "Name the paradox: Ono advocates for others what he cannot enact for himself.",
+          "Write a sentence holding the paradox in tension without resolving it."
+        ]
+      },
+      open: {
+        main: "Ono is simultaneously the advocate of change and its most resistant subject. Make a sustained argument about how this paradox operates in the Kawakami scene.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that Ono's advice to Mrs Kawakami is paradoxical — it advocates for change he himself cannot achieve — and connect this to the novel's broader theme of post-war denial.",
+        steps: []
+      }
+    },
+    shintaro: {
+      scaffold: {
+        main: "Ono condemns Shintaro for the cunning and hypocrisy that he himself exhibits. What is the precise paradox here — and why does naming it as paradox rather than hypocrisy produce a richer analysis?",
+        steps: [
+          "Name the paradox: the accuser and the accused are guilty of the same thing.",
+          "Explain why 'paradox' is more precise than 'hypocrisy' in this context.",
+          "Find a quotation that most sharply captures the paradox.",
+          "Write a sentence that names both sides of the paradox explicitly."
+        ]
+      },
+      open: {
+        main: "The paradox of Ono's critique of Shintaro is that every accusation is also a confession. Make an argument about how this paradox positions the reader as judge of both characters simultaneously.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the paradox at the heart of Ono's critique — that every accusation is a self-accusation — is the mechanism by which Ishiguro generates the novel's deepest ironies.",
+        steps: []
+      }
+    },
+    propaganda: {
+      scaffold: {
+        main: "Ono was an artist who used beauty to serve destruction. How does this paradox — of aesthetic form in service of brutal ends — complicate any simple moral judgement of his wartime work?",
+        steps: [
+          "Articulate the paradox: Ono's skill as an artist was deployed for destructive purposes.",
+          "Explain why this makes him harder to judge than a soldier or bureaucrat.",
+          "Argue how the novel uses this paradox to question whether art and ethics can be separated.",
+          "Write a sentence holding both sides of the paradox without collapsing either."
+        ]
+      },
+      open: {
+        main: "The paradox of propaganda art — that it is simultaneously beautiful and destructive — is central to how we judge Ono. Make a sustained argument about how Ishiguro uses this paradox to complicate the novel's ethical landscape.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the paradox of Ono's role as a propaganda artist — deploying aesthetic skill in service of destruction — is the novel's most historically specific and ethically demanding idea.",
+        steps: []
+      }
+    },
+    superiority: {
+      scaffold: {
+        main: "Ono's need for superiority is most intense in the moments when he is most exposed. How does this paradox — needing to dominate precisely when vulnerable — function in the extract?",
+        steps: [
+          "Name the paradox: assertion of superiority signals vulnerability, not strength.",
+          "Find a moment in the extract where this paradox is visible.",
+          "Explain why the paradox makes Ono a more complex character than a simply arrogant one.",
+          "Write a sentence holding the paradox in tension."
+        ]
+      },
+      open: {
+        main: "Ono's performances of superiority are a paradox — they are most pronounced when he is most threatened. Make an argument about what this paradox reveals about the psychology of men who sense their authority collapsing.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that Ono's superiority complex is paradoxically an expression of his sense of diminishment, connecting this to the post-war collapse of the values he once embodied.",
+        steps: []
+      }
+    },
+    irony: {
+      scaffold: {
+        main: "Ishiguro uses irony to reveal truth — but the paradox is that the more Ono tries to justify himself, the more the truth of his guilt is exposed. Why is this paradox central to the novel's design?",
+        steps: [
+          "Name the paradox: Ono's self-justifications are simultaneously self-exposures.",
+          "Find a moment in the extract where this is most visible.",
+          "Explain why the paradox makes this an unusually powerful form of first-person narration.",
+          "Write a sentence naming the paradox as a structural principle of the novel."
+        ]
+      },
+      open: {
+        main: "The paradox of the unreliable narrator is that the more convincingly he lies, the more convincingly the truth is exposed. Make a sustained argument about how Ishiguro exploits this paradox.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the paradox at the centre of unreliable narration — that every attempt at concealment is simultaneously a form of revelation — is Ishiguro's most important technical achievement.",
+        steps: []
+      }
+    },
+    projection: {
+      scaffold: {
+        main: "Ono accuses others of the very traits he embodies — yet in doing so, he reveals exactly what he is trying to hide. What is the paradox here — and why is it not simply ironic?",
+        steps: [
+          "Name the paradox: projection simultaneously conceals and reveals.",
+          "Explain why 'paradox' is more precise than 'irony' in this context.",
+          "Find evidence in the extract of both movements — concealment and revelation — occurring at once.",
+          "Write a sentence holding the paradox in tension without resolving it."
+        ]
+      },
+      open: {
+        main: "The paradox of Ono's projection is that it achieves exactly the opposite of its purpose: by attributing his failings to others, he makes them more visible. Make an argument about how Ishiguro exploits this paradox.",
+        steps: []
+      },
+      essay: {
+        main: "Write a paragraph arguing that the central paradox of Ono's projection — that it simultaneously conceals and exposes — is the primary mechanism by which Ishiguro constructs his critique of post-war denial.",
+        steps: []
+      }
+    }
+  }
+};
+
+// Fallback generator for combinations not explicitly defined
+function generateFallback(element, topic, level) {
+  const meta = elementMeta[element];
+  const topicLabels = {
+    hypocrisy: "Ono's hypocrisy and self-blindness",
+    superiority: "Ono's need to assert superiority",
+    shintaro: "the critique of Shintaro",
+    setting: "the bar setting and change",
+    nostalgia: "nostalgia and the past",
+    propaganda: "propaganda and war responsibility",
+    irony: "the unreliable narrator and irony",
+    projection: "Ono's projection onto others"
+  };
+  const topicLabel = topicLabels[topic] || topic;
+
+  const templates = {
+    scaffold: {
+      main: `Apply the concept of <em>${meta.label.toLowerCase()}</em> to ${topicLabel} in this extract. What does this lens reveal that a surface reading would miss?`,
+      steps: [
+        `Define what ${meta.label.toLowerCase()} means in the context of literary analysis.`,
+        `Identify a specific moment in the extract that this concept illuminates.`,
+        `Explain what the concept reveals about Ono's character or Ishiguro's purpose.`,
+        `Connect your reading to the broader themes of post-war Japan.`
+      ]
+    },
+    open: {
+      main: `Using the lens of <em>${meta.label.toLowerCase()}</em>, construct a sophisticated argument about ${topicLabel} in the extract. What does this lens make visible that others cannot?`,
+      steps: []
+    },
+    essay: {
+      main: `Write a structured analytical paragraph using <em>${meta.label.toLowerCase()}</em> as your central lens to examine ${topicLabel}. Ensure your opening sentence is debatable.`,
+      steps: [
+        "Debatable topic sentence naming the key idea.",
+        "Embedded quotation with precise word-level analysis.",
+        "Link to Ishiguro's historical or cultural context."
+      ]
+    }
+  };
+
+  return templates[level] || templates.scaffold;
+}
+
+function getPromptContent(element, topic, level) {
+  if (promptData[element] && promptData[element][topic] && promptData[element][topic][level]) {
+    return promptData[element][topic][level];
+  }
+  return generateFallback(element, topic, level);
+}
+
+function buildCard(element, topic, level) {
+  const meta = elementMeta[element];
+  const content = getPromptContent(element, topic, level);
+  const topicLabels = {
+    hypocrisy: "Hypocrisy & Blindness",
+    superiority: "Need for Superiority",
+    shintaro: "Critique of Shintaro",
+    setting: "Setting & Change",
+    nostalgia: "Nostalgia & the Past",
+    propaganda: "Propaganda & War",
+    irony: "Unreliable Narrator",
+    projection: "Projection"
+  };
+
+  const scaffoldHtml = content.steps && content.steps.length > 0
+    ? `<div class="prompt-scaffolds">
+        ${content.steps.map((s, i) => `
+          <div class="scaffold-item">
+            <span class="scaffold-num">0${i+1}</span>
+            <span class="scaffold-text">${s}</span>
+          </div>`).join('')}
+       </div>`
+    : '';
+
+  return `
+    <div class="prompt-card">
+      <div class="card-header">
+        <span class="element-badge ${meta.css}">${meta.label}</span>
+        <span class="card-section-label">${topicLabels[topic] || topic}</span>
+      </div>
+      <div class="card-body">
+        <div class="main-prompt">${content.main}</div>
+        ${scaffoldHtml}
+      </div>
+      <div class="card-footer">
+        <span class="tip"><strong>Tip:</strong> ${meta.tip}</span>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+      </div>
+    </div>`;
+}
+
+function buildSetOfThree(topic, level) {
+  // Pick 3 elements that make sense together
+  const sets = {
+    hypocrisy: ['language', 'patterns', 'ethics'],
+    shintaro: ['perspectives', 'paradox', 'patterns'],
+    setting: ['language', 'change', 'perspectives'],
+    nostalgia: ['patterns', 'paradox', 'ethics'],
+    propaganda: ['ethics', 'perspectives', 'origins'],
+    superiority: ['patterns', 'paradox', 'perspectives'],
+    irony: ['language', 'paradox', 'perspectives'],
+    projection: ['paradox', 'patterns', 'ethics']
+  };
+  const elements = sets[topic] || ['language', 'patterns', 'ethics'];
+  return `<div class="multi-grid">${elements.map(el => buildCard(el, topic, level)).join('')}</div>`;
+}
+
+async function generatePrompts() {
+  const element = document.getElementById('elementSelect').value;
+  const topic = document.getElementById('topicSelect').value;
+  const level = document.getElementById('levelSelect').value;
+  const mode = document.getElementById('modeSelect').value;
+  
+  const btn = document.querySelector('.generate-btn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+  const output = document.getElementById('output');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  btnText.textContent = 'Generating…';
+  output.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div>Composing your prompt…</div>`;
+
+  await new Promise(r => setTimeout(r, 600));
+
+  try {
+    let html;
+    if (mode === 'set') {
+      html = buildSetOfThree(topic, level);
+    } else {
+      html = buildCard(element, topic, level);
+    }
+    output.innerHTML = html;
+  } catch(e) {
+    output.innerHTML = `<div class="error-card">Something went wrong generating the prompt. Please try again.</div>`;
+  }
+
+  btn.disabled = false;
+  spinner.style.display = 'none';
+  btnText.textContent = 'Generate Prompt';
+}
+
+function copyPrompt(btn) {
+  const card = btn.closest('.prompt-card');
+  const main = card.querySelector('.main-prompt').innerText;
+  const steps = [...card.querySelectorAll('.scaffold-text')].map((s, i) => `${i+1}. ${s.innerText}`).join('\n');
+  const tip = card.querySelector('.tip').innerText;
+  const text = steps ? `${main}\n\nSteps:\n${steps}\n\n${tip}` : `${main}\n\n${tip}`;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+</script>
+</body>
+</html>
