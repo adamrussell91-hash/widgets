@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discursive Paragraph Health Check</title>
+<style>
+  :root {
+    --green: #22C55E;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --ink: #1a1a2e;
+    --ink-soft: #4a4a6a;
+    --paper: #fafaf8;
+    --card: #ffffff;
+    --border: #e8e8f0;
+    --progress-bg: #e8e8f0;
+    --accent: #6366f1;
+    --accent-light: #eef2ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Progress bar */
+  #progress-bar-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--progress-bg);
+    z-index: 100;
+  }
+  #progress-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Screen wrapper */
+  #app {
+    width: 100%;
+    max-width: 540px;
+    padding: 0 20px 48px;
+    padding-top: 32px;
+  }
+
+  /* Screen transitions */
+  .screen {
+    animation: fadeUp 0.35s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Welcome screen */
+  .welcome-eyebrow {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    margin-top: 48px;
+  }
+  .welcome-title {
+    font-size: clamp(26px, 7vw, 36px);
+    font-weight: normal;
+    line-height: 1.18;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .welcome-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .welcome-body {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 40px;
+  }
+  .welcome-note {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 17px 24px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: Georgia, serif;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    min-height: 54px;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:hover { background: #2d2d4e; }
+
+  .btn-primary.accent {
+    background: var(--accent);
+  }
+  .btn-primary.accent:hover { background: #4f52d8; }
+
+  /* Question screen */
+  .q-step {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 40px;
+    margin-bottom: 14px;
+  }
+  .q-text {
+    font-size: clamp(17px, 4.5vw, 21px);
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 32px;
+    font-weight: normal;
+  }
+
+  /* Choice buttons */
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .choice-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.18s, background 0.18s, transform 0.1s;
+    min-height: 54px;
+    line-height: 1.4;
+  }
+  .choice-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .choice-btn.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+    font-style: italic;
+  }
+  .choice-btn:active { transform: scale(0.985); }
+
+  /* Dropdown */
+  .select-wrap {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .choice-select {
+    width: 100%;
+    padding: 16px 44px 16px 18px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    color: var(--ink);
+    appearance: none;
+    cursor: pointer;
+    min-height: 54px;
+    transition: border-color 0.18s;
+  }
+  .choice-select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .select-arrow {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  /* Number input */
+  .number-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 24px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .num-btn {
+    width: 56px;
+    min-height: 56px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .num-btn:hover { background: var(--accent-light); }
+  .num-input {
+    flex: 1;
+    border: none;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 22px;
+    color: var(--ink);
+    background: transparent;
+    padding: 0;
+    min-height: 56px;
+    outline: none;
+  }
+  /* Hide spinners */
+  .num-input::-webkit-inner-spin-button,
+  .num-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .num-input[type=number] { -moz-appearance: textfield; }
+
+  /* Next button */
+  .q-nav {
+    margin-top: 8px;
+  }
+
+  /* Report screen */
+  .report-header {
+    margin-top: 40px;
+    margin-bottom: 8px;
+  }
+  .report-eyebrow {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .report-title {
+    font-size: clamp(22px, 6vw, 30px);
+    font-weight: normal;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .report-subtitle {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .report-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .status-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .status-dot.green  { background: var(--green); box-shadow: 0 0 0 3px #dcfce7; }
+  .status-dot.amber  { background: var(--amber); box-shadow: 0 0 0 3px #fef3c7; }
+  .status-dot.red    { background: var(--red);   box-shadow: 0 0 0 3px #fee2e2; }
+
+  .report-section-name {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .report-feedback {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .score-box {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 12px;
+    padding: 22px 20px;
+    margin: 20px 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .score-label {
+    font-size: 14px;
+    font-family: 'Courier New', Courier, monospace;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .score-number {
+    font-size: 32px;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+  .score-denom {
+    font-size: 16px;
+    opacity: 0.6;
+  }
+
+  .screenshot-note {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .btn-ghost {
+    display: block;
+    width: 100%;
+    padding: 15px 24px;
+    background: transparent;
+    color: var(--ink-soft);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    min-height: 54px;
+  }
+  .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-wrap" style="display:none">
+  <div id="progress-bar" style="width:0%"></div>
+</div>
+
+<div id="app"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: 1,
+    text: "Does your paragraph begin with a clear literary speculation point — a controlling idea that explores a question rather than answering it?",
+    type: "buttons",
+    options: ["Yes", "No", "Not Sure"]
+  },
+  {
+    id: 2,
+    text: "Does your paragraph include a research point — contextual or expert knowledge that supports your speculation?",
+    type: "buttons",
+    options: ["Yes", "No", "Not Sure"]
+  },
+  {
+    id: 3,
+    text: "Is your research point interpreted using a critical thinking tool (e.g. suggestion, example, criteria, generalisation), or is it just listed as a fact?",
+    type: "buttons",
+    options: ["Interpreted using a CT tool", "Just listed as fact", "Not sure"]
+  },
+  {
+    id: 4,
+    text: "Which CT tool did you use to discuss your research point?",
+    type: "dropdown",
+    options: ["Suggestion", "Example", "Counterexample", "Criteria", "Generalisation", "Reason", "I don't know", "I didn't use one"]
+  },
+  {
+    id: 5,
+    text: "Does your paragraph include a comprehension point — a specific reference to the lyrics of your song?",
+    type: "buttons",
+    options: ["Yes", "No", "Not Sure"]
+  },
+  {
+    id: 6,
+    text: "Is your comprehension point developed or complicated using a critical thinking tool, or is it just described?",
+    type: "buttons",
+    options: ["Developed using a CT tool", "Just described", "Not sure"]
+  },
+  {
+    id: 7,
+    text: "Which CT tool did you use to discuss your comprehension point?",
+    type: "dropdown",
+    options: ["Distinction", "Thought Experiment", "Suggestion", "Example", "Counterexample", "Criteria", "I don't know", "I didn't use one"]
+  },
+  {
+    id: 8,
+    text: "Does your paragraph end with a closing link that connects back to your inquiry question and opens up thinking?",
+    type: "buttons",
+    options: ["Yes", "No", "Not Sure"]
+  },
+  {
+    id: 9,
+    text: "Count the tentative phrases in your paragraph (perhaps, suggests, might, could, seems to, it is possible, arguably, it is worth noting, points to, probably). How many did you find?",
+    type: "number"
+  },
+  {
+    id: 10,
+    text: "Did you use any assertive or absolute phrases (clearly, obviously, proves, definitely, without doubt, always, never, certainly, undeniably, this shows that)?",
+    type: "buttons",
+    options: ["Yes", "No", "Not sure"]
+  }
+];
+
+const NAMED_CT_TOOLS = ["Suggestion","Example","Counterexample","Criteria","Generalisation","Reason","Distinction","Thought Experiment"];
+
+let answers = {};
+let currentQ = 0; // 0 = welcome, 1-10 = questions, 11 = report
+
+const app = document.getElementById('app');
+const progressBarWrap = document.getElementById('progress-bar-wrap');
+const progressBar = document.getElementById('progress-bar');
+
+function setProgress(step) {
+  if (step === 0) {
+    progressBarWrap.style.display = 'none';
+  } else {
+    progressBarWrap.style.display = 'block';
+    const pct = Math.round((step / QUESTIONS.length) * 100);
+    progressBar.style.width = pct + '%';
+  }
+}
+
+function render(html) {
+  app.innerHTML = `<div class="screen">${html}</div>`;
+}
+
+function showWelcome() {
+  currentQ = 0;
+  setProgress(0);
+  render(`
+    <p class="welcome-eyebrow">Year 11 English</p>
+    <h1 class="welcome-title">Discursive Paragraph<br><em>Health Check</em></h1>
+    <p class="welcome-body">Read your handwritten paragraph carefully. Then answer the following questions about it. Be honest — this is for you, not for a mark.</p>
+    <div class="welcome-note">You'll be asked 10 questions. At the end, you'll get a colour-coded diagnostic report you can screenshot.</div>
+    <button class="btn-primary accent" onclick="startQuiz()">Start →</button>
+  `);
+}
+
+function startQuiz() {
+  answers = {};
+  currentQ = 1;
+  showQuestion(currentQ);
+}
+
+function showQuestion(n) {
+  setProgress(n);
+  const q = QUESTIONS[n - 1];
+  let inputHtml = '';
+
+  if (q.type === 'buttons') {
+    inputHtml = `<div class="choices" id="choices">` +
+      q.options.map((opt, i) =>
+        `<button class="choice-btn" id="opt-${i}" onclick="selectBtn(${i}, '${opt.replace(/'/g,"\\'")}', ${n})">${opt}</button>`
+      ).join('') +
+      `</div>`;
+  } else if (q.type === 'dropdown') {
+    inputHtml = `<div class="select-wrap">
+      <select class="choice-select" id="dropdown-${n}" onchange="selectDropdown(${n})">
+        <option value="" disabled selected>Select a CT tool…</option>
+        ${q.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+      </select>
+      <span class="select-arrow">▾</span>
+    </div>`;
+  } else if (q.type === 'number') {
+    inputHtml = `<div class="number-wrap">
+      <button class="num-btn" onclick="nudge(-1, ${n})">−</button>
+      <input class="num-input" type="number" id="num-${n}" value="${answers[n] !== undefined ? answers[n] : 0}" min="0" oninput="answers[${n}] = parseInt(this.value)||0">
+      <button class="num-btn" onclick="nudge(1, ${n})">+</button>
+    </div>`;
+  }
+
+  render(`
+    <p class="q-step">Question ${n} of ${QUESTIONS.length}</p>
+    <p class="q-text">${q.text}</p>
+    ${inputHtml}
+    <div class="q-nav">
+      <button class="btn-primary" id="next-btn" onclick="nextQuestion(${n})" ${(q.type !== 'buttons' && q.type !== 'dropdown') ? '' : 'disabled'} style="${(q.type !== 'buttons' && q.type !== 'dropdown') ? '' : 'opacity:0.4;cursor:not-allowed;'}">
+        ${n === QUESTIONS.length ? 'See my results →' : 'Next →'}
+      </button>
+    </div>
+  `);
+
+  // Re-apply saved button selection
+  if (q.type === 'buttons' && answers[n] !== undefined) {
+    const opts = document.querySelectorAll('.choice-btn');
+    opts.forEach((btn, i) => {
+      if (q.options[i] === answers[n]) btn.classList.add('selected');
+    });
+    enableNext();
+  }
+  // Re-apply saved dropdown
+  if (q.type === 'dropdown' && answers[n] !== undefined) {
+    const sel = document.getElementById(`dropdown-${n}`);
+    if (sel) sel.value = answers[n];
+    enableNext();
+  }
+}
+
+function enableNext() {
+  const btn = document.getElementById('next-btn');
+  if (btn) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+  }
+}
+
+function selectBtn(idx, val, qNum) {
+  answers[qNum] = val;
+  document.querySelectorAll('.choice-btn').forEach((b, i) => {
+    b.classList.toggle('selected', i === idx);
+  });
+  enableNext();
+}
+
+function selectDropdown(qNum) {
+  const sel = document.getElementById(`dropdown-${qNum}`);
+  answers[qNum] = sel.value;
+  enableNext();
+}
+
+function nudge(delta, qNum) {
+  const inp = document.getElementById(`num-${qNum}`);
+  let val = parseInt(inp.value) || 0;
+  val = Math.max(0, val + delta);
+  inp.value = val;
+  answers[qNum] = val;
+}
+
+function nextQuestion(n) {
+  const q = QUESTIONS[n - 1];
+  // For number input, make sure we have value
+  if (q.type === 'number') {
+    const inp = document.getElementById(`num-${n}`);
+    answers[n] = parseInt(inp.value) || 0;
+  }
+  if (n < QUESTIONS.length) {
+    currentQ = n + 1;
+    showQuestion(currentQ);
+  } else {
+    showReport();
+  }
+}
+
+function getStatus(section) {
+  const a = answers;
+  if (section === 'lsp') {
+    if (a[1] === 'Yes') return 'green';
+    if (a[1] === 'Not Sure') return 'amber';
+    return 'red';
+  }
+  if (section === 'rp') {
+    if (a[2] === 'Yes' && a[3] === 'Interpreted using a CT tool') return 'green';
+    if (a[2] === 'Yes') return 'amber';
+    return 'red';
+  }
+  if (section === 'rct') {
+    if (NAMED_CT_TOOLS.includes(a[4])) return 'green';
+    if (a[4] === "I don't know") return 'amber';
+    return 'red';
+  }
+  if (section === 'cp') {
+    if (a[5] === 'Yes' && a[6] === 'Developed using a CT tool') return 'green';
+    if (a[5] === 'Yes') return 'amber';
+    return 'red';
+  }
+  if (section === 'cct') {
+    if (NAMED_CT_TOOLS.includes(a[7])) return 'green';
+    if (a[7] === "I don't know") return 'amber';
+    return 'red';
+  }
+  if (section === 'cl') {
+    if (a[8] === 'Yes') return 'green';
+    if (a[8] === 'Not Sure') return 'amber';
+    return 'red';
+  }
+  if (section === 'tl') {
+    const count = a[9] !== undefined ? a[9] : 0;
+    if (count >= 3 && a[10] === 'No') return 'green';
+    if (count === 0) return 'red';
+    return 'amber';
+  }
+}
+
+function getFeedback(section, status) {
+  const a = answers;
+  const msgs = {
+    lsp: {
+      green: "Your speculation point is doing its job — it opens up a question rather than closing one down.",
+      amber: "You've made a start, but it's not clear whether your opening point is genuinely exploratory. Read it again and ask: does this invite thinking, or does it just state a position?",
+      red: "There is no clear literary speculation point here. Your paragraph needs an opening that explores a question, not answers one."
+    },
+    rp: {
+      green: "You've brought in research and used a CT tool to make it work — that's the point of the knowledge, not just reporting it.",
+      amber: "You have a research point, but it reads more like a fact being listed. Try using a CT tool to interpret what that knowledge actually means for your argument.",
+      red: "There is no research point here. Find some contextual or expert knowledge that speaks to your speculation and bring it in."
+    },
+    rct: {
+      green: `Good — you named and used ${a[4]} as your CT tool for the research point.`,
+      amber: "You've attempted a CT tool but aren't sure which one. Go back to your class notes and identify the tool by name — precision matters here.",
+      red: "You haven't used a CT tool to discuss your research point. Pick one (suggestion, example, criteria, generalisation, reason) and use it to interpret your evidence."
+    },
+    cp: {
+      green: "Your comprehension point is specific and developed — you're doing more than just describing what the lyrics say.",
+      amber: "You've referenced the lyrics, but you're describing them rather than developing or complicating them. A CT tool will help you push the idea further.",
+      red: "There is no comprehension point here. Go back to the lyrics and find a specific line or image that supports your speculation."
+    },
+    cct: {
+      green: `You've used ${a[7]} to develop your comprehension point — that's the right move.`,
+      amber: "You've attempted a CT tool on your comprehension point but aren't sure which one. Name it specifically in your self-check.",
+      red: "You haven't used a CT tool to develop your comprehension point. Try distinction, thought experiment, or counterexample to complicate the lyric you've chosen."
+    },
+    cl: {
+      green: "Your closing link connects back to the question and keeps the thinking open — exactly right.",
+      amber: "You've tried a closing link, but you're not confident it's working. Check: does it restate your speculation, or does it open up a new angle on the question?",
+      red: "There is no closing link. Your paragraph needs an ending that loops back to the inquiry question without shutting it down."
+    },
+    tl: {
+      green: "Your tentative language is working well — you're speculating rather than asserting, which is the whole point of discursive writing.",
+      amber: a[10] === 'Yes' || a[10] === 'Not sure'
+        ? "Watch your assertive phrases — words like 'clearly' or 'proves' pull your writing away from discursive and towards persuasive. Swap them for tentative alternatives."
+        : "You only have one or two tentative phrases. Discursive writing needs more speculative language — try adding 'perhaps', 'it is possible', or 'one reading might be'.",
+      red: "There are no tentative phrases in your paragraph. Discursive writing depends on language that opens up thinking — go back and soften your claims."
+    }
+  };
+  return msgs[section][status];
+}
+
+function showReport() {
+  setProgress(QUESTIONS.length);
+  progressBar.style.width = '100%';
+
+  const sections = ['lsp','rp','rct','cp','cct','cl','tl'];
+  const names = {
+    lsp: 'Literary Speculation Point',
+    rp: 'Research Point',
+    rct: 'Research CT Tool',
+    cp: 'Comprehension Point',
+    cct: 'Comprehension CT Tool',
+    cl: 'Closing Link',
+    tl: 'Tentative Language'
+  };
+
+  const statuses = {};
+  sections.forEach(s => statuses[s] = getStatus(s));
+  const greenCount = sections.filter(s => statuses[s] === 'green').length;
+
+  const cardsHtml = sections.map(s => {
+    const st = statuses[s];
+    const fb = getFeedback(s, st);
+    return `<div class="report-card">
+      <span class="status-dot ${st}"></span>
+      <div>
+        <div class="report-section-name">${names[s]}</div>
+        <div class="report-feedback">${fb}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  render(`
+    <div class="report-header">
+      <div class="report-eyebrow">Diagnostic Report</div>
+      <h2 class="report-title">Your Paragraph Health Check</h2>
+      <div class="report-subtitle">Generated ${new Date().toLocaleDateString('en-AU', {day:'numeric',month:'long',year:'numeric'})}</div>
+    </div>
+    ${cardsHtml}
+    <div class="score-box">
+      <div>
+        <div class="score-label">Areas working well</div>
+        <div class="score-number">${greenCount} <span class="score-denom">/ ${sections.length}</span></div>
+      </div>
+      <div style="text-align:right;font-size:13px;opacity:0.65;font-family:'Courier New',monospace;line-height:1.5;">
+        ${sections.length - greenCount} area${sections.length - greenCount !== 1 ? 's' : ''} to<br>revise
+      </div>
+    </div>
+    <div class="screenshot-note">📸 Screenshot this report before leaving the page — it won't be saved.</div>
+    <button class="btn-ghost" onclick="showWelcome()">↩ Start again</button>
+  `);
+}
+
+// Boot
+showWelcome();
+</script>
+</body>
+</html>
