@@ -66,25 +66,17 @@ body {
 }
 .phase-tab:hover { background: var(--paper2); color: var(--ink); }
 .phase-tab.active { background: var(--ink); color: var(--paper); }
+.phase-tab.unlocked { color: #666; }
 .phase-tab .tab-num { opacity: 0.45; }
 .phase-tab.active .tab-num { opacity: 0.65; }
 
 /* CANVAS */
-.canvas-wrap {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-#mapCanvas {
-  position: absolute;
-  inset: 0;
-}
+.canvas-wrap { flex: 1; position: relative; overflow: hidden; }
+#mapCanvas { position: absolute; inset: 0; }
 #mapSvg {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   width: 100%; height: 100%;
-  pointer-events: none;
-  overflow: visible;
+  pointer-events: none; overflow: visible;
 }
 
 /* NODES */
@@ -107,17 +99,12 @@ body {
 .node-blue  { background: var(--blue); color: white; box-shadow: 3px 3px 0 rgba(29,78,216,0.25); cursor: grab; }
 .node-blue:active { cursor: grabbing; }
 .node-center {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--paper); color: var(--ink);
   border: 2.5px solid var(--ink);
   font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1rem; font-weight: 700;
   box-shadow: 4px 4px 0 var(--ink);
-  cursor: default;
-  border-radius: 8px;
-  min-width: 120px;
-  z-index: 5;
+  cursor: default; border-radius: 8px; min-width: 120px; z-index: 5;
 }
 .connect-active .node-black,
 .connect-active .node-blue { cursor: pointer !important; }
@@ -128,50 +115,45 @@ body {
 
 /* EDGE LABELS */
 .edge-label {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 0.15rem 0.4rem;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.62rem;
-  color: #555;
-  white-space: nowrap;
-  cursor: pointer;
-  z-index: 20;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  position: absolute; transform: translate(-50%,-50%);
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 3px; padding: 0.15rem 0.4rem;
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  color: #555; white-space: nowrap; cursor: pointer; z-index: 20;
+  max-width: 140px; overflow: hidden; text-overflow: ellipsis;
 }
 .edge-label:hover { border-color: var(--ink); }
 .edge-label-input {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background: white;
-  border: 1.5px solid var(--line-kg);
-  border-radius: 3px;
-  padding: 0.2rem 0.5rem;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.62rem;
-  color: var(--ink);
-  z-index: 30;
-  outline: none;
-  min-width: 100px;
-  max-width: 160px;
+  position: absolute; transform: translate(-50%,-50%);
+  background: white; border: 1.5px solid var(--line-kg);
+  border-radius: 3px; padding: 0.2rem 0.5rem;
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  color: var(--ink); z-index: 30; outline: none;
+  min-width: 100px; max-width: 160px;
 }
 
 /* BOTTOM BAR */
 .bottom-bar {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  padding: 0.55rem 1.2rem;
-  border-top: 1px solid var(--rule);
+  gap: 0;
+  border-top: 2px solid var(--ink);
   background: var(--paper2);
   z-index: 200;
   flex-shrink: 0;
+  min-height: 48px;
 }
+.bb-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 1rem;
+  border-right: 1px solid var(--rule);
+  height: 100%;
+  flex-shrink: 0;
+}
+.bb-section.grow { flex: 1; }
+
 .bb-label {
   font-family: 'DM Mono', monospace;
   font-size: 0.6rem;
@@ -180,67 +162,51 @@ body {
   color: #999;
   white-space: nowrap;
 }
-.bb-sep { width: 1px; height: 20px; background: var(--rule); flex-shrink: 0; }
 
-/* TIMER IN BOTTOM BAR */
+/* TIMER */
 .bb-timer {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
   background: var(--ink);
   color: var(--paper);
-  padding: 0.3rem 0.8rem 0.3rem 0.6rem;
+  padding: 0.28rem 0.7rem 0.28rem 0.5rem;
   border-radius: 2px;
 }
 .bb-timer-display {
   font-family: 'DM Mono', monospace;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 500;
   letter-spacing: 0.04em;
-  min-width: 54px;
+  min-width: 52px;
   transition: color 0.3s;
 }
 .bb-timer-display.urgent { color: #ef4444; animation: tblink 1s ease-in-out infinite; }
 .bb-timer-display.done   { color: #4ade80; }
 @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:0.35} }
 .timer-nudge {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.8rem;
-  width: 20px; height: 20px;
-  border: 1px solid #444;
-  background: none; color: var(--paper);
-  cursor: pointer; border-radius: 2px;
-  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 0.8rem;
+  width: 19px; height: 19px; border: 1px solid #444;
+  background: none; color: var(--paper); cursor: pointer;
+  border-radius: 2px; display: flex; align-items: center; justify-content: center;
   transition: all 0.1s;
 }
 .timer-nudge:hover { background: #333; }
 .timer-ctrl {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #444;
-  border-radius: 1px;
-  cursor: pointer;
-  background: none; color: var(--paper);
-  transition: all 0.1s;
+  font-family: 'DM Mono', monospace; font-size: 0.57rem;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 0.22rem 0.48rem; border: 1px solid #444;
+  border-radius: 1px; cursor: pointer; background: none;
+  color: var(--paper); transition: all 0.1s;
 }
 .timer-ctrl:hover { background: #333; }
 
 .action-btn {
   font-family: 'DM Mono', monospace;
-  font-size: 0.63rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.38rem 0.85rem;
-  border: 1px solid var(--rule);
-  border-radius: 1px;
-  cursor: pointer;
-  background: var(--paper);
-  color: var(--ink);
-  transition: all 0.12s;
-  white-space: nowrap;
+  font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.35rem 0.8rem; border: 1px solid var(--rule);
+  border-radius: 1px; cursor: pointer; background: var(--paper);
+  color: var(--ink); transition: all 0.12s; white-space: nowrap;
 }
 .action-btn:hover { border-color: var(--ink); }
 .action-btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
@@ -249,61 +215,43 @@ body {
 .action-btn.green:hover { background: #245a42; }
 .action-btn.orange { background: var(--line-kg); color: white; border-color: var(--line-kg); }
 .action-btn.orange:hover { background: #d35400; }
+.action-btn.muted { color: #999; border-color: var(--rule); }
+.action-btn.muted:hover { color: var(--ink); border-color: var(--ink); }
 
-.bb-right { margin-left: auto; display: flex; gap: 0.6rem; align-items: center; }
-.legend { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; color: #666; white-space: nowrap; }
+.legend { display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.68rem; color: #777; white-space: nowrap; }
 .leg-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .leg-line { width: 20px; height: 2.5px; flex-shrink: 0; border-radius: 2px; }
 
 /* CONNECT HINT */
 .connect-hint {
-  position: absolute;
-  top: 12px; left: 50%;
-  transform: translateX(-50%);
-  background: var(--line-kg);
-  color: white;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.63rem;
-  letter-spacing: 0.04em;
-  padding: 0.4rem 1rem;
-  border-radius: 2px;
-  z-index: 100;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s;
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  background: var(--line-kg); color: white;
+  font-family: 'DM Mono', monospace; font-size: 0.63rem;
+  padding: 0.4rem 1rem; border-radius: 2px;
+  z-index: 100; pointer-events: none; opacity: 0; transition: opacity 0.25s;
 }
 .connect-hint.show { opacity: 1; }
 
 /* OVERLAYS */
 .overlay {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: rgba(245,242,235,0.97);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   z-index: 150;
 }
 .overlay-card {
-  max-width: 500px;
-  width: 100%;
-  text-align: center;
-  padding: 3rem 2.5rem;
+  max-width: 500px; width: 100%;
+  text-align: center; padding: 3rem 2.5rem;
 }
 .overlay-card .big-num {
   font-family: 'Playfair Display', serif;
-  font-size: 5rem;
-  font-weight: 900;
-  color: var(--rule);
-  line-height: 1;
-  margin-bottom: 0.4rem;
+  font-size: 5rem; font-weight: 900;
+  color: var(--rule); line-height: 1; margin-bottom: 0.4rem;
 }
 .overlay-card h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.9rem;
+  font-size: 2rem; font-weight: 700; margin-bottom: 0.9rem;
 }
 .overlay-card p { font-size: 0.88rem; line-height: 1.7; color: #666; margin-bottom: 0.9rem; }
 .topic-row { display: flex; gap: 0.6rem; margin-bottom: 1rem; }
@@ -317,99 +265,69 @@ body {
 
 /* REPORT */
 .report {
-  max-width: 640px;
-  width: 100%;
-  text-align: left;
-  padding: 2.5rem;
-  max-height: 85vh;
-  overflow-y: auto;
+  max-width: 660px; width: 100%;
+  text-align: left; padding: 2.5rem;
+  max-height: 88vh; overflow-y: auto;
 }
 .report h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 0.3rem;
+  font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem;
 }
 .report-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #aaa;
-  margin-bottom: 1.5rem;
+  font-family: 'DM Mono', monospace; font-size: 0.63rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: #aaa; margin-bottom: 1.5rem;
 }
 .report-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.6rem;
-  margin-bottom: 1.5rem;
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 0.5rem; margin-bottom: 1.5rem;
 }
 .stat-box {
-  border: 1px solid var(--rule);
-  border-radius: 2px;
-  background: white;
-  padding: 0.9rem 0.7rem;
-  text-align: center;
+  border: 1px solid var(--rule); border-radius: 2px;
+  background: white; padding: 0.8rem 0.6rem; text-align: center;
 }
 .stat-num {
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 0.25rem;
+  font-size: 1.8rem; font-weight: 700; line-height: 1; margin-bottom: 0.2rem;
 }
 .stat-lbl {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: #999;
+  font-family: 'DM Mono', monospace; font-size: 0.55rem;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #999;
 }
 .report-section { margin-bottom: 1.4rem; }
 .report-section h3 {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #999;
-  margin-bottom: 0.6rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--rule);
+  font-family: 'DM Mono', monospace; font-size: 0.63rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #999; margin-bottom: 0.7rem;
+  padding-bottom: 0.4rem; border-bottom: 1px solid var(--rule);
 }
 .priority-item {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.55rem 0.8rem;
-  border: 1px solid var(--rule);
-  border-radius: 2px;
-  background: white;
-  margin-bottom: 0.4rem;
+  display: flex; align-items: flex-start; gap: 0.8rem;
+  padding: 0.65rem 0.8rem; border: 1px solid var(--rule);
+  border-radius: 2px; background: white; margin-bottom: 0.4rem;
 }
 .priority-badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 2px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-family: 'DM Mono', monospace; font-size: 0.58rem;
+  padding: 0.2rem 0.45rem; border-radius: 2px; white-space: nowrap;
+  flex-shrink: 0; margin-top: 2px;
 }
-.badge-high   { background: #fef2f2; color: var(--accent); border: 1px solid #fca5a5; }
-.badge-med    { background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; }
-.badge-low    { background: #f0fdf4; color: var(--green); border: 1px solid #86efac; }
-.badge-iso    { background: #f8fafc; color: #64748b; border: 1px solid #cbd5e1; }
-.priority-name { font-size: 0.85rem; font-weight: 500; flex: 1; }
-.priority-detail { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: #aaa; }
-.report-insight {
-  background: #f0f4ff;
-  border-left: 3px solid var(--blue);
-  padding: 0.8rem 1rem;
-  border-radius: 0 2px 2px 0;
-  font-size: 0.84rem;
-  line-height: 1.6;
-  color: #444;
+.badge-1 { background: #fef2f2; color: var(--accent); border: 1px solid #fca5a5; }
+.badge-2 { background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; }
+.badge-3 { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+.badge-4 { background: #f8fafc; color: #64748b; border: 1px solid #cbd5e1; }
+.priority-body { flex: 1; }
+.priority-name { font-size: 0.87rem; font-weight: 600; margin-bottom: 0.2rem; }
+.priority-guidance { font-size: 0.8rem; color: #666; line-height: 1.5; }
+.report-callout {
+  padding: 0.9rem 1.1rem; border-radius: 0 2px 2px 0;
+  font-size: 0.84rem; line-height: 1.65; color: #444;
+  margin-bottom: 0.5rem;
 }
-.report-actions { display: flex; gap: 0.6rem; margin-top: 1.5rem; }
+.callout-blue  { background: #eff6ff; border-left: 3px solid var(--blue); }
+.callout-orange { background: #fff7ed; border-left: 3px solid var(--line-kg); }
+.callout-teal  { background: #f0f9ff; border-left: 3px solid var(--line-gg); }
+.callout-green { background: #f0fdf4; border-left: 3px solid var(--green); }
+.report-actions { display: flex; gap: 0.6rem; margin-top: 1.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); }
 </style>
 </head>
 <body>
@@ -417,100 +335,114 @@ body {
 <div class="topbar">
   <div class="topbar-brand">Brain Dump <span>→</span> Sort</div>
   <div class="phase-tabs">
-    <button class="phase-tab active" id="tab0"><span class="tab-num">01</span> Dump</button>
-    <button class="phase-tab" id="tab1"><span class="tab-num">02</span> Check</button>
-    <button class="phase-tab" id="tab2"><span class="tab-num">03</span> Connect</button>
-    <button class="phase-tab" id="tab3"><span class="tab-num">04</span> Priorities</button>
+    <button class="phase-tab active" id="tab0" onclick="goToPhase(0)"><span class="tab-num">01</span> Dump</button>
+    <button class="phase-tab" id="tab1" onclick="goToPhase(1)"><span class="tab-num">02</span> Check</button>
+    <button class="phase-tab" id="tab2" onclick="goToPhase(2)"><span class="tab-num">03</span> Connect</button>
+    <button class="phase-tab" id="tab3" onclick="goToPhase(3)"><span class="tab-num">04</span> Priorities</button>
   </div>
 </div>
 
 <div class="canvas-wrap" id="canvasWrap">
   <div id="mapCanvas"></div>
   <svg id="mapSvg"></svg>
-
   <div class="connect-hint" id="connectHint">Click a node to start a connection</div>
 
-  <!-- OVERLAY 0: start -->
+  <!-- OVERLAY 0 -->
   <div class="overlay" id="overlay0">
     <div class="overlay-card">
       <div class="big-num">01</div>
       <h2>Brain Dump</h2>
-      <p>Enter your topic. Then add everything you already know — without looking at any notes. Double-click the canvas or hit the button to drop nodes.</p>
+      <p>Enter your topic. Then add everything you already know — without looking at any notes. Double-click the canvas or hit the button below to drop nodes.</p>
       <div class="topic-row">
         <input type="text" id="topicInput" placeholder="e.g. The Water Cycle" autofocus>
         <button class="action-btn primary" onclick="startDump()">Begin →</button>
       </div>
-      <p style="font-size:0.78rem;color:#bbb;">Use the timer in the bottom bar to keep yourself honest.</p>
+      <p style="font-size:0.78rem;color:#bbb;">Set a timer in the bottom bar to keep yourself honest.</p>
     </div>
   </div>
 
-  <!-- OVERLAY 1: check -->
+  <!-- OVERLAY 1 -->
   <div class="overlay" id="overlay1" style="display:none">
     <div class="overlay-card">
       <div class="big-num">02</div>
       <h2>Check</h2>
       <p>Open your notes or textbook. Add everything you missed or got wrong as <strong style="color:var(--blue)">blue nodes</strong>. These are your knowledge gaps.</p>
-      <button class="action-btn primary" onclick="beginPhase(1)">Start adding gaps →</button>
+      <button class="action-btn primary" onclick="dismissOverlay(1)">Start adding gaps →</button>
     </div>
   </div>
 
-  <!-- OVERLAY 2: connect -->
+  <!-- OVERLAY 2 -->
   <div class="overlay" id="overlay2" style="display:none">
     <div class="overlay-card">
       <div class="big-num">03</div>
       <h2>Connect</h2>
-      <p>Click one node, then another to connect them. After connecting you can <strong>type a label</strong> on the line — e.g. "causes", "part of", "contrasts with".</p>
+      <p>Click one node, then another to link them. Type a label on the line — e.g. "causes", "part of", "contrasts with".</p>
       <div class="legend" style="justify-content:center;margin:0.8rem 0 1.4rem">
         <div class="legend-item"><div class="leg-line" style="background:var(--line-kk)"></div> Known ↔ Known</div>
         <div class="legend-item"><div class="leg-line" style="background:var(--line-kg)"></div> Known ↔ Gap</div>
         <div class="legend-item"><div class="leg-line" style="background:var(--line-gg)"></div> Gap ↔ Gap</div>
       </div>
-      <button class="action-btn primary" onclick="beginPhase(2)">Start connecting →</button>
+      <button class="action-btn primary" onclick="beginConnect()">Start connecting →</button>
     </div>
   </div>
 
   <!-- OVERLAY 3: report -->
   <div class="overlay" id="overlay3" style="display:none">
-    <div class="report" id="reportContent">
-      <!-- filled by JS -->
-    </div>
+    <div class="report" id="reportContent"></div>
   </div>
 </div>
 
 <!-- BOTTOM BAR -->
-<div class="bottom-bar" id="bottomBar">
-  <div class="bb-timer" id="bbTimer">
-    <button class="timer-nudge" onclick="nudgeTimer(-1)">−</button>
-    <div class="bb-timer-display" id="timerDisplay">10:00</div>
-    <button class="timer-nudge" onclick="nudgeTimer(1)">+</button>
-    <button class="timer-ctrl" id="timerStartBtn" onclick="toggleTimer()">Start</button>
-    <button class="timer-ctrl" onclick="resetTimer()">Reset</button>
+<div class="bottom-bar">
+
+  <!-- Timer — always visible -->
+  <div class="bb-section" id="timerSection">
+    <div class="bb-timer">
+      <button class="timer-nudge" onclick="nudgeTimer(-1)">−</button>
+      <div class="bb-timer-display" id="timerDisplay">10:00</div>
+      <button class="timer-nudge" onclick="nudgeTimer(1)">+</button>
+      <button class="timer-ctrl" id="timerStartBtn" onclick="toggleTimer()">Start</button>
+      <button class="timer-ctrl" onclick="resetTimer()">Reset</button>
+    </div>
   </div>
 
-  <div class="bb-sep"></div>
-  <span class="bb-label" id="bbLabel">Phase 1 — Dump</span>
-  <div class="bb-sep"></div>
+  <!-- Phase label — always visible -->
+  <div class="bb-section">
+    <span class="bb-label" id="bbLabel">Phase 1 — Dump</span>
+  </div>
 
-  <button class="action-btn" id="addBtn" onclick="addNode()">+ Add node</button>
-  <span id="dblHint" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#bbb;">or double-click</span>
-  <button class="action-btn" id="connectBtn" style="display:none" onclick="toggleConnectMode()">⟵ Connect nodes</button>
+  <!-- Actions — change per phase -->
+  <div class="bb-section grow" id="bbActions">
+    <button class="action-btn" id="addBtn" onclick="addNode()">+ Add node</button>
+    <span id="dblHint" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#bbb;">or double-click</span>
+    <button class="action-btn" id="connectBtn" style="display:none" onclick="toggleConnectMode()">⟵ Connect nodes</button>
+    <button class="action-btn" id="reportBtn" style="display:none" onclick="document.getElementById('overlay3').style.display='flex'">↗ View report</button>
+  </div>
 
-  <div class="bb-right">
+  <!-- Legend — always visible, updates per phase -->
+  <div class="bb-section">
     <div class="legend" id="legendArea">
       <div class="legend-item"><div class="leg-dot" style="background:var(--ink)"></div> Known</div>
     </div>
-    <div class="bb-sep"></div>
+  </div>
+
+  <!-- Navigation — always visible -->
+  <div class="bb-section" id="navSection">
+    <button class="action-btn muted" id="backBtn" style="display:none" onclick="goBack()">← Back</button>
     <button class="action-btn primary" id="nextBtn" onclick="nextPhase()">Done — Check →</button>
   </div>
+
 </div>
 
 <script>
 let phase = 0;
+let maxPhase = 0; // furthest unlocked phase
 let nodes = [], edges = [];
 let nodeCounter = 0, edgeCounter = 0;
 let connectMode = false, connectFromId = null;
 let dragging = null, dragOffX = 0, dragOffY = 0, isDragging = false;
 let timerMins = 10, timerRemaining = 600, timerRunning = false, timerInterval = null;
+let reportBuilt = false;
 
 const canvasWrap = document.getElementById('canvasWrap');
 const mapCanvas  = document.getElementById('mapCanvas');
@@ -525,9 +457,8 @@ function nudgeTimer(d) {
   if (timerRunning) return;
   timerMins = Math.max(1, timerMins + d);
   timerRemaining = timerMins * 60;
-  const el = document.getElementById('timerDisplay');
-  el.textContent = fmt(timerRemaining);
-  el.classList.remove('urgent','done');
+  document.getElementById('timerDisplay').textContent = fmt(timerRemaining);
+  document.getElementById('timerDisplay').classList.remove('urgent','done');
 }
 function toggleTimer() {
   const btn = document.getElementById('timerStartBtn');
@@ -560,7 +491,7 @@ function resetTimer() {
 
 // ── NODES ──────────────────────────────────────────────────────
 function makeNode(x, y, text, type) {
-  const node = { id: ++nodeCounter, x, y, text: text || (type==='blue'?'Gap':'Idea'), type };
+  const node = { id: ++nodeCounter, x, y, text: text||(type==='blue'?'Gap':'Idea'), type };
   const el = document.createElement('div');
   el.className = `node node-${type}`;
   el.style.left = x+'px'; el.style.top = y+'px';
@@ -650,112 +581,71 @@ function addNode() {
 
 function deleteNode(id) {
   const n = nodes.find(n=>n.id===id); if (!n) return;
-  n.el.remove();
-  nodes = nodes.filter(n=>n.id!==id);
+  n.el.remove(); nodes = nodes.filter(n=>n.id!==id);
   edges = edges.filter(e => {
-    if (e.from===id||e.to===id) { e.line.remove(); e.labelEl&&e.labelEl.remove(); return false; }
+    if (e.from===id||e.to===id) { e.line.remove(); e.labelEl?.remove(); return false; }
     return true;
   });
 }
 
 // ── EDGES ──────────────────────────────────────────────────────
-const edgeColours = {
-  kk: 'var(--line-kk)',
-  kg: 'var(--line-kg)',
-  gg: 'var(--line-gg)'
-};
-function getEdgeType(fromId, toId) {
-  const a = nodes.find(n=>n.id===fromId), b = nodes.find(n=>n.id===toId);
+const COLOURS = { kk:'var(--line-kk)', kg:'var(--line-kg)', gg:'var(--line-gg)' };
+function getEtype(fid, tid) {
+  const a = nodes.find(n=>n.id===fid), b = nodes.find(n=>n.id===tid);
   if (!a||!b) return 'kk';
-  const ab = a.type==='blue'||a.type==='center', bb = b.type==='blue'||b.type==='center';
-  const aBlue = a.type==='blue', bBlue = b.type==='blue';
-  if (!aBlue && !bBlue) return 'kk';
-  if (aBlue && bBlue) return 'gg';
+  const ab=a.type==='blue', bb=b.type==='blue';
+  if (!ab&&!bb) return 'kk';
+  if (ab&&bb)   return 'gg';
   return 'kg';
 }
-
 function drawEdge(fromId, toId) {
   if (edges.find(e=>(e.from===fromId&&e.to===toId)||(e.from===toId&&e.to===fromId))) return;
-  const etype = getEdgeType(fromId, toId);
+  const etype = getEtype(fromId, toId);
   const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-  const colour = edgeColours[etype];
-  line.setAttribute('stroke', colour);
+  line.setAttribute('stroke', COLOURS[etype]);
   line.setAttribute('stroke-width','2.5');
   line.setAttribute('stroke-linecap','round');
   line.setAttribute('opacity','0.8');
   mapSvg.appendChild(line);
-
-  const edge = { id: ++edgeCounter, from: fromId, to: toId, etype, line, label: '', labelEl: null };
+  const edge = { id:++edgeCounter, from:fromId, to:toId, etype, line, label:'', labelEl:null };
   edges.push(edge);
   updateEdge(edge);
-
-  // spawn label input immediately
   spawnLabelInput(edge);
 }
-
-function updateEdge(edge) {
-  const a = nodes.find(n=>n.id===edge.from), b = nodes.find(n=>n.id===edge.to);
-  if (!a||!b) return;
-  edge.line.setAttribute('x1',a.x); edge.line.setAttribute('y1',a.y);
-  edge.line.setAttribute('x2',b.x); edge.line.setAttribute('y2',b.y);
-  // update label position
-  if (edge.labelEl) {
-    const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
-    edge.labelEl.style.left = mx+'px';
-    edge.labelEl.style.top  = my+'px';
-  }
+function updateEdge(e) {
+  const a=nodes.find(n=>n.id===e.from), b=nodes.find(n=>n.id===e.to); if (!a||!b) return;
+  e.line.setAttribute('x1',a.x); e.line.setAttribute('y1',a.y);
+  e.line.setAttribute('x2',b.x); e.line.setAttribute('y2',b.y);
+  if (e.labelEl) { e.labelEl.style.left=((a.x+b.x)/2)+'px'; e.labelEl.style.top=((a.y+b.y)/2)+'px'; }
 }
-
 function redrawEdges() { edges.forEach(updateEdge); }
 
 function spawnLabelInput(edge) {
-  const a = nodes.find(n=>n.id===edge.from), b = nodes.find(n=>n.id===edge.to);
-  if (!a||!b) return;
-  const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+  const a=nodes.find(n=>n.id===edge.from), b=nodes.find(n=>n.id===edge.to); if (!a||!b) return;
   const inp = document.createElement('input');
-  inp.type = 'text';
-  inp.className = 'edge-label-input';
-  inp.placeholder = 'label (optional)';
-  inp.style.left = mx+'px'; inp.style.top = my+'px';
-  inp.value = edge.label || '';
-  mapCanvas.appendChild(inp);
-  inp.focus();
-  inp.select();
-
+  inp.type='text'; inp.className='edge-label-input';
+  inp.placeholder='label (optional)';
+  inp.style.left=((a.x+b.x)/2)+'px'; inp.style.top=((a.y+b.y)/2)+'px';
+  inp.value = edge.label||'';
+  mapCanvas.appendChild(inp); inp.focus(); inp.select();
   const commit = () => {
-    edge.label = inp.value.trim();
-    inp.remove();
-    if (edge.label) {
-      renderEdgeLabel(edge);
-    }
+    edge.label = inp.value.trim(); inp.remove();
+    if (edge.label) renderEdgeLabel(edge);
   };
-  inp.addEventListener('keydown', e => {
-    if (e.key==='Enter'||e.key==='Escape') { e.preventDefault(); commit(); }
-  });
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key==='Escape'){e.preventDefault();commit();} });
   inp.addEventListener('blur', commit);
 }
-
 function renderEdgeLabel(edge) {
   if (edge.labelEl) edge.labelEl.remove();
-  const a = nodes.find(n=>n.id===edge.from), b = nodes.find(n=>n.id===edge.to);
-  if (!a||!b||!edge.label) return;
-  const div = document.createElement('div');
-  div.className = 'edge-label';
-  div.style.left = ((a.x+b.x)/2)+'px';
-  div.style.top  = ((a.y+b.y)/2)+'px';
-  div.textContent = edge.label;
-  div.title = 'Click to edit label';
-  div.addEventListener('click', e => {
-    e.stopPropagation();
-    if (connectMode) return;
-    div.remove(); edge.labelEl = null;
-    spawnLabelInput(edge);
-  });
-  mapCanvas.appendChild(div);
-  edge.labelEl = div;
+  const a=nodes.find(n=>n.id===edge.from), b=nodes.find(n=>n.id===edge.to); if (!a||!b||!edge.label) return;
+  const div=document.createElement('div'); div.className='edge-label';
+  div.style.left=((a.x+b.x)/2)+'px'; div.style.top=((a.y+b.y)/2)+'px';
+  div.textContent=edge.label; div.title='Click to edit';
+  div.addEventListener('click', e=>{ e.stopPropagation(); if(connectMode)return; div.remove(); edge.labelEl=null; spawnLabelInput(edge); });
+  mapCanvas.appendChild(div); edge.labelEl=div;
 }
 
-// ── PHASES ─────────────────────────────────────────────────────
+// ── PHASE NAVIGATION ──────────────────────────────────────────
 function startDump() {
   const topic = document.getElementById('topicInput').value.trim() || 'My Topic';
   document.getElementById('overlay0').style.display = 'none';
@@ -763,49 +653,76 @@ function startDump() {
   makeNode(wr.width/2, wr.height/2, topic, 'center');
 }
 
-function beginPhase(p) {
-  document.getElementById('overlay'+p).style.display = 'none';
-  if (p===2) {
-    connectMode = true;
-    canvasWrap.classList.add('connect-active');
-    document.getElementById('connectBtn').classList.add('orange');
-    document.getElementById('connectBtn').textContent = '✕ Stop connecting';
-    connectHint.classList.add('show');
-  }
+function dismissOverlay(n) {
+  document.getElementById('overlay'+n).style.display = 'none';
+}
+
+function beginConnect() {
+  dismissOverlay(2);
+  connectMode = true;
+  canvasWrap.classList.add('connect-active');
+  document.getElementById('connectBtn').classList.add('orange');
+  document.getElementById('connectBtn').textContent = '✕ Stop connecting';
+  connectHint.classList.add('show');
 }
 
 function toggleConnectMode() {
   connectMode = !connectMode;
   const btn = document.getElementById('connectBtn');
   if (connectMode) {
-    canvasWrap.classList.add('connect-active');
-    btn.classList.add('orange'); btn.textContent = '✕ Stop connecting';
-    connectHint.classList.add('show');
+    canvasWrap.classList.add('connect-active'); btn.classList.add('orange');
+    btn.textContent='✕ Stop connecting'; connectHint.classList.add('show');
   } else {
-    canvasWrap.classList.remove('connect-active');
-    btn.classList.remove('orange'); btn.textContent = '⟵ Connect nodes';
-    connectHint.classList.remove('show');
+    canvasWrap.classList.remove('connect-active'); btn.classList.remove('orange');
+    btn.textContent='⟵ Connect nodes'; connectHint.classList.remove('show');
     if (connectFromId!==null) {
       mapCanvas.querySelector(`[data-id="${connectFromId}"]`)?.classList.remove('connect-selected');
-      connectFromId = null;
+      connectFromId=null;
     }
   }
 }
 
-function nextPhase() {
-  if (phase===0) {
-    phase=1;
-    document.getElementById('overlay1').style.display='flex';
-  } else if (phase===1) {
-    phase=2;
-    document.getElementById('overlay2').style.display='flex';
-  } else if (phase===2) {
-    phase=3;
-    buildReport();
-    document.getElementById('overlay3').style.display='flex';
-    connectMode=false;
+function goToPhase(p) {
+  if (p > maxPhase) return; // can't skip ahead past unlocked
+  // exit connect mode if leaving phase 2
+  if (phase === 2 && p !== 2) {
+    connectMode = false;
     canvasWrap.classList.remove('connect-active');
     connectHint.classList.remove('show');
+    if (connectFromId!==null) {
+      mapCanvas.querySelector(`[data-id="${connectFromId}"]`)?.classList.remove('connect-selected');
+      connectFromId=null;
+    }
+  }
+  phase = p;
+  // show phase overlay if returning to an intro phase (only show report overlay for phase 3)
+  if (p === 3) {
+    document.getElementById('overlay3').style.display = 'flex';
+  }
+  updateUI();
+}
+
+function goBack() {
+  if (phase > 0) goToPhase(phase - 1);
+}
+
+function nextPhase() {
+  if (phase === 0) {
+    maxPhase = Math.max(maxPhase, 1);
+    phase = 1;
+    document.getElementById('overlay1').style.display = 'flex';
+  } else if (phase === 1) {
+    maxPhase = Math.max(maxPhase, 2);
+    phase = 2;
+    document.getElementById('overlay2').style.display = 'flex';
+  } else if (phase === 2) {
+    maxPhase = Math.max(maxPhase, 3);
+    phase = 3;
+    connectMode = false;
+    canvasWrap.classList.remove('connect-active');
+    connectHint.classList.remove('show');
+    buildReport();
+    document.getElementById('overlay3').style.display = 'flex';
   }
   updateUI();
 }
@@ -815,110 +732,143 @@ function buildReport() {
   const blackNodes = nodes.filter(n=>n.type==='black');
   const blueNodes  = nodes.filter(n=>n.type==='blue');
   const total = blackNodes.length + blueNodes.length;
-  const pct = total>0 ? Math.round(blackNodes.length/total*100) : 0;
+  const pct = total > 0 ? Math.round(blackNodes.length/total*100) : 0;
 
-  // score each blue node
+  const ggEdges = edges.filter(e=>e.etype==='gg');
+  const kgEdges = edges.filter(e=>e.etype==='kg');
+
+  // Score each blue node
   const scored = blueNodes.map(n => {
-    const conns = edges.filter(e=>e.from===n.id||e.to===n.id);
-    const kgConns = conns.filter(e=>e.etype==='kg');
-    const ggConns = conns.filter(e=>e.etype==='gg');
-    // priority: connected to known things (kg) = high; connected to other gaps (gg) = medium; isolated = low
-    let priority, badge;
-    if (kgConns.length>=2)      { priority='High'; badge='badge-high'; }
-    else if (kgConns.length===1) { priority='Medium'; badge='badge-med'; }
-    else if (ggConns.length>0)   { priority='Medium'; badge='badge-med'; }
-    else                          { priority='Isolated'; badge='badge-iso'; }
-    return { ...n, conns: conns.length, kgConns: kgConns.length, ggConns: ggConns.length, priority, badge,
-             kgLabels: kgConns.map(e=>e.label).filter(Boolean) };
+    const myEdges = edges.filter(e=>e.from===n.id||e.to===n.id);
+    const kg = myEdges.filter(e=>e.etype==='kg');
+    const gg = myEdges.filter(e=>e.etype==='gg');
+    const ggNeighbours = gg.map(e=>{ const otherId = e.from===n.id?e.to:e.from; return nodes.find(x=>x.id===otherId); }).filter(Boolean);
+    const kgNeighbours = kg.map(e=>{ const otherId = e.from===n.id?e.to:e.from; return nodes.find(x=>x.id===otherId); }).filter(Boolean);
+    const kgLabels = kg.map(e=>e.label).filter(Boolean);
+    let tier, badge, guidance;
+
+    if (gg.length > 0 && kg.length === 0) {
+      // Gap connected only to other gaps — study cluster
+      tier = 1; badge = 'badge-1';
+      const neighbours = ggNeighbours.map(x=>'"'+x.text+'"').join(', ');
+      guidance = `Study this alongside ${neighbours} — these form a cluster of gaps with no connection yet to what you know. Work through them together and try to link them back to a concept you do understand.`;
+    } else if (gg.length > 0 && kg.length > 0) {
+      // Connected to both gaps and known — bridging node
+      tier = 2; badge = 'badge-2';
+      const known = kgNeighbours.map(x=>'"'+x.text+'"').join(', ');
+      const gaps2 = ggNeighbours.map(x=>'"'+x.text+'"').join(', ');
+      guidance = `This gap connects your known content (${known}) with other gaps (${gaps2}). Understanding this node will likely unlock the others — study it second.`;
+    } else if (kg.length >= 2) {
+      // Well-connected to known — high context, study soon
+      tier = 3; badge = 'badge-3';
+      const known = kgNeighbours.map(x=>'"'+x.text+'"').join(', ');
+      const via = kgLabels.length ? ` via "${kgLabels.join('", "')}"` : '';
+      guidance = `You already know related concepts (${known})${via}. This gap has strong context around it — it should be relatively quick to fill in. Study it after the clusters.`;
+    } else if (kg.length === 1) {
+      tier = 3; badge = 'badge-3';
+      const known = kgNeighbours[0]?.text || 'a known concept';
+      guidance = `Connected to "${known}" — you have some context here. Study it alongside what you already know about ${known} and look for how they relate.`;
+    } else {
+      // Completely isolated
+      tier = 4; badge = 'badge-4';
+      guidance = `No connections drawn to this node. It may be a completely unfamiliar concept, or you may not yet see where it fits. Study it last and focus on understanding how it connects to the rest of the topic.`;
+    }
+    return { ...n, kg, gg, tier, badge, guidance };
   });
 
-  // sort: High first, then Medium, then Isolated
-  const order = { High:0, Medium:1, Isolated:2 };
-  scored.sort((a,b)=>order[a.priority]-order[b.priority]||b.conns-a.conns);
+  scored.sort((a,b)=>a.tier-b.tier||b.kg.length+b.gg.length - (a.kg.length+a.gg.length));
 
-  const highCount = scored.filter(s=>s.priority==='High').length;
-  const isoCount  = scored.filter(s=>s.priority==='Isolated').length;
+  // Build guidance sections
+  let studyOrderHtml = '';
+  if (scored.length > 0) {
+    const cluster = scored.filter(s=>s.tier===1);
+    const bridge  = scored.filter(s=>s.tier===2);
+    const context = scored.filter(s=>s.tier===3);
+    const iso     = scored.filter(s=>s.tier===4);
 
-  // build insight text
-  let insight = '';
-  if (blueNodes.length===0) {
-    insight = 'No gaps recorded — either you know this topic very well, or try going deeper next time.';
-  } else {
-    const parts = [];
-    if (highCount>0) parts.push(`${highCount} gap${highCount>1?'s':''} with strong links to things you already know — these are your highest-leverage study targets because you have context for them.`);
-    if (isoCount>0)  parts.push(`${isoCount} isolated gap${isoCount>1?'s':''} with no connections — these may be entirely unfamiliar concepts. Study them to understand how they fit into the broader picture.`);
-    const ggEdges = edges.filter(e=>e.etype==='gg');
-    if (ggEdges.length>0) parts.push(`${ggEdges.length} gap–gap connection${ggEdges.length>1?'s':''} suggest there are clusters of unfamiliar material that likely need to be studied together.`);
-    insight = parts.join(' ');
+    const makeItems = arr => arr.map(s=>`
+      <div class="priority-item">
+        <span class="priority-badge ${s.badge}">${s.tier===1?'Study first':s.tier===2?'Then this':s.tier===3?'Then this':'Study last'}</span>
+        <div class="priority-body">
+          <div class="priority-name">${s.text}</div>
+          <div class="priority-guidance">${s.guidance}</div>
+        </div>
+      </div>`).join('');
+
+    studyOrderHtml = `<div class="report-section"><h3>Recommended study order</h3>${makeItems(scored)}</div>`;
   }
 
-  const priorityRows = scored.map(s => {
-    const connDetail = s.conns===0 ? 'no connections' :
-      `${s.conns} connection${s.conns>1?'s':''}${s.kgLabels.length>0?' — linked via: '+s.kgLabels.join(', '):''}`;
-    return `<div class="priority-item">
-      <span class="priority-badge ${s.badge}">${s.priority}</span>
-      <span class="priority-name">${s.text}</span>
-      <span class="priority-detail">${connDetail}</span>
-    </div>`;
-  }).join('');
+  // What this map tells you — big picture
+  let bigPicture = '';
+  if (blueNodes.length === 0) {
+    bigPicture = `<div class="report-callout callout-green">You recorded no gaps. Either you know this topic very well, or consider whether you went deep enough in the dump phase. If you're confident, move on — if not, go back to Check and add more.</div>`;
+  } else {
+    const lines = [];
+    if (ggEdges.length > 0) {
+      lines.push(`<div class="report-callout callout-orange"><strong>Gap clusters need to be studied together.</strong> You have ${ggEdges.length} gap–gap connection${ggEdges.length>1?'s':''}, meaning some of your unknown areas are linked to each other rather than to things you know. The risk is that if you study them in isolation you won't build a connected understanding. Study these clusters as a group and keep asking: how does this connect back to what I already know?</div>`);
+    }
+    if (kgEdges.length > 0) {
+      lines.push(`<div class="report-callout callout-blue"><strong>You have ${kgEdges.length} known–gap link${kgEdges.length>1?'s':''}.</strong> This is a good sign — it means your existing knowledge gives you a scaffold to hang the new material on. When you study the connected gaps, start from what you already know and build outward.</div>`);
+    }
+    if (pct >= 70) {
+      lines.push(`<div class="report-callout callout-green"><strong>You already know ${pct}% of what you mapped.</strong> Your gaps are relatively targeted. Focus your remaining study time on the nodes listed above rather than reviewing material you already understand.</div>`);
+    } else if (pct < 40) {
+      lines.push(`<div class="report-callout callout-orange"><strong>There are significant gaps in this topic (${100-pct}% of your map).</strong> Don't try to close all of them at once. Work through them in the order listed above — starting with the clusters, then the bridge nodes, then the isolated ones.</div>`);
+    }
+    bigPicture = lines.join('');
+  }
 
   document.getElementById('reportContent').innerHTML = `
     <h2>Study Priorities</h2>
-    <div class="report-sub">Session complete</div>
-
+    <div class="report-sub">Based on your map</div>
     <div class="report-stats">
       <div class="stat-box"><div class="stat-num">${blackNodes.length}</div><div class="stat-lbl">Known</div></div>
       <div class="stat-box" style="border-color:var(--blue)"><div class="stat-num" style="color:var(--blue)">${blueNodes.length}</div><div class="stat-lbl">Gaps</div></div>
       <div class="stat-box"><div class="stat-num">${edges.length}</div><div class="stat-lbl">Links</div></div>
       <div class="stat-box"><div class="stat-num">${pct}%</div><div class="stat-lbl">Known</div></div>
     </div>
-
-    ${scored.length>0 ? `
-    <div class="report-section">
-      <h3>Gap priorities — ranked by urgency</h3>
-      ${priorityRows}
-    </div>` : ''}
-
-    ${insight ? `
-    <div class="report-section">
-      <h3>What this map tells you</h3>
-      <div class="report-insight">${insight}</div>
-    </div>` : ''}
-
+    ${bigPicture}
+    ${studyOrderHtml}
     <div class="report-actions">
-      <button class="action-btn" onclick="document.getElementById('overlay3').style.display='none'">View map</button>
+      <button class="action-btn" onclick="document.getElementById('overlay3').style.display='none'">← View map</button>
       <button class="action-btn green" onclick="resetAll()">New session</button>
     </div>
   `;
+  reportBuilt = true;
 }
 
-// ── UI ─────────────────────────────────────────────────────────
 function updateUI() {
-  for (let i=0;i<4;i++) document.getElementById('tab'+i).classList.toggle('active',i===phase);
+  for (let i=0;i<4;i++) {
+    const tab = document.getElementById('tab'+i);
+    tab.classList.toggle('active', i===phase);
+    tab.classList.toggle('unlocked', i<=maxPhase && i!==phase);
+  }
+
   const labels = ['Phase 1 — Dump','Phase 2 — Check','Phase 3 — Connect','Phase 4 — Priorities'];
   document.getElementById('bbLabel').textContent = labels[phase];
 
   const addBtn=document.getElementById('addBtn'), dblHint=document.getElementById('dblHint');
   const connectBtn=document.getElementById('connectBtn'), nextBtn=document.getElementById('nextBtn');
-  const legendArea=document.getElementById('legendArea'), bbTimer=document.getElementById('bbTimer');
+  const backBtn=document.getElementById('backBtn'), legendArea=document.getElementById('legendArea');
+  const reportBtn=document.getElementById('reportBtn');
 
-  bbTimer.style.display = phase===0 ? '' : 'none';
+  backBtn.style.display = phase > 0 ? '' : 'none';
 
   if (phase===0) {
     addBtn.style.display=''; addBtn.textContent='+ Add node'; dblHint.style.display='';
-    connectBtn.style.display='none';
+    connectBtn.style.display='none'; reportBtn.style.display='none';
     nextBtn.textContent='Done — Check →'; nextBtn.className='action-btn primary'; nextBtn.style.display='';
     legendArea.innerHTML=`<div class="legend-item"><div class="leg-dot" style="background:var(--ink)"></div> Known</div>`;
   } else if (phase===1) {
     addBtn.style.display=''; addBtn.textContent='+ Add gap'; dblHint.style.display='';
-    connectBtn.style.display='none';
+    connectBtn.style.display='none'; reportBtn.style.display='none';
     nextBtn.textContent='Done — Connect →'; nextBtn.className='action-btn primary'; nextBtn.style.display='';
     legendArea.innerHTML=`
       <div class="legend-item"><div class="leg-dot" style="background:var(--ink)"></div> Known</div>
       <div class="legend-item"><div class="leg-dot" style="background:var(--blue)"></div> Gap</div>`;
   } else if (phase===2) {
     addBtn.style.display='none'; dblHint.style.display='none';
-    connectBtn.style.display='';
+    connectBtn.style.display=''; reportBtn.style.display='none';
     nextBtn.textContent='Done — See priorities →'; nextBtn.className='action-btn green'; nextBtn.style.display='';
     legendArea.innerHTML=`
       <div class="legend-item"><div class="leg-line" style="background:var(--line-kk)"></div> Known–Known</div>
@@ -926,7 +876,9 @@ function updateUI() {
       <div class="legend-item"><div class="leg-line" style="background:var(--line-gg)"></div> Gap–Gap</div>`;
   } else {
     addBtn.style.display='none'; dblHint.style.display='none';
-    connectBtn.style.display='none'; nextBtn.style.display='none';
+    connectBtn.style.display='none';
+    reportBtn.style.display = reportBuilt ? '' : 'none';
+    nextBtn.style.display='none';
     legendArea.innerHTML=`
       <div class="legend-item"><div class="leg-dot" style="background:var(--ink)"></div> Known</div>
       <div class="legend-item"><div class="leg-dot" style="background:var(--blue)"></div> Gap</div>`;
@@ -936,19 +888,17 @@ function updateUI() {
 function resetAll() {
   nodes.forEach(n=>n.el?.remove());
   edges.forEach(e=>{ e.line?.remove(); e.labelEl?.remove(); });
-  // remove any stray label inputs
   mapCanvas.querySelectorAll('.edge-label-input,.edge-label').forEach(el=>el.remove());
   nodes=[]; edges=[]; nodeCounter=0; edgeCounter=0;
-  phase=0; connectMode=false; connectFromId=null;
+  phase=0; maxPhase=0; connectMode=false; connectFromId=null; reportBuilt=false;
   canvasWrap.classList.remove('connect-active');
   connectHint.classList.remove('show');
   document.getElementById('overlay0').style.display='flex';
-  ['overlay1','overlay2','overlay3'].forEach(id=>document.getElementById(id).style.display='none');
+  [1,2,3].forEach(i=>document.getElementById('overlay'+i).style.display='none');
   document.getElementById('topicInput').value='';
   document.getElementById('connectBtn').classList.remove('orange');
   document.getElementById('connectBtn').textContent='⟵ Connect nodes';
-  resetTimer();
-  updateUI();
+  resetTimer(); updateUI();
 }
 
 // init
