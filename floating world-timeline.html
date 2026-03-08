@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An Artist of the Floating World — HSC Module B Timeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --washi: #f5f0e8;
+    --washi-dark: #e8e0cc;
+    --ink: #1a1410;
+    --ink-light: #3d3228;
+    --vermillion: #c0392b;
+    --vermillion-light: #e74c3c;
+    --gold: #b8860b;
+    --gold-light: #d4a017;
+    --slate: #4a5568;
+    --mist: #8b7355;
+    --mist-light: #a89070;
+    --shadow: rgba(26,20,16,0.15);
+    --track-narrative: #7b3f2d;
+    --track-chrono: #2d4a5a;
+    --tag-art: #6b4c8a;
+    --tag-family: #2d6a4a;
+    --tag-war: #8a2d2d;
+    --tag-honour: #8a6b2d;
+    --tag-memory: #2d4a8a;
+    --tag-craft: #4a2d6b;
+    --tag-context: #2d6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--washi);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Washi paper texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* Header */
+  .header {
+    background: var(--ink);
+    color: var(--washi);
+    padding: 2.5rem 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid var(--vermillion);
+  }
+
+  .header::before {
+    content: '浮世';
+    position: absolute;
+    right: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Shippori Mincho', serif;
+    font-size: 8rem;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -0.05em;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+
+  .header h1 span {
+    display: block;
+    font-size: 0.85rem;
+    font-style: normal;
+    font-weight: 400;
+    color: var(--mist-light);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .header-meta {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--mist-light);
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+  }
+
+  .header-meta strong {
+    color: var(--vermillion-light);
+    font-weight: 600;
+  }
+
+  /* Controls bar */
+  .controls {
+    background: var(--ink-light);
+    padding: 1rem 3rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .controls-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mist-light);
+    white-space: nowrap;
+  }
+
+  .tag-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tag-btn {
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    border: 1px solid;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+  }
+
+  .tag-btn.active { opacity: 1; }
+  .tag-btn:not(.active) { opacity: 0.35; }
+  .tag-btn:hover { opacity: 0.8; }
+
+  .tag-btn[data-tag="art"] { color: #c9a8e0; border-color: #c9a8e0; }
+  .tag-btn[data-tag="family"] { color: #7ec8a0; border-color: #7ec8a0; }
+  .tag-btn[data-tag="war"] { color: #e08080; border-color: #e08080; }
+  .tag-btn[data-tag="honour"] { color: #e0c080; border-color: #e0c080; }
+  .tag-btn[data-tag="memory"] { color: #80a0e0; border-color: #80a0e0; }
+  .tag-btn[data-tag="craft"] { color: #c0a0e0; border-color: #c0a0e0; }
+  .tag-btn[data-tag="context"] { color: #80d0d0; border-color: #80d0d0; }
+  .tag-btn[data-tag="all"] { color: var(--washi); border-color: var(--washi); }
+
+  .view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  .view-btn {
+    padding: 0.3rem 1rem;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.5);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .view-btn.active {
+    background: var(--vermillion);
+    border-color: var(--vermillion);
+    color: white;
+  }
+
+  /* Track labels */
+  .track-header {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    padding: 1rem 3rem;
+    background: var(--washi-dark);
+    border-bottom: 1px solid rgba(26,20,16,0.1);
+    gap: 1rem;
+  }
+
+  .track-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .track-label.narrative { color: var(--track-narrative); text-align: right; }
+  .track-label.chrono { color: var(--track-chrono); }
+  .track-label-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.2rem;
+    color: var(--mist);
+  }
+
+  /* Main timeline container */
+  .timeline-container {
+    padding: 2rem 3rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Era section */
+  .era-section {
+    margin-bottom: 3rem;
+    transition: opacity 0.3s;
+  }
+
+  .era-section.filtered-out {
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  .era-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .era-label-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--mist), transparent);
+  }
+
+  .era-label-text {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.85rem;
+    color: var(--mist);
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+    padding: 0.2rem 1rem;
+    border: 1px solid var(--mist-light);
+    border-radius: 2px;
+  }
+
+  /* Dual track row */
+  .dual-row {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    margin-bottom: 1.2rem;
+    align-items: stretch;
+    position: relative;
+  }
+
+  .dual-row.narrative-only .chrono-cell { visibility: hidden; }
+  .dual-row.chrono-only .narrative-cell { visibility: hidden; }
+
+  /* Spine */
+  .spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0.5rem 0;
+  }
+
+  .spine-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--mist) 20%, var(--mist) 80%, transparent);
+    opacity: 0.3;
+  }
+
+  .spine-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--mist);
+    z-index: 1;
+    flex-shrink: 0;
+    margin-top: 1.2rem;
+    transition: transform 0.2s;
+  }
+
+  .spine-dot.narrative { background: var(--track-narrative); }
+  .spine-dot.chrono { background: var(--track-chrono); }
+  .spine-dot.both {
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold-light);
+  }
+
+  /* Event cards */
+  .event-card {
+    background: white;
+    border-radius: 3px;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    box-shadow: 0 1px 4px var(--shadow);
+    border-left: 3px solid transparent;
+  }
+
+  .event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--shadow);
+  }
+
+  .narrative-cell .event-card {
+    border-left: none;
+    border-right: 3px solid var(--track-narrative);
+  }
+
+  .chrono-cell .event-card {
+    border-left: 3px solid var(--track-chrono);
+  }
+
+  .event-card.has-context {
+    background: linear-gradient(135deg, white 85%, #e8f4f4 100%);
+  }
+
+  .event-card.unreliable {
+    background: linear-gradient(135deg, white 85%, #fdf0ee 100%);
+  }
+
+  .event-date {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 0.3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+  }
+
+  .narrative-cell .event-date { color: var(--track-narrative); }
+  .chrono-cell .event-date { color: var(--track-chrono); }
+
+  .event-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+
+  .event-summary {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--ink-light);
+    font-style: italic;
+  }
+
+  .event-tags {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+  }
+
+  .event-tag {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 1px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+  }
+
+  .event-tag.art { background: #f0e8f8; color: var(--tag-art); }
+  .event-tag.family { background: #e8f4ee; color: var(--tag-family); }
+  .event-tag.war { background: #fceaea; color: var(--tag-war); }
+  .event-tag.honour { background: #faf4e0; color: var(--tag-honour); }
+  .event-tag.memory { background: #e8eef8; color: var(--tag-memory); }
+  .event-tag.craft { background: #efe8f8; color: var(--tag-craft); }
+  .event-tag.context { background: #e0f4f4; color: var(--tag-context); }
+
+  .event-indicators {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.6rem;
+    display: flex;
+    gap: 0.3rem;
+  }
+
+  .indicator {
+    font-size: 0.7rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .indicator:hover { opacity: 1; }
+
+  /* Connection line between matching events */
+  .connection-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, var(--track-narrative), transparent 30%, transparent 70%, var(--track-chrono));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 0;
+  }
+
+  .dual-row:hover .connection-line { opacity: 0.4; }
+
+  /* Modal overlay */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,20,16,0.75);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(3px);
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--washi);
+    max-width: 780px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 3px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    transform: translateY(20px);
+    transition: transform 0.3s;
+    border-top: 4px solid var(--vermillion);
+  }
+
+  .modal-overlay.open .modal {
+    transform: translateY(0);
+  }
+
+  .modal-header {
+    padding: 1.8rem 2rem 1.2rem;
+    border-bottom: 1px solid var(--washi-dark);
+    position: relative;
+  }
+
+  .modal-track-badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modal-track-badge.narrative { color: var(--track-narrative); }
+  .modal-track-badge.chrono { color: var(--track-chrono); }
+
+  .modal-date {
+    font-size: 0.8rem;
+    color: var(--mist);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+  }
+
+  .modal-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--mist);
+    line-height: 1;
+    padding: 0.3rem;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--ink); }
+
+  .modal-body {
+    padding: 1.5rem 2rem;
+  }
+
+  /* Modal sections */
+  .modal-section {
+    margin-bottom: 1.8rem;
+  }
+
+  .modal-section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--mist);
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--washi-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modal-section-label .icon { font-size: 0.9rem; }
+
+  .modal-section p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--ink-light);
+  }
+
+  /* Quote */
+  .quote-block {
+    border-left: 3px solid var(--gold);
+    padding: 0.8rem 1.2rem;
+    background: rgba(184,134,11,0.05);
+    border-radius: 0 3px 3px 0;
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .quote-source {
+    font-size: 0.72rem;
+    color: var(--mist);
+    margin-top: 0.4rem;
+    font-style: normal;
+    letter-spacing: 0.05em;
+  }
+
+  /* Unreliable narrator slider */
+  .narrator-slider-container {
+    background: white;
+    border-radius: 3px;
+    padding: 1.2rem;
+    border: 1px solid var(--washi-dark);
+  }
+
+  .narrator-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .slider-label-ono { color: var(--track-narrative); }
+  .slider-label-truth { color: var(--track-chrono); }
+
+  .narrator-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(to right, var(--track-narrative), var(--track-chrono));
+    outline: none;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  }
+
+  .narrator-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    cursor: pointer;
+  }
+
+  .narrator-text {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--ink-light);
+    font-style: italic;
+    min-height: 4rem;
+    transition: opacity 0.3s;
+  }
+
+  /* Context collision */
+  .context-collision {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .context-panel {
+    padding: 1rem;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+
+  .context-panel.japan {
+    background: rgba(192,57,43,0.04);
+    border-color: rgba(192,57,43,0.2);
+  }
+
+  .context-panel.britain {
+    background: rgba(45,74,90,0.04);
+    border-color: rgba(45,74,90,0.2);
+  }
+
+  .context-panel-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .context-panel.japan .context-panel-label { color: var(--track-narrative); }
+  .context-panel.britain .context-panel-label { color: var(--track-chrono); }
+
+  .context-panel p {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--ink-light);
+  }
+
+  /* Technique spotter */
+  .technique-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .technique-option {
+    padding: 0.7rem 1rem;
+    background: white;
+    border: 1px solid var(--washi-dark);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    transition: all 0.2s;
+    color: var(--ink);
+  }
+
+  .technique-option:hover { border-color: var(--gold); background: rgba(212,160,23,0.05); }
+  .technique-option.correct { border-color: #2d6a4a; background: rgba(45,106,74,0.08); color: #2d6a4a; }
+  .technique-option.incorrect { border-color: #c0392b; background: rgba(192,57,43,0.06); color: #8a2020; }
+
+  .technique-explanation {
+    display: none;
+    padding: 0.8rem 1rem;
+    background: rgba(184,134,11,0.06);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 3px 3px 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .technique-explanation.visible { display: block; }
+
+  /* Argument pin */
+  .pin-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    border-radius: 2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .pin-btn:hover { background: var(--gold); color: white; }
+  .pin-btn.pinned { background: var(--gold); color: white; }
+
+  /* Argument builder panel */
+  .argument-panel {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 380px;
+    background: var(--ink);
+    color: var(--washi);
+    z-index: 400;
+    border-radius: 8px 0 0 0;
+    transform: translateY(calc(100% - 48px));
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    border-top: 3px solid var(--vermillion);
+    box-shadow: -4px -4px 20px rgba(0,0,0,0.3);
+  }
+
+  .argument-panel.expanded {
+    transform: translateY(0);
+  }
+
+  .argument-panel-header {
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .argument-panel-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--washi);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pin-count {
+    background: var(--vermillion);
+    color: white;
+    border-radius: 10px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+
+  .argument-panel-body {
+    padding: 0 1.2rem 1.2rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .pinned-item {
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .pinned-item-text {
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: rgba(255,255,255,0.8);
+    font-style: italic;
+  }
+
+  .pinned-item-date {
+    font-size: 0.65rem;
+    color: var(--mist-light);
+    margin-top: 0.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .unpin-btn {
+    background: none;
+    border: none;
+    color: var(--mist-light);
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: color 0.2s;
+  }
+
+  .unpin-btn:hover { color: var(--vermillion-light); }
+.thesis-output {
+    margin-top: 1rem;
+    padding: 1.1rem 1.2rem;
+    background: rgba(255,255,255,0.08);
+    border-left: 3px solid var(--gold);
+    font-size: 1rem;
+    line-height: 1.75;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: #f0e8d8;
+    border-radius: 0 4px 4px 0;
+    display: none;
+    letter-spacing: 0.01em;
+  }
+
+  .thesis-output.visible { display: block; }
+
+  /* Character filter row */
+  .controls-characters {
+    background: #111008;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .char-btn {
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.18);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    position: relative;
+  }
+
+  .char-btn:hover { color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.4); }
+  .char-btn.active { background: rgba(255,255,255,0.1); color: var(--washi); border-color: rgba(255,255,255,0.5); }
+  .char-btn[data-char="all"].active { background: var(--vermillion); border-color: var(--vermillion); color: white; }
+
+  /* Character tooltip */
+  .char-btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--washi);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.1);
+    pointer-events: none;
+    z-index: 100;
+    letter-spacing: 0.03em;
+    font-style: italic;
+  }
+
+  /* Thinking tool */
+  .thinking-prompt {
+    margin: 0.8rem 0 0.6rem;
+    padding: 0.9rem 1rem;
+    background: rgba(184,134,11,0.1);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .thinking-prompt-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .thinking-prompt-text {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #f0e0c0;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .theme-cluster {
+    margin: 0.6rem 0;
+  }
+
+  .theme-cluster-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+  }
+
+  .scratchpad-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mist-light);
+    margin: 0.8rem 0 0.4rem;
+    font-weight: 700;
+  }
+
+  .scratchpad {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 3px;
+    color: rgba(255,255,255,0.85);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    padding: 0.7rem 0.8rem;
+    resize: vertical;
+    min-height: 90px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .scratchpad:focus { border-color: rgba(255,255,255,0.3); }
+  .scratchpad::placeholder { color: rgba(255,255,255,0.25); font-style: italic; }
+
+  /* Source badges in unreliable narrator panel */
+  .source-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 2px;
+    margin-bottom: 0.55rem;
+    font-style: normal;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .source-badge.textual { background: rgba(45,106,74,0.15); color: #7ec8a0; border: 1px solid rgba(45,106,74,0.3); }
+  .source-badge.critical { background: rgba(184,134,11,0.15); color: #d4a017; border: 1px solid rgba(184,134,11,0.3); }
+  .source-badge.intention { background: rgba(45,74,90,0.15); color: #80c0d8; border: 1px solid rgba(45,74,90,0.3); }
+
+  /* Reception shift */
+  .reception-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--washi-dark);
+  }
+
+  .reception-tab {
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    color: var(--mist);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+
+  .reception-tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--vermillion);
+  }
+
+  .reception-content {
+    display: none;
+    padding: 0.8rem 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--ink-light);
+  }
+
+  .reception-content.active { display: block; }
+
+  /* Intro / legend */
+  .legend {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem 3rem;
+    background: var(--washi-dark);
+    border-bottom: 1px solid rgba(26,20,16,0.08);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--mist);
+    letter-spacing: 0.05em;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .legend-line {
+    width: 24px;
+    height: 2px;
+  }
+
+  /* Narrative present-day highlight */
+  .narrative-cell .event-card.present-day {
+    background: linear-gradient(135deg, #fff9f5 0%, white 100%);
+    border-right-color: var(--vermillion);
+  }
+
+  .chrono-cell .event-card.present-day {
+    border-left-color: var(--vermillion);
+  }
+
+  .present-day-badge {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--vermillion);
+    color: white;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--washi-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--mist); border-radius: 3px; }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .era-section {
+    animation: fadeInUp 0.5s ease both;
+  }
+
+  .era-section:nth-child(1) { animation-delay: 0.05s; }
+  .era-section:nth-child(2) { animation-delay: 0.1s; }
+  .era-section:nth-child(3) { animation-delay: 0.15s; }
+  .era-section:nth-child(4) { animation-delay: 0.2s; }
+  .era-section:nth-child(5) { animation-delay: 0.25s; }
+  .era-section:nth-child(6) { animation-delay: 0.3s; }
+  .era-section:nth-child(7) { animation-delay: 0.35s; }
+
+  /* Japanese vertical accent */
+  .vertical-accent {
+    writing-mode: vertical-rl;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.7rem;
+    color: var(--mist);
+    opacity: 0.3;
+    letter-spacing: 0.2em;
+    position: fixed;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .header, .controls, .legend, .track-header, .timeline-container {
+      padding-left: 1.2rem;
+      padding-right: 1.2rem;
+    }
+    .context-collision { grid-template-columns: 1fr; }
+    .argument-panel { width: 100%; }
+    .vertical-accent { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="vertical-accent">浮世絵師の記憶</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-top">
+    <h1>
+      <span>Kazuo Ishiguro · 1986</span>
+      An Artist of the Floating World
+    </h1>
+    <div class="header-meta">
+      <strong>HSC Advanced English — Module B</strong><br>
+      Critical Study of Literature<br>
+      Interactive Chronological Timeline
+    </div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <span class="controls-label">Theme:</span>
+  <div class="tag-filters">
+    <button class="tag-btn active" data-tag="all" onclick="filterTag('all')">All</button>
+    <button class="tag-btn active" data-tag="art" onclick="filterTag('art')">🎨 Art &amp; Identity</button>
+    <button class="tag-btn active" data-tag="family" onclick="filterTag('family')">👨‍👩‍👧 Family &amp; Legacy</button>
+    <button class="tag-btn active" data-tag="war" onclick="filterTag('war')">⚔️ War &amp; Complicity</button>
+    <button class="tag-btn active" data-tag="honour" onclick="filterTag('honour')">⚖️ Honour &amp; Shame</button>
+    <button class="tag-btn active" data-tag="memory" onclick="filterTag('memory')">🌊 Memory &amp; Self-Deception</button>
+    <button class="tag-btn active" data-tag="craft" onclick="filterTag('craft')">✍️ Narrative Craft</button>
+    <button class="tag-btn active" data-tag="context" onclick="filterTag('context')">🇬🇧 Ishiguro's Context</button>
+  </div>
+</div>
+<div class="controls controls-characters">
+  <span class="controls-label">Character:</span>
+  <div class="tag-filters">
+    <button class="char-btn active" data-char="all" onclick="filterChar('all')">All</button>
+    <button class="char-btn" data-char="ono" onclick="filterChar('ono')" title="The narrator — retired nationalist artist">Ono</button>
+    <button class="char-btn" data-char="setsuko" onclick="filterChar('setsuko')" title="Elder daughter — gently challenges Ono's self-image">Setsuko</button>
+    <button class="char-btn" data-char="noriko" onclick="filterChar('noriko')" title="Younger daughter — her marriage prospects drive present-day tension">Noriko</button>
+    <button class="char-btn" data-char="kuroda" onclick="filterChar('kuroda')" title="Ono's former pupil — denounced, beaten, career destroyed">Kuroda</button>
+    <button class="char-btn" data-char="matsuda" onclick="filterChar('matsuda')" title="Nationalist mentor — gave Ono his ideological framework">Matsuda</button>
+    <button class="char-btn" data-char="shintaro" onclick="filterChar('shintaro')" title="Fellow student — seeks to erase his wartime associations">Shintaro</button>
+    <button class="char-btn" data-char="kawakami" onclick="filterChar('kawakami')" title="Bar owner — embodies the fading floating world">Mrs Kawakami</button>
+    <button class="char-btn" data-char="suichi" onclick="filterChar('suichi')" title="Setsuko's husband — openly hostile to Ono's generation">Suichi</button>
+    <button class="char-btn" data-char="moriyama" onclick="filterChar('moriyama')" title="Ono's first master — apolitical aesthete whom Ono betrayed">Moriyama</button>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:var(--track-narrative)"></div>
+    <span>Narrative order — as Ono tells it</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:var(--track-chrono)"></div>
+    <span>Chronological order — when it happened</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:var(--gold); box-shadow: 0 0 5px var(--gold)"></div>
+    <span>Present-day narrative moment</span>
+  </div>
+  <div class="legend-item">
+    <span style="font-size:0.85rem">🎭</span>
+    <span>Unreliable narrator moment</span>
+  </div>
+  <div class="legend-item">
+    <span style="font-size:0.85rem">🌐</span>
+    <span>Ishiguro's British context</span>
+  </div>
+  <div class="legend-item">
+    <span style="font-size:0.85rem">✍️</span>
+    <span>Technique spotter challenge</span>
+  </div>
+</div>
+
+<!-- Track Header -->
+<div class="track-header">
+  <div class="track-label narrative">Narrative Order → Ono's Four Present-Day Sections</div>
+  <div class="track-label-center">間</div>
+  <div class="track-label chrono">← Chronological Order · What Actually Happened</div>
+</div>
+
+<!-- Timeline Container -->
+<div class="timeline-container" id="timeline">
+  <!-- Rendered by JS -->
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="handleModalClick(event)">
+  <div class="modal" id="modalContent">
+    <div class="modal-header" id="modalHeader"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Thinking Tool Panel -->
+<div class="argument-panel" id="argPanel">
+  <div class="argument-panel-header" onclick="toggleArgPanel()">
+    <div class="argument-panel-title">
+      📌 My Reading
+      <span class="pin-count" id="pinCount">0</span>
+    </div>
+    <span style="color:var(--mist-light); font-size:0.8rem" id="argPanelArrow">▲</span>
+  </div>
+  <div class="argument-panel-body">
+    <div id="pinnedList"></div>
+    <div class="thinking-prompt" id="thinkingPrompt" style="display:none">
+      <div class="thinking-prompt-label">Something to consider</div>
+      <div class="thinking-prompt-text" id="thinkingPromptText"></div>
+    </div>
+    <div class="theme-cluster" id="themeCluster" style="display:none">
+      <div class="thinking-prompt-label">Threads you're pulling on</div>
+      <div id="themeClusterTags"></div>
+    </div>
+    <div class="scratchpad-label" id="scratchpadLabel" style="display:none">Your observations</div>
+    <textarea class="scratchpad" id="scratchpad" placeholder="What do these moments have in common? What is Ishiguro doing across all of them?" style="display:none"></textarea>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const timelineData = [
+  {
+    era: "Early Life · Pre-1910s",
+    eraJP: "幼少期",
+    events: [
+      {
+        id: "e1",
+        track: "chrono",
+        date: "Pre-1910s",
+        title: "Father Burns the Sketches",
+        summary: "Ono grows up in a modest household. His father strongly disapproves of his drawing and burns his sketches — an act of erasure that will echo through Ono's entire life.",
+        tags: ["art", "family", "memory"],
+        quote: { text: "He would burn whatever he found… as though the act of painting itself was something shameful.", source: "Narrator's retrospective account" },
+        unreliable: {
+          onoVersion: "Ono frames this as early suffering that justified his resolve — his father was narrow-minded, and Ono's courage in defying him is presented as noble artistic conviction.",
+          reality: "textual evidence||| The parallel is embedded in the novel's structure: Ono's father destroys his sketches; Ono later signs the report that leads to Kuroda's paintings being destroyed. Ishiguro places these acts at either end of Ono's life, inviting the reader to draw the connection — though Ono never does."
+        },
+        technique: {
+          prompt: "What narrative technique does Ishiguro deploy in this opening memory?",
+          options: [
+            { text: "Dramatic irony — the reader sees what Ono cannot: his own future mirrors his father's act of destruction.", correct: true },
+            { text: "Symbolism — the father represents Japanese tradition resisting modernity.", correct: false },
+            { text: "Foreshadowing only — Ishiguro is signposting Ono's later moral failings.", correct: false },
+          ],
+          explanation: "The burning sketches establish Ishiguro's central irony: Ono will become the very thing he fled. This is retrospective narration at its most controlled — Ono lacks the self-awareness to see the parallel, but the reader accumulates this meaning across the novel. For Module B, this moment rewards analysis of how form (first-person retrospective) enables Ishiguro's exploration of self-deception."
+        },
+        context: {
+          japan: "In Meiji and early Taisho Japan, art was increasingly instrumentalised — either for Westernisation or, later, nationalist purposes. A father burning art 'for the boy's own good' reflects social anxiety about artists as economically unreliable.",
+          britain: "Ishiguro wrote this in 1986 Thatcher's Britain, where economic utility was prized and cultural value was contested. The father's attitude mirrors Thatcherite scepticism toward the arts — 'What use is it?' Ishiguro is writing about Britain through Japan."
+        },
+        reception: {
+          "1986": "Early reviewers praised Ishiguro's restraint. The father-son conflict was read as a portrait of generational change in modernising Japan.",
+          "2000s": "Postcolonial critics began reading the novel as an allegory of British imperial guilt — Ono's complicity mapping onto Britain's own unacknowledged wartime choices.",
+          "Now": "Contemporary readers increasingly focus on unreliable narration as Ishiguro's formal strategy for exploring how nations and individuals construct self-exonerating histories."
+        }
+      },
+      {
+        id: "e2",
+        track: "chrono",
+        date: "c. 1910",
+        title: "Running Away to the City",
+        summary: "After repeated conflict, the teenage Ono runs away from home to pursue painting. The first act of self-determination — and the first self-mythology.",
+        tags: ["art", "memory", "honour"],
+        quote: { text: "I had set out, it seems, to find my destiny as a painter.", source: "Ono, retrospective narration" },
+        unreliable: {
+          onoVersion: "Ono casts his departure as courageous and romantic — a young man following his calling against the odds.",
+          reality: "textual evidence||| The phrase 'it seems' appears in the novel's actual prose. It is one of a cluster of hedging expressions — 'as I recall', 'if I remember correctly' — that Ishiguro uses throughout Ono's narration. These are words on the page; what they reveal about Ono's reliability is the reader's inference to make."
+        },
+        technique: {
+          prompt: "The phrase 'it seems' appears repeatedly in Ono's narration. What is Ishiguro doing here?",
+          options: [
+            { text: "Epistemic hedging — Ono signals uncertainty about his own past, inviting readers to question his reliability.", correct: true },
+            { text: "Politeness convention — Ono is simply being modest about his achievements.", correct: false },
+            { text: "Translation effect — Ishiguro is mimicking the style of Japanese literary prose.", correct: false },
+          ],
+          explanation: "This is one of Ishiguro's most distinctive craft choices. 'It seems', 'as I recall', 'if I remember correctly' — these hedges are not politeness. They are the formal signatures of an unreliable narrator who cannot fully commit to his own story. In Module B essays, students who identify these verbal tics and explain what work they do will demonstrate genuine critical sophistication."
+        },
+        context: {
+          japan: "The early 1910s saw rapid urbanisation in Japan. Cities became centres of a new bohemian culture — Western-influenced, pleasure-seeking, artistically experimental. Ono's move mirrors the trajectory of many young men of this era.",
+          britain: "For Ishiguro personally: he left Japan as a child and grew up in Britain, always navigating between cultures. Ono's flight from home carries biographical resonance — Ishiguro is writing about the experience of self-reinvention and the costs of leaving one world for another."
+        },
+        reception: {
+          "1986": "The coming-of-age structure was read conventionally — a young artist finding his voice.",
+          "Now": "Readers now see this flight as the first step in a pattern of reinvention-through-betrayal: Ono will later 'run away' from Moriyama's world, then from his own nationalism, then from full acknowledgement of guilt."
+        }
+      }
+    ]
+  },
+  {
+    era: "Apprenticeship with Moriyama · 1910s–Early 1920s",
+    eraJP: "師匠の元で",
+    events: [
+      {
+        id: "e3",
+        track: "chrono",
+        date: "1910s–c.1922",
+        title: "The Floating World — Moriyama's Villa",
+        summary: "Ono becomes Moriyama's 'prize pupil', spending seven years painting the floating world: geishas, nightlife, pleasure districts — beauty without politics. He meets fellow students Shintaro and the Tortoise.",
+        tags: ["art", "memory", "craft"],
+        quote: { text: "We were concerned with beauty, with the transience of things. The pleasure district was our world, and we recorded it faithfully.", source: "Ono, retrospective narration" },
+        unreliable: {
+          onoVersion: "Ono speaks of this period with warm nostalgia — it was a time of artistic purity, beauty, and brotherhood.",
+          reality: "textual evidence||| Ono does return repeatedly to Mrs Kawakami's bar throughout the present-day sections — this is in the text. His later condemnation of the floating world as decadent is also his own stated position. Whether the returns undercut the condemnation is a question the novel poses but does not answer directly."
+        },
+        technique: {
+          prompt: "The novel's title is An Artist of the Floating World. What does Ishiguro gain by making this the title?",
+          options: [
+            { text: "Ironic layering — Ono is 'of' the floating world in multiple senses: he painted it, lived in it, and is himself adrift, impermanent, morally unmoored.", correct: true },
+            { text: "Historical accuracy — the title simply identifies Ono's artistic genre.", correct: false },
+            { text: "Symbolism — the floating world represents Japan's loss of cultural identity.", correct: false },
+          ],
+          explanation: "The title operates on at least three levels simultaneously. Ukiyo — the floating world — originally referred to the Buddhist concept of life's impermanence and the pursuit of transient pleasure. By the Edo period it described the entertainment districts. Ishiguro uses it to encapsulate Ono's entire condition: his art, his world, and his identity are all 'floating' — beautiful, transient, and ultimately insubstantial. This is exactly the kind of multi-layered analysis Module B rewards."
+        },
+        context: {
+          japan: "The ukiyo-e tradition (floating world woodblock prints) was one of Japan's most distinctive art forms — celebrated internationally yet associated with 'low' culture domestically. Moriyama's villa represents this aesthetic tradition under pressure from modernisation.",
+          britain: "Thatcher's Britain was experiencing intense debates about 'high' vs 'low' culture, arts funding, and whether beauty had social utility. Ishiguro is writing into these debates — Moriyama's detached aestheticism is a provocation to both nationalist and utilitarian views of art."
+        },
+        reception: {
+          "1986": "The floating world setting was seen as exoticist by some — a Western writer's romanticisation of Japan.",
+          "2000s": "Scholars like Brian Shaffer reread the floating world as a formal metaphor for the unreliable narrator's condition — everything Ono describes is 'floating', unstable, subject to revision.",
+          "Now": "The title is now read as announcing the novel's central formal concern: an artist whose entire world — aesthetic, political, personal — has dissolved, and who must now narrate from the ruins."
+        }
+      }
+    ]
+  },
+  {
+    era: "Nationalist Turn · Early–Mid 1920s",
+    eraJP: "転換期",
+    events: [
+      {
+        id: "e4",
+        track: "chrono",
+        date: "Early–mid 1920s",
+        title: "Meeting Matsuda — Art Must Serve the Nation",
+        summary: "Ono meets Matsuda, an educated nationalist who convinces him that art detached from politics is irresponsible. Ono is won over by talk of 'commitment' and 'responsibility to the nation'.",
+        tags: ["art", "war", "honour", "craft"],
+        quote: { text: "A man who aspires to any worth must continually ask himself: in what way are my efforts of benefit to my fellow countrymen?", source: "Matsuda, as recalled by Ono" },
+        unreliable: {
+          onoVersion: "Ono presents his conversion as intellectually driven — he was persuaded by reasoned argument that apolitical art was morally inferior.",
+          reality: "critical reading||| The novel does not state that Ono's motives were primarily careerist. Ishiguro presents Ono as genuinely convinced by Matsuda's arguments. The reading that ambition drove the conversion is an inference — reasonable, but yours to test against the text."
+        },
+        technique: {
+          prompt: "Matsuda's words are rendered in free indirect discourse — whose voice are we really hearing?",
+          options: [
+            { text: "The boundary is deliberately blurred — we cannot fully separate Matsuda's original words from Ono's decades-long reworking of them.", correct: true },
+            { text: "We hear Matsuda clearly — Ono is a faithful reporter of past conversations.", correct: false },
+            { text: "We hear Ono's present-day scepticism ironising Matsuda's arguments.", correct: false },
+          ],
+          explanation: "Free indirect discourse — one of Ishiguro's most powerful tools — allows past and present voices to merge without clear attribution. When Ono quotes Matsuda, he may be quoting accurately, paraphrasing admiringly, or unconsciously reshaping the memory to serve his current self-image. The technique enacts the novel's central argument: memory is never neutral retrieval."
+        },
+        context: {
+          japan: "The 1920s saw rising nationalism in Japan, fuelled by the aftermath of WWI, economic anxieties, and imperial ambition in Manchuria. Artists and intellectuals faced genuine social pressure to align their work with national purposes.",
+          britain: "In 1986, Thatcher's government was demanding that public institutions justify themselves in national, economic terms. Arts funding was cut; artists were asked to prove their social utility. Ishiguro's portrait of Matsuda reads as a displaced portrait of this ideological pressure — the demand that art serve the state rather than truth."
+        },
+        reception: {
+          "1986": "Matsuda was read as a cautionary villain — the charismatic ideologue who corrupts a talented artist.",
+          "2000s": "More nuanced readings emerged: Matsuda's argument that art must engage with its world has genuine force. The novel doesn't let us simply dismiss him.",
+          "Now": "Contemporary readers often see Matsuda's position as a real intellectual challenge — the novel asks whether Ono's later retreat from politics is any more admirable than his earlier embrace of it."
+        }
+      },
+      {
+        id: "e5",
+        track: "chrono",
+        date: "Mid 1920s",
+        title: "Break with Moriyama",
+        summary: "Ono leaves Moriyama's villa, declaring the floating world 'decadent and frivolous'. The Tortoise stays loyal; Shintaro follows Ono's path. A decisive, irrevocable severance.",
+        tags: ["art", "honour", "memory"],
+        unreliable: {
+          onoVersion: "Ono presents this as a courageous act of moral clarity — choosing commitment over comfort, purpose over beauty.",
+          reality: "critical reading||| The structural parallel between leaving his father and leaving Moriyama is a pattern readers and critics have identified — it is not stated by Ono. The claim that Moriyama 'saw through' him is an inference; Ono's account of the departure is notably brief, which is textual evidence of evasion, but what Moriyama actually thought is not given to us."
+        },
+        technique: {
+          prompt: "Ono's departure from Moriyama is notably undernarrated — we are told it happened but given little emotional detail. Why?",
+          options: [
+            { text: "Ellipsis as craft choice — Ishiguro uses narrative gap to suggest this is a memory Ono finds too uncomfortable to render fully.", correct: true },
+            { text: "Economy of storytelling — the detail is simply unnecessary to the plot.", correct: false },
+            { text: "Moriyama is an unimportant character so the scene doesn't merit attention.", correct: false },
+          ],
+          explanation: "Ellipsis — deliberate narrative omission — is one of Ishiguro's most powerful formal tools. What Ono does not say is as significant as what he does. The undernarration of the Moriyama break suggests shame, evasion, or a memory too complicated to examine. In Module B essays, students who analyse what is absent from the narration, not just what is present, demonstrate the highest critical insight."
+        },
+        context: {
+          japan: "The break from one's artistic master (sensei) carried profound social weight in Japanese culture. Ono's departure was not merely professional — it was a moral statement about the purpose of art in an era of rising nationalism.",
+          britain: "Ishiguro was writing in a period of intense ideological rupture — the Thatcherite break with postwar consensus. The experience of renouncing one's intellectual tradition in favour of a new ideology resonated deeply with British readers of 1986."
+        },
+        reception: {
+          "1986": "The break was read as the novel's first moral turning point — the moment Ono chose wrongly.",
+          "Now": "Post-colonial and post-nationalist readings complicate this: if Moriyama's aestheticism was also a kind of evasion, Ono's critique of it had genuine merit, even if his alternative was catastrophic."
+        }
+      }
+    ]
+  },
+  {
+    era: "Rising Nationalist Career · Late 1920s–1930s",
+    eraJP: "昇進の時代",
+    events: [
+      {
+        id: "e6",
+        track: "chrono",
+        date: "Late 1920s–1930s",
+        title: "Political Posters, Public Visibility, Marriage",
+        summary: "Ono designs political propaganda, gains public standing and wealth, marries Michiko, has three children — Kenji, Setsuko, Noriko — and buys the prestigious Sugimura house.",
+        tags: ["art", "family", "war", "honour"],
+        quote: { text: "In those days, I was at the height of my influence. I need not be ashamed to say so.", source: "Ono, present-day narration" },
+        unreliable: {
+          onoVersion: "Ono presents this as a time of well-earned success — his talent rewarded by a society that recognised its value.",
+          reality: "critical reading||| This is an interpretive claim, not a textual statement. Ono presents the purchase as a mark of social prestige — the Sugimuras recognised his standing. The darker reading, that his influence made refusal unsafe, is a critical inference drawn from what we know about nationalist power structures of the period. The text does not confirm it."
+        },
+        technique: {
+          prompt: "'I need not be ashamed to say so' — what does this phrase reveal about Ono's narration?",
+          options: [
+            { text: "A defensive pre-emption — Ono protests his own innocence before any accusation is made, which paradoxically signals guilt.", correct: true },
+            { text: "Simple confidence — Ono is stating a fact about his historical standing.", correct: false },
+            { text: "Modesty — Ono is acknowledging his success while downplaying it.", correct: false },
+          ],
+          explanation: "Protestations of innocence are among the most reliable signals of an unreliable narrator. When Ono says 'I need not be ashamed', he is actively managing the reader's response — and revealing that shame is precisely what he fears. This is a classic Ishiguro move: the narrator's defensive rhetorical gestures betray the very guilt they are designed to conceal. Identifying and explaining these gestures is central to a high-band Module B response."
+        },
+        context: {
+          japan: "The 1930s saw Japan commit to imperial expansion in China and Manchuria. State propaganda was a genuine career path — artists who served nationalist purposes were rewarded with commissions, social status, and institutional appointments.",
+          britain: "Thatcher's Britain saw art and media increasingly co-opted for political messaging. The culture wars of the 1980s — over national identity, immigration, the Falklands — created a context in which the relationship between art and ideology was intensely live. Ishiguro's Japanese propagandist is also a British question."
+        },
+        reception: {
+          "1986": "The nationalist career was read straightforwardly as moral corruption.",
+          "2000s": "Critics began noting Ishiguro's refusal to render Ono simply as a monster — the novel insists on his genuine belief, his capacity for love, his real talent. Complicity is shown as ordinary, not exceptional.",
+          "Now": "Post-2016, readings have become more politically charged — Ono's willing participation in nationalist ideology resonates with contemporary anxieties about how ordinary people become complicit in authoritarian projects."
+        }
+      }
+    ]
+  },
+  {
+    era: "Institutional Power & Denunciation · Late 1930s–Early 1940s",
+    eraJP: "権力の頂点",
+    events: [
+      {
+        id: "e7",
+        track: "chrono",
+        date: "Late 1930s–c.1942",
+        title: "The Denunciation of Kuroda",
+        summary: "At the height of his influence, Ono serves on official cultural committees. When his former pupil Kuroda is investigated for 'unpatriotic tendencies', Ono signs the critical report. Kuroda's studio is raided; his paintings are destroyed; his career is ruined.",
+        tags: ["war", "honour", "memory", "craft"],
+        quote: { text: "It was not an easy thing to do. But I believed it was necessary.", source: "Ono, attempting to account for his actions" },
+        unreliable: {
+          onoVersion: "Ono frames the denunciation as a difficult but conscientious act — he was serving his nation, doing what the times required. He dwells on how hard it was.",
+          reality: "textual evidence||| That Kuroda's studio was raided, his paintings destroyed, and his career damaged is given in the novel. That Ono frames his own experience of the decision — its difficulty for him — rather than its consequences for Kuroda is also in the text. The formal point — that first-person narration structurally centres the narrator — follows directly from how the novel is written."
+        },
+        technique: {
+          prompt: "Ono narrates the Kuroda denunciation with careful circumspection, never quite stating directly what he did. What formal effect does this create?",
+          options: [
+            { text: "The grammatical evasion mimics the moral evasion — Ono's syntax performs the very self-deception the novel is about.", correct: true },
+            { text: "Ishiguro is protecting Ono's dignity by not dwelling on his worst act.", correct: false },
+            { text: "The indirectness reflects Japanese cultural norms around discussing shameful acts.", correct: false },
+          ],
+          explanation: "This is Ishiguro's formal mastery at its most visible. Ono approaches the Kuroda denunciation obliquely across multiple sections — circling it, touching it, retreating. The passive voice ('a report was signed'), the focus on committees rather than individual agency, the shift to discussing his own emotional state — these are not cultural conventions but deliberate rhetorical strategies. The syntax is self-exculpating. For Module B, this moment is a gift: form and content are inseparable."
+        },
+        context: {
+          japan: "The Tokkō (Special Higher Police) and various 'purity' committees actively policed art and literature for unpatriotic sentiment throughout the late 1930s. Denunciation by respected figures carried enormous institutional weight.",
+          britain: "In 1986, Britain was still processing its own histories of complicity — collaboration during WWII, the conduct of empire, the choices made by 'respectable' people under ideological pressure. Ishiguro's novel joined a broader cultural conversation about accountability, amnesia, and how nations construct comfortable historical narratives."
+        },
+        reception: {
+          "1986": "The Kuroda episode was read as the novel's moral nadir — the act that defines Ono's culpability.",
+          "2000s": "Hannah Arendt's 'banality of evil' became a reference point: Ono is not a monster but an ordinary man whose institutional position enabled extraordinary harm.",
+          "Now": "The Kuroda denunciation is increasingly taught as a study in how legitimate authority can be weaponised for ideological persecution — resonant with contemporary debates about cancel culture, whistleblowing, and institutional accountability."
+        }
+      }
+    ]
+  },
+  {
+    era: "War, Loss & Aftermath · 1940–1948",
+    eraJP: "戦争と喪失",
+    events: [
+      {
+        id: "e8",
+        track: "chrono",
+        date: "Early 1940s–1945",
+        title: "Kenji Dies at War; Michiko Killed in Air Raids",
+        summary: "Japan's war turns catastrophic. Ono's son Kenji is drafted and killed. His wife Michiko dies in an air raid. The pleasure district — the 'floating world' — is destroyed. Mrs Kawakami's bar is ruined.",
+        tags: ["war", "family", "memory"],
+        quote: { text: "I do not wish to dwell on those years.", source: "Ono, characteristic ellipsis" },
+        unreliable: {
+          onoVersion: "Ono's account of the war years is strikingly compressed. He 'does not wish to dwell on them'. His losses are named but not explored.",
+          reality: "critical reading||| The compression of Kenji's and Michiko's deaths into brief passages is textual evidence — you can measure it on the page. The interpretation that this brevity is psychological self-protection, rather than, say, cultural restraint or narratorial tact, is a critical reading. Both explanations are available; the novel does not settle it."
+        },
+        technique: {
+          prompt: "Ishiguro compresses the most traumatic events — Kenji's death, Michiko's death — into a few sentences. What does this structural choice achieve?",
+          options: [
+            { text: "It enacts Ono's psychological defence mechanism — the narrator cannot process what he refuses to narrate, and his brevity reveals his inability to grieve openly.", correct: true },
+            { text: "The events are less important than the postwar reckoning, so they receive proportionally less attention.", correct: false },
+            { text: "Ishiguro is respecting the privacy of grief — some things should not be narrated in detail.", correct: false },
+          ],
+          explanation: "Narrative proportion is itself meaning. Ishiguro gives more space to Ono's memories of his house purchase than to his son's death — and this disproportionality is a formal statement about Ono's psychological priorities. The novel's structure maps the narrator's deflections. Students who notice and analyse these structural proportions are engaging with Module B at the highest level."
+        },
+        context: {
+          japan: "The firebombing of Japanese cities — particularly by the United States from 1944 — caused devastating civilian casualties. The destruction of the pleasure districts was literal and symbolic: the world Ono had painted was physically erased.",
+          britain: "Ishiguro was writing forty years after WWII ended, in a Britain still sorting out its relationship to that war — the mythology of the Blitz, the suppression of uncomfortable truths, the difficulty of mourning without self-congratulation. The Japanese civilian experience of being bombed offered a different angle on war's costs."
+        },
+        reception: {
+          "1986": "The war losses were read as Ono's just punishment — a providential structure.",
+          "2000s": "More critical readings resisted the retributive reading: Michiko and Kenji did not die because Ono was guilty. The novel refuses moral tidiness.",
+          "Now": "Contemporary readings focus on the gap between private grief and public reckoning — Ono's losses are real and painful, but they do not constitute the accountability that characters like Suichi are demanding."
+        }
+      },
+      {
+        id: "e9",
+        track: "chrono",
+        date: "1945–1948",
+        title: "Postwar Retreat — The Miyake Failure",
+        summary: "Japan's defeat discredits the nationalist ideology. Ono retires from painting. He lives quietly in the Sugimura house. Noriko's first marriage negotiations with the Miyake family fail. Ono wrongly assumes this was a class matter.",
+        tags: ["honour", "memory", "family"],
+        unreliable: {
+          onoVersion: "Ono initially believes the Miyakes found the match socially beneath them — a class slight to his family.",
+          reality: "textual evidence||| Setsuko does raise the question of whether Ono's past affected the Miyake negotiations — this exchange is in the text. Ono's initial interpretation (a class slight) is also his stated view. That his preferred reading happens to be the less self-incriminating one is something the novel makes available for the reader to notice."
+        },
+        context: {
+          japan: "The American Occupation (1945–1952) brought the Tokyo War Crimes Trials and a systematic effort to identify and punish those responsible for wartime atrocities. Middle-level collaborators like Ono — influential enough to matter but not prominent enough to be tried — existed in a grey zone of accountability.",
+          britain: "Britain had its own postwar reckoning with collaboration and guilt — particularly regarding empire and the conduct of various wartime policies. Ishiguro's exploration of how ordinary people navigate the aftermath of ideological complicity spoke directly to British postwar experience."
+        },
+        reception: {
+          "1986": "The Miyake failure was read as dramatic setup — an early signal of the threat Ono's past poses to his family.",
+          "Now": "The episode is now understood as the novel's first demonstration of Ono's fundamental interpretive tendency: to translate social evidence of his guilt into narratives that preserve his self-image."
+        }
+      }
+    ]
+  },
+  {
+    era: "October 1948 — First Narrative Present",
+    eraJP: "語りの現在",
+    events: [
+      {
+        id: "e10",
+        track: "narrative",
+        date: "October 1948",
+        title: "Ono Begins Narrating — Setsuko's Visit",
+        summary: "The novel opens here. Ono narrates from his house; Setsuko visits with grandson Ichiro. Suichi's bitterness about the war is open. Setsuko hints the Miyake failure was about Ono's record. New marriage talks begin for Noriko with the Saito family.",
+        tags: ["memory", "family", "honour", "craft"],
+        presentDay: true,
+        quote: { text: "The world is changing rapidly about us. We must all do our best to keep pace with it.", source: "Ono, characteristic self-justification" },
+        unreliable: {
+          onoVersion: "Ono presents himself as a gracious patriarch navigating a changed world with dignity. He is generous with his interpretations of events, always finding explanations that flatter his judgement.",
+          reality: "textual evidence||| The novel genuinely opens in 1948, mid-story — this is a structural fact. Suichi's hostility and Setsuko's pressure are in the text. The claim that Ono 'cannot fully see himself' is an interpretive position, but one the novel's form actively invites."
+        },
+        technique: {
+          prompt: "The novel begins in 1948 — forty years before publication — not at the beginning of Ono's story. What does Ishiguro achieve by beginning in the middle?",
+          options: [
+            { text: "In medias res forces the reader to reconstruct the past alongside Ono, making us complicit in his act of retrospective interpretation.", correct: true },
+            { text: "Beginning in 1948 creates suspense about what happened during the war.", correct: false },
+            { text: "The postwar setting is simply historically interesting to Ishiguro.", correct: false },
+          ],
+          explanation: "The in medias res opening is one of Ishiguro's most consequential structural choices. By beginning with Ono already narrating, we are already inside his version of events. We never get an 'objective' account — only Ono's. This implicates the reader in the act of unreliable narration. By the time we understand what Ono has done (the Kuroda denunciation), we have been travelling with his perspective for many pages. Ishiguro's formal choice creates the very experience of complicity the novel is about."
+        },
+        context: {
+          japan: "October 1948 was during the American Occupation period. The Tokyo War Crimes Trials were concluding. The social atmosphere combined rapid Americanisation (Ichiro watching cowboy films) with unresolved guilt about the war.",
+          britain: "1986 Britain: Thatcher's second term; miners' strike recently ended; the Falklands War of 1982 still fresh; intense debates about British national identity. A novel about the costs of nationalism, the difficulty of accountability, and how old men justify their pasts was acutely timely."
+        },
+        reception: {
+          "1986": "The opening was praised for its quiet precision — Ishiguro establishing a world of surface politeness and underlying tension.",
+          "2000s": "Scholars began analysing the opening more formally — noting how Ishiguro's choice of present-tense anchoring destabilises our sense of chronology from the first page.",
+          "Now": "The opening is now read as a masterclass in embedded unreliability — everything we need to suspect Ono is present in the first chapter, but rendered with such surface normalcy that first-time readers overlook it."
+        }
+      }
+    ]
+  },
+  {
+    era: "Late 1948–April 1949 — Second Narrative Present",
+    eraJP: "縁談と不安",
+    events: [
+      {
+        id: "e11",
+        track: "narrative",
+        date: "Late 1948–April 1949",
+        title: "Shintaro's Request & the Miai Confession",
+        summary: "Shintaro asks Ono to falsify his recommendation letter to remove references to wartime propaganda. Ono refuses. Noriko's miai with Taro Saito is arranged. Ono makes a pre-emptive confession to Dr Saito, framing it as dignified honesty.",
+        tags: ["honour", "memory", "family", "craft"],
+        presentDay: true,
+        quote: { text: "I wished to demonstrate I was not a man who lacked the courage to acknowledge his past.", source: "Ono, explaining his confession" },
+        unreliable: {
+          onoVersion: "Ono presents his confession to Dr Saito as a noble act of courage — he proactively acknowledged his mistakes rather than waiting to be confronted.",
+          reality: "textual evidence||| The language of Ono's confession — including the passive, distancing formulation 'policies now considered mistaken' — is drawn from the novel's actual prose. That he does not name Kuroda or specific acts is also verifiable in the text. Whether this constitutes genuine accountability or strategic management is the interpretive question the novel leaves open."
+        },
+        technique: {
+          prompt: "Ono's confession to Dr Saito is strategically vague. Ishiguro's prose reflects this through careful diction. What technique is most at work?",
+          options: [
+            { text: "Euphemism and circumlocution — the language of the confession is as evasive as the confession itself, mirroring Ono's moral evasion in the structure of his sentences.", correct: true },
+            { text: "Dramatic irony — the reader knows more than Dr Saito about the true extent of Ono's guilt.", correct: false },
+            { text: "Stream of consciousness — Ono's thoughts flow without clear structure, reflecting his anxiety.", correct: false },
+          ],
+          explanation: "Euphemism — the substitution of vague or mild language for precise and uncomfortable truth — is the primary technique of Ono's confession. 'Policies now considered mistaken' does considerable moral work: it attributes the judgement of wrongness to 'now' rather than acknowledging it was wrong at the time; it uses the passive voice to avoid agency; it refers to 'policies' rather than acts. The grammar of the confession is the grammar of evasion. This is Module B analysis at its most productive."
+        },
+        context: {
+          japan: "The miai (formal marriage meeting) was a highly ritualised social institution in postwar Japan. The investigation of a potential husband's family was thorough and serious — social reputation was genuinely consequential.",
+          britain: "The scene resonates with British class anxieties about background investigations, reputation, and the management of embarrassing pasts. In Thatcher's Britain, the idea that one's history could disqualify one from social advancement was intensely live."
+        },
+        reception: {
+          "1986": "The confession was generally read as admirable — Ono doing the right thing, however belatedly.",
+          "2000s": "Critics began reading the confession more sceptically: noting what it omits, how it frames Ono's agency, and how it serves his self-image as much as any genuine reckoning.",
+          "Now": "The confession is now a central text for discussions of performative accountability — the difference between acknowledgement that serves the confessor's dignity and acknowledgement that genuinely addresses harm."
+        }
+      }
+    ]
+  },
+  {
+    era: "November 1949 — Third Narrative Present",
+    eraJP: "過去との対面",
+    events: [
+      {
+        id: "e12",
+        track: "narrative",
+        date: "November 1949",
+        title: "Visiting Kuroda — No Absolution",
+        summary: "Ono visits Kuroda in his modest apartment to apologise. Kuroda remains cold and silent. No reconciliation is offered. Construction noise from the modernising city filters in. Ono also visits Mrs Kawakami's declining bar.",
+        tags: ["honour", "war", "memory", "craft"],
+        presentDay: true,
+        quote: { text: "I had supposed Kuroda would understand. But he simply sat there, saying very little.", source: "Ono's account of the visit" },
+        unreliable: {
+          onoVersion: "Ono presents himself as having done something courageous and generous by visiting Kuroda. He is surprised and perhaps hurt by the cold reception.",
+          reality: "critical reading||| That Kuroda is largely silent and unresponsive is in the text. The interpretation — that his silence constitutes a refusal of the absolution Ono seeks — is a critical reading, and a widely held one. But Ishiguro does not tell us what Kuroda thinks or feels. His silence is deliberately unreadable."
+        },
+        technique: {
+          prompt: "Kuroda remains largely silent throughout Ono's visit. What does this narrative choice achieve?",
+          options: [
+            { text: "Silence as refusal — Kuroda denies Ono the narrative he seeks. His silence is the novel's most significant act of resistance to Ono's self-exculpating story.", correct: true },
+            { text: "Kuroda is poorly characterised — Ishiguro cannot write a convincing confrontation scene.", correct: false },
+            { text: "Silence represents Japanese cultural norms around conflict avoidance.", correct: false },
+          ],
+          explanation: "In a novel narrated entirely by Ono, other characters' silences are powerful. Ono cannot put words in Kuroda's mouth — cannot narrate his inner state — because Kuroda refuses to cooperate with the reconciliation script Ono has written. The silence is also a structural reminder that we only ever have Ono's version: Kuroda has a story that this novel cannot tell, and his refusal to speak is a formal acknowledgement of that absence. This is deeply sophisticated Module B territory."
+        },
+        context: {
+          japan: "By late 1949, Tokyo's reconstruction was well underway. The new Japan — modern, American-influenced, forward-looking — was physically replacing the world Ono had known. The construction noise is not just background detail.",
+          britain: "The construction of new Britain under Thatcher — the 'creative destruction' of old industries, communities, and institutions — provides the contemporary context. Ishiguro is writing about erasure: what happens to the people and the memories that don't fit the new world being built."
+        },
+        reception: {
+          "1986": "The Kuroda scene was read as emotionally powerful — a failed attempt at reconciliation.",
+          "2000s": "Feminist and postcolonial critics noted that the novel gives Ono's perspective on an encounter with someone he harmed, without giving the harmed person's voice. This structural choice is itself a political act.",
+          "Now": "The scene is now read as the novel's formal statement on the limits of perpetrator-centred narratives of accountability."
+        }
+      }
+    ]
+  },
+  {
+    era: "June 1950 — Final Narrative Present",
+    eraJP: "静かな終幕",
+    events: [
+      {
+        id: "e13",
+        track: "narrative",
+        date: "June 1950",
+        title: "The New Japan — Ono's Ambivalent Closing",
+        summary: "Five years since Michiko's death. Both daughters are pregnant. The city is transformed — new offices, bridges, American culture. Ono watches young salarymen planning the future. He reflects with subdued, ambivalent pride: neither condemning nor glorifying his past.",
+        tags: ["memory", "family", "craft", "context"],
+        presentDay: true,
+        quote: { text: "We must each of us take responsibility for the things we did. But then, perhaps it is equally important to retain some pride in oneself.", source: "Ono's closing reflection — characteristically balanced, characteristically evasive" },
+        unreliable: {
+          onoVersion: "Ono achieves a kind of peace — accepting that he made mistakes while retaining his dignity. He sees the new Japan as hopeful and his own story as part of a larger historical movement.",
+          reality: "critical reading||| The closing ambivalence is textual — Ono's final reflection is genuinely poised between self-condemnation and self-justification. Whether this represents evasion or a hard-won honesty is one of the central interpretive disputes about the novel. Both positions have serious critical support."
+        },
+        technique: {
+          prompt: "The novel ends without resolution — no judgement, no punishment, no catharsis. What does this open ending achieve?",
+          options: [
+            { text: "The open ending implicates the reader — we must make the moral judgement that Ono refuses to make, which enacts Module B's central demand: the reader as active, critical interpreter.", correct: true },
+            { text: "The ending suggests Ishiguro himself is undecided about Ono's culpability.", correct: false },
+            { text: "The ambiguous ending reflects Japanese aesthetic norms around resolution and closure.", correct: false },
+          ],
+          explanation: "The open ending is Ishiguro's greatest structural achievement. By refusing to punish Ono, refuse him redemption, or restore his reputation, the novel deposits the question with the reader. This is the formal realisation of Module B's central concern: literature's ongoing cultural value lies precisely in its refusal to resolve the questions it raises. The reader who finishes this novel must decide — and in deciding, must examine their own relationship to complicity, accountability, and self-deception. That is what makes the text 'critically significant'."
+        },
+        context: {
+          japan: "June 1950 is weeks before the Korean War begins — a reminder that the postwar order Ono is watching be built will itself become a site of conflict. The 'new Japan' is not simply hopeful; it is already embedded in new geopolitical tensions.",
+          britain: "The novel was published in 1986 — at a moment when Thatcherism was being consolidated and many people who had participated in earlier ideological movements (left and right) were performing their own quiet revisions. The closing image of Ono watching younger people build a world he doesn't understand resonated powerfully with a generation of British readers."
+        },
+        reception: {
+          "1986": "The ending was praised for its restraint and melancholy. Many readers found Ono sympathetic despite everything.",
+          "2000s": "Critical readings became more suspicious of reader sympathy — noting that Ishiguro's formal choices engineer that sympathy, and asking what it means that we are made to feel for a man who denounced a student and destroyed his career.",
+          "Now": "The ending is now central to discussions of narrative ethics: what are the moral implications of a form (first-person unreliable narration) that structurally generates sympathy for a perpetrator?"
+        }
+      },
+      {
+        id: "e14",
+        track: "chrono",
+        date: "Early 1950",
+        title: "Final Visit to Matsuda",
+        summary: "Shortly before Matsuda's death, Ono visits him. Both men are frailer. They tentatively acknowledge their commitments may have been 'disastrously wrong' — yet each tries to retain pride in having been 'men of action'.",
+        tags: ["honour", "memory", "war"],
+        quote: { text: "We were men who acted. We were not afraid to dirty our hands.", source: "Matsuda, as recalled by Ono" },
+        unreliable: {
+          onoVersion: "Ono presents the Matsuda meeting as a shared, dignified reckoning — two old men facing their pasts together with honesty.",
+          reality: "critical reading||| The phrase 'men of action' and its valorisation of agency over consequence is in the text. The connection to the philosophical 'dirty hands' tradition is a critical observation — a useful framework, but one you are applying to the novel, not one Ishiguro signals directly."
+        },
+        technique: {
+          prompt: "Matsuda and Ono's final conversation is about history's judgement — yet neither man changes his fundamental self-assessment. What does this stasis mean?",
+          options: [
+            { text: "Character stasis at the close enacts the novel's central argument: the mechanisms of self-deception are too deeply embedded to yield to mere reflection.", correct: true },
+            { text: "The men are simply too old and tired to engage in genuine self-examination.", correct: false },
+            { text: "Ishiguro is suggesting that self-knowledge is impossible — a nihilistic conclusion.", correct: false },
+          ],
+          explanation: "If the novel ended with Ono achieving genuine insight, it would be a conventional redemption arc. Ishiguro refuses this. The stasis of Ono and Matsuda's final scene is the novel's most honest formal statement: the mechanisms of self-deception are not dissolved by the passage of time, by loss, or even by the awareness that one might have been wrong. This is not nihilism — it is a rigorous account of how self-protective narration actually works. For Module B, this stasis is the novel's central critical provocation."
+        },
+        context: {
+          japan: "Many former nationalist ideologues lived into the postwar period and navigated their histories with varying degrees of self-examination. Matsuda's 'men of action' framing was a genuinely available cultural position — not absurd, but deeply self-serving.",
+          britain: "The image of two old men consoling each other for their historical failures resonated in 1986 as a portrait of a certain kind of conservative nostalgia — the celebration of 'having acted' as an end in itself, regardless of consequences. Ishiguro identified something real about how ideological generations process their legacies."
+        },
+        reception: {
+          "1986": "Matsuda was read as an enabler — giving Ono permission to maintain his self-mythology.",
+          "Now": "The scene is now taught as a study in the social dimensions of self-deception: we construct our self-exonerating narratives in conversation with others who share our investments in those narratives."
+        }
+      }
+    ]
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let activeFilters = new Set(['all']);
+let activeChar = 'all';
+let pinnedItems = [];
+let argPanelExpanded = false;
+let currentModal = null;
+
+// ============================================================
+// CHARACTER DATA
+// ============================================================
+const eventCharacters = {
+  e1:  ['ono', 'moriyama'],
+  e2:  ['ono'],
+  e3:  ['ono', 'moriyama', 'shintaro'],
+  e4:  ['ono', 'matsuda'],
+  e5:  ['ono', 'moriyama', 'shintaro'],
+  e6:  ['ono', 'matsuda', 'shintaro', 'noriko'],
+  e7:  ['ono', 'kuroda'],
+  e8:  ['ono', 'noriko'],
+  e9:  ['ono', 'noriko', 'setsuko', 'suichi'],
+  e10: ['ono', 'setsuko', 'noriko', 'suichi'],
+  e11: ['ono', 'noriko', 'shintaro', 'setsuko'],
+  e12: ['ono', 'kuroda', 'kawakami'],
+  e13: ['ono', 'setsuko', 'noriko'],
+  e14: ['ono', 'matsuda'],
+};
+
+const thinkingPrompts = {
+  memory:  "You've pinned moments shaped by memory and retrospection. Does Ono's narration ever genuinely remember, or does it always reconstruct? What's the difference — and why does it matter for how we read him?",
+  war:     "You've gathered moments around war and complicity. At what point does Ono cross from being a product of his times to being personally responsible? Does the novel ever answer this — or refuse to?",
+  honour:  "These moments all turn on questions of honour and shame. Who actually has honour in this novel — and who merely performs it? Is there a difference between Ono's dignity and Kuroda's silence?",
+  art:     "You're tracking Ono's relationship with his art. Does the novel suggest that art made in service of ideology can still be aesthetically valuable — or does complicity corrupt the work itself?",
+  family:  "You've pinned moments centred on family. Ono speaks of legacy constantly — but what has he actually left his daughters? Is the family structure here a site of love, or of managed anxiety?",
+  craft:   "You're noticing Ishiguro's craft choices. What do these techniques have in common? What does it tell you that Ishiguro uses form — not just content — to explore self-deception?",
+  context: "You've gathered moments with connections to Ishiguro's Britain. Why might a British-Japanese writer choose this particular story in 1986? What is he saying about his own country through Japan?",
+  mixed:   "You've pinned moments that cut across several threads. What single claim could you make that holds all of these together? What is Ishiguro doing — as a craftsman — that makes these moments speak to each other?",
+};
+
+// ============================================================
+// RENDER
+// ============================================================
+
+function renderTimeline() {
+  const container = document.getElementById('timeline');
+  container.innerHTML = '';
+
+  timelineData.forEach((era, eraIdx) => {
+    const section = document.createElement('div');
+    section.className = 'era-section';
+    section.dataset.era = eraIdx;
+
+    // Era label
+    const eraLabel = document.createElement('div');
+    eraLabel.className = 'era-label';
+    eraLabel.innerHTML = `
+      <div class="era-label-line"></div>
+      <div class="era-label-text">${era.era} <span style="opacity:0.5;margin-left:0.5rem;font-size:0.75rem;">${era.eraJP}</span></div>
+      <div class="era-label-line"></div>
+    `;
+    section.appendChild(eraLabel);
+
+    era.events.forEach(event => {
+      const row = document.createElement('div');
+      row.className = 'dual-row';
+      row.dataset.tags = event.tags.join(' ');
+      row.dataset.eventid = event.id;
+      if (event.track === 'narrative') row.classList.add('narrative-only');
+      if (event.track === 'chrono') row.classList.add('chrono-only');
+
+      // Determine spine type
+      const spineClass = event.presentDay ? 'both' : event.track;
+
+      row.innerHTML = `
+        <div class="narrative-cell" ${event.track !== 'narrative' ? 'style="visibility:hidden"' : ''}>
+          ${event.track === 'narrative' ? buildCard(event, 'narrative') : ''}
+        </div>
+        <div class="spine">
+          <div class="spine-line"></div>
+          <div class="spine-dot ${spineClass}"></div>
+        </div>
+        <div class="chrono-cell" ${event.track !== 'chrono' ? 'style="visibility:hidden"' : ''}>
+          ${event.track === 'chrono' ? buildCard(event, 'chrono') : ''}
+        </div>
+        ${event.track === 'both' ? '<div class="connection-line"></div>' : ''}
+      `;
+
+      section.appendChild(row);
+    });
+
+    container.appendChild(section);
+  });
+
+  applyFilters();
+}
+
+function buildCard(event, track) {
+  const isPinned = pinnedItems.some(p => p.id === event.id);
+  const indicators = [];
+  if (event.unreliable) indicators.push('<span class="indicator" title="Unreliable narrator moment">🎭</span>');
+  if (event.context?.britain) indicators.push('<span class="indicator" title="Ishiguro\'s British context">🌐</span>');
+  if (event.technique) indicators.push('<span class="indicator" title="Technique challenge">✍️</span>');
+
+  return `
+    <div class="event-card ${event.presentDay ? 'present-day' : ''} ${event.context ? 'has-context' : ''} ${event.unreliable ? 'unreliable' : ''}"
+         onclick="openModal('${event.id}')"
+         data-tags="${event.tags.join(' ')}">
+      ${event.presentDay ? `<div class="present-day-badge">Narrative Present</div>` : ''}
+      <div class="event-indicators">${indicators.join('')}</div>
+      <div class="event-date">${event.date}</div>
+      <div class="event-title">${event.title}</div>
+      <div class="event-summary">${event.summary.substring(0, 120)}…</div>
+      <div class="event-tags">
+        ${event.tags.map(t => `<span class="event-tag ${t}">${tagLabel(t)}</span>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function tagLabel(t) {
+  const labels = { art: 'Art & Identity', family: 'Family', war: 'War & Complicity', honour: 'Honour & Shame', memory: 'Memory', craft: 'Craft', context: "Ishiguro's Context" };
+  return labels[t] || t;
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+
+function findEvent(id) {
+  for (const era of timelineData) {
+    for (const ev of era.events) {
+      if (ev.id === id) return ev;
+    }
+  }
+  return null;
+}
+
+function openModal(id) {
+  const event = findEvent(id);
+  if (!event) return;
+  currentModal = event;
+
+  const isPinned = pinnedItems.some(p => p.id === event.id);
+  const track = event.track === 'narrative' ? 'narrative' : 'chrono';
+  const trackLabel = event.track === 'narrative' ? 'Narrative Order · Ono\'s Present-Day Account' : 'Chronological Order · Historical Sequence';
+
+  const header = document.getElementById('modalHeader');
+  header.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-track-badge ${track}">${event.presentDay ? '◆ ' : ''}${trackLabel}</div>
+    <div class="modal-date">${event.date}</div>
+    <div class="modal-title">${event.title}</div>
+    <div class="modal-tags">
+      ${event.tags.map(t => `<span class="event-tag ${t}">${tagLabel(t)}</span>`).join('')}
+    </div>
+  `;
+
+  const body = document.getElementById('modalBody');
+  let html = '';
+
+  // Summary
+  html += `
+    <div class="modal-section">
+      <div class="modal-section-label"><span class="icon">📖</span> What Happens</div>
+      <p>${event.summary}</p>
+    </div>
+  `;
+
+  // Quote
+  if (event.quote) {
+    html += `
+      <div class="modal-section">
+        <div class="modal-section-label"><span class="icon">💬</span> Key Passage</div>
+        <div class="quote-block">
+          "${event.quote.text}"
+          <div class="quote-source">— ${event.quote.source}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Unreliable narrator
+  if (event.unreliable) {
+    const rawReality = event.unreliable.reality;
+    const hasSrc = rawReality.includes('|||');
+    const srcKey = hasSrc ? rawReality.split('|||')[0].trim() : '';
+    const realityText = hasSrc ? rawReality.split('|||')[1].trim() : rawReality;
+
+    const badgeClass = srcKey === 'textual evidence' ? 'textual' : srcKey === 'critical reading' ? 'critical' : srcKey === "Ishiguro's stated intention" ? 'intention' : '';
+    const badgeLabel = srcKey === 'textual evidence' ? '📄 Textual evidence' : srcKey === 'critical reading' ? '🔍 Critical reading' : srcKey === "Ishiguro's stated intention" ? '💬 Ishiguro\'s stated intention' : '';
+    const badge = badgeClass ? `<span class="source-badge ${badgeClass}">${badgeLabel}</span>` : '';
+
+    const encodedOno = encodeURIComponent(event.unreliable.onoVersion);
+    const encodedReality = encodeURIComponent(realityText);
+    const encodedBadge = encodeURIComponent(badge);
+
+    html += `
+      <div class="modal-section">
+        <div class="modal-section-label"><span class="icon">🎭</span> Unreliable Narrator — Slide to Reveal</div>
+        <div class="narrator-slider-container">
+          <div class="narrator-slider-labels">
+            <span class="slider-label-ono">Ono's Version</span>
+            <span class="slider-label-truth">What the Text Implies</span>
+          </div>
+          <input type="range" class="narrator-slider" id="slider-${event.id}" min="0" max="100" value="0"
+                 oninput="updateSlider('${event.id}', this.value)"
+                 data-ono="${encodedOno}"
+                 data-truth="${encodedReality}"
+                 data-badge="${encodedBadge}">
+          <div class="narrator-text" id="narratorText-${event.id}">${event.unreliable.onoVersion}</div>
+          <div id="narratorBadge-${event.id}" style="display:none">${badge}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Technique spotter
+  if (event.technique) {
+    html += `
+      <div class="modal-section">
+        <div class="modal-section-label"><span class="icon">✍️</span> Technique Spotter — Module B Challenge</div>
+        <p style="margin-bottom:0.8rem;font-size:0.88rem;color:var(--ink-light)"><em>${event.technique.prompt}</em></p>
+        <div class="technique-options" id="techOptions-${event.id}">
+          ${event.technique.options.map((opt, i) => `
+            <button class="technique-option" onclick="checkTechnique('${event.id}', ${i}, ${opt.correct})">
+              ${opt.text}
+            </button>
+          `).join('')}
+        </div>
+        <div class="technique-explanation" id="techExp-${event.id}">${event.technique.explanation}</div>
+      </div>
+    `;
+  }
+
+  // Context collision
+  if (event.context) {
+    html += `
+      <div class="modal-section">
+        <div class="modal-section-label"><span class="icon">🌐</span> Context Collision — Japan 1930s–50s vs. Ishiguro's Britain 1986</div>
+        <div class="context-collision">
+          ${event.context.japan ? `
+            <div class="context-panel japan">
+              <div class="context-panel-label">🗾 Japan — Historical Context</div>
+              <p>${event.context.japan}</p>
+            </div>
+          ` : ''}
+          ${event.context.britain ? `
+            <div class="context-panel britain">
+              <div class="context-panel-label">🇬🇧 Ishiguro's Britain — 1986</div>
+              <p>${event.context.britain}</p>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  // Reception shift
+  if (event.reception) {
+    const periods = Object.keys(event.reception);
+    html += `
+      <div class="modal-section">
+        <div class="modal-section-label"><span class="icon">🔄</span> Reception Shift — How Critical Readings Have Changed</div>
+        <div class="reception-tabs">
+          ${periods.map((p, i) => `<button class="reception-tab ${i===0?'active':''}" onclick="switchReception('${event.id}', '${p}', this)">${p}</button>`).join('')}
+        </div>
+        ${periods.map((p, i) => `
+          <div class="reception-content ${i===0?'active':''}" id="rec-${event.id}-${p.replace(/\s/g,'_')}">
+            ${event.reception[p]}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // Argument builder pin
+  html += `
+    <div class="modal-section" style="border-top:1px solid var(--washi-dark);padding-top:1.2rem;margin-top:0.5rem">
+      <button class="pin-btn ${isPinned?'pinned':''}" id="pin-${event.id}" onclick="togglePin('${event.id}')">
+        ${isPinned ? '📌 Pinned to My Reading' : '📌 Pin to My Reading'}
+      </button>
+      <p style="font-size:0.75rem;color:var(--mist);margin-top:0.5rem;font-style:italic">
+        Pin key moments to collect your observations. A thinking prompt will appear once you have two or more pinned.
+      </p>
+    </div>
+  `;
+
+  body.innerHTML = html;
+
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  currentModal = null;
+}
+
+function handleModalClick(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+
+// ============================================================
+// INTERACTIVE FEATURES
+// ============================================================
+
+function updateSlider(id, value) {
+  const el = document.getElementById(`narratorText-${id}`);
+  const badgeEl = document.getElementById(`narratorBadge-${id}`);
+  const slider = document.getElementById(`slider-${id}`);
+  const v = parseInt(value);
+  const crossfading = v >= 45 && v <= 55;
+
+  if (v < 50) {
+    el.textContent = decodeURIComponent(slider.dataset.ono);
+    if (badgeEl) badgeEl.style.display = 'none';
+  } else {
+    el.textContent = decodeURIComponent(slider.dataset.truth);
+    if (badgeEl) badgeEl.style.display = v > 55 ? 'block' : 'none';
+  }
+  el.style.opacity = crossfading ? 0.2 : 1;
+}
+
+function checkTechnique(eventId, optIdx, isCorrect) {
+  const container = document.getElementById(`techOptions-${eventId}`);
+  const buttons = container.querySelectorAll('.technique-option');
+  buttons.forEach((btn, i) => {
+    if (i === optIdx) {
+      btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+    } else if (i === optIdx && !isCorrect) {
+      // find correct
+    }
+  });
+  // Find and highlight correct
+  const event = findEvent(eventId);
+  event.technique.options.forEach((opt, i) => {
+    if (opt.correct) buttons[i].classList.add('correct');
+  });
+
+  const expEl = document.getElementById(`techExp-${eventId}`);
+  expEl.classList.add('visible');
+}
+
+function switchReception(eventId, period, tabEl) {
+  const allTabs = tabEl.parentElement.querySelectorAll('.reception-tab');
+  allTabs.forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+
+  const event = findEvent(eventId);
+  const periods = Object.keys(event.reception);
+  periods.forEach(p => {
+    const el = document.getElementById(`rec-${eventId}-${p.replace(/\s/g,'_')}`);
+    if (el) el.classList.toggle('active', p === period);
+  });
+}
+
+// ============================================================
+// ARGUMENT BUILDER
+// ============================================================
+
+function togglePin(eventId) {
+  const event = findEvent(eventId);
+  const idx = pinnedItems.findIndex(p => p.id === eventId);
+  if (idx >= 0) {
+    pinnedItems.splice(idx, 1);
+  } else {
+    pinnedItems.push({ id: eventId, title: event.title, date: event.date, tags: event.tags });
+  }
+  updateArgPanel();
+  // Update button in modal
+  const btn = document.getElementById(`pin-${eventId}`);
+  if (btn) {
+    const isPinned = pinnedItems.some(p => p.id === eventId);
+    btn.textContent = isPinned ? '📌 Pinned to My Reading' : '📌 Pin to My Reading';
+    btn.classList.toggle('pinned', isPinned);
+  }
+}
+
+function updateArgPanel() {
+  document.getElementById('pinCount').textContent = pinnedItems.length;
+  const list = document.getElementById('pinnedList');
+
+  if (pinnedItems.length === 0) {
+    list.innerHTML = '<p style="font-size:0.8rem;color:var(--mist-light);font-style:italic;margin-bottom:0.5rem;">Pin moments from the timeline to collect your observations.</p>';
+    document.getElementById('thinkingPrompt').style.display = 'none';
+    document.getElementById('themeCluster').style.display = 'none';
+    document.getElementById('scratchpadLabel').style.display = 'none';
+    document.getElementById('scratchpad').style.display = 'none';
+    return;
+  }
+
+  list.innerHTML = pinnedItems.map(item => `
+    <div class="pinned-item">
+      <div>
+        <div class="pinned-item-text">${item.title}</div>
+        <div class="pinned-item-date">${item.date}</div>
+      </div>
+      <button class="unpin-btn" onclick="togglePin('${item.id}')">✕</button>
+    </div>
+  `).join('');
+
+  // Show thinking elements once 2+ pinned
+  if (pinnedItems.length >= 2) {
+    // Tally tags
+    const tagCounts = {};
+    pinnedItems.forEach(item => {
+      item.tags.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; });
+    });
+    const sortedTags = Object.entries(tagCounts).sort((a,b) => b[1]-a[1]);
+    const topTag = sortedTags[0]?.[0] || 'mixed';
+    const tagCount = sortedTags.length;
+
+    // Pick prompt
+    const promptKey = tagCount >= 4 ? 'mixed' : (thinkingPrompts[topTag] ? topTag : 'mixed');
+    document.getElementById('thinkingPromptText').textContent = thinkingPrompts[promptKey];
+    document.getElementById('thinkingPrompt').style.display = 'block';
+
+    // Show theme cluster
+    document.getElementById('themeCluster').style.display = 'block';
+    document.getElementById('themeClusterTags').innerHTML =
+      '<div class="theme-cluster-tags">' +
+      sortedTags.map(([t, count]) =>
+        `<span class="event-tag ${t}" style="opacity:${0.5 + (count/pinnedItems.length)*0.5}">${tagLabel(t)} <span style="font-size:0.6rem;opacity:0.7">×${count}</span></span>`
+      ).join('') +
+      '</div>';
+
+    document.getElementById('scratchpadLabel').style.display = 'block';
+    document.getElementById('scratchpad').style.display = 'block';
+  } else {
+    document.getElementById('thinkingPrompt').style.display = 'none';
+    document.getElementById('themeCluster').style.display = 'none';
+    document.getElementById('scratchpadLabel').style.display = 'none';
+    document.getElementById('scratchpad').style.display = 'none';
+  }
+}
+
+function toggleArgPanel() {
+  argPanelExpanded = !argPanelExpanded;
+  document.getElementById('argPanel').classList.toggle('expanded', argPanelExpanded);
+  document.getElementById('argPanelArrow').textContent = argPanelExpanded ? '▼' : '▲';
+}
+
+// ============================================================
+// FILTERING
+// ============================================================
+
+function filterTag(tag) {
+  if (tag === 'all') {
+    activeFilters = new Set(['all', 'art', 'family', 'war', 'honour', 'memory', 'craft', 'context']);
+  } else {
+    activeFilters.delete('all');
+    if (activeFilters.has(tag)) {
+      activeFilters.delete(tag);
+      if (activeFilters.size === 0) activeFilters = new Set(['all', 'art', 'family', 'war', 'honour', 'memory', 'craft', 'context']);
+    } else {
+      activeFilters.add(tag);
+    }
+  }
+  const showAll = activeFilters.has('all');
+  document.querySelectorAll('.tag-btn').forEach(btn => {
+    const t = btn.dataset.tag;
+    btn.classList.toggle('active', t === 'all' ? showAll : (showAll || activeFilters.has(t)));
+  });
+  applyFilters();
+}
+
+function filterChar(char) {
+  activeChar = char;
+  document.querySelectorAll('.char-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.char === char);
+  });
+  applyFilters();
+}
+
+function applyFilters() {
+  const showAllTags = activeFilters.has('all');
+  const showAllChars = activeChar === 'all';
+
+  document.querySelectorAll('.dual-row').forEach(row => {
+    const rowTags = (row.dataset.tags || '').split(' ').filter(Boolean);
+    const rowId = row.dataset.eventid;
+    const rowChars = eventCharacters[rowId] || [];
+
+    const tagMatch = showAllTags || rowTags.some(t => activeFilters.has(t));
+    const charMatch = showAllChars || rowChars.includes(activeChar);
+
+    row.style.display = (tagMatch && charMatch) ? '' : 'none';
+  });
+
+  // Hide entire era sections if all rows hidden
+  document.querySelectorAll('.era-section').forEach(section => {
+    const rows = section.querySelectorAll('.dual-row');
+    const anyVisible = [...rows].some(r => r.style.display !== 'none');
+    section.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderTimeline();
+updateArgPanel();
+</script>
+</body>
+</html>
