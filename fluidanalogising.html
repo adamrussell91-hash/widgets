@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluid Analogising Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300;1,9..144,600&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --paper: #f5f0e8;
+    --cream: #ede7d4;
+    --gold: #c9a84c;
+    --gold-light: #e8d4a0;
+    --rust: #b85c38;
+    --sage: #6b8f71;
+    --slate: #4a5568;
+    --muted: #8a7f6e;
+    --border: #d4c9b0;
+
+    /* Level colours */
+    --l1: #4a7c6f;
+    --l2: #7b5ea7;
+    --l3: #4a6b9a;
+    --l4: #8a6040;
+    --l5: #6b8a4a;
+    --l6: #3a7a8a;
+    --l7: #8a3a4a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 32px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    border-bottom: 3px solid var(--gold);
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  header span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── LAYOUT ── */
+  .app {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ── PHASE INDICATOR ── */
+  .phase-bar {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .phase-step {
+    flex: 1;
+    padding: 8px 4px;
+    text-align: center;
+    background: var(--cream);
+    color: var(--muted);
+    border-right: 1px solid var(--border);
+    cursor: default;
+    transition: all 0.2s;
+  }
+  .phase-step:last-child { border-right: none; }
+  .phase-step.active {
+    background: var(--ink);
+    color: var(--gold);
+  }
+  .phase-step.done {
+    background: var(--ink);
+    color: var(--muted);
+    opacity: 0.5;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    display: none;
+    animation: fadeUp 0.35s ease;
+  }
+  section.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── LEVEL PICKER ── */
+  .level-intro {
+    margin-bottom: 28px;
+  }
+  .level-intro h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .level-intro p {
+    color: var(--muted);
+    max-width: 580px;
+  }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .level-card {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+  .level-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--level-color, #888);
+    transition: width 0.2s;
+  }
+  .level-card:hover {
+    border-color: var(--level-color, #888);
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .level-card:hover::before { width: 6px; }
+  .level-card.selected {
+    border-color: var(--level-color, #888);
+    background: white;
+    box-shadow: 0 0 0 2px var(--level-color, #888);
+  }
+
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--level-color, #888);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .card-name {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+    color: var(--ink);
+  }
+  .card-tag {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--level-color, #888) 15%, transparent);
+    color: var(--level-color, #888);
+  }
+  .card-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.45;
+  }
+
+  /* ── SUBJECT INPUT ── */
+  .subject-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .subject-section .level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--active-level-color, #888) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--active-level-color, #888) 30%, transparent);
+    margin-bottom: 20px;
+  }
+  .subject-section .level-badge span:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--active-level-color, #888);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .subject-section .level-badge span:last-child {
+    font-family: 'Fraunces', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .field-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  textarea, input[type="text"] {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 15px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  textarea:focus, input[type="text"]:focus {
+    border-color: var(--active-level-color, var(--gold));
+  }
+  textarea { min-height: 80px; }
+
+  .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .field-group { margin-bottom: 20px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 5px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .btn-primary:hover {
+    background: color-mix(in srgb, var(--active-level-color, var(--gold)) 80%, var(--ink));
+    border-color: color-mix(in srgb, var(--active-level-color, var(--gold)) 80%, var(--ink));
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover {
+    border-color: var(--ink);
+    background: var(--cream);
+  }
+  .btn-ghost {
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  /* ── CONVERSATION ── */
+  .convo-area {
+    margin-bottom: 24px;
+  }
+  .convo-area h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .convo-meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .convo-meta strong {
+    color: var(--ink);
+  }
+
+  .messages {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .msg {
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.3s ease;
+  }
+  .msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+  }
+  .msg.coach .msg-avatar {
+    background: var(--ink);
+    color: var(--gold);
+  }
+  .msg.student .msg-avatar {
+    background: var(--cream);
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+  }
+  .msg-body {
+    flex: 1;
+  }
+  .msg-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .msg-text {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    padding: 12px 16px;
+    line-height: 1.65;
+  }
+  .msg.coach .msg-text {
+    border-color: color-mix(in srgb, var(--active-level-color, var(--gold)) 40%, var(--border));
+    background: color-mix(in srgb, var(--active-level-color, var(--gold)) 5%, white);
+  }
+  .msg.student .msg-text {
+    background: var(--cream);
+    border-color: var(--border);
+  }
+  .msg-text p { margin-bottom: 8px; }
+  .msg-text p:last-child { margin-bottom: 0; }
+
+  /* typing indicator */
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 14px 16px;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    width: fit-content;
+  }
+  .typing-indicator span {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* response input */
+  .response-area {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+  }
+  .response-area textarea {
+    border: none;
+    border-radius: 0;
+    min-height: 90px;
+    background: transparent;
+  }
+  .response-area textarea:focus {
+    border: none;
+    box-shadow: none;
+  }
+  .response-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+  }
+  .response-hint {
+    font-size: 0.73rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── WRAP UP PANEL ── */
+  .wrapup {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin-top: 24px;
+  }
+  .wrapup h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .summary-block {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    border-left: 3px solid var(--active-level-color, var(--gold));
+  }
+  .summary-block label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .summary-block p {
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  /* reflection checkboxes */
+  .reflection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 16px 0;
+  }
+  @media (max-width: 560px) { .reflection-grid { grid-template-columns: 1fr; } }
+  .reflection-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+    background: white;
+  }
+  .reflection-item:hover { border-color: var(--active-level-color, var(--gold)); }
+  .reflection-item.checked {
+    border-color: var(--sage);
+    background: color-mix(in srgb, var(--sage) 8%, white);
+  }
+  .reflection-item input { display: none; }
+  .reflection-check {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s;
+  }
+  .reflection-item.checked .reflection-check {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+  .reflection-text { font-size: 13px; line-height: 1.4; }
+
+  /* ── START OVER ── */
+  .start-over {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+  }
+
+  /* ── PROGRESS TRACKER inside convo ── */
+  .progress-track {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: color-mix(in srgb, var(--active-level-color, var(--gold)) 8%, white);
+    border: 1px solid color-mix(in srgb, var(--active-level-color, var(--gold)) 25%, var(--border));
+    border-radius: 6px;
+    margin-bottom: 18px;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .progress-pip {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .progress-pip.done { background: var(--active-level-color, var(--gold)); }
+
+  /* mobile tweaks */
+  @media (max-width: 600px) {
+    header { padding: 14px 18px; }
+    .app { padding: 20px 14px 48px; }
+    .level-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fluid Analogising Builder</h1>
+  <span>A thinking workshop · not an answer machine</span>
+</header>
+
+<div class="app">
+
+  <!-- PHASE BAR -->
+  <div class="phase-bar" id="phaseBar">
+    <div class="phase-step active" id="ph0">01 · Choose level</div>
+    <div class="phase-step" id="ph1">02 · Set your subject</div>
+    <div class="phase-step" id="ph2">03 · Build</div>
+    <div class="phase-step" id="ph3">04 · Reflect</div>
+  </div>
+
+  <!-- SECTION 0: LEVEL PICKER -->
+  <section id="sec0" class="visible">
+    <div class="level-intro">
+      <h2>What kind of analogy are you building?</h2>
+      <p>Each level asks you to do a different kind of thinking. Pick the one you're working on — or the one that will stretch you.</p>
+    </div>
+
+    <div class="level-grid" id="levelGrid">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnChooseLevel" disabled>Continue with this level →</button>
+    </div>
+  </section>
+
+  <!-- SECTION 1: SUBJECT INPUT -->
+  <section id="sec1" class="subject-section">
+    <div class="level-badge" id="levelBadge">
+      <span id="badgeCode">L1</span>
+      <span id="badgeName">Leaflink</span>
+    </div>
+    <h2>What are you analogising?</h2>
+
+    <div class="field-group">
+      <label class="field-label" for="textContext">Your text or subject</label>
+      <input type="text" id="textContext" placeholder="e.g. Ishiguro's An Artist of the Floating World · or: the French Revolution">
+      <p class="hint">The text, topic, or concept you're working with.</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="analogySubject">The specific element you want to analogise</label>
+      <textarea id="analogySubject" placeholder="e.g. Ono's unreliable narration · or: the way Macbeth's ambition escalates · or: the theme of isolation in Frankenstein"></textarea>
+      <p class="hint">Be specific — the narrower this is, the richer your analogy will be.</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnStartBuilding">Start building →</button>
+      <button class="btn-ghost" onclick="goToSection(0)">← Back</button>
+    </div>
+  </section>
+
+  <!-- SECTION 2: CONVERSATION -->
+  <section id="sec2" class="convo-area">
+    <h2>Building your analogy</h2>
+    <div class="convo-meta">
+      Level: <strong id="metaLevel">–</strong> &nbsp;·&nbsp;
+      Subject: <strong id="metaSubject">–</strong>
+    </div>
+
+    <div class="progress-track" id="progressTrack">
+      <!-- pips added by JS -->
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div id="inputArea">
+      <div class="response-area">
+        <textarea id="studentInput" placeholder="Write your response here…" rows="3"></textarea>
+        <div class="response-toolbar">
+          <span class="response-hint" id="inputHint">Think it through before you type.</span>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" id="btnWrapUp" style="display:none" onclick="triggerWrapUp()">I'm done — wrap up</button>
+            <button class="btn btn-primary" id="btnSend" onclick="sendStudentMessage()">Send →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: REFLECT -->
+  <section id="sec3">
+    <div class="wrapup" id="wrapupContent">
+      <!-- populated by JS -->
+    </div>
+  </section>
+</div> <!-- /app -->
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+
+const LEVELS = [
+  {
+    id: 1,
+    code: "01",
+    name: "Analogical Close Reading",
+    color: "var(--l1)",
+    tag: "Foundational",
+    desc: "Select one element of the text and map its underlying structure onto something in another domain. The goal is not surface resemblance — it's identifying how things work and finding the same mechanism elsewhere.",
+  },
+  {
+    id: 2,
+    code: "02",
+    name: "Pattern Translation",
+    color: "var(--l2)",
+    tag: "Cross-domain",
+    desc: "Abstract a recurring pattern from the text and locate it operating in a completely different field. Strip it to its essential logic, then find where that same logic governs something entirely unrelated.",
+  },
+  {
+    id: 3,
+    code: "03",
+    name: "Reverse Analogising",
+    color: "var(--l3)",
+    tag: "Evaluative",
+    desc: "Build an analogy, then break it. Identify precisely where the comparison stops working — and use that failure point to reveal something about the text that the analogy itself could not.",
+  },
+  {
+    id: 4,
+    code: "04",
+    name: "Analogical Problem Solving",
+    color: "var(--l4)",
+    tag: "Transfer",
+    desc: "Identify a genuine interpretive problem in the text — an ambiguity, a critical crux, something that resists easy resolution. Then import a method or framework from another field to solve it.",
+  },
+  {
+    id: 5,
+    code: "05",
+    name: "Metaphorical Analysis",
+    color: "var(--l5)",
+    tag: "Implication tracing",
+    desc: "Choose a metaphor in the text and follow its logic systematically. If we take this metaphor seriously, what does it imply about every related element? Where does it guide understanding — and where does it mislead?",
+  },
+  {
+    id: 6,
+    code: "06",
+    name: "Conceptual Transfer",
+    color: "var(--l6)",
+    tag: "Generalisation",
+    desc: "Extract a concept or principle from the text — not a plot detail, but a generalisable rule — then apply it to new contexts outside literature to test its range and limits.",
+  },
+  {
+    id: 7,
+    code: "07",
+    name: "Analogical Chains",
+    color: "var(--l7)",
+    tag: "Advanced",
+    desc: "Start with one analogy. Take where you land and make a new analogy from there. Repeat three or four times. Then look at where you started and where you ended — the chain reveals something no single link could.",
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+
+let state = {
+  level: null,
+  textContext: '',
+  subject: '',
+  messages: [],   // {role: 'coach'|'student', text: string}
+  turn: 0,
+  wrappedUp: false,
+};
+
+// ── LEVEL GRID SETUP ──────────────────────────────────────────────────────
+
+function buildLevelGrid() {
+  const grid = document.getElementById('levelGrid');
+  LEVELS.forEach(lv => {
+    const card = document.createElement('div');
+    card.className = 'level-card';
+    card.style.setProperty('--level-color', lv.color);
+    card.dataset.id = lv.id;
+    card.innerHTML = `
+      <div class="card-num">${lv.code}</div>
+      <div class="card-name">${lv.name}</div>
+      <p class="card-desc">${lv.desc}</p>
+      <div class="card-tag">${lv.tag}</div>
+    `;
+    card.addEventListener('click', () => selectLevel(lv.id));
+    grid.appendChild(card);
+  });
+}
+
+function selectLevel(id) {
+  state.level = LEVELS.find(l => l.id === id);
+  document.querySelectorAll('.level-card').forEach(c => {
+    c.classList.toggle('selected', parseInt(c.dataset.id) === id);
+  });
+  document.getElementById('btnChooseLevel').disabled = false;
+}
+
+document.getElementById('btnChooseLevel').addEventListener('click', () => {
+  goToSection(1);
+  // Set active level colour CSS var
+  document.documentElement.style.setProperty('--active-level-color', state.level.color);
+  document.getElementById('badgeCode').textContent = state.level.code;
+  document.getElementById('badgeName').textContent = state.level.name;
+});
+
+// ── SECTION NAVIGATION ────────────────────────────────────────────────────
+
+function goToSection(n) {
+  [0,1,2,3].forEach(i => {
+    document.getElementById(`sec${i}`).classList.toggle('visible', i === n);
+    const ph = document.getElementById(`ph${i}`);
+    ph.classList.remove('active','done');
+    if (i < n) ph.classList.add('done');
+    else if (i === n) ph.classList.add('active');
+  });
+}
+
+// ── START BUILDING ────────────────────────────────────────────────────────
+
+document.getElementById('btnStartBuilding').addEventListener('click', () => {
+  const ctx = document.getElementById('textContext').value.trim();
+  const sub = document.getElementById('analogySubject').value.trim();
+  if (!ctx || !sub) { alert('Please fill in both fields.'); return; }
+  state.textContext = ctx;
+  state.subject = sub;
+  state.messages = [];
+  state.turn = 0;
+  state.wrappedUp = false;
+
+  document.getElementById('metaLevel').textContent = `${state.level.code} · ${state.level.name}`;
+  document.getElementById('metaSubject').textContent = sub;
+
+  goToSection(2);
+  buildProgressPips(6);
+  document.getElementById('messages').innerHTML = '';
+  sendCoachOpener();
+});
+
+// ── PROGRESS PIPS ─────────────────────────────────────────────────────────
+
+function buildProgressPips(n) {
+  const track = document.getElementById('progressTrack');
+  track.innerHTML = '<span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px">Progress</span>';
+  for (let i = 0; i < n; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'progress-pip';
+    pip.id = `pip${i}`;
+    track.appendChild(pip);
+  }
+}
+
+function markPip(n) {
+  const pip = document.getElementById(`pip${n}`);
+  if (pip) pip.classList.add('done');
+}
+
+// ── MESSAGES ──────────────────────────────────────────────────────────────
+
+function appendMessage(role, text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const isCoach = role === 'coach';
+  div.innerHTML = `
+    <div class="msg-avatar">${isCoach ? '◆' : 'You'}</div>
+    <div class="msg-body">
+      <div class="msg-label">${isCoach ? 'Coach' : 'You'}</div>
+      <div class="msg-text">${formatMessage(text)}</div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  state.messages.push({ role, text });
+}
+
+function formatMessage(text) {
+  // Convert **bold**, line breaks, and > blockquotes
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^> (.+)/gm, '<blockquote style="border-left:3px solid var(--border);margin:8px 0;padding:4px 12px;color:var(--muted);font-style:italic">$1</blockquote>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^/, '<p>').replace(/$/, '</p>');
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg coach';
+  div.id = 'typingMsg';
+  div.innerHTML = `
+    <div class="msg-avatar">◆</div>
+    <div class="msg-body">
+      <div class="msg-label">Coach</div>
+      <div class="typing-indicator"><span></span><span></span><span></span></div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function removeTyping() {
+  const t = document.getElementById('typingMsg');
+  if (t) t.remove();
+}
+
+// ── API CALL ──────────────────────────────────────────────────────────────
+
+async function callClaude(messages) {
+  const resp = await fetch("https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      system: buildSystemPrompt(),
+      messages: messages,
+    })
+  });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    return `⚠️ ${err?.error || `API error ${resp.status}`}`;
+  }
+  const data = await resp.json();
+  return data.content || "Sorry, I couldn't generate a response right now.";
+}
+
+function buildSystemPrompt() {
+  const lv = state.level;
+  const levelGuides = {
+    1: `You are coaching Analogical Close Reading. The student should:
+- Select a structural element (not a surface feature) in the text
+- Ask: "What is the underlying system or pattern at work here?"
+- Map it onto a parallel structure in another domain
+- Explain what parts align and what the alignment REVEALS about the text
+- NOT just say "X is like Y because both are [single adjective]"
+Your questioning sequence:
+1. Get them to name the element and ask them "what is the underlying structure or mechanism?" (push away from description)
+2. Once they identify structure, prompt them to find a parallel in a different domain
+3. Test the mapping: "What specifically corresponds to what? Map the parts."
+4. Push for insight: "What does this analogy let you see about the text that you couldn't see without it?"
+5. Ask them to identify where the analogy breaks down — this is important`,
+
+    2: `You are coaching Pattern Translation. The student should:
+- Abstract a PATTERN or principle from the text (not a single element, but a recurring structure)
+- Strip it to its abstract form: "what is the underlying logic?"
+- Find the same logic operating in a completely different field
+- Use the cross-domain parallel to deepen or reframe their reading
+Your questioning sequence:
+1. Get them to name a pattern (not a moment — a recurring structure)
+2. Ask them to abstract it: "Strip this to its most general form. What is the underlying principle?"
+3. Push for a genuinely different domain — if they stay in literature, push them to history, science, ecology, economics
+4. Ask: "What does seeing this pattern in [other domain] reveal about how it functions in the text?"
+5. Test: "Does this pattern hold across the whole text, or does it break at some point? What does the breakpoint tell you?"`,
+
+    3: `You are coaching Reverse Analogising. The student should:
+- First CONSTRUCT an analogy for their element
+- Then systematically TEST where the analogy holds
+- Identify the SPECIFIC POINT where it breaks down
+- Extract insight from the failure: "what does the breakdown reveal that the analogy couldn't?"
+Your questioning sequence:
+1. Get them to produce their own analogy (don't give them one)
+2. Ask: "Where does this hold? Map the specific correspondences."
+3. Push: "Now find where it stops working. What can your analogy NOT capture?"
+4. This is the key move: "What does the failure point reveal about the text that a better-fitting analogy might have hidden?"
+5. Ask them to revise or complicate their original interpretation based on what the breakdown taught them`,
+
+    4: `You are coaching Analogical Problem Solving. The student should:
+- Identify a genuine interpretive PROBLEM: an ambiguity, a critical crux, something that resists easy resolution
+- Find another field where people have solved a structurally similar problem
+- Import that method/framework
+- Test whether it resolves or reframes the interpretive problem
+Your questioning sequence:
+1. Get them to name a genuine problem in the text (not "what does it mean" but a specific crux)
+2. Help them articulate the structure of that problem: "What KIND of problem is this? Decision under uncertainty? Competing explanations? System failure?"
+3. Ask: "Where else have people had to solve this kind of problem? Psychology? Architecture? Biology? Economics?"
+4. Once they identify a framework, ask them to apply it step by step to the text
+5. Test: "Does this framework resolve the problem, or just reframe it? Which is more useful?"`,
+
+    5: `You are coaching Metaphorical Analysis. The student should:
+- Identify an EXTENDED metaphor (or central metaphor) in the text
+- Systematically trace its implications: "if we take this metaphor seriously, what does it say about every element of the situation?"
+- Identify where the metaphor guides understanding AND where it misleads
+- Consider alternative metaphors and what they would change
+Your questioning sequence:
+1. Get them to name a specific metaphor (not "there are lots of metaphors" — one specific one)
+2. Ask: "What does this metaphor imply? If [X] is [metaphor], what does that make [related element]?"
+3. Push for systematic exploration: "Keep following the logic. What else does this metaphor entail?"
+4. Test the ideology: "What does this metaphor make us assume? What does it hide or naturalise?"
+5. Counter: "What alternative metaphor could replace this? What would change in our reading if we used that one instead?"`,
+
+    6: `You are coaching Conceptual Transfer. The student should:
+- Extract a CONCEPT or principle from the text (a generalisable rule, not a specific plot detail)
+- Apply it to NEW contexts outside literature — test its range
+- Use the transfer to identify what is universal vs. specific about the text's concerns
+Your questioning sequence:
+1. Get them to name a concept (not "the theme of isolation" — the PRINCIPLE: "isolation functions as X when Y")
+2. Ask them to generalise: "State this as a rule or principle that could apply anywhere."
+3. Ask them to apply it to at least two very different contexts (different fields, historical periods, etc.)
+4. Test: "Does the principle hold in all those contexts? Where does it fail? What does that tell you about the text?"
+5. Push: "What does the breadth or narrowness of this principle's application tell you about what Ishiguro/the author is actually claiming?"`,
+
+    7: `You are coaching Analogical Chains. This is the most demanding level. The student should:
+- Start with one analogy
+- Take the TARGET of that analogy and make it the SOURCE of a new one
+- Repeat for at least 3-4 links
+- Then trace the direct relationship between the START and END — the emergent insight
+The emergent insight must be something NO SINGLE LINK could have revealed on its own.
+Your questioning sequence:
+1. Get them to produce their first analogy (A is like B)
+2. Ask: "Now take B. What is B like? Make a new analogy." (B is like C)
+3. Push for at least one more link. Each link must be structurally valid.
+4. Once the chain has 3-4 links, say: "Now look at A and D together — your starting point and ending point. What connects them directly? What does the chain as a whole reveal?"
+5. The key test: "Could you have seen this connection directly, or did you need the chain to get there?"
+6. Ask them to articulate the emergent insight in 2-3 sentences as if writing it into an essay.`
+  };
+
+  return `You are a coaching tool for Year 12 students learning to build sophisticated analogies. Your role is to guide the student through building their OWN analogy — you do NOT write the analogy for them.
+
+CRITICAL RULES:
+- Never produce the analogy yourself. Ask questions that help the student produce it.
+- If a student gives you a surface-level answer, gently push for depth without telling them the answer.
+- If they give you a strong answer, affirm specifically WHAT is strong, then push to the next step.
+- Keep responses focused: 2-4 sentences of coaching, then ONE clear question.
+- Do not give lengthy explanations. Trust the student to do the thinking.
+- You may give brief examples ONLY to illustrate what "structural" vs "surface" looks like — not to model the answer for their specific case.
+- Track progress: after each exchange, move toward the goal. Don't loop on the same step.
+
+CURRENT TASK:
+- Level: ${lv.code} · ${lv.name}
+- Text/subject: "${state.textContext}"
+- Element being analogised: "${state.subject}"
+
+LEVEL-SPECIFIC COACHING GUIDE:
+${levelGuides[lv.id]}
+
+TONE: Warm but intellectually demanding. You are a thoughtful mentor who respects student intelligence and refuses to give easy answers. Short, incisive questions are your main tool.`;
+}
+
+// ── OPENING MOVE ──────────────────────────────────────────────────────────
+
+async function sendCoachOpener() {
+  document.getElementById('btnSend').disabled = true;
+  showTyping();
+
+  const openingMessages = [{
+    role: 'user',
+    content: `I want to build an analogy. I'm working on: "${state.subject}" from "${state.textContext}". I've chosen: ${state.level.name}. Please give me my first coaching question to get started.`
+  }];
+
+  const reply = await callClaude(openingMessages);
+  removeTyping();
+  appendMessage('coach', reply);
+  markPip(0);
+  document.getElementById('btnSend').disabled = false;
+  document.getElementById('studentInput').focus();
+}
+
+// ── SEND STUDENT MESSAGE ──────────────────────────────────────────────────
+
+async function sendStudentMessage() {
+  const input = document.getElementById('studentInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendMessage('student', text);
+  input.value = '';
+  state.turn++;
+
+  // Show wrap-up button after turn 3
+  if (state.turn >= 3) {
+    document.getElementById('btnWrapUp').style.display = 'inline-block';
+    document.getElementById('inputHint').textContent = 'Keep going, or click "I\'m done" when you feel you\'ve built something solid.';
+  }
+
+  markPip(Math.min(state.turn, 5));
+
+  document.getElementById('btnSend').disabled = true;
+  showTyping();
+
+  // Build messages for API
+  const apiMessages = buildApiMessages();
+  const reply = await callClaude(apiMessages);
+  removeTyping();
+  appendMessage('coach', reply);
+  document.getElementById('btnSend').disabled = false;
+  input.focus();
+}
+
+function buildApiMessages() {
+  // Reconstruct conversation for API
+  const msgs = [];
+  // Add opener context
+  msgs.push({
+    role: 'user',
+    content: `I want to build an analogy. I'm working on: "${state.subject}" from "${state.textContext}". I've chosen: ${state.level.name}.`
+  });
+
+  // Add conversation history
+  state.messages.forEach(m => {
+    msgs.push({
+      role: m.role === 'coach' ? 'assistant' : 'user',
+      content: m.text
+    });
+  });
+
+  return msgs;
+}
+
+// ── WRAP UP ───────────────────────────────────────────────────────────────
+
+async function triggerWrapUp() {
+  if (state.wrappedUp) return;
+  state.wrappedUp = true;
+  document.getElementById('btnWrapUp').disabled = true;
+  document.getElementById('btnSend').disabled = true;
+  document.getElementById('inputArea').style.opacity = '0.4';
+  document.getElementById('inputArea').style.pointerEvents = 'none';
+
+  showTyping();
+
+  // Ask for a synthesis summary
+  const summaryMessages = buildApiMessages();
+  summaryMessages.push({
+    role: 'user',
+    content: `I think I'm done. Can you give me a brief, focused summary of: (1) the core analogy I built, (2) the strongest structural insight it reveals, and (3) one thing I should push further if I were to use this in formal writing? Be concise — this is for my notes.`
+  });
+
+  const summary = await callClaude(summaryMessages);
+  removeTyping();
+  appendMessage('coach', summary);
+
+  setTimeout(() => buildReflectionPanel(summary), 400);
+}
+
+function buildReflectionPanel(summary) {
+  goToSection(3);
+  document.getElementById('ph2').classList.remove('active');
+  document.getElementById('ph2').classList.add('done');
+  document.getElementById('ph3').classList.add('active');
+
+  const checks = [
+    "My analogy maps structural patterns, not just surface features",
+    "I can explain specifically what corresponds to what",
+    "My analogy reveals something about the text I couldn't see without it",
+    "I've identified where the analogy breaks down",
+    "I know how I'd integrate this into formal writing",
+    "I pushed beyond my first obvious answer",
+  ];
+
+  const studentAnalogy = state.messages
+    .filter(m => m.role === 'student')
+    .map(m => m.text)
+    .join('\n\n');
+
+  const panel = document.getElementById('wrapupContent');
+  panel.innerHTML = `
+    <h3>Reflection</h3>
+
+    <div class="summary-block">
+      <label>Your element</label>
+      <p>${state.level.code} · ${state.level.name} · ${state.subject} (from ${state.textContext})</p>
+    </div>
+
+    <div class="summary-block">
+      <label>Coach's synthesis</label>
+      <p>${formatMessage(summary)}</p>
+    </div>
+
+    <div class="summary-block">
+      <label>Your thinking (full draft)</label>
+      <p style="font-size:13px;color:var(--muted)">${studentAnalogy.replace(/\n/g,'<br>')}</p>
+    </div>
+
+    <h3 style="margin-top:24px;margin-bottom:10px;font-size:1rem">Self-check: how's your analogy?</h3>
+    <div class="reflection-grid" id="refGrid">
+      ${checks.map((c, i) => `
+        <label class="reflection-item" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="reflection-check" id="rc${i}">✓</div>
+          <span class="reflection-text">${c}</span>
+        </label>
+      `).join('')}
+    </div>
+
+    <div class="btn-row" style="margin-top:24px">
+      <button class="btn btn-secondary" onclick="startAgain()">Build another analogy</button>
+      <button class="btn btn-secondary" onclick="tryHigherLevel()">Try the next level</button>
+    </div>
+  `;
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+function startAgain() {
+  state = { level: null, textContext: '', subject: '', messages: [], turn: 0, wrappedUp: false };
+  document.documentElement.style.setProperty('--active-level-color', 'var(--gold)');
+  document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('btnChooseLevel').disabled = true;
+  document.getElementById('textContext').value = '';
+  document.getElementById('analogySubject').value = '';
+  goToSection(0);
+}
+
+function tryHigherLevel() {
+  const nextId = Math.min(state.level.id + 1, 7);
+  state.level = null;
+  state.messages = [];
+  state.turn = 0;
+  state.wrappedUp = false;
+  document.documentElement.style.setProperty('--active-level-color', 'var(--gold)');
+  document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('btnChooseLevel').disabled = true;
+  goToSection(0);
+  // Pre-select next level after a tick
+  setTimeout(() => {
+    selectLevel(nextId);
+    document.querySelectorAll('.level-card').forEach(c => {
+      if (parseInt(c.dataset.id) === nextId) c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }, 100);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+
+buildLevelGrid();
+</script>
+</body>
+</html>
