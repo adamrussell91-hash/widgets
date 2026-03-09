@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLARITY QUEST</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #07111a;
+  --bg2:    #0b1a26;
+  --bg3:    #0f2030;
+  --panel:  #0a1820;
+  --bdr:    #1a3a55;
+  --bdr2:   #2a5070;
+  --green:  #00e87a;
+  --gdim:   #007a40;
+  --gglow:  rgba(0,232,122,0.12);
+  --amber:  #f5a623;
+  --adim:   #7a5010;
+  --aglow:  rgba(245,166,35,0.12);
+  --red:    #ff4f5e;
+  --blue:   #4fc3f7;
+  --white:  #ddeeff;
+  --dim:    #3a6080;
+  --dimmer: #1e3a50;
+  --gold:   #ffd060;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--white);font-family:'Share Tech Mono',monospace;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(26,58,85,0.2) 1px,transparent 1px),linear-gradient(90deg,rgba(26,58,85,0.2) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);pointer-events:none;z-index:9999;}
+
+.app{max-width:760px;margin:0 auto;padding:20px 18px 80px;position:relative;z-index:1;}
+
+/* HEADER */
+.header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--bdr);margin-bottom:20px;}
+.eyebrow{font-size:9px;letter-spacing:.4em;color:var(--green);text-shadow:0 0 8px var(--gdim);margin-bottom:8px;}
+.game-title{font-family:'DM Serif Display',serif;font-size:50px;font-style:italic;line-height:1;}
+.game-title span{color:var(--green);text-shadow:0 0 20px var(--green);}
+.tagline{font-size:10px;color:var(--dim);letter-spacing:.15em;margin-top:6px;}
+
+/* HUD */
+.hud{display:grid;grid-template-columns:1fr 2fr 1fr;gap:10px;margin-bottom:12px;}
+.hud-box{background:var(--panel);border:1px solid var(--bdr);padding:10px 14px;}
+.hud-lbl{font-size:8px;letter-spacing:.25em;color:var(--dim);margin-bottom:3px;text-transform:uppercase;}
+.hud-val{font-size:20px;color:var(--green);text-shadow:0 0 6px var(--gdim);line-height:1;}
+.rank-box{text-align:center;}
+.rank-name{font-family:'DM Serif Display',serif;font-size:17px;color:var(--amber);text-shadow:0 0 8px var(--adim);line-height:1;margin-bottom:1px;}
+.rank-lv{font-size:9px;color:var(--dim);letter-spacing:.2em;}
+.xp-outer{height:6px;background:var(--bg3);border:1px solid var(--bdr);margin-top:5px;overflow:hidden;}
+.xp-inner{height:100%;background:var(--green);box-shadow:0 0 6px var(--green);transition:width .5s cubic-bezier(.4,0,.2,1);}
+.xp-sub{font-size:9px;color:var(--dim);margin-top:3px;}
+
+/* STREAK */
+.streak-row{display:flex;align-items:center;gap:8px;padding:7px 14px;background:var(--panel);border:1px solid var(--bdr);margin-bottom:16px;font-size:10px;color:var(--dim);}
+.s-dot{width:10px;height:10px;border-radius:50%;background:var(--dimmer);border:1px solid var(--bdr2);transition:all .25s;}
+.s-dot.lit{background:var(--amber);border-color:var(--amber);box-shadow:0 0 5px var(--amber);}
+.streak-msg{margin-left:auto;font-size:10px;color:var(--dim);}
+
+/* SCREENS */
+.screen{display:none;} .screen.active{display:block;}
+
+/* INTRO */
+.intro-wrap{background:var(--panel);border:1px solid var(--bdr);padding:36px;}
+.intro-wrap h2{font-family:'DM Serif Display',serif;font-size:26px;font-style:italic;margin-bottom:12px;}
+.intro-wrap p{font-size:13px;line-height:1.8;color:#6a9ab8;margin-bottom:10px;max-width:520px;}
+.level-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:22px 0;}
+.lp{background:var(--bg3);border:1px solid var(--bdr);padding:9px 6px;text-align:center;}
+.lp.locked{opacity:.3;}
+.lp-n{font-size:9px;color:var(--dim);margin-bottom:3px;letter-spacing:.1em;}
+.lp-name{font-family:'DM Serif Display',serif;font-style:italic;font-size:13px;color:var(--amber);}
+.lp.locked .lp-name{color:var(--dim);}
+.btn-start{background:var(--green);color:var(--bg);border:none;padding:14px 44px;font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.15em;cursor:pointer;text-transform:uppercase;transition:all .15s;box-shadow:0 0 16px var(--gglow);}
+.btn-start:hover{background:#00ff8c;box-shadow:0 0 28px var(--green);}
+
+/* LOADING */
+.loading-screen{display:none;position:fixed;inset:0;background:rgba(7,17,26,.92);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading-screen.show{display:flex;}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--bdr2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:11px;letter-spacing:.3em;color:var(--green);text-shadow:0 0 8px var(--gdim);}
+
+/* CHALLENGE SHELL */
+.ch-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.ch-meta{font-size:9px;letter-spacing:.2em;color:var(--dim);}
+.ch-lv{color:var(--amber);margin-right:6px;}
+.ch-type{color:var(--blue);}
+.ch-counter{font-size:10px;color:var(--dim);}
+
+.phase-bar{display:flex;gap:0;margin-bottom:16px;}
+.ph{flex:1;padding:7px 0;text-align:center;font-size:8px;letter-spacing:.2em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--bdr);color:var(--dim);border-right:none;transition:all .2s;}
+.ph:last-child{border-right:1px solid var(--bdr);}
+.ph.active{background:var(--bg2);border-color:var(--amber);color:var(--amber);}
+.ph.done{border-color:var(--gdim);color:var(--green);}
+
+/* SENTENCE CARD */
+.sentence-card{background:var(--panel);border:1px solid var(--bdr2);border-top:3px solid var(--amber);padding:28px 28px 20px;margin-bottom:18px;position:relative;}
+.sentence-card::before{content:'SENTENCE';position:absolute;top:0;left:20px;font-size:8px;letter-spacing:.25em;color:var(--amber);background:var(--panel);padding:0 6px;transform:translateY(-50%);}
+.the-sentence{font-family:'Lora',serif;font-size:19px;line-height:1.75;color:var(--white);}
+.the-sentence .hl{color:var(--amber);border-bottom:2px solid rgba(245,166,35,.4);font-style:italic;}
+
+/* TASK BOX */
+.task-box{background:var(--bg3);border:1px solid var(--bdr);border-left:3px solid var(--blue);padding:12px 16px;margin-bottom:16px;}
+.task-lbl{font-size:8px;letter-spacing:.25em;color:var(--blue);margin-bottom:5px;text-transform:uppercase;}
+.task-text{font-family:'Lora',serif;font-style:italic;font-size:14px;color:#6a9ab8;line-height:1.6;}
+
+/* SPOT OPTIONS */
+.spot-options{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+.spot-btn{background:var(--bg3);border:1px solid var(--bdr2);color:var(--white);padding:10px 18px;cursor:pointer;font-family:'Lora',serif;font-size:15px;font-style:italic;transition:all .15s;}
+.spot-btn:hover{border-color:var(--amber);background:var(--bg2);}
+.spot-btn.correct{border-color:var(--green);background:rgba(0,232,122,.1);color:var(--green);}
+.spot-btn.wrong{border-color:var(--red);background:rgba(255,79,94,.08);color:var(--red);}
+.spot-btn:disabled{cursor:not-allowed;}
+
+/* WHY OPTIONS */
+.why-options{display:flex;flex-direction:column;gap:8px;}
+.why-btn{background:var(--bg3);border:1px solid var(--bdr2);color:#8ab8d8;padding:12px 16px;cursor:pointer;font-family:'Lora',serif;font-size:14px;line-height:1.5;text-align:left;transition:all .15s;}
+.why-btn:hover{border-color:var(--amber);background:var(--bg2);color:var(--white);}
+.why-btn.correct{border-color:var(--green);background:rgba(0,232,122,.08);color:var(--green);}
+.why-btn.wrong{border-color:var(--red);background:rgba(255,79,94,.06);color:var(--red);}
+.why-btn:disabled{cursor:not-allowed;}
+
+/* JUDGE */
+.judge-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.judge-card{background:var(--bg3);border:1px solid var(--bdr2);padding:16px;cursor:pointer;transition:all .15s;}
+.judge-card:hover{border-color:var(--amber);background:var(--bg2);}
+.judge-card.correct{border-color:var(--green);background:rgba(0,232,122,.07);}
+.judge-card.wrong{border-color:var(--red);background:rgba(255,79,94,.06);}
+.judge-lbl{font-size:8px;letter-spacing:.2em;color:var(--dim);margin-bottom:8px;text-transform:uppercase;}
+.judge-text{font-family:'Lora',serif;font-size:14px;line-height:1.6;color:#8ab8d8;}
+
+/* BUILD */
+.build-stem{font-family:'Lora',serif;font-size:16px;line-height:1.75;color:var(--white);margin-bottom:14px;background:var(--bg3);border:1px solid var(--bdr);padding:16px 20px;}
+.build-blank{display:inline-block;min-width:100px;border-bottom:2px solid var(--amber);color:var(--amber);font-style:italic;text-align:center;padding:0 4px;}
+.build-options{display:flex;flex-direction:column;gap:8px;}
+.build-btn{background:var(--bg3);border:1px solid var(--bdr2);color:#8ab8d8;padding:11px 16px;cursor:pointer;font-family:'Lora',serif;font-size:14px;line-height:1.5;text-align:left;transition:all .15s;}
+.build-btn:hover{border-color:var(--amber);background:var(--bg2);color:var(--white);}
+.build-btn.correct{border-color:var(--green);background:rgba(0,232,122,.08);color:var(--green);}
+.build-btn.wrong{border-color:var(--red);background:rgba(255,79,94,.06);color:var(--red);}
+.build-btn:disabled{cursor:not-allowed;}
+
+/* COMPLETE / REWRITE */
+.stem-box{font-family:'Lora',serif;font-size:16px;line-height:1.75;color:var(--white);background:var(--bg3);border:1px solid var(--bdr);padding:16px 20px;margin-bottom:14px;}
+.stem-fixed{color:#6a9ab8;}
+.write-input{width:100%;min-height:100px;background:var(--bg3);border:1px solid var(--bdr2);color:var(--white);font-family:'Lora',serif;font-size:15px;line-height:1.7;padding:14px;resize:vertical;outline:none;transition:border-color .2s;}
+.write-input:focus{border-color:var(--amber);box-shadow:0 0 0 1px var(--adim);}
+.write-input::placeholder{color:var(--dimmer);font-style:italic;}
+
+/* FEEDBACK */
+.feedback-panel{background:var(--bg2);border:1px solid var(--bdr);padding:18px;margin-top:14px;display:none;}
+.feedback-panel.show{display:block;}
+.fb-result{font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
+.fb-result.correct{color:var(--green);text-shadow:0 0 6px var(--gdim);}
+.fb-result.wrong{color:var(--red);}
+.fb-result.info{color:var(--amber);}
+
+.model-box{background:var(--bg3);border:1px solid var(--bdr);border-left:3px solid var(--green);padding:14px 16px;margin-bottom:10px;}
+.model-lbl{font-size:8px;letter-spacing:.25em;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.model-text{font-family:'Lora',serif;font-size:15px;line-height:1.7;color:var(--white);}
+
+.why-box{background:var(--bg3);border:1px solid var(--bdr);border-left:3px solid var(--blue);padding:12px 16px;margin-bottom:10px;}
+.why-lbl{font-size:8px;letter-spacing:.25em;color:var(--blue);margin-bottom:5px;text-transform:uppercase;}
+.why-text{font-family:'Lora',serif;font-style:italic;font-size:13px;color:#5a8aaa;line-height:1.65;}
+
+/* AI FEEDBACK BOX */
+.ai-feedback-box{background:var(--bg3);border:1px solid var(--bdr);border-left:3px solid var(--amber);padding:14px 16px;margin-bottom:10px;}
+.ai-fb-lbl{font-size:8px;letter-spacing:.25em;color:var(--amber);margin-bottom:6px;text-transform:uppercase;}
+.ai-fb-text{font-family:'Lora',serif;font-size:14px;line-height:1.7;color:#c8d8e8;}
+
+/* SELF SCORE */
+.self-score{margin-top:14px;display:none;}
+.self-score.show{display:block;}
+.ss-q{font-size:12px;color:var(--white);margin-bottom:10px;text-align:center;letter-spacing:.05em;}
+.ss-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.ss-btn{background:var(--bg3);border:1px solid var(--bdr2);padding:14px 8px;cursor:pointer;text-align:center;font-family:'Share Tech Mono',monospace;transition:all .15s;}
+.ss-btn:hover{border-color:var(--amber);background:var(--bg2);}
+.ss-btn.sel-1{border-color:var(--red);background:rgba(255,79,94,.08);}
+.ss-btn.sel-2{border-color:var(--amber);background:rgba(245,166,35,.08);}
+.ss-btn.sel-3{border-color:var(--green);background:rgba(0,232,122,.08);}
+.ss-pts{font-size:22px;display:block;margin-bottom:4px;}
+.ss-lbl{font-size:9px;letter-spacing:.1em;color:var(--dim);}
+.ss-desc{font-size:11px;color:#5a8aaa;margin-top:5px;font-family:'Lora',serif;font-style:italic;line-height:1.3;}
+
+/* BUTTONS */
+.btn-submit{background:var(--amber);color:var(--bg);border:none;padding:11px 28px;font-family:'Share Tech Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.12em;cursor:pointer;text-transform:uppercase;transition:all .15s;margin-top:10px;}
+.btn-submit:hover{background:#ffbe4a;box-shadow:0 0 12px var(--aglow);}
+.btn-submit:disabled{opacity:.35;cursor:not-allowed;}
+.btn-next{width:100%;background:var(--bg3);border:1px solid var(--green);color:var(--green);padding:13px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.2em;cursor:pointer;text-transform:uppercase;transition:all .2s;margin-top:12px;display:none;}
+.btn-next.show{display:block;}
+.btn-next:hover{background:var(--green);color:var(--bg);box-shadow:0 0 16px var(--gglow);}
+
+/* LEVEL UP */
+.lu-overlay{display:none;position:fixed;inset:0;background:rgba(7,17,26,.96);z-index:1000;align-items:center;justify-content:center;flex-direction:column;text-align:center;}
+.lu-overlay.show{display:flex;}
+.lu-inner{animation:pop .45s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes pop{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
+.lu-eyebrow{font-size:10px;letter-spacing:.4em;color:var(--amber);text-shadow:0 0 8px var(--adim);margin-bottom:10px;text-transform:uppercase;}
+.lu-name{font-family:'DM Serif Display',serif;font-size:58px;font-style:italic;color:var(--gold);text-shadow:0 0 36px var(--gold);margin-bottom:6px;line-height:1;}
+.lu-desc{font-family:'Lora',serif;font-style:italic;font-size:17px;color:#6a9ab8;margin-bottom:16px;max-width:380px;}
+.lu-task{background:rgba(245,166,35,.1);border:1px solid var(--amber);padding:12px 28px;margin-bottom:24px;font-size:12px;color:var(--amber);max-width:400px;}
+.btn-continue{background:transparent;border:1px solid var(--green);color:var(--green);padding:12px 36px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.2em;cursor:pointer;text-transform:uppercase;transition:all .15s;}
+.btn-continue:hover{background:var(--green);color:var(--bg);}
+
+/* XP FLASH */
+.xp-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-family:'Share Tech Mono',monospace;font-size:44px;color:var(--green);text-shadow:0 0 24px var(--green);pointer-events:none;z-index:9998;opacity:0;transition:all .35s cubic-bezier(.175,.885,.32,1.275);}
+.xp-flash.show{transform:translate(-50%,-50%) scale(1);opacity:1;}
+.xp-flash.hide{transform:translate(-50%,-80%) scale(.8);opacity:0;}
+
+/* VICTORY */
+.v-wrap{background:var(--panel);border:1px solid var(--bdr);padding:44px;text-align:center;}
+.v-title{font-family:'DM Serif Display',serif;font-size:44px;font-style:italic;color:var(--gold);text-shadow:0 0 28px var(--gold);margin-bottom:6px;}
+.v-sub{font-size:10px;letter-spacing:.3em;color:var(--dim);margin-bottom:28px;}
+.v-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;}
+.v-stat{background:var(--bg3);border:1px solid var(--bdr);padding:14px;}
+.v-num{font-size:30px;color:var(--green);text-shadow:0 0 8px var(--gdim);margin-bottom:3px;}
+.v-lbl{font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;}
+.btn-replay{background:var(--green);color:var(--bg);border:none;padding:13px 36px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.15em;cursor:pointer;text-transform:uppercase;transition:all .15s;}
+.btn-replay:hover{box-shadow:0 0 18px var(--green);}
+
+@keyframes slide-up{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.slide-up{animation:slide-up .28s ease both;}
+
+@media(max-width:580px){
+  .hud{grid-template-columns:1fr 1fr;} .rank-box{grid-column:1/-1;}
+  .judge-pair{grid-template-columns:1fr;} .ss-btns{grid-template-columns:1fr;}
+  .v-stats{grid-template-columns:1fr;} .level-grid{grid-template-columns:repeat(2,1fr);}
+  .game-title{font-size:34px;}
+}
+</style>
+</head>
+<body>
+
+<div class="xp-flash" id="xpFlash"></div>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">GENERATING CHALLENGE…</div>
+</div>
+
+<div class="lu-overlay" id="luOverlay">
+  <div class="lu-inner">
+    <div class="lu-eyebrow">▲ Rank Up ▲</div>
+    <div class="lu-name" id="luName">—</div>
+    <div class="lu-desc" id="luDesc">—</div>
+    <div class="lu-task" id="luTask"></div>
+    <button class="btn-continue" onclick="closeLU()">▶ Continue</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="header">
+    <div class="eyebrow">▸ HSC Advanced English · Language Training</div>
+    <h1 class="game-title">Clarity <span>Quest</span></h1>
+    <div class="tagline">TRAIN YOUR EYE · SHARPEN YOUR LANGUAGE · EARN YOUR RANK</div>
+  </div>
+
+  <div class="hud" id="hud" style="display:none">
+    <div class="hud-box"><div class="hud-lbl">▸ Score</div><div class="hud-val" id="scoreDisp">0</div></div>
+    <div class="hud-box rank-box">
+      <div class="hud-lbl">▸ Rank</div>
+      <div class="rank-name" id="rankName">Spotter</div>
+      <div class="rank-lv" id="rankLv">LEVEL 1</div>
+      <div class="xp-outer"><div class="xp-inner" id="xpBar" style="width:0%"></div></div>
+      <div class="xp-sub" id="xpSub">0 XP to next rank</div>
+    </div>
+    <div class="hud-box"><div class="hud-lbl">▸ XP</div><div class="hud-val" id="xpDisp">0</div></div>
+  </div>
+  <div class="streak-row" id="streakRow" style="display:none">
+    <span style="font-size:9px;letter-spacing:.2em;color:var(--amber)">STREAK</span>
+    <div id="streakDots" style="display:flex;gap:4px;"></div>
+    <span class="streak-msg" id="streakMsg"></span>
+  </div>
+
+  <!-- INTRO -->
+  <div class="screen active" id="introScreen">
+    <div class="intro-wrap">
+      <h2>Welcome, Analyst.</h2>
+      <p>Abstract language is the most common reason HSC English responses fall short of Band 6. Words like <em>exploration</em>, <em>complexity</em>, <em>significance</em> feel analytical. They aren't.</p>
+      <p>This game starts with identification and builds to full rewriting — with AI-powered feedback on your actual sentences. Every challenge is freshly generated. No two sessions are the same.</p>
+      <div class="level-grid">
+        <div class="lp"><div class="lp-n">LV 1</div><div class="lp-name">Spotter</div></div>
+        <div class="lp"><div class="lp-n">LV 2</div><div class="lp-name">Classifier</div></div>
+        <div class="lp"><div class="lp-n">LV 3</div><div class="lp-name">Judge</div></div>
+        <div class="lp locked"><div class="lp-n">LV 4</div><div class="lp-name">Builder</div></div>
+        <div class="lp locked"><div class="lp-n">LV 5</div><div class="lp-name">Completer</div></div>
+        <div class="lp locked"><div class="lp-n">LV 6</div><div class="lp-name">Analyst</div></div>
+        <div class="lp locked"><div class="lp-n">LV 7</div><div class="lp-name">Master</div></div>
+        <div class="lp locked"><div class="lp-n">LV ?</div><div class="lp-name">???</div></div>
+      </div>
+      <button class="btn-start" onclick="startGame()">▶ Begin Training</button>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="screen" id="challengeScreen">
+    <div class="ch-header">
+      <div class="ch-meta"><span class="ch-lv" id="chLvTag">LV 1</span><span class="ch-type" id="chTypeTag">SPOTTER</span></div>
+      <div class="ch-counter" id="chCounter">Q 1 of 3</div>
+    </div>
+    <div class="phase-bar">
+      <div class="ph active" id="ph1">01 · Read</div>
+      <div class="ph" id="ph2">02 · Task</div>
+      <div class="ph" id="ph3">03 · Feedback</div>
+    </div>
+    <div class="sentence-card slide-up" id="sentenceCard">
+      <div class="the-sentence" id="theSentence"></div>
+    </div>
+    <div class="task-box">
+      <div class="task-lbl">▸ Task</div>
+      <div class="task-text" id="taskText"></div>
+    </div>
+    <div id="taskArea"></div>
+    <div class="feedback-panel" id="feedbackPanel">
+      <div class="fb-result" id="fbResult"></div>
+      <div class="ai-feedback-box" id="aiFeedbackBox" style="display:none">
+        <div class="ai-fb-lbl">▸ Feedback on your rewrite</div>
+        <div class="ai-fb-text" id="aiFeedbackText"></div>
+      </div>
+      <div class="model-box">
+        <div class="model-lbl">▸ Model answer</div>
+        <div class="model-text" id="modelText"></div>
+      </div>
+      <div class="why-box">
+        <div class="why-lbl">▸ Why this works</div>
+        <div class="why-text" id="whyText"></div>
+      </div>
+    </div>
+    <div class="self-score" id="selfScore">
+      <div class="ss-q">Comparing your rewrite to the model — how did you do?</div>
+      <div class="ss-btns">
+        <div class="ss-btn" id="ssBtn1" onclick="selfScore(1)"><span class="ss-pts" style="color:var(--red)">+5</span><div class="ss-lbl">CLOSE MISS</div><div class="ss-desc">Tried but stayed abstract</div></div>
+        <div class="ss-btn" id="ssBtn2" onclick="selfScore(2)"><span class="ss-pts" style="color:var(--amber)">+15</span><div class="ss-lbl">SOLID</div><div class="ss-desc">Added real specificity</div></div>
+        <div class="ss-btn" id="ssBtn3" onclick="selfScore(3)"><span class="ss-pts" style="color:var(--green)">+30</span><div class="ss-lbl">PRECISION HIT</div><div class="ss-desc">Named moment, technique, or tension exactly</div></div>
+      </div>
+    </div>
+    <button class="btn-next" id="btnNext" onclick="nextChallenge()">▶ Next Challenge</button>
+  </div>
+
+  <!-- VICTORY -->
+  <div class="screen" id="victoryScreen">
+    <div class="v-wrap">
+      <div class="v-title">Mission Complete</div>
+      <div class="v-sub">TRAINING SESSION CONCLUDED</div>
+      <div class="v-stats">
+        <div class="v-stat"><div class="v-num" id="vScore">0</div><div class="v-lbl">Score</div></div>
+        <div class="v-stat"><div class="v-num" id="vXP">0</div><div class="v-lbl">XP Earned</div></div>
+        <div class="v-stat"><div class="v-num" id="vRank">—</div><div class="v-lbl">Final Rank</div></div>
+      </div>
+      <button class="btn-replay" onclick="replayGame()">▶ Train Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+const PROXY = 'https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai';
+const CHALLENGES_PER_LEVEL = 3;
+
+// ═══════════════════════════════════════
+// LEVELS
+// ═══════════════════════════════════════
+const LEVELS = [
+  { num:1, name:'Spotter',    xpToNext:15, taskType:'spot',
+    desc:'Identify the abstract term.',
+    taskUnlock:'Find the word doing the least analytical work.',
+    luTask:'Task: tap the vague word from four options. Wrong options will be plausible — read carefully.' },
+  { num:2, name:'Classifier', xpToNext:25, taskType:'why',
+    desc:'Name the problem, not just the word.',
+    taskUnlock:'Four reasons — only one is correct.',
+    luTask:'Task: the abstract term is highlighted. Pick the best reason it\'s vague.' },
+  { num:3, name:'Judge',      xpToNext:35, taskType:'judge',
+    desc:'Tell the precise from the almost-precise.',
+    taskUnlock:'Two rewrites — similar length. One is genuinely better.',
+    luTask:'Task: both options are plausible. Pick the rewrite that earns its claim.' },
+  { num:4, name:'Builder',    xpToNext:45, taskType:'build',
+    desc:'Choose the specific filler.',
+    taskUnlock:'Gap-fill with four similar-length options.',
+    luTask:'Task: complete the sentence. Options are similar length — focus on specificity, not size.' },
+  { num:5, name:'Completer',  xpToNext:60, taskType:'complete',
+    desc:'Stem given. You write the ending.',
+    taskUnlock:'First open writing task. AI will respond to what you write.',
+    luTask:'Task: a sentence stem is given. Complete it with the most specific ending you can write.' },
+  { num:6, name:'Analyst',    xpToNext:80, taskType:'rewrite',
+    desc:'Full rewrite. AI evaluates your thinking.',
+    taskUnlock:'Write the whole sentence. AI gives specific criteria-based feedback.',
+    luTask:'Task: full rewrite. AI will tell you exactly what is and isn\'t working.' },
+  { num:7, name:'Master',     xpToNext:999, taskType:'rewrite',
+    desc:'Near-miss sentences. The hardest to catch.',
+    taskUnlock:'Sentences that look almost good. AI evaluates against Band 6 criteria.',
+    luTask:'Task: near-miss sentences. These look sophisticated. Find what they\'re still hiding.' },
+];
+
+// ═══════════════════════════════════════
+// PROMPTS
+// ═══════════════════════════════════════
+
+const SYSTEM_BASE = `You are an expert HSC Advanced English teacher. Your job is to help Year 12 students identify and fix abstract language in analytical writing. 
+
+Key principles:
+- A nominalisation is a verb frozen as a noun (exploration, representation, construction, reflection, examination, portrayal, depiction, development, transformation, rejection, disruption)
+- An abstract evaluative is a claim with no criteria (complexity, significance, importance, identity, values, society, truth, humanity, ambiguity, tension, theme, perspective, growth, change)
+- Vague causal verbs: reflects, represents, explores, demonstrates, shows (when used without specifying mechanism)
+- Good analytical language: names a specific technique, identifies a specific moment or contradiction, makes an arguable claim, specifies reader effect
+- Bad analytical language: labels without demonstrating, substitutes one abstraction for another, adds adjectives to abstract nouns
+- Never reference specific texts, authors, characters, or works. All sentences must be generic HSC English sentences.
+- Always respond in valid JSON only. No markdown, no preamble, no explanation outside the JSON.`;
+
+function promptForLevel(level) {
+  const taskType = LEVELS[level-1].taskType;
+
+  if (taskType === 'spot') {
+    return `Generate a HSC English analytical sentence challenge for LEVEL 1 (Spotter task).
+
+Return JSON in exactly this format:
+{
+  "sentence": "A sentence with one clearly abstract term. Do NOT use <t> tags.",
+  "targetWord": "the single abstract word that is doing the least analytical work",
+  "options": ["word1", "word2", "word3", "word4"],
+  "correctIndex": 0,
+  "model": "One sentence explaining what the target word hides.",
+  "why": "One sentence explaining the general principle (nominalisation / abstract evaluative / vague causal)."
+}
+
+Rules for options:
+- correctIndex must match the position of targetWord in options
+- All 4 options must be actual words from the sentence
+- Wrong options must be plausible — real words from the sentence that a student might think are vague
+- At least one wrong option should be another abstract-looking word (e.g. 'demonstrates', 'conveys', 'meaning')
+- Options should be roughly similar length
+- Vary which index is correct (not always 0 or 1)`;
+  }
+
+  if (taskType === 'why') {
+    return `Generate a HSC English analytical sentence challenge for LEVEL 2 (Classifier task).
+
+Return JSON in exactly this format:
+{
+  "sentence": "A sentence with one abstract term wrapped in <t> tags like <t>exploration</t>.",
+  "targetWord": "the abstract word inside the tags",
+  "reasons": ["reason A", "reason B", "reason C", "reason D"],
+  "correctIndex": 2,
+  "model": "One sentence explaining precisely why this word is vague and what it hides.",
+  "why": "One sentence on the general analytical principle students should take away."
+}
+
+Rules for reasons:
+- All 4 reasons must sound plausible — a thoughtful student should have to think carefully
+- The correct reason must identify the specific linguistic problem: nominalisation / abstract evaluative / hidden mechanism / missing criteria
+- Wrong reasons should be things students commonly believe: 'it's a cliché', 'it's too long', 'it's too emotional', 'it's a grammar error', 'it's too vague generally' — but framed specifically and plausibly
+- Vary which index is correct
+- Reasons should be similar in length — no reason should be noticeably longer than others`;
+  }
+
+  if (taskType === 'judge') {
+    return `Generate a HSC English analytical sentence challenge for LEVEL 3 (Judge task).
+
+Return JSON in exactly this format:
+{
+  "sentence": "The original abstract sentence students will see.",
+  "targetTerm": "the vague term(s) in the original",
+  "optionA": "A rewrite that looks sophisticated but still contains abstraction or adds adjectives without adding content.",
+  "optionB": "A genuinely specific rewrite that names a technique, moment, or contradiction.",
+  "correctOption": "B",
+  "model": "One or two sentences explaining what makes the correct option better.",
+  "why": "One sentence on the analytical principle."
+}
+
+CRITICAL rules:
+- Both options must be SIMILAR LENGTH — this is essential. The wrong option must not be noticeably shorter.
+- The wrong option should sound impressive — use sophisticated vocabulary, complex syntax, but still be abstract
+- The wrong option should add adjectives to abstract nouns OR substitute one abstraction for another
+- correctOption can be A or B — vary it
+- The correct option names something specific: a technique, a contradiction, a reader effect, a structural feature`;
+  }
+
+  if (taskType === 'build') {
+    return `Generate a HSC English analytical sentence challenge for LEVEL 4 (Builder task).
+
+Return JSON in exactly this format:
+{
+  "sentenceBefore": "The first part of the sentence, ending just before the blank.",
+  "sentenceAfter": ", [rest of sentence after blank].",
+  "blankHint": "three-word description of what goes in the blank",
+  "options": ["option A", "option B", "option C", "option D"],
+  "correctIndex": 1,
+  "model": "The complete sentence with the correct option filled in.",
+  "why": "One sentence explaining why the correct filler is more specific."
+}
+
+CRITICAL rules for options:
+- ALL FOUR OPTIONS must be similar length — within 5 words of each other
+- Wrong options must not be obviously bad — they should be plausible completions that a student might choose
+- Wrong options should fail by: staying abstract, adding adjectives to abstract nouns, using a vague causal relationship
+- The correct option should: name a specific technique OR a specific contradiction OR a specific reader effect
+- Vary which index is correct`;
+  }
+
+  if (taskType === 'complete') {
+    return `Generate a HSC English analytical sentence challenge for LEVEL 5 (Completer task).
+
+Return JSON in exactly this format:
+{
+  "stem": "A sentence stem that begins a specific analytical claim, ending with 'because' or 'by' or 'through' or 'when' — a word that forces the student to complete a mechanism.",
+  "placeholder": "A short prompt (under 10 words) telling students what kind of completion to write.",
+  "model": "The full sentence completed with a specific, technique-anchored ending.",
+  "why": "One sentence explaining what the completion demonstrates that the abstract version could not."
+}
+
+Rules:
+- The stem should begin a real analytical claim — not just 'The text shows that loss is important because...'
+- The stem should make the student name either: a technique, a contradiction, a structural feature, or a reader effect
+- The model completion should be specific enough that a student would have to think hard to match it
+- No text references, no character names`;
+  }
+
+  if (taskType === 'rewrite' && level === 6) {
+    return `Generate a HSC English analytical sentence challenge for LEVEL 6 (Analyst task — full rewrite with AI evaluation).
+
+Return JSON in exactly this format:
+{
+  "sentence": "A full HSC analytical sentence with 2-3 abstract terms.",
+  "targetTerms": "the abstract terms, comma separated",
+  "task": "A one-sentence instruction telling the student what specific analytical move to make in their rewrite.",
+  "model": "A full rewrite that names a technique, makes an arguable claim, and specifies a reader effect.",
+  "why": "Two sentences explaining the thinking process behind the model — what questions the writer had to ask themselves."
+}
+
+Rules:
+- The sentence should sound like something a real Year 12 student would write — plausible, not obviously bad
+- It should contain 2-3 abstract terms that interact with each other
+- The task instruction should guide students toward the specific move needed without giving the answer away`;
+  }
+
+  if (taskType === 'rewrite' && level === 7) {
+    return `Generate a HSC English analytical sentence challenge for LEVEL 7 (Master task — near-miss sentences).
+
+Return JSON in exactly this format:
+{
+  "sentence": "A near-miss HSC analytical sentence — one that looks sophisticated and almost works, but still contains a subtle abstraction or unearned claim.",
+  "targetTerms": "the subtle problem term(s)",
+  "task": "A one-sentence instruction identifying the specific subtle problem and asking students to push it further.",
+  "model": "A rewrite that fixes the near-miss by making one more specific move — naming the exact mechanism, the reader's precise role, or the specific contradiction.",
+  "why": "Two sentences explaining what the final 20% of precision looks like and why it matters for Band 6."
+}
+
+Rules:
+- The sentence must look good to a Year 12 student — it should name a technique, have active verbs, sound analytical
+- The subtle problem should be: a vague causal verb ('mirrors', 'reflects', 'creates'), an unearned reader effect, a structural claim without a mechanism, or a 'gap' without named contents
+- The model rewrite should make one very specific additional move — not a complete overhaul`;
+  }
+}
+
+const EVAL_PROMPT = (level, sentence, studentRewrite) => `You are evaluating a Year 12 HSC English student's rewrite of an abstract sentence.
+
+Original sentence: "${sentence}"
+Student's rewrite: "${studentRewrite}"
+
+Evaluate the rewrite against these criteria:
+1. Did they avoid substituting one abstract term for another?
+2. Did they name a specific technique, structural feature, or textual moment?
+3. Did they make a claim that could be argued with or against?
+4. (Level 7 only) Did they identify the specific subtle mechanism the original was hiding?
+
+${level === 7 ? 'This is a Level 7 near-miss challenge. Apply Band 6 criteria strictly.' : 'This is a Level ' + level + ' challenge.'}
+
+Respond in JSON:
+{
+  "feedback": "2-3 sentences of specific, direct feedback. Start with what they got right, then name the one thing still missing or vague. Be direct — this is for a high-achieving student. Do not be vague in your feedback.",
+  "achieved": true or false (did they make genuine progress toward specificity?)
+}`;
+
+// ═══════════════════════════════════════
+// API CALL
+// ═══════════════════════════════════════
+async function callAI(userMessage, systemOverride) {
+  const response = await fetch(PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system: systemOverride || SYSTEM_BASE,
+      messages: [{ role: 'user', content: userMessage }]
+    })
+  });
+  const data = await response.json();
+  return data.content || '';
+}
+
+function parseJSON(raw) {
+  try {
+    const clean = raw.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    console.error('JSON parse error:', e, raw);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let S = {
+  level:1, xp:0, score:0, streak:0,
+  challengeIdx:0, challengesThisLevel:0,
+  currentChallenge:null,
+  answered:false, selfScored:false,
+};
+
+// ═══════════════════════════════════════
+// GAME FLOW
+// ═══════════════════════════════════════
+function startGame() {
+  S = { level:1, xp:0, score:0, streak:0,
+        challengeIdx:0, challengesThisLevel:0,
+        currentChallenge:null, answered:false, selfScored:false };
+  document.getElementById('hud').style.display = 'grid';
+  document.getElementById('streakRow').style.display = 'flex';
+  buildStreakDots();
+  updateHUD();
+  showScreen('challengeScreen');
+  generateChallenge();
+}
+
+async function generateChallenge() {
+  showLoading('GENERATING CHALLENGE…');
+  S.answered = false;
+  S.selfScored = false;
+
+  const lv = LEVELS[S.level - 1];
+  document.getElementById('chLvTag').textContent = `LV ${S.level}`;
+  document.getElementById('chTypeTag').textContent = lv.name.toUpperCase();
+  document.getElementById('chCounter').textContent =
+    `Q ${S.challengesThisLevel + 1} of ${CHALLENGES_PER_LEVEL}`;
+
+  try {
+    const raw = await callAI(promptForLevel(S.level));
+    const ch  = parseJSON(raw);
+    if (!ch) { hideLoading(); showError(); return; }
+
+    S.currentChallenge = ch;
+    hideLoading();
+    renderChallenge(ch, lv);
+  } catch(e) {
+    console.error(e);
+    hideLoading();
+    showError();
+  }
+}
+
+function renderChallenge(ch, lv) {
+  // Render sentence
+  let sentHtml = ch.sentence || '';
+  if (lv.taskType === 'why' || lv.taskType === 'rewrite') {
+    sentHtml = sentHtml.replace(/<t>(.*?)<\/t>/g, '<span class="hl">$1</span>');
+  } else {
+    sentHtml = sentHtml.replace(/<t>(.*?)<\/t>/g, '$1');
+  }
+  document.getElementById('theSentence').innerHTML = sentHtml;
+
+  // Task instruction
+  const taskInstructions = {
+    spot:     'Which word is doing the least analytical work? Tap it.',
+    why:      'The highlighted word is underlined. Why exactly is it vague? Pick the most precise reason.',
+    judge:    'Two rewrites — similar length, both plausible. Which one earns its claim?',
+    build:    'Choose the completion that makes the sentence most specific. Options are similar length — focus on content.',
+    complete: 'A stem has been given. Write the most specific completion you can.',
+    rewrite:  ch.task || 'Rewrite this sentence. Make every claim specific enough to argue with.',
+  };
+  document.getElementById('taskText').textContent = taskInstructions[lv.taskType];
+
+  setPhase(1);
+  document.getElementById('feedbackPanel').classList.remove('show');
+  document.getElementById('selfScore').classList.remove('show');
+  document.getElementById('aiFeedbackBox').style.display = 'none';
+  document.getElementById('btnNext').classList.remove('show');
+  document.querySelectorAll('.ss-btn').forEach(b => b.classList.remove('sel-1','sel-2','sel-3'));
+
+  renderTaskArea(ch, lv.taskType);
+
+  const sc = document.getElementById('sentenceCard');
+  sc.classList.remove('slide-up'); void sc.offsetWidth; sc.classList.add('slide-up');
+}
+
+function renderTaskArea(ch, taskType) {
+  const area = document.getElementById('taskArea');
+  area.innerHTML = '';
+
+  if (taskType === 'spot') {
+    const wrap = document.createElement('div');
+    wrap.className = 'spot-options';
+    (ch.options || []).forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'spot-btn';
+      btn.textContent = opt;
+      btn.onclick = () => handleSpot(i, ch.correctIndex, ch);
+      wrap.appendChild(btn);
+    });
+    area.appendChild(wrap);
+
+  } else if (taskType === 'why') {
+    const wrap = document.createElement('div');
+    wrap.className = 'why-options';
+    (ch.reasons || []).forEach((r, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'why-btn';
+      btn.textContent = r;
+      btn.onclick = () => handleWhy(i, ch.correctIndex, ch);
+      wrap.appendChild(btn);
+    });
+    area.appendChild(wrap);
+
+  } else if (taskType === 'judge') {
+    const pair = document.createElement('div');
+    pair.className = 'judge-pair';
+    ['A','B'].forEach(letter => {
+      const card = document.createElement('div');
+      card.className = 'judge-card';
+      card.innerHTML = `<div class="judge-lbl">Option ${letter}</div><div class="judge-text">${esc(ch['option'+letter])}</div>`;
+      card.onclick = () => handleJudge(letter, ch.correctOption, ch);
+      pair.appendChild(card);
+    });
+    area.appendChild(pair);
+
+  } else if (taskType === 'build') {
+    const stem = document.createElement('div');
+    stem.className = 'build-stem';
+    stem.innerHTML = `${esc(ch.sentenceBefore)} <span class="build-blank" id="buildBlank">${esc(ch.blankHint)}</span>${esc(ch.sentenceAfter || '')}`;
+    area.appendChild(stem);
+    const opts = document.createElement('div');
+    opts.className = 'build-options';
+    (ch.options || []).forEach((o, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'build-btn';
+      btn.textContent = o;
+      btn.onclick = () => handleBuild(i, ch.correctIndex, ch);
+      opts.appendChild(btn);
+    });
+    area.appendChild(opts);
+
+  } else if (taskType === 'complete') {
+    const stemBox = document.createElement('div');
+    stemBox.className = 'stem-box';
+    stemBox.innerHTML = `<span class="stem-fixed">${esc(ch.stem)}</span> <span style="color:var(--amber);font-style:italic;">…</span>`;
+    area.appendChild(stemBox);
+    const ta = document.createElement('textarea');
+    ta.className = 'write-input';
+    ta.id = 'writeInput';
+    ta.placeholder = ch.placeholder || 'Complete the sentence with the most specific ending you can…';
+    area.appendChild(ta);
+    const btn = document.createElement('button');
+    btn.className = 'btn-submit';
+    btn.id = 'submitBtn';
+    btn.textContent = '▶ Submit';
+    btn.onclick = () => handleWritten(ch, 'complete');
+    area.appendChild(btn);
+
+  } else if (taskType === 'rewrite') {
+    const ta = document.createElement('textarea');
+    ta.className = 'write-input';
+    ta.id = 'writeInput';
+    ta.placeholder = 'Rewrite the sentence here…';
+    area.appendChild(ta);
+    const btn = document.createElement('button');
+    btn.className = 'btn-submit';
+    btn.id = 'submitBtn';
+    btn.textContent = '▶ Submit Rewrite';
+    btn.onclick = () => handleWritten(ch, 'rewrite');
+    area.appendChild(btn);
+  }
+}
+
+// ═══════════════════════════════════════
+// HANDLERS
+// ═══════════════════════════════════════
+function handleSpot(chosen, correct, ch) {
+  if (S.answered) return;
+  S.answered = true; setPhase(2);
+  document.querySelectorAll('.spot-btn').forEach((b,i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+  });
+  awardAuto(chosen === correct, ch);
+}
+
+function handleWhy(chosen, correct, ch) {
+  if (S.answered) return;
+  S.answered = true; setPhase(2);
+  document.querySelectorAll('.why-btn').forEach((b,i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+  });
+  awardAuto(chosen === correct, ch);
+}
+
+function handleJudge(chosen, correct, ch) {
+  if (S.answered) return;
+  S.answered = true; setPhase(2);
+  const cards = document.querySelectorAll('.judge-card');
+  const ci = correct === 'A' ? 0 : 1;
+  const xi = chosen  === 'A' ? 0 : 1;
+  cards[ci].classList.add('correct');
+  if (chosen !== correct) cards[xi].classList.add('wrong');
+  awardAuto(chosen === correct, ch);
+}
+
+function handleBuild(chosen, correct, ch) {
+  if (S.answered) return;
+  S.answered = true; setPhase(2);
+  document.querySelectorAll('.build-btn').forEach((b,i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+  });
+  const blank = document.getElementById('buildBlank');
+  if (blank) { blank.textContent = ch.options[correct]; blank.style.color = 'var(--green)'; }
+  awardAuto(chosen === correct, ch);
+}
+
+async function handleWritten(ch, mode) {
+  if (S.answered) return;
+  const val = document.getElementById('writeInput')?.value.trim();
+  if (!val) return;
+  S.answered = true; setPhase(2);
+
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) submitBtn.disabled = true;
+
+  // Show model first
+  showFeedback('info', ch.model, ch.why);
+
+  // Get AI evaluation
+  showLoading('EVALUATING YOUR REWRITE…');
+  try {
+    const raw = await callAI(EVAL_PROMPT(S.level, ch.sentence, val));
+    const result = parseJSON(raw);
+    hideLoading();
+    if (result) {
+      const aiFbBox  = document.getElementById('aiFeedbackBox');
+      const aiFbText = document.getElementById('aiFeedbackText');
+      aiFbBox.style.display  = 'block';
+      aiFbText.textContent   = result.feedback || '';
+      // Move AI feedback before model box
+      const fb = document.getElementById('feedbackPanel');
+      fb.insertBefore(aiFbBox, fb.querySelector('.model-box'));
+    }
+  } catch(e) {
+    hideLoading();
+  }
+
+  setPhase(3);
+  showSelfScore();
+}
+
+function awardAuto(correct, ch) {
+  const pts   = correct ? 10 : 3;
+  const xpGain = correct ? 6 : 2;
+  if (correct) S.streak = Math.min(S.streak+1, 5);
+  else S.streak = 0;
+  S.score += pts; S.xp += xpGain;
+  updateHUD(); updateStreakDots(); flashXP(`+${xpGain} XP`);
+  setPhase(3);
+  showFeedback(correct ? 'correct' : 'wrong', ch.model, ch.why);
+  document.getElementById('btnNext').classList.add('show');
+  advanceCheck();
+}
+
+function selfScore(tier) {
+  if (S.selfScored) return;
+  S.selfScored = true;
+  const xpMap = {1:2,2:6,3:12}; const ptsMap = {1:5,2:15,3:30};
+  document.querySelectorAll('.ss-btn').forEach(b => b.classList.remove('sel-1','sel-2','sel-3'));
+  document.getElementById(`ssBtn${tier}`).classList.add(`sel-${tier}`);
+  if (tier >= 2) S.streak = Math.min(S.streak+1, 5); else S.streak = 0;
+  S.xp += xpMap[tier]; S.score += ptsMap[tier];
+  updateHUD(); updateStreakDots(); flashXP(`+${xpMap[tier]} XP`);
+  setPhase(3);
+  document.getElementById('btnNext').classList.add('show');
+  advanceCheck();
+}
+
+function advanceCheck() {
+  // level-up check deferred to nextChallenge
+}
+
+function nextChallenge() {
+  S.challengesThisLevel++;
+  if (S.challengesThisLevel >= CHALLENGES_PER_LEVEL) {
+    const nextLv = S.level + 1;
+    if (nextLv > LEVELS.length) { endGame(); return; }
+    S.level = nextLv;
+    S.challengesThisLevel = 0;
+    showLU(S.level);
+  } else {
+    generateChallenge();
+  }
+}
+
+function showFeedback(type, model, why) {
+  const labels = { correct:'▲ Correct', wrong:'▼ Try this instead', info:'▸ Model answer' };
+  const panel = document.getElementById('feedbackPanel');
+  document.getElementById('fbResult').className = `fb-result ${type}`;
+  document.getElementById('fbResult').textContent = labels[type] || '';
+  document.getElementById('modelText').textContent = model || '';
+  document.getElementById('whyText').textContent   = why   || '';
+  panel.classList.add('show');
+}
+
+function showSelfScore() {
+  document.getElementById('selfScore').classList.add('show');
+  document.querySelectorAll('.ss-btn').forEach(b => b.classList.remove('sel-1','sel-2','sel-3'));
+}
+
+function showLU(lv) {
+  const def = LEVELS[lv-1];
+  document.getElementById('luName').textContent = def.name;
+  document.getElementById('luDesc').textContent = def.desc;
+  document.getElementById('luTask').textContent = def.luTask;
+  document.getElementById('luOverlay').classList.add('show');
+}
+
+function closeLU() {
+  document.getElementById('luOverlay').classList.remove('show');
+  updateHUD();
+  generateChallenge();
+}
+
+function endGame() {
+  document.getElementById('vScore').textContent = S.score;
+  document.getElementById('vXP').textContent    = S.xp;
+  document.getElementById('vRank').textContent  = LEVELS[S.level-1].name;
+  showScreen('victoryScreen');
+}
+
+function replayGame() {
+  showScreen('introScreen');
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('streakRow').style.display = 'none';
+}
+
+// ═══════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setPhase(n) {
+  for (let i=1;i<=3;i++) {
+    const el = document.getElementById(`ph${i}`);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+}
+
+function updateHUD() {
+  const lv  = LEVELS[S.level-1];
+  const nxt = LEVELS[S.level] || null;
+  document.getElementById('scoreDisp').textContent = S.score;
+  document.getElementById('xpDisp').textContent    = S.xp;
+  document.getElementById('rankName').textContent  = lv.name;
+  document.getElementById('rankLv').textContent    = `LEVEL ${S.level}`;
+  const base = LEVELS.slice(0,S.level-1).reduce((a,l)=>a+l.xpToNext,0);
+  const top  = base + lv.xpToNext;
+  const pct  = Math.min(100, Math.round(((S.xp-base)/(top-base))*100));
+  document.getElementById('xpBar').style.width = Math.max(0,pct)+'%';
+  document.getElementById('xpSub').textContent = nxt
+    ? `${Math.max(0,top-S.xp)} XP to ${nxt.name}` : 'Maximum rank achieved';
+}
+
+function showLoading(txt) {
+  document.getElementById('loadingText').textContent = txt || 'LOADING…';
+  document.getElementById('loadingScreen').classList.add('show');
+}
+function hideLoading() { document.getElementById('loadingScreen').classList.remove('show'); }
+
+function showError() {
+  document.getElementById('theSentence').textContent = 'Failed to generate challenge. Check your connection and try again.';
+  document.getElementById('taskArea').innerHTML =
+    `<button class="btn-submit" onclick="generateChallenge()">↺ Retry</button>`;
+}
+
+function flashXP(txt) {
+  const el = document.getElementById('xpFlash');
+  el.textContent = txt;
+  el.classList.remove('show','hide'); void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(()=>{ el.classList.remove('show'); el.classList.add('hide');
+    setTimeout(()=>el.classList.remove('hide'),350); },850);
+}
+
+function buildStreakDots() {
+  const c = document.getElementById('streakDots'); c.innerHTML = '';
+  for(let i=0;i<5;i++){ const d=document.createElement('div'); d.className='s-dot'; d.id=`sd${i}`; c.appendChild(d); }
+}
+
+function updateStreakDots() {
+  for(let i=0;i<5;i++) document.getElementById(`sd${i}`)?.classList.toggle('lit',i<S.streak);
+  const m = document.getElementById('streakMsg');
+  if(S.streak>=3){m.textContent=`🔥 ${S.streak}-answer streak`;m.style.color='var(--amber)';}
+  else m.textContent='';
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
