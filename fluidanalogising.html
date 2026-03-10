@@ -3,1205 +3,2364 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fluid Analogising Builder</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300;1,9..144,600&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Analogical Thinking Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #1a1714;
-    --paper: #f5f0e8;
-    --cream: #ede7d4;
-    --gold: #c9a84c;
-    --gold-light: #e8d4a0;
-    --rust: #b85c38;
-    --sage: #6b8f71;
-    --slate: #4a5568;
-    --muted: #8a7f6e;
-    --border: #d4c9b0;
+:root {
+  --bg: #0f0e0c;
+  --surface: #1a1916;
+  --surface2: #242220;
+  --border: #2e2c28;
+  --border2: #3d3a35;
+  --text: #e8e3d8;
+  --muted: #7a7268;
+  --faint: #3a3733;
 
-    /* Level colours */
-    --l1: #4a7c6f;
-    --l2: #7b5ea7;
-    --l3: #4a6b9a;
-    --l4: #8a6040;
-    --l5: #6b8a4a;
-    --l6: #3a7a8a;
-    --l7: #8a3a4a;
-  }
+  --gold: #d4a843;
+  --gold-dim: #8a6e2a;
+  --rust: #c4583a;
+  --sage: #5a8a5e;
+  --slate: #4a7a9a;
+  --plum: #7a5a8a;
+  --teal: #3a8a8a;
+  --amber: #b87a2a;
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* per-level accent, set by JS */
+  --accent: var(--gold);
+  --accent-dim: var(--gold-dim);
+}
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── HEADER ── */
-  header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 20px 32px;
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    border-bottom: 3px solid var(--gold);
-  }
-  header h1 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-  header span {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--gold);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
+html { scroll-behavior: smooth; }
 
-  /* ── LAYOUT ── */
-  .app {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 32px 24px 64px;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* ── PHASE INDICATOR ── */
-  .phase-bar {
-    display: flex;
-    gap: 0;
-    margin-bottom: 32px;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .phase-step {
-    flex: 1;
-    padding: 8px 4px;
-    text-align: center;
-    background: var(--cream);
-    color: var(--muted);
-    border-right: 1px solid var(--border);
-    cursor: default;
-    transition: all 0.2s;
-  }
-  .phase-step:last-child { border-right: none; }
-  .phase-step.active {
-    background: var(--ink);
-    color: var(--gold);
-  }
-  .phase-step.done {
-    background: var(--ink);
-    color: var(--muted);
-    opacity: 0.5;
-  }
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
 
-  /* ── SECTIONS ── */
-  section {
-    display: none;
-    animation: fadeUp 0.35s ease;
-  }
-  section.visible { display: block; }
+/* ── HEADER ── */
+header {
+  position: relative;
+  z-index: 10;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: rgba(15,14,12,0.9);
+  backdrop-filter: blur(8px);
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.logo span { color: var(--gold); }
+.header-right {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* ── MAIN WRAPPER ── */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
 
-  /* ── LEVEL PICKER ── */
-  .level-intro {
-    margin-bottom: 28px;
-  }
-  .level-intro h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  .level-intro p {
-    color: var(--muted);
-    max-width: 580px;
-  }
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active {
+  display: block;
+  animation: screenIn 0.4s ease;
+}
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  .level-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 14px;
-    margin-bottom: 32px;
-  }
+/* ══════════════════════════════════════
+   SCREEN 0: LEVEL SELECT
+══════════════════════════════════════ */
+.level-header {
+  margin-bottom: 48px;
+  text-align: center;
+}
+.level-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.level-header h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.level-header p {
+  color: var(--muted);
+  max-width: 520px;
+  margin: 0 auto;
+  font-size: 0.9rem;
+}
 
-  .level-card {
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    padding: 18px 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--cream);
-    position: relative;
-    overflow: hidden;
-  }
-  .level-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px; height: 100%;
-    background: var(--level-color, #888);
-    transition: width 0.2s;
-  }
-  .level-card:hover {
-    border-color: var(--level-color, #888);
-    background: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  }
-  .level-card:hover::before { width: 6px; }
-  .level-card.selected {
-    border-color: var(--level-color, #888);
-    background: white;
-    box-shadow: 0 0 0 2px var(--level-color, #888);
-  }
+.levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
 
-  .card-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--level-color, #888);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .card-name {
-    font-family: 'Fraunces', serif;
-    font-size: 1.05rem;
-    font-weight: 600;
-    margin-bottom: 3px;
-    color: var(--ink);
-  }
-  .card-tag {
-    display: inline-block;
-    margin-top: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 3px;
-    background: color-mix(in srgb, var(--level-color, #888) 15%, transparent);
-    color: var(--level-color, #888);
-  }
-  .card-desc {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-top: 8px;
-    line-height: 1.45;
-  }
+.level-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.level-tile::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--tile-color, var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.level-tile:hover {
+  border-color: var(--tile-color, var(--gold));
+  background: var(--surface2);
+  transform: translateY(-2px);
+}
+.level-tile:hover::after { transform: scaleX(1); }
 
-  /* ── SUBJECT INPUT ── */
-  .subject-section h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .subject-section .level-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 14px;
-    border-radius: 4px;
-    background: color-mix(in srgb, var(--active-level-color, #888) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--active-level-color, #888) 30%, transparent);
-    margin-bottom: 20px;
-  }
-  .subject-section .level-badge span:first-child {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--active-level-color, #888);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .subject-section .level-badge span:last-child {
-    font-family: 'Fraunces', serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
+.tile-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  color: var(--tile-color, var(--gold));
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.tile-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+.tile-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.tile-badge {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--tile-color, var(--gold)) 12%, transparent);
+  color: var(--tile-color, var(--gold));
+  border: 1px solid color-mix(in srgb, var(--tile-color, var(--gold)) 25%, transparent);
+}
 
-  .field-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 6px;
-    display: block;
-  }
+/* ══════════════════════════════════════
+   SCREEN 1: SUBJECT INPUT
+══════════════════════════════════════ */
+.subject-screen {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-bottom: 32px;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s;
+}
+.back-btn:hover { color: var(--text); }
 
-  textarea, input[type="text"] {
-    width: 100%;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    padding: 12px 14px;
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 15px;
-    background: white;
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.2s;
-    resize: vertical;
-  }
-  textarea:focus, input[type="text"]:focus {
-    border-color: var(--active-level-color, var(--gold));
-  }
-  textarea { min-height: 80px; }
+.level-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--accent-dim);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  margin-bottom: 20px;
+}
+.level-chip-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.level-chip-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
 
-  .hint {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 6px;
-    font-style: italic;
-  }
+.subject-screen h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.subject-screen .sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 32px;
+}
 
-  .field-group { margin-bottom: 20px; }
+.field-group { margin-bottom: 22px; }
+.field-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+input[type="text"], textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+input[type="text"]:focus, textarea:focus {
+  border-color: var(--accent);
+}
+input[type="text"]::placeholder, textarea::placeholder { color: var(--muted); }
+textarea { min-height: 80px; }
+.field-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 5px;
+  font-style: italic;
+}
 
-  /* ── BUTTONS ── */
-  .btn {
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 10px 22px;
-    border-radius: 5px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.18s;
-    letter-spacing: 0.01em;
-  }
-  .btn-primary {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
-  }
-  .btn-primary:hover {
-    background: color-mix(in srgb, var(--active-level-color, var(--gold)) 80%, var(--ink));
-    border-color: color-mix(in srgb, var(--active-level-color, var(--gold)) 80%, var(--ink));
-  }
-  .btn-secondary {
-    background: transparent;
-    color: var(--ink);
-    border-color: var(--border);
-  }
-  .btn-secondary:hover {
-    border-color: var(--ink);
-    background: var(--cream);
-  }
-  .btn-ghost {
-    background: none;
-    border: none;
-    color: var(--muted);
-    padding: 8px 12px;
-    font-size: 13px;
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .btn-ghost:hover { color: var(--ink); }
-  .btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
+/* ── BUTTONS ── */
+.btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 24px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border2);
+}
+.btn-secondary:hover {
+  border-color: var(--text);
+  background: var(--surface);
+}
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
 
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
+/* ══════════════════════════════════════
+   SHARED ACTIVITY CHROME
+══════════════════════════════════════ */
+.activity-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 20px;
+}
+.activity-meta {}
+.activity-level-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.activity-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.activity-subject-pill {
+  display: inline-block;
+  margin-top: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.activity-subject-pill strong { color: var(--text); font-style: normal; }
 
-  /* ── CONVERSATION ── */
-  .convo-area {
-    margin-bottom: 24px;
-  }
-  .convo-area h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .convo-meta {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-bottom: 18px;
-  }
-  .convo-meta strong {
-    color: var(--ink);
-  }
+/* step indicator */
+.steps-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--faint);
+  transition: all 0.3s;
+}
+.step-dot.active {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.step-dot.done { background: var(--accent-dim); }
 
-  .messages {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
+/* instruction box */
+.instruction {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+.instruction strong { color: var(--accent); }
 
-  .msg {
-    display: flex;
-    gap: 12px;
-    animation: fadeUp 0.3s ease;
-  }
-  .msg-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: 'DM Mono', monospace;
-    margin-top: 2px;
-  }
-  .msg.coach .msg-avatar {
-    background: var(--ink);
-    color: var(--gold);
-  }
-  .msg.student .msg-avatar {
-    background: var(--cream);
-    color: var(--ink);
-    border: 1.5px solid var(--border);
-  }
-  .msg-body {
-    flex: 1;
-  }
-  .msg-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 5px;
-  }
-  .msg-text {
-    background: white;
-    border: 1.5px solid var(--border);
-    border-radius: 0 8px 8px 8px;
-    padding: 12px 16px;
-    line-height: 1.65;
-  }
-  .msg.coach .msg-text {
-    border-color: color-mix(in srgb, var(--active-level-color, var(--gold)) 40%, var(--border));
-    background: color-mix(in srgb, var(--active-level-color, var(--gold)) 5%, white);
-  }
-  .msg.student .msg-text {
-    background: var(--cream);
-    border-color: var(--border);
-  }
-  .msg-text p { margin-bottom: 8px; }
-  .msg-text p:last-child { margin-bottom: 0; }
+/* ══════════════════════════════════════
+   LEVEL 1: ANALOGICAL CLOSE READING
+   Observation cards → domain picker → mapping
+══════════════════════════════════════ */
+.obs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.obs-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  user-select: none;
+  position: relative;
+}
+.obs-card:hover { border-color: var(--accent); background: var(--surface2); }
+.obs-card.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--text);
+}
+.obs-card.selected::before {
+  content: '✓';
+  position: absolute;
+  top: 8px; right: 10px;
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 700;
+}
 
-  /* typing indicator */
-  .typing-indicator {
-    display: flex;
-    gap: 4px;
-    padding: 14px 16px;
-    background: white;
-    border: 1.5px solid var(--border);
-    border-radius: 0 8px 8px 8px;
-    width: fit-content;
-  }
-  .typing-indicator span {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--muted);
-    animation: bounce 1.2s ease-in-out infinite;
-  }
-  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce {
-    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-    40% { transform: translateY(-6px); opacity: 1; }
-  }
+.domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.domain-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.18s;
+  user-select: none;
+}
+.domain-card:hover { border-color: var(--accent); background: var(--surface2); }
+.domain-card.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+.domain-icon { font-size: 1.6rem; margin-bottom: 6px; }
+.domain-name { font-size: 0.78rem; font-weight: 600; }
 
-  /* response input */
-  .response-area {
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    background: white;
-    overflow: hidden;
-  }
-  .response-area textarea {
-    border: none;
-    border-radius: 0;
-    min-height: 90px;
-    background: transparent;
-  }
-  .response-area textarea:focus {
-    border: none;
-    box-shadow: none;
-  }
-  .response-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 14px;
-    border-top: 1px solid var(--border);
-    background: var(--cream);
-  }
-  .response-hint {
-    font-size: 0.73rem;
-    color: var(--muted);
-    font-style: italic;
-  }
+/* mapping table */
+.mapping-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+.mapping-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.mapping-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.mapping-table td:first-child {
+  color: var(--accent);
+  font-size: 0.85rem;
+  width: 40%;
+}
+.mapping-table td input {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  color: var(--text);
+  width: 100%;
+  font-family: 'Syne', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.mapping-table td input:focus { border-color: var(--accent); }
+.mapping-table td input::placeholder { color: var(--muted); }
 
-  /* ── WRAP UP PANEL ── */
-  .wrapup {
-    background: white;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 28px;
-    margin-top: 24px;
-  }
-  .wrapup h3 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 16px;
-  }
+/* ══════════════════════════════════════
+   LEVEL 2: PATTERN TRANSLATION
+   Pattern extractor → domain flip cards
+══════════════════════════════════════ */
+.pattern-display {
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+.pattern-display .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.pattern-display .pattern-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+}
+.when-then {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.when-then-field { }
+.when-then-field input {
+  margin-top: 8px;
+}
 
-  .summary-block {
-    background: var(--cream);
-    border-radius: 6px;
-    padding: 16px 18px;
-    margin-bottom: 14px;
-    border-left: 3px solid var(--active-level-color, var(--gold));
-  }
-  .summary-block label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: block;
-    margin-bottom: 6px;
-  }
-  .summary-block p {
-    font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-  }
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.flip-card {
+  height: 140px;
+  cursor: pointer;
+  perspective: 800px;
+  position: relative;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+}
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: 1px solid var(--border2);
+}
+.flip-front {
+  background: var(--surface);
+  text-align: center;
+}
+.flip-front .f-icon { font-size: 2rem; margin-bottom: 8px; }
+.flip-front .f-name { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+.flip-front .f-hint { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+.flip-back {
+  background: var(--surface2);
+  border-color: var(--accent-dim);
+  transform: rotateY(180deg);
+  padding: 12px;
+}
+.flip-back textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border2);
+  border-radius: 0;
+  padding: 4px 0;
+  font-size: 0.78rem;
+  min-height: 60px;
+  resize: none;
+  color: var(--text);
+}
+.flip-back textarea:focus { border-color: var(--accent); }
+.flip-back-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+.match-slider {
+  margin-top: 8px;
+  width: 100%;
+}
+.match-slider input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.match-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.55rem;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
 
-  /* reflection checkboxes */
-  .reflection-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin: 16px 0;
-  }
-  @media (max-width: 560px) { .reflection-grid { grid-template-columns: 1fr; } }
-  .reflection-item {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.18s;
-    user-select: none;
-    background: white;
-  }
-  .reflection-item:hover { border-color: var(--active-level-color, var(--gold)); }
-  .reflection-item.checked {
-    border-color: var(--sage);
-    background: color-mix(in srgb, var(--sage) 8%, white);
-  }
-  .reflection-item input { display: none; }
-  .reflection-check {
-    width: 18px; height: 18px;
-    border: 2px solid var(--border);
-    border-radius: 4px;
-    flex-shrink: 0;
-    margin-top: 2px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    transition: all 0.15s;
-  }
-  .reflection-item.checked .reflection-check {
-    background: var(--sage);
-    border-color: var(--sage);
-    color: white;
-  }
-  .reflection-text { font-size: 13px; line-height: 1.4; }
+/* ══════════════════════════════════════
+   LEVEL 3: REVERSE ANALOGISING
+   AI gives them an analogy → stamp sorting
+══════════════════════════════════════ */
+.given-analogy {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  position: relative;
+}
+.given-analogy::before {
+  content: '"';
+  position: absolute;
+  top: 10px; left: 16px;
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: var(--accent-dim);
+  line-height: 1;
+  opacity: 0.4;
+}
+.given-analogy p {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.6;
+  padding-left: 20px;
+}
 
-  /* ── START OVER ── */
-  .start-over {
-    display: flex;
-    justify-content: center;
-    margin-top: 32px;
-  }
+.claims-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.claim-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  transition: all 0.2s;
+}
+.claim-text {
+  flex: 1;
+  font-size: 0.87rem;
+  line-height: 1.45;
+}
+.stamp-group {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.stamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  cursor: pointer;
+  transition: all 0.15s;
+  background: transparent;
+  color: var(--muted);
+}
+.stamp:hover { color: var(--text); border-color: var(--text); }
+.stamp.holds { background: color-mix(in srgb, var(--sage) 20%, transparent); border-color: var(--sage); color: var(--sage); }
+.stamp.partly { background: color-mix(in srgb, var(--amber) 20%, transparent); border-color: var(--amber); color: var(--amber); }
+.stamp.fails { background: color-mix(in srgb, var(--rust) 20%, transparent); border-color: var(--rust); color: var(--rust); }
 
-  /* ── PROGRESS TRACKER inside convo ── */
-  .progress-track {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: color-mix(in srgb, var(--active-level-color, var(--gold)) 8%, white);
-    border: 1px solid color-mix(in srgb, var(--active-level-color, var(--gold)) 25%, var(--border));
-    border-radius: 6px;
-    margin-bottom: 18px;
-    font-size: 0.75rem;
-    color: var(--muted);
-  }
-  .progress-pip {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--border);
-    transition: background 0.3s;
-  }
-  .progress-pip.done { background: var(--active-level-color, var(--gold)); }
+.insight-box {
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+.insight-box .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.insight-box p {
+  font-size: 0.83rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
 
-  /* mobile tweaks */
-  @media (max-width: 600px) {
-    header { padding: 14px 18px; }
-    .app { padding: 20px 14px 48px; }
-    .level-grid { grid-template-columns: 1fr; }
-  }
+/* ══════════════════════════════════════
+   LEVEL 4: ANALOGICAL PROBLEM SOLVING
+   Crux finder → field cards → import
+══════════════════════════════════════ */
+.crux-questions { margin-bottom: 24px; }
+.crux-q {
+  margin-bottom: 16px;
+}
+.crux-q label {
+  display: block;
+  font-size: 0.87rem;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.crux-q label span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+.crux-display {
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+.crux-display .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.crux-display p {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.field-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.field-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 18px 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  user-select: none;
+}
+.field-card:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-2px); }
+.field-card.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+.field-icon { font-size: 1.8rem; margin-bottom: 8px; }
+.field-title { font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; }
+.field-example { font-size: 0.7rem; color: var(--muted); line-height: 1.35; }
+
+.import-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.import-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.import-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  color: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.import-step textarea {
+  flex: 1;
+}
+
+/* ══════════════════════════════════════
+   LEVEL 5: METAPHORICAL ANALYSIS
+   Node web
+══════════════════════════════════════ */
+.metaphor-center {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.metaphor-bubble {
+  display: inline-block;
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border: 2px solid var(--accent);
+  border-radius: 50px;
+  padding: 14px 28px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.metaphor-arrow {
+  font-size: 1.5rem;
+  color: var(--accent-dim);
+  margin: 0 8px;
+}
+
+.nodes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.node-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.2s;
+  position: relative;
+}
+.node-card.kept {
+  border-color: var(--sage);
+  background: color-mix(in srgb, var(--sage) 8%, var(--surface));
+}
+.node-card.complicated {
+  border-color: var(--rust);
+  background: color-mix(in srgb, var(--rust) 8%, var(--surface));
+}
+.node-implication {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.node-actions {
+  display: flex;
+  gap: 6px;
+}
+.node-btn {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.node-btn.keep:hover, .node-btn.keep.active { background: color-mix(in srgb, var(--sage) 20%, transparent); border-color: var(--sage); color: var(--sage); }
+.node-btn.complicate:hover, .node-btn.complicate.active { background: color-mix(in srgb, var(--rust) 20%, transparent); border-color: var(--rust); color: var(--rust); }
+.node-extend {
+  width: 100%;
+  margin-top: 8px;
+  display: none;
+  font-size: 0.8rem;
+  min-height: 50px;
+}
+.node-card.complicated .node-extend { display: block; }
+
+/* ══════════════════════════════════════
+   LEVEL 6: CONCEPTUAL TRANSFER
+   Rule builder → domain testing
+══════════════════════════════════════ */
+.rule-builder {
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.rule-builder .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.rule-sentence {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.rule-sentence span { color: var(--muted); }
+.rule-input-inline {
+  background: var(--surface2) !important;
+  border-radius: 4px !important;
+  padding: 4px 10px !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1rem !important;
+  font-style: italic;
+  min-width: 160px;
+  flex: 1;
+  min-height: auto !important;
+}
+
+.transfer-worlds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+@media (max-width: 600px) { .transfer-worlds { grid-template-columns: 1fr; } }
+.transfer-world {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 18px;
+  transition: border-color 0.2s;
+}
+.world-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.world-icon { font-size: 1.4rem; }
+.world-name { font-size: 0.85rem; font-weight: 700; }
+.world-textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  outline: none;
+  resize: none;
+  min-height: 70px;
+  transition: border-color 0.2s;
+}
+.world-textarea:focus { border-color: var(--accent); }
+.world-verdict {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.verdict-btn {
+  flex: 1;
+  padding: 6px 4px;
+  border-radius: 5px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.verdict-btn.yes.active { background: color-mix(in srgb, var(--sage) 20%, transparent); border-color: var(--sage); color: var(--sage); }
+.verdict-btn.kinda.active { background: color-mix(in srgb, var(--amber) 20%, transparent); border-color: var(--amber); color: var(--amber); }
+.verdict-btn.no.active { background: color-mix(in srgb, var(--rust) 20%, transparent); border-color: var(--rust); color: var(--rust); }
+.verdict-btn:hover { color: var(--text); border-color: var(--text); }
+
+/* ══════════════════════════════════════
+   LEVEL 7: ANALOGICAL CHAINS
+   Visual chain builder
+══════════════════════════════════════ */
+.chain-container {
+  margin-bottom: 24px;
+}
+.chain-track {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+.chain-node {
+  flex-shrink: 0;
+  width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 16px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.chain-node.active-node { border-color: var(--accent); }
+.chain-node.locked {
+  border-color: var(--accent-dim);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+}
+.chain-node-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.chain-node-text {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text);
+  min-height: 50px;
+}
+.chain-node textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border2);
+  border-radius: 0;
+  padding: 4px 0;
+  font-size: 0.85rem;
+  min-height: 60px;
+  resize: none;
+  color: var(--text);
+  width: 100%;
+  font-family: 'Syne', sans-serif;
+}
+.chain-node textarea:focus { border-color: var(--accent); }
+.chain-node-connector {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  color: var(--accent-dim);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  align-self: center;
+}
+.chain-suggestions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.chain-suggestion {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: var(--muted);
+}
+.chain-suggestion:hover { border-color: var(--accent); color: var(--text); }
+.chain-suggestion em { color: var(--accent); font-style: normal; }
+
+.collapse-zone {
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: 10px;
+  padding: 24px;
+  margin-top: 24px;
+  display: none;
+}
+.collapse-zone.visible { display: block; animation: screenIn 0.5s ease; }
+.collapse-endpoints {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.endpoint-card {
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  border: 1px solid var(--accent-dim);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  font-style: italic;
+  font-family: 'Playfair Display', serif;
+  flex: 1;
+  min-width: 140px;
+}
+.endpoint-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.collapse-prompt {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════
+   COMPLETION / WRAP UP
+══════════════════════════════════════ */
+.completion {
+  max-width: 700px;
+  margin: 0 auto;
+}
+.completion-badge {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.completion-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+.completion h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.completion .sub { color: var(--muted); font-size: 0.88rem; }
+
+.ai-feedback {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+.ai-feedback-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ai-feedback.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media (max-width: 560px) { .summary-cards { grid-template-columns: 1fr; } }
+.summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 16px;
+}
+.summary-card .s-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.summary-card .s-value {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.self-check {
+  margin-bottom: 28px;
+}
+.self-check h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.check-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.check-item:hover { border-color: var(--accent-dim); }
+.check-item.checked { border-color: var(--sage); background: color-mix(in srgb, var(--sage) 8%, var(--surface)); }
+.check-box {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border2);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: all 0.15s;
+}
+.check-item.checked .check-box { background: var(--sage); border-color: var(--sage); color: white; }
+.check-item span { font-size: 0.85rem; line-height: 1.4; }
+
+/* ── LOADING overlay ── */
+.loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,14,12,0.85);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+}
+.loading-overlay.visible { display: flex; }
+.loading-overlay p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.big-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ── mobile ── */
+@media (max-width: 600px) {
+  header { padding: 14px 16px; }
+  .app { padding: 24px 14px 60px; }
+  .levels-grid { grid-template-columns: 1fr; }
+  .when-then { grid-template-columns: 1fr; }
+  .activity-header { flex-direction: column; gap: 12px; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Fluid Analogising Builder</h1>
-  <span>A thinking workshop · not an answer machine</span>
+  <div class="logo">Analogical <span>Thinking</span></div>
+  <div class="header-right">Year 12 · Advanced English</div>
 </header>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="big-spinner"></div>
+  <p>Thinking…</p>
+</div>
 
 <div class="app">
 
-  <!-- PHASE BAR -->
-  <div class="phase-bar" id="phaseBar">
-    <div class="phase-step active" id="ph0">01 · Choose level</div>
-    <div class="phase-step" id="ph1">02 · Set your subject</div>
-    <div class="phase-step" id="ph2">03 · Build</div>
-    <div class="phase-step" id="ph3">04 · Reflect</div>
+  <!-- ── SCREEN 0: CHOOSE LEVEL ── -->
+  <div class="screen active" id="screen0">
+    <div class="level-header">
+      <h1>Seven ways to<br><em>think through an analogy</em></h1>
+      <p>Each level is a different cognitive move. Pick the one you're working on — or the one that will push you hardest.</p>
+    </div>
+    <div class="levels-grid" id="levelsGrid"></div>
   </div>
 
-  <!-- SECTION 0: LEVEL PICKER -->
-  <section id="sec0" class="visible">
-    <div class="level-intro">
-      <h2>What kind of analogy are you building?</h2>
-      <p>Each level asks you to do a different kind of thinking. Pick the one you're working on — or the one that will stretch you.</p>
-    </div>
-
-    <div class="level-grid" id="levelGrid">
-      <!-- populated by JS -->
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-primary" id="btnChooseLevel" disabled>Continue with this level →</button>
-    </div>
-  </section>
-
-  <!-- SECTION 1: SUBJECT INPUT -->
-  <section id="sec1" class="subject-section">
-    <div class="level-badge" id="levelBadge">
-      <span id="badgeCode">L1</span>
-      <span id="badgeName">Leaflink</span>
-    </div>
-    <h2>What are you analogising?</h2>
-
-    <div class="field-group">
-      <label class="field-label" for="textContext">Your text or subject</label>
-      <input type="text" id="textContext" placeholder="e.g. Ishiguro's An Artist of the Floating World · or: the French Revolution">
-      <p class="hint">The text, topic, or concept you're working with.</p>
-    </div>
-
-    <div class="field-group">
-      <label class="field-label" for="analogySubject">The specific element you want to analogise</label>
-      <textarea id="analogySubject" placeholder="e.g. Ono's unreliable narration · or: the way Macbeth's ambition escalates · or: the theme of isolation in Frankenstein"></textarea>
-      <p class="hint">Be specific — the narrower this is, the richer your analogy will be.</p>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-primary" id="btnStartBuilding">Start building →</button>
-      <button class="btn-ghost" onclick="goToSection(0)">← Back</button>
-    </div>
-  </section>
-
-  <!-- SECTION 2: CONVERSATION -->
-  <section id="sec2" class="convo-area">
-    <h2>Building your analogy</h2>
-    <div class="convo-meta">
-      Level: <strong id="metaLevel">–</strong> &nbsp;·&nbsp;
-      Subject: <strong id="metaSubject">–</strong>
-    </div>
-
-    <div class="progress-track" id="progressTrack">
-      <!-- pips added by JS -->
-    </div>
-
-    <div class="messages" id="messages"></div>
-
-    <div id="inputArea">
-      <div class="response-area">
-        <textarea id="studentInput" placeholder="Write your response here…" rows="3"></textarea>
-        <div class="response-toolbar">
-          <span class="response-hint" id="inputHint">Think it through before you type.</span>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-ghost" id="btnWrapUp" style="display:none" onclick="triggerWrapUp()">I'm done — wrap up</button>
-            <button class="btn btn-primary" id="btnSend" onclick="sendStudentMessage()">Send →</button>
-          </div>
-        </div>
+  <!-- ── SCREEN 1: SUBJECT INPUT ── -->
+  <div class="screen" id="screen1">
+    <div class="subject-screen">
+      <button class="back-btn" onclick="showScreen(0)">← All levels</button>
+      <div class="level-chip">
+        <span class="level-chip-num" id="chipNum">01</span>
+        <span class="level-chip-name" id="chipName">Analogical Close Reading</span>
+      </div>
+      <h2>What are you working with?</h2>
+      <p class="sub">Give the tool something specific to work from — the more precise, the more useful the activity will be.</p>
+      <div class="field-group">
+        <label class="field-label">Your text or subject</label>
+        <input type="text" id="inputText" placeholder="e.g. An Artist of the Floating World · The French Revolution · Macbeth">
+      </div>
+      <div class="field-group">
+        <label class="field-label">The specific element you want to explore</label>
+        <textarea id="inputElement" placeholder="e.g. Ono's gradual revision of his own past · the way ambition changes Macbeth · the creature's isolation in Frankenstein"></textarea>
+        <p class="field-hint">Specific is better than broad. A character's function, a recurring pattern, a key moment.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnBegin">Begin →</button>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- SECTION 3: REFLECT -->
-  <section id="sec3">
-    <div class="wrapup" id="wrapupContent">
-      <!-- populated by JS -->
+  <!-- ── SCREENS 2–8: ACTIVITIES (populated by JS) ── -->
+  <div class="screen" id="screen2"></div>
+
+  <!-- ── SCREEN 9: COMPLETION ── -->
+  <div class="screen" id="screen9">
+    <div class="completion">
+      <div class="completion-badge">
+        <div class="completion-icon">◆</div>
+        <h2>Analogy complete</h2>
+        <p class="sub" id="completionSub">Here's what you built.</p>
+      </div>
+      <div class="ai-feedback loading" id="aiFeedback">
+        <div class="spinner"></div>
+        <span>Generating synthesis…</span>
+      </div>
+      <div class="summary-cards" id="summaryCards"></div>
+      <div class="self-check">
+        <h3>Before you close — honest check</h3>
+        <div class="check-items" id="checkItems"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="restart()">Build another →</button>
+        <button class="btn btn-secondary" onclick="tryNextLevel()">Try the next level</button>
+      </div>
     </div>
-  </section>
-</div> <!-- /app -->
+  </div>
+
+</div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════
+const PROXY = 'https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai';
+
+const LEVEL_COLORS = ['#d4a843','#7a9ad4','#7a5a8a','#c4583a','#5a8a5e','#3a8a8a','#b87a2a'];
+const LEVEL_ACCENTS = ['#8a6e2a','#4a6a9a','#4a3a5a','#8a3a22','#3a5a3e','#1a5a5a','#7a4a1a'];
 
 const LEVELS = [
-  {
-    id: 1,
-    code: "01",
-    name: "Analogical Close Reading",
-    color: "var(--l1)",
-    tag: "Foundational",
-    desc: "Select one element of the text and map its underlying structure onto something in another domain. The goal is not surface resemblance — it's identifying how things work and finding the same mechanism elsewhere.",
-  },
-  {
-    id: 2,
-    code: "02",
-    name: "Pattern Translation",
-    color: "var(--l2)",
-    tag: "Cross-domain",
-    desc: "Abstract a recurring pattern from the text and locate it operating in a completely different field. Strip it to its essential logic, then find where that same logic governs something entirely unrelated.",
-  },
-  {
-    id: 3,
-    code: "03",
-    name: "Reverse Analogising",
-    color: "var(--l3)",
-    tag: "Evaluative",
-    desc: "Build an analogy, then break it. Identify precisely where the comparison stops working — and use that failure point to reveal something about the text that the analogy itself could not.",
-  },
-  {
-    id: 4,
-    code: "04",
-    name: "Analogical Problem Solving",
-    color: "var(--l4)",
-    tag: "Transfer",
-    desc: "Identify a genuine interpretive problem in the text — an ambiguity, a critical crux, something that resists easy resolution. Then import a method or framework from another field to solve it.",
-  },
-  {
-    id: 5,
-    code: "05",
-    name: "Metaphorical Analysis",
-    color: "var(--l5)",
-    tag: "Implication tracing",
-    desc: "Choose a metaphor in the text and follow its logic systematically. If we take this metaphor seriously, what does it imply about every related element? Where does it guide understanding — and where does it mislead?",
-  },
-  {
-    id: 6,
-    code: "06",
-    name: "Conceptual Transfer",
-    color: "var(--l6)",
-    tag: "Generalisation",
-    desc: "Extract a concept or principle from the text — not a plot detail, but a generalisable rule — then apply it to new contexts outside literature to test its range and limits.",
-  },
-  {
-    id: 7,
-    code: "07",
-    name: "Analogical Chains",
-    color: "var(--l7)",
-    tag: "Advanced",
-    desc: "Start with one analogy. Take where you land and make a new analogy from there. Repeat three or four times. Then look at where you started and where you ended — the chain reveals something no single link could.",
-  },
+  { num:'01', name:'Analogical Close Reading', color: LEVEL_COLORS[0], accent: LEVEL_ACCENTS[0],
+    tag:'Foundational', desc:'Observe how your element actually behaves, then find where something else behaves the same way.' },
+  { num:'02', name:'Pattern Translation', color: LEVEL_COLORS[1], accent: LEVEL_ACCENTS[1],
+    tag:'Cross-domain', desc:'Extract the repeating logic from your text, then locate that same logic at work in a completely different field.' },
+  { num:'03', name:'Reverse Analogising', color: LEVEL_COLORS[2], accent: LEVEL_ACCENTS[2],
+    tag:'Evaluative', desc:'Test a ready-made comparison. Find where it holds, where it breaks — the breaking point is often where the real insight lives.' },
+  { num:'04', name:'Analogical Problem Solving', color: LEVEL_COLORS[3], accent: LEVEL_ACCENTS[3],
+    tag:'Transfer', desc:'Name the genuine puzzle in your text, then borrow how another field would approach that exact kind of problem.' },
+  { num:'05', name:'Metaphorical Analysis', color: LEVEL_COLORS[4], accent: LEVEL_ACCENTS[4],
+    tag:'Implication tracing', desc:'Take one metaphor in the text and follow it to every conclusion it implies — including the ones the author may not have intended.' },
+  { num:'06', name:'Conceptual Transfer', color: LEVEL_COLORS[5], accent: LEVEL_ACCENTS[5],
+    tag:'Generalisation', desc:'Turn a pattern in your text into a rule. Then test that rule in three different contexts to find out how far it travels.' },
+  { num:'07', name:'Analogical Chains', color: LEVEL_COLORS[6], accent: LEVEL_ACCENTS[6],
+    tag:'Advanced', desc:'Build a sequence of connected comparisons. The insight emerges from the gap between where you start and where you end up.' },
 ];
 
-// ── STATE ─────────────────────────────────────────────────────────────────
-
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
 let state = {
-  level: null,
-  textContext: '',
-  subject: '',
-  messages: [],   // {role: 'coach'|'student', text: string}
-  turn: 0,
-  wrappedUp: false,
+  levelIdx: 0,
+  text: '',
+  element: '',
+  workData: {}, // collected as student works
 };
 
-// ── LEVEL GRID SETUP ──────────────────────────────────────────────────────
-
-function buildLevelGrid() {
-  const grid = document.getElementById('levelGrid');
-  LEVELS.forEach(lv => {
-    const card = document.createElement('div');
-    card.className = 'level-card';
-    card.style.setProperty('--level-color', lv.color);
-    card.dataset.id = lv.id;
-    card.innerHTML = `
-      <div class="card-num">${lv.code}</div>
-      <div class="card-name">${lv.name}</div>
-      <p class="card-desc">${lv.desc}</p>
-      <div class="card-tag">${lv.tag}</div>
-    `;
-    card.addEventListener('click', () => selectLevel(lv.id));
-    grid.appendChild(card);
+// ═══════════════════════════════════════════════════════
+// API
+// ═══════════════════════════════════════════════════════
+async function callAI(system, messages) {
+  const r = await fetch(PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ system, messages })
   });
+  const d = await r.json();
+  return d.content || '';
 }
 
-function selectLevel(id) {
-  state.level = LEVELS.find(l => l.id === id);
-  document.querySelectorAll('.level-card').forEach(c => {
-    c.classList.toggle('selected', parseInt(c.dataset.id) === id);
-  });
-  document.getElementById('btnChooseLevel').disabled = false;
+async function callAIJson(system, messages) {
+  const text = await callAI(system, messages);
+  try {
+    const clean = text.replace(/```json|```/g,'').trim();
+    return JSON.parse(clean);
+  } catch { return null; }
 }
 
-document.getElementById('btnChooseLevel').addEventListener('click', () => {
-  goToSection(1);
-  // Set active level colour CSS var
-  document.documentElement.style.setProperty('--active-level-color', state.level.color);
-  document.getElementById('badgeCode').textContent = state.level.code;
-  document.getElementById('badgeName').textContent = state.level.name;
-});
-
-// ── SECTION NAVIGATION ────────────────────────────────────────────────────
-
-function goToSection(n) {
-  [0,1,2,3].forEach(i => {
-    document.getElementById(`sec${i}`).classList.toggle('visible', i === n);
-    const ph = document.getElementById(`ph${i}`);
-    ph.classList.remove('active','done');
-    if (i < n) ph.classList.add('done');
-    else if (i === n) ph.classList.add('active');
-  });
+function showLoading(show) {
+  document.getElementById('loadingOverlay').classList.toggle('visible', show);
 }
 
-// ── START BUILDING ────────────────────────────────────────────────────────
-
-document.getElementById('btnStartBuilding').addEventListener('click', () => {
-  const ctx = document.getElementById('textContext').value.trim();
-  const sub = document.getElementById('analogySubject').value.trim();
-  if (!ctx || !sub) { alert('Please fill in both fields.'); return; }
-  state.textContext = ctx;
-  state.subject = sub;
-  state.messages = [];
-  state.turn = 0;
-  state.wrappedUp = false;
-
-  document.getElementById('metaLevel').textContent = `${state.level.code} · ${state.level.name}`;
-  document.getElementById('metaSubject').textContent = sub;
-
-  goToSection(2);
-  buildProgressPips(6);
-  document.getElementById('messages').innerHTML = '';
-  sendCoachOpener();
-});
-
-// ── PROGRESS PIPS ─────────────────────────────────────────────────────────
-
-function buildProgressPips(n) {
-  const track = document.getElementById('progressTrack');
-  track.innerHTML = '<span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px">Progress</span>';
-  for (let i = 0; i < n; i++) {
-    const pip = document.createElement('div');
-    pip.className = 'progress-pip';
-    pip.id = `pip${i}`;
-    track.appendChild(pip);
-  }
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen' + n).classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-function markPip(n) {
-  const pip = document.getElementById(`pip${n}`);
-  if (pip) pip.classList.add('done');
+function restart() {
+  state = { levelIdx: 0, text: '', element: '', workData: {} };
+  showScreen(0);
 }
 
-// ── MESSAGES ──────────────────────────────────────────────────────────────
-
-function appendMessage(role, text) {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  const isCoach = role === 'coach';
-  div.innerHTML = `
-    <div class="msg-avatar">${isCoach ? '◆' : 'You'}</div>
-    <div class="msg-body">
-      <div class="msg-label">${isCoach ? 'Coach' : 'You'}</div>
-      <div class="msg-text">${formatMessage(text)}</div>
-    </div>
-  `;
-  msgs.appendChild(div);
-  div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  state.messages.push({ role, text });
-}
-
-function formatMessage(text) {
-  // Convert **bold**, line breaks, and > blockquotes
-  return text
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/^> (.+)/gm, '<blockquote style="border-left:3px solid var(--border);margin:8px 0;padding:4px 12px;color:var(--muted);font-style:italic">$1</blockquote>')
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>').replace(/$/, '</p>');
-}
-
-function showTyping() {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = 'msg coach';
-  div.id = 'typingMsg';
-  div.innerHTML = `
-    <div class="msg-avatar">◆</div>
-    <div class="msg-body">
-      <div class="msg-label">Coach</div>
-      <div class="typing-indicator"><span></span><span></span><span></span></div>
-    </div>
-  `;
-  msgs.appendChild(div);
-  div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function removeTyping() {
-  const t = document.getElementById('typingMsg');
-  if (t) t.remove();
-}
-
-// ── API CALL ──────────────────────────────────────────────────────────────
-
-async function callClaude(messages) {
-  const resp = await fetch("https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      system: buildSystemPrompt(),
-      messages: messages,
-    })
-  });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    return `⚠️ ${err?.error || `API error ${resp.status}`}`;
-  }
-  const data = await resp.json();
-  return data.content || "Sorry, I couldn't generate a response right now.";
-}
-
-function buildSystemPrompt() {
-  const lv = state.level;
-  const levelGuides = {
-    1: `You are coaching Analogical Close Reading. The student should:
-- Select a structural element (not a surface feature) in the text
-- Ask: "What is the underlying system or pattern at work here?"
-- Map it onto a parallel structure in another domain
-- Explain what parts align and what the alignment REVEALS about the text
-- NOT just say "X is like Y because both are [single adjective]"
-Your questioning sequence:
-1. Get them to name the element and ask them "what is the underlying structure or mechanism?" (push away from description)
-2. Once they identify structure, prompt them to find a parallel in a different domain
-3. Test the mapping: "What specifically corresponds to what? Map the parts."
-4. Push for insight: "What does this analogy let you see about the text that you couldn't see without it?"
-5. Ask them to identify where the analogy breaks down — this is important`,
-
-    2: `You are coaching Pattern Translation. The student should:
-- Abstract a PATTERN or principle from the text (not a single element, but a recurring structure)
-- Strip it to its abstract form: "what is the underlying logic?"
-- Find the same logic operating in a completely different field
-- Use the cross-domain parallel to deepen or reframe their reading
-Your questioning sequence:
-1. Get them to name a pattern (not a moment — a recurring structure)
-2. Ask them to abstract it: "Strip this to its most general form. What is the underlying principle?"
-3. Push for a genuinely different domain — if they stay in literature, push them to history, science, ecology, economics
-4. Ask: "What does seeing this pattern in [other domain] reveal about how it functions in the text?"
-5. Test: "Does this pattern hold across the whole text, or does it break at some point? What does the breakpoint tell you?"`,
-
-    3: `You are coaching Reverse Analogising. The student should:
-- First CONSTRUCT an analogy for their element
-- Then systematically TEST where the analogy holds
-- Identify the SPECIFIC POINT where it breaks down
-- Extract insight from the failure: "what does the breakdown reveal that the analogy couldn't?"
-Your questioning sequence:
-1. Get them to produce their own analogy (don't give them one)
-2. Ask: "Where does this hold? Map the specific correspondences."
-3. Push: "Now find where it stops working. What can your analogy NOT capture?"
-4. This is the key move: "What does the failure point reveal about the text that a better-fitting analogy might have hidden?"
-5. Ask them to revise or complicate their original interpretation based on what the breakdown taught them`,
-
-    4: `You are coaching Analogical Problem Solving. The student should:
-- Identify a genuine interpretive PROBLEM: an ambiguity, a critical crux, something that resists easy resolution
-- Find another field where people have solved a structurally similar problem
-- Import that method/framework
-- Test whether it resolves or reframes the interpretive problem
-Your questioning sequence:
-1. Get them to name a genuine problem in the text (not "what does it mean" but a specific crux)
-2. Help them articulate the structure of that problem: "What KIND of problem is this? Decision under uncertainty? Competing explanations? System failure?"
-3. Ask: "Where else have people had to solve this kind of problem? Psychology? Architecture? Biology? Economics?"
-4. Once they identify a framework, ask them to apply it step by step to the text
-5. Test: "Does this framework resolve the problem, or just reframe it? Which is more useful?"`,
-
-    5: `You are coaching Metaphorical Analysis. The student should:
-- Identify an EXTENDED metaphor (or central metaphor) in the text
-- Systematically trace its implications: "if we take this metaphor seriously, what does it say about every element of the situation?"
-- Identify where the metaphor guides understanding AND where it misleads
-- Consider alternative metaphors and what they would change
-Your questioning sequence:
-1. Get them to name a specific metaphor (not "there are lots of metaphors" — one specific one)
-2. Ask: "What does this metaphor imply? If [X] is [metaphor], what does that make [related element]?"
-3. Push for systematic exploration: "Keep following the logic. What else does this metaphor entail?"
-4. Test the ideology: "What does this metaphor make us assume? What does it hide or naturalise?"
-5. Counter: "What alternative metaphor could replace this? What would change in our reading if we used that one instead?"`,
-
-    6: `You are coaching Conceptual Transfer. The student should:
-- Extract a CONCEPT or principle from the text (a generalisable rule, not a specific plot detail)
-- Apply it to NEW contexts outside literature — test its range
-- Use the transfer to identify what is universal vs. specific about the text's concerns
-Your questioning sequence:
-1. Get them to name a concept (not "the theme of isolation" — the PRINCIPLE: "isolation functions as X when Y")
-2. Ask them to generalise: "State this as a rule or principle that could apply anywhere."
-3. Ask them to apply it to at least two very different contexts (different fields, historical periods, etc.)
-4. Test: "Does the principle hold in all those contexts? Where does it fail? What does that tell you about the text?"
-5. Push: "What does the breadth or narrowness of this principle's application tell you about what Ishiguro/the author is actually claiming?"`,
-
-    7: `You are coaching Analogical Chains. This is the most demanding level. The student should:
-- Start with one analogy
-- Take the TARGET of that analogy and make it the SOURCE of a new one
-- Repeat for at least 3-4 links
-- Then trace the direct relationship between the START and END — the emergent insight
-The emergent insight must be something NO SINGLE LINK could have revealed on its own.
-Your questioning sequence:
-1. Get them to produce their first analogy (A is like B)
-2. Ask: "Now take B. What is B like? Make a new analogy." (B is like C)
-3. Push for at least one more link. Each link must be structurally valid.
-4. Once the chain has 3-4 links, say: "Now look at A and D together — your starting point and ending point. What connects them directly? What does the chain as a whole reveal?"
-5. The key test: "Could you have seen this connection directly, or did you need the chain to get there?"
-6. Ask them to articulate the emergent insight in 2-3 sentences as if writing it into an essay.`
-  };
-
-  return `You are a coaching tool for Year 12 students learning to build sophisticated analogies. Your role is to guide the student through building their OWN analogy — you do NOT write the analogy for them.
-
-CRITICAL RULES:
-- Never produce the analogy yourself. Ask questions that help the student produce it.
-- If a student gives you a surface-level answer, gently push for depth without telling them the answer.
-- If they give you a strong answer, affirm specifically WHAT is strong, then push to the next step.
-- Keep responses focused: 2-4 sentences of coaching, then ONE clear question.
-- Do not give lengthy explanations. Trust the student to do the thinking.
-- You may give brief examples ONLY to illustrate what "structural" vs "surface" looks like — not to model the answer for their specific case.
-- Track progress: after each exchange, move toward the goal. Don't loop on the same step.
-
-CURRENT TASK:
-- Level: ${lv.code} · ${lv.name}
-- Text/subject: "${state.textContext}"
-- Element being analogised: "${state.subject}"
-
-LEVEL-SPECIFIC COACHING GUIDE:
-${levelGuides[lv.id]}
-
-TONE: Warm but intellectually demanding. You are a thoughtful mentor who respects student intelligence and refuses to give easy answers. Short, incisive questions are your main tool.`;
-}
-
-// ── OPENING MOVE ──────────────────────────────────────────────────────────
-
-async function sendCoachOpener() {
-  document.getElementById('btnSend').disabled = true;
-  showTyping();
-
-  const openingMessages = [{
-    role: 'user',
-    content: `I want to build an analogy. I'm working on: "${state.subject}" from "${state.textContext}". I've chosen: ${state.level.name}. Please give me my first coaching question to get started.`
-  }];
-
-  const reply = await callClaude(openingMessages);
-  removeTyping();
-  appendMessage('coach', reply);
-  markPip(0);
-  document.getElementById('btnSend').disabled = false;
-  document.getElementById('studentInput').focus();
-}
-
-// ── SEND STUDENT MESSAGE ──────────────────────────────────────────────────
-
-async function sendStudentMessage() {
-  const input = document.getElementById('studentInput');
-  const text = input.value.trim();
-  if (!text) return;
-
-  appendMessage('student', text);
-  input.value = '';
-  state.turn++;
-
-  // Show wrap-up button after turn 3
-  if (state.turn >= 3) {
-    document.getElementById('btnWrapUp').style.display = 'inline-block';
-    document.getElementById('inputHint').textContent = 'Keep going, or click "I\'m done" when you feel you\'ve built something solid.';
-  }
-
-  markPip(Math.min(state.turn, 5));
-
-  document.getElementById('btnSend').disabled = true;
-  showTyping();
-
-  // Build messages for API
-  const apiMessages = buildApiMessages();
-  const reply = await callClaude(apiMessages);
-  removeTyping();
-  appendMessage('coach', reply);
-  document.getElementById('btnSend').disabled = false;
-  input.focus();
-}
-
-function buildApiMessages() {
-  // Reconstruct conversation for API
-  const msgs = [];
-  // Add opener context
-  msgs.push({
-    role: 'user',
-    content: `I want to build an analogy. I'm working on: "${state.subject}" from "${state.textContext}". I've chosen: ${state.level.name}.`
-  });
-
-  // Add conversation history
-  state.messages.forEach(m => {
-    msgs.push({
-      role: m.role === 'coach' ? 'assistant' : 'user',
-      content: m.text
-    });
-  });
-
-  return msgs;
-}
-
-// ── WRAP UP ───────────────────────────────────────────────────────────────
-
-async function triggerWrapUp() {
-  if (state.wrappedUp) return;
-  state.wrappedUp = true;
-  document.getElementById('btnWrapUp').disabled = true;
-  document.getElementById('btnSend').disabled = true;
-  document.getElementById('inputArea').style.opacity = '0.4';
-  document.getElementById('inputArea').style.pointerEvents = 'none';
-
-  showTyping();
-
-  // Ask for a synthesis summary
-  const summaryMessages = buildApiMessages();
-  summaryMessages.push({
-    role: 'user',
-    content: `I think I'm done. Can you give me a brief, focused summary of: (1) the core analogy I built, (2) the strongest structural insight it reveals, and (3) one thing I should push further if I were to use this in formal writing? Be concise — this is for my notes.`
-  });
-
-  const summary = await callClaude(summaryMessages);
-  removeTyping();
-  appendMessage('coach', summary);
-
-  setTimeout(() => buildReflectionPanel(summary), 400);
-}
-
-function buildReflectionPanel(summary) {
-  goToSection(3);
-  document.getElementById('ph2').classList.remove('active');
-  document.getElementById('ph2').classList.add('done');
-  document.getElementById('ph3').classList.add('active');
-
-  const checks = [
-    "My analogy maps structural patterns, not just surface features",
-    "I can explain specifically what corresponds to what",
-    "My analogy reveals something about the text I couldn't see without it",
-    "I've identified where the analogy breaks down",
-    "I know how I'd integrate this into formal writing",
-    "I pushed beyond my first obvious answer",
-  ];
-
-  const studentAnalogy = state.messages
-    .filter(m => m.role === 'student')
-    .map(m => m.text)
-    .join('\n\n');
-
-  const panel = document.getElementById('wrapupContent');
-  panel.innerHTML = `
-    <h3>Reflection</h3>
-
-    <div class="summary-block">
-      <label>Your element</label>
-      <p>${state.level.code} · ${state.level.name} · ${state.subject} (from ${state.textContext})</p>
-    </div>
-
-    <div class="summary-block">
-      <label>Coach's synthesis</label>
-      <p>${formatMessage(summary)}</p>
-    </div>
-
-    <div class="summary-block">
-      <label>Your thinking (full draft)</label>
-      <p style="font-size:13px;color:var(--muted)">${studentAnalogy.replace(/\n/g,'<br>')}</p>
-    </div>
-
-    <h3 style="margin-top:24px;margin-bottom:10px;font-size:1rem">Self-check: how's your analogy?</h3>
-    <div class="reflection-grid" id="refGrid">
-      ${checks.map((c, i) => `
-        <label class="reflection-item" onclick="toggleCheck(this)">
-          <input type="checkbox">
-          <div class="reflection-check" id="rc${i}">✓</div>
-          <span class="reflection-text">${c}</span>
-        </label>
-      `).join('')}
-    </div>
-
-    <div class="btn-row" style="margin-top:24px">
-      <button class="btn btn-secondary" onclick="startAgain()">Build another analogy</button>
-      <button class="btn btn-secondary" onclick="tryHigherLevel()">Try the next level</button>
-    </div>
-  `;
-}
-
-function toggleCheck(el) {
-  el.classList.toggle('checked');
-}
-
-function startAgain() {
-  state = { level: null, textContext: '', subject: '', messages: [], turn: 0, wrappedUp: false };
-  document.documentElement.style.setProperty('--active-level-color', 'var(--gold)');
-  document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('btnChooseLevel').disabled = true;
-  document.getElementById('textContext').value = '';
-  document.getElementById('analogySubject').value = '';
-  goToSection(0);
-}
-
-function tryHigherLevel() {
-  const nextId = Math.min(state.level.id + 1, 7);
-  state.level = null;
-  state.messages = [];
-  state.turn = 0;
-  state.wrappedUp = false;
-  document.documentElement.style.setProperty('--active-level-color', 'var(--gold)');
-  document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('btnChooseLevel').disabled = true;
-  goToSection(0);
-  // Pre-select next level after a tick
+function tryNextLevel() {
+  state.levelIdx = Math.min(state.levelIdx + 1, 6);
+  state.workData = {};
+  buildLevelTiles();
+  showScreen(0);
   setTimeout(() => {
-    selectLevel(nextId);
-    document.querySelectorAll('.level-card').forEach(c => {
-      if (parseInt(c.dataset.id) === nextId) c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
+    const tile = document.querySelectorAll('.level-tile')[state.levelIdx];
+    if (tile) tile.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 100);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// SCREEN 0: LEVEL TILES
+// ═══════════════════════════════════════════════════════
+function buildLevelTiles() {
+  const grid = document.getElementById('levelsGrid');
+  grid.innerHTML = '';
+  LEVELS.forEach((lv, i) => {
+    const t = document.createElement('div');
+    t.className = 'level-tile';
+    t.style.setProperty('--tile-color', lv.color);
+    t.innerHTML = `
+      <div class="tile-num">${lv.num} ·  ${lv.name}</div>
+      <div class="tile-desc">${lv.desc}</div>
+      <div class="tile-badge">${lv.tag}</div>
+    `;
+    t.addEventListener('click', () => startLevel(i));
+    grid.appendChild(t);
+  });
+}
 
-buildLevelGrid();
+// ═══════════════════════════════════════════════════════
+// SCREEN 1: SUBJECT INPUT
+// ═══════════════════════════════════════════════════════
+function startLevel(idx) {
+  state.levelIdx = idx;
+  const lv = LEVELS[idx];
+  document.documentElement.style.setProperty('--accent', lv.color);
+  document.documentElement.style.setProperty('--accent-dim', lv.accent);
+  document.getElementById('chipNum').textContent = lv.num;
+  document.getElementById('chipName').textContent = lv.name;
+  showScreen(1);
+}
+
+document.getElementById('btnBegin').addEventListener('click', async () => {
+  const t = document.getElementById('inputText').value.trim();
+  const e = document.getElementById('inputElement').value.trim();
+  if (!t || !e) { alert('Please fill in both fields.'); return; }
+  state.text = t;
+  state.element = e;
+  showLoading(true);
+  await buildActivity();
+  showLoading(false);
+  showScreen(2);
+});
+
+// ═══════════════════════════════════════════════════════
+// ACTIVITY BUILDER — routes to correct level
+// ═══════════════════════════════════════════════════════
+async function buildActivity() {
+  const builders = [buildL1,buildL2,buildL3,buildL4,buildL5,buildL6,buildL7];
+  await builders[state.levelIdx]();
+}
+
+// ═══════════════════════════════════════════════════════
+// SHARED HELPERS
+// ═══════════════════════════════════════════════════════
+function activityShell(levelIdx, stepCount) {
+  const lv = LEVELS[levelIdx];
+  const dots = Array.from({length: stepCount}, (_,i) =>
+    `<div class="step-dot${i===0?' active':''}" id="dot${i}"></div>`).join('');
+  return `
+    <div class="activity-header">
+      <div class="activity-meta">
+        <div class="activity-level-tag">${lv.num} · ${lv.name}</div>
+        <div class="activity-title">${lv.name}</div>
+        <div class="activity-subject-pill">Working on: <strong>${state.element}</strong> — <em>${state.text}</em></div>
+      </div>
+      <div class="steps-bar">${dots}</div>
+    </div>`;
+}
+
+function setDot(i, status) {
+  const d = document.getElementById('dot'+i);
+  if (!d) return;
+  d.className = 'step-dot' + (status==='active'?' active':status==='done'?' done':'');
+}
+
+function collectSummaryCard(key, label, value) {
+  state.workData[key] = { label, value };
+}
+
+// ═══════════════════════════════════════════════════════
+// LEVEL 1: ANALOGICAL CLOSE READING
+// Observations → domain pick → mapping
+// ═══════════════════════════════════════════════════════
+async function buildL1() {
+  const screen = document.getElementById('screen2');
+  // Generate observations
+  const obs = await callAIJson(
+    `You generate plain-English observations about how a textual element BEHAVES or FUNCTIONS — not what it looks like. No jargon. No "structural" or "analogical". Write as a thoughtful human would describe what something *does*. Return JSON: { "observations": ["...", "...", ...] } — exactly 8 short observations (one sentence each, starting with "It..." or an active verb).`,
+    [{ role:'user', content:`Text: "${state.text}"\nElement: "${state.element}"\n\nGenerate 8 observations about what this element does or how it behaves.` }]
+  );
+  const observations = obs?.observations || ['It builds slowly over time','It conceals as much as it reveals','It changes everything around it','It resists being named directly','It returns to the same moment repeatedly','It operates differently for different characters','It creates distance between narrator and reader','It rewrites what came before'];
+
+  const domains = [
+    { icon:'🌿', name:'Nature & ecology' },
+    { icon:'🏗️', name:'Architecture' },
+    { icon:'💊', name:'Medicine & biology' },
+    { icon:'⚖️', name:'Law & justice' },
+    { icon:'📡', name:'Technology' },
+    { icon:'🎵', name:'Music' },
+    { icon:'🌍', name:'History & politics' },
+    { icon:'🧮', name:'Mathematics' },
+    { icon:'🎭', name:'Theatre & film' },
+    { icon:'🏃', name:'Sport' },
+  ];
+
+  screen.innerHTML = activityShell(0, 3) + `
+    <div id="l1step1">
+      <div class="instruction">
+        Below are observations about <strong>${state.element}</strong>. Select the ones that feel most true — the ones that capture what it actually <em>does</em>.
+        <br><br>Don't worry about which are "correct". Pick what resonates.
+      </div>
+      <div class="obs-grid" id="obsGrid">
+        ${observations.map((o,i) => `<div class="obs-card" data-i="${i}" onclick="toggleObs(this)">${o}</div>`).join('')}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="l1next1()">These feel right →</button>
+      </div>
+    </div>
+
+    <div id="l1step2" style="display:none">
+      <div class="instruction">
+        Good. Now pick a domain — a completely different field — that you want to find the same behaviours in.
+      </div>
+      <div class="domain-grid">
+        ${domains.map((d,i) => `
+          <div class="domain-card" data-i="${i}" onclick="selectDomain(this)">
+            <div class="domain-icon">${d.icon}</div>
+            <div class="domain-name">${d.name}</div>
+          </div>`).join('')}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnL1D" disabled onclick="l1next2()">Work with this domain →</button>
+      </div>
+    </div>
+
+    <div id="l1step3" style="display:none">
+      <div class="instruction">
+        For each behaviour you selected, find what plays that same role in <strong id="chosenDomainLabel">your chosen domain</strong>. Write it in the right column. You don't need to force every row — leave blank if it genuinely doesn't map.
+      </div>
+      <table class="mapping-table">
+        <thead>
+          <tr>
+            <th>In "${state.element}"</th>
+            <th>In <span id="mappingDomainLabel">the domain</span></th>
+          </tr>
+        </thead>
+        <tbody id="mappingBody"></tbody>
+      </table>
+      <div class="field-group" style="margin-top:8px">
+        <label class="field-label">What does this mapping reveal about the text?</label>
+        <textarea id="l1insight" placeholder="What can you now see about ${state.element} that you couldn't articulate without this comparison?"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+      </div>
+    </div>
+  `;
+
+  state.workData._obs = observations;
+  state.workData._domains = domains;
+}
+
+function toggleObs(el) {
+  el.classList.toggle('selected');
+}
+
+let selectedDomainIdx = null;
+function selectDomain(el) {
+  document.querySelectorAll('.domain-card').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDomainIdx = parseInt(el.dataset.i);
+  document.getElementById('btnL1D').disabled = false;
+}
+
+function l1next1() {
+  const selected = [...document.querySelectorAll('.obs-card.selected')].map(el => el.textContent);
+  if (selected.length < 2) { alert('Pick at least two observations.'); return; }
+  state.workData.selectedObs = selected;
+  setDot(0,'done'); setDot(1,'active');
+  document.getElementById('l1step1').style.display = 'none';
+  document.getElementById('l1step2').style.display = 'block';
+}
+
+function l1next2() {
+  if (selectedDomainIdx === null) return;
+  const domain = state.workData._domains[selectedDomainIdx];
+  state.workData.domain = domain.name;
+  document.getElementById('chosenDomainLabel').textContent = domain.name;
+  document.getElementById('mappingDomainLabel').textContent = domain.name;
+  const tbody = document.getElementById('mappingBody');
+  tbody.innerHTML = state.workData.selectedObs.map((o,i) => `
+    <tr>
+      <td>${o}</td>
+      <td><input type="text" placeholder="What does this in ${domain.name}?" id="map${i}"></td>
+    </tr>`).join('');
+  setDot(1,'done'); setDot(2,'active');
+  document.getElementById('l1step2').style.display = 'none';
+  document.getElementById('l1step3').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
+// LEVEL 2: PATTERN TRANSLATION
+// When→Then → flip domain cards
+// ═══════════════════════════════════════════════════════
+async function buildL2() {
+  const screen = document.getElementById('screen2');
+  const domains = [
+    { icon:'🦠', name:'Biology', hint:'ecosystems, cells, evolution' },
+    { icon:'📈', name:'Economics', hint:'markets, supply/demand cycles' },
+    { icon:'🏛️', name:'History', hint:'empires, revolutions, regimes' },
+    { icon:'🧬', name:'Psychology', hint:'behaviour, cognition, identity' },
+    { icon:'🌊', name:'Physics', hint:'forces, energy, entropy' },
+    { icon:'🕸️', name:'Sociology', hint:'systems, hierarchies, power' },
+  ];
+
+  screen.innerHTML = activityShell(1, 2) + `
+    <div id="l2step1">
+      <div class="instruction">
+        Don't describe a single moment — describe the <strong>repeating logic</strong> of ${state.element}. What keeps happening? Complete both halves to name the pattern.
+      </div>
+      <div class="when-then">
+        <div class="when-then-field">
+          <label class="field-label">Whenever…</label>
+          <input type="text" id="whenField" placeholder="e.g. Ono recounts his past achievements">
+        </div>
+        <div class="when-then-field">
+          <label class="field-label">…what follows is</label>
+          <input type="text" id="thenField" placeholder="e.g. the account quietly shifts to remove evidence of complicity">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="l2next1()">Lock in this pattern →</button>
+      </div>
+    </div>
+
+    <div id="l2step2" style="display:none">
+      <div class="pattern-display">
+        <div class="label">Your pattern</div>
+        <div class="pattern-text" id="patternDisplay"></div>
+      </div>
+      <div class="instruction">
+        Flip each domain card. For each one, ask: does this same "whenever → what follows" pattern appear here? Write where you see it and rate how well it maps.
+      </div>
+      <div class="flip-grid">
+        ${domains.map((d,i) => `
+          <div class="flip-card" id="fc${i}" onclick="flipCard(${i})">
+            <div class="flip-inner">
+              <div class="flip-face flip-front">
+                <div class="f-icon">${d.icon}</div>
+                <div class="f-name">${d.name}</div>
+                <div class="f-hint">${d.hint}</div>
+              </div>
+              <div class="flip-face flip-back" onclick="event.stopPropagation()">
+                <span class="flip-back-label">Where does the same pattern appear?</span>
+                <textarea placeholder="Describe it briefly…" id="fd${i}"></textarea>
+                <div class="match-slider">
+                  <input type="range" min="1" max="5" value="3" id="fs${i}">
+                  <div class="match-labels"><span>Surface match</span><span>Deep match</span></div>
+                </div>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="field-group">
+        <label class="field-label">Which domain gave the deepest match, and what does that tell you about the text?</label>
+        <textarea id="l2insight" placeholder="The closest match was… because… This reveals that in the text…"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+      </div>
+    </div>
+  `;
+}
+
+function flipCard(i) {
+  document.getElementById('fc'+i).classList.toggle('flipped');
+}
+
+function l2next1() {
+  const w = document.getElementById('whenField').value.trim();
+  const t = document.getElementById('thenField').value.trim();
+  if (!w || !t) { alert('Complete both halves of the pattern.'); return; }
+  state.workData.when = w;
+  state.workData.then = t;
+  document.getElementById('patternDisplay').textContent = `Whenever ${w}, what follows is: ${t}`;
+  setDot(0,'done'); setDot(1,'active');
+  document.getElementById('l2step1').style.display = 'none';
+  document.getElementById('l2step2').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
+// LEVEL 3: REVERSE ANALOGISING
+// AI gives analogy → stamp each claim
+// ═══════════════════════════════════════════════════════
+async function buildL3() {
+  const screen = document.getElementById('screen2');
+  // Get AI to generate an analogy AND stress-test claims
+  const result = await callAIJson(
+    `You generate a thoughtful analogy for a textual element and then a list of specific claims about how well that analogy holds. Return JSON:
+{
+  "analogy": "A paragraph (3-5 sentences) comparing the element to something from a different domain. Do NOT use the words 'like' or 'as' — write it as a declarative assertion. Avoid hedging language.",
+  "claims": [
+    "A specific, concrete claim about one way the analogy holds or doesn't hold",
+    ...6 total claims, mix of ones that hold, partly hold, and fail
+  ]
+}
+Make the analogy genuinely interesting — not an obvious comparison. The claims should be specific and testable, not vague.`,
+    [{ role:'user', content:`Text: "${state.text}"\nElement: "${state.element}"\n\nGenerate an analogy and 6 specific claims to test.` }]
+  );
+
+  const analogy = result?.analogy || `${state.element} operates as a palimpsest — each new account written over the last, the earlier versions still faintly visible beneath. The reader works as an archaeologist of the text, scraping back layers of revision to find what originally stood. What appears as coherent memory is in fact a document under continuous reconstruction.`;
+  const claims = result?.claims || [
+    'Both involve something being covered without being fully erased',
+    'Both require deliberate effort to detect the earlier version',
+    'Both involve a single author/agent making all the changes',
+    'The original "truth" can always be recovered if you look hard enough',
+    'Both serve a preserving function as much as a concealing one',
+    'The process of revision leaves traces that expose the motivation behind it',
+  ];
+
+  state.workData.givenAnalogy = analogy;
+  state.workData.claims = claims;
+  state.workData.stamps = {};
+
+  screen.innerHTML = activityShell(2, 2) + `
+    <div id="l3step1">
+      <div class="instruction">
+        Below is an analogy for <strong>${state.element}</strong>. Read it carefully. Then stamp each claim: does it hold, partly hold, or fail?
+      </div>
+      <div class="given-analogy"><p>${analogy}</p></div>
+      <div class="claims-list">
+        ${claims.map((c,i) => `
+          <div class="claim-item" id="claim${i}">
+            <div class="claim-text">${c}</div>
+            <div class="stamp-group">
+              <button class="stamp holds" onclick="stampClaim(${i},'holds',this)">Holds</button>
+              <button class="stamp partly" onclick="stampClaim(${i},'partly',this)">Partly</button>
+              <button class="stamp fails" onclick="stampClaim(${i},'fails',this)">Fails</button>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="l3next1()">Work with the failures →</button>
+      </div>
+    </div>
+
+    <div id="l3step2" style="display:none">
+      <div class="instruction">
+        The places where an analogy <strong>fails</strong> are often where the real insight lives. For each thing you stamped as failing or only partly holding, explain what that breakdown reveals about the text that a perfect analogy would have hidden.
+      </div>
+      <div id="failureInsights"></div>
+      <div class="field-group" style="margin-top:16px">
+        <label class="field-label">How does testing this analogy change or sharpen your reading of ${state.element}?</label>
+        <textarea id="l3final" placeholder="After testing this analogy, I now see that…"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+      </div>
+    </div>
+  `;
+}
+
+function stampClaim(i, verdict, btn) {
+  const group = btn.closest('.stamp-group');
+  group.querySelectorAll('.stamp').forEach(s => {
+    s.classList.remove('holds','partly','fails');
+  });
+  btn.classList.add(verdict);
+  state.workData.stamps[i] = verdict;
+  const item = document.getElementById('claim'+i);
+  item.style.borderColor = verdict==='holds'?'var(--sage)':verdict==='partly'?'var(--amber)':'var(--rust)';
+}
+
+function l3next1() {
+  const stamped = Object.keys(state.workData.stamps).length;
+  if (stamped < state.workData.claims.length * 0.5) {
+    alert('Stamp at least half the claims before moving on.'); return;
+  }
+  // Build failure insights section
+  const failures = state.workData.claims
+    .map((c,i) => ({ c, verdict: state.workData.stamps[i] }))
+    .filter(x => x.verdict === 'fails' || x.verdict === 'partly');
+
+  const insightsHtml = failures.length === 0
+    ? '<p style="color:var(--muted);font-size:.85rem">You found the analogy held throughout — now consider: what would a version of it say that fails? What would that reveal?</p>'
+    : failures.map((f,i) => `
+        <div class="insight-box" style="margin-bottom:12px">
+          <div class="label">${f.verdict === 'fails' ? 'This failed' : 'This only partly held'}</div>
+          <p>${f.c}</p>
+          <textarea placeholder="What does this breakdown or partial fit reveal about the text?" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:8px 10px;color:var(--text);font-family:'Syne',sans-serif;font-size:.85rem;resize:none;min-height:60px;outline:none" id="fi${i}"></textarea>
+        </div>`).join('');
+
+  document.getElementById('failureInsights').innerHTML = insightsHtml;
+  setDot(0,'done'); setDot(1,'active');
+  document.getElementById('l3step1').style.display = 'none';
+  document.getElementById('l3step2').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
+// LEVEL 4: ANALOGICAL PROBLEM SOLVING
+// Crux questions → field cards → structured import
+// ═══════════════════════════════════════════════════════
+async function buildL4() {
+  const screen = document.getElementById('screen2');
+
+  const fields = [
+    { icon:'🧠', title:'Psychology', example:'How we handle contradictory beliefs, grief, identity rupture' },
+    { icon:'🌿', title:'Ecology', example:'How systems recover, collapse, adapt under pressure' },
+    { icon:'⚖️', title:'Law', example:'How competing claims are weighed, resolved, or left open' },
+    { icon:'🏗️', title:'Engineering', example:'How systems fail, are stress-tested, or redundancy built in' },
+    { icon:'💊', title:'Medicine', example:'How diagnosis works when symptoms are ambiguous or masked' },
+    { icon:'📈', title:'Economics', example:'How actors make decisions under uncertainty or incomplete information' },
+    { icon:'🌍', title:'History', example:'How societies account for, suppress, or revise collective memory' },
+    { icon:'🎭', title:'Theatre', example:'How performance creates meaning through gap between role and actor' },
+  ];
+
+  screen.innerHTML = activityShell(3, 3) + `
+    <div id="l4step1">
+      <div class="instruction">
+        Before you can borrow a solution from somewhere else, you need to be precise about the problem. Answer these three questions about <strong>${state.element}</strong> in <strong>${state.text}</strong>.
+      </div>
+      <div class="crux-questions">
+        <div class="crux-q">
+          <label><span>Q1</span> What does this element want to do, or what is it trying to achieve?</label>
+          <input type="text" id="cq1" placeholder="e.g. Ono wants to believe he acted with integrity throughout his career">
+        </div>
+        <div class="crux-q">
+          <label><span>Q2</span> What is the tension, obstacle, or contradiction embedded in it?</label>
+          <input type="text" id="cq2" placeholder="e.g. but the evidence of his complicity keeps surfacing through his own narration">
+        </div>
+        <div class="crux-q">
+          <label><span>Q3</span> Why does this resist a simple explanation?</label>
+          <input type="text" id="cq3" placeholder="e.g. because Ishiguro never lets us decide whether Ono is self-deceived or consciously dishonest">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="l4next1()">Name the problem →</button>
+      </div>
+    </div>
+
+    <div id="l4step2" style="display:none">
+      <div class="crux-display">
+        <div class="label">The problem</div>
+        <p id="cruxDisplay"></p>
+      </div>
+      <div class="instruction">
+        Which field has experience dealing with this kind of problem? Pick the one whose tools or frameworks feel closest to what you need.
+      </div>
+      <div class="field-cards">
+        ${fields.map((f,i) => `
+          <div class="field-card" data-i="${i}" onclick="selectField(this,${i})">
+            <div class="field-icon">${f.icon}</div>
+            <div class="field-title">${f.title}</div>
+            <div class="field-example">${f.example}</div>
+          </div>`).join('')}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnL4F" disabled onclick="l4next2()">Import from this field →</button>
+      </div>
+    </div>
+
+    <div id="l4step3" style="display:none">
+      <div class="instruction">
+        Now do the import. Work through each step — these are the moves that turn a borrowed framework into a genuine reading.
+      </div>
+      <div class="import-steps">
+        <div class="import-step">
+          <div class="import-step-num">1</div>
+          <div style="flex:1">
+            <label class="field-label">In <span id="fieldName1">this field</span>, when they face a problem like yours, they call it…</label>
+            <input type="text" id="is1" placeholder="e.g. In psychology, this is called cognitive dissonance">
+          </div>
+        </div>
+        <div class="import-step">
+          <div class="import-step-num">2</div>
+          <div style="flex:1">
+            <label class="field-label">The way they typically approach it is…</label>
+            <textarea id="is2" placeholder="e.g. Rather than resolving the contradiction, they map how a person holds two incompatible beliefs simultaneously by constructing rationalising narratives"></textarea>
+          </div>
+        </div>
+        <div class="import-step">
+          <div class="import-step-num">3</div>
+          <div style="flex:1">
+            <label class="field-label">Applying that to ${state.element}, it means…</label>
+            <textarea id="is3" placeholder="e.g. Ono's contradictions aren't signs of dishonesty — they're the predictable output of a mind managing incompatible self-images"></textarea>
+          </div>
+        </div>
+        <div class="import-step">
+          <div class="import-step-num">4</div>
+          <div style="flex:1">
+            <label class="field-label">This resolves / reframes the problem because…</label>
+            <textarea id="is4" placeholder="e.g. Both readings of Ono — guilty collaborator and deluded fantasist — can now be simultaneously true, which is what the novel's ambiguity requires"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+      </div>
+    </div>
+  `;
+
+  state.workData._fields = fields;
+  state.workData._selectedFieldIdx = null;
+}
+
+function selectField(el, i) {
+  document.querySelectorAll('.field-card').forEach(f => f.classList.remove('selected'));
+  el.classList.add('selected');
+  state.workData._selectedFieldIdx = i;
+  document.getElementById('btnL4F').disabled = false;
+}
+
+function l4next1() {
+  const q1 = document.getElementById('cq1').value.trim();
+  const q2 = document.getElementById('cq2').value.trim();
+  const q3 = document.getElementById('cq3').value.trim();
+  if (!q1 || !q2 || !q3) { alert('Answer all three questions to define the problem precisely.'); return; }
+  state.workData.crux = { q1, q2, q3 };
+  document.getElementById('cruxDisplay').textContent = `${q1} — but ${q2} — and this resists easy resolution because ${q3}.`;
+  setDot(0,'done'); setDot(1,'active');
+  document.getElementById('l4step1').style.display = 'none';
+  document.getElementById('l4step2').style.display = 'block';
+}
+
+function l4next2() {
+  const idx = state.workData._selectedFieldIdx;
+  if (idx === null) return;
+  const field = state.workData._fields[idx];
+  state.workData.field = field.title;
+  document.querySelectorAll('[id^="fieldName"]').forEach(el => el.textContent = field.title);
+  setDot(1,'done'); setDot(2,'active');
+  document.getElementById('l4step2').style.display = 'none';
+  document.getElementById('l4step3').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
+// LEVEL 5: METAPHORICAL ANALYSIS
+// Node web
+// ═══════════════════════════════════════════════════════
+async function buildL5() {
+  const screen = document.getElementById('screen2');
+  // Get AI to extract a metaphor and generate implications
+  const result = await callAIJson(
+    `You identify a central metaphor in a textual element and generate its implications as a node web.
+Return JSON:
+{
+  "metaphor": "One specific metaphor phrase the text uses or implies (not 'like X' — the direct metaphorical equation)",
+  "nodes": [
+    { "implication": "A specific thing this metaphor implies about the text, character, or world — one clear claim per node" },
+    ... 7 nodes total, mix of obvious and non-obvious implications, including at least 2 that might be unintended or ideologically uncomfortable
+  ]
+}`,
+    [{ role:'user', content:`Text: "${state.text}"\nElement: "${state.element}"\n\nIdentify the key metaphor and generate 7 implication nodes.` }]
+  );
+
+  const metaphor = result?.metaphor || `${state.element} as sediment`;
+  const nodes = result?.nodes || [
+    { implication: 'Time moves in one direction only — later layers cannot be removed without destroying earlier ones' },
+    { implication: 'What is buried is not gone; it simply requires excavation to recover' },
+    { implication: 'The present is always built on what came before, whether acknowledged or not' },
+    { implication: 'Geological processes operate without intent — suggesting events happened "naturally" rather than through deliberate choice' },
+    { implication: 'The agent who buries has no control over what survives beneath' },
+    { implication: 'Readers are positioned as geologists — detached experts rather than moral judges' },
+    { implication: 'The metaphor naturalises what might otherwise be seen as suppression or evasion' },
+  ];
+
+  state.workData.metaphor = metaphor;
+  state.workData.nodes = nodes;
+  state.workData.nodeVerdicts = {};
+
+  screen.innerHTML = activityShell(4, 1) + `
+    <div class="metaphor-center">
+      <div class="metaphor-bubble" id="metaphorBubble">${metaphor}</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:8px">Central metaphor in ${state.element}</div>
+    </div>
+    <div class="instruction">
+      Below are implications of this metaphor — things that follow logically if we take it seriously. For each one: <strong>Keep</strong> it if it genuinely illuminates the text. Mark it as <strong>Complicates</strong> if it's useful but creates a tension worth writing about. If you mark it as Complicates, add a sentence about what the tension reveals.
+    </div>
+    <div class="nodes-grid">
+      ${nodes.map((n,i) => `
+        <div class="node-card" id="nc${i}">
+          <div class="node-implication">${n.implication}</div>
+          <div class="node-actions">
+            <button class="node-btn keep" onclick="nodeVerdict(${i},'keep',this)">Keep ✓</button>
+            <button class="node-btn complicate" onclick="nodeVerdict(${i},'complicate',this)">Complicates →</button>
+          </div>
+          <textarea class="node-extend" id="ne${i}" placeholder="What tension does this create? What does that tension reveal?"></textarea>
+        </div>`).join('')}
+    </div>
+    <div class="field-group">
+      <label class="field-label">Across all the nodes — what is this metaphor making us assume that we might not notice without analysis?</label>
+      <textarea id="l5insight" placeholder="This metaphor positions the reader to assume… it hides or naturalises… an alternative metaphor might be…"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+    </div>
+  `;
+}
+
+function nodeVerdict(i, verdict, btn) {
+  const card = document.getElementById('nc'+i);
+  card.classList.remove('kept','complicated');
+  btn.closest('.node-actions').querySelectorAll('.node-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.workData.nodeVerdicts[i] = verdict;
+  if (verdict === 'keep') { card.classList.add('kept'); }
+  if (verdict === 'complicate') { card.classList.add('complicated'); }
+}
+
+// ═══════════════════════════════════════════════════════
+// LEVEL 6: CONCEPTUAL TRANSFER
+// Rule builder → 3-world testing
+// ═══════════════════════════════════════════════════════
+async function buildL6() {
+  const screen = document.getElementById('screen2');
+
+  const worlds = [
+    { icon:'🌿', name:'The natural world', placeholder:'e.g. In ecological succession, whenever a dominant species collapses, what follows is…' },
+    { icon:'🕰️', name:'History', placeholder:'e.g. In post-war reconstruction, whenever a regime is discredited, what follows is…' },
+    { icon:'🧑‍🤝‍🧑', name:'Everyday social life', placeholder:'e.g. In close relationships, whenever someone causes serious harm to someone they love, what follows is…' },
+  ];
+
+  screen.innerHTML = activityShell(5, 2) + `
+    <div id="l6step1">
+      <div class="instruction">
+        Don't describe a single moment — pull out the <strong>principle</strong>. Complete the rule statement below so it captures the underlying logic of how <strong>${state.element}</strong> operates.
+      </div>
+      <div class="rule-builder">
+        <div class="label">State the rule</div>
+        <div class="rule-sentence">
+          <span>Whenever</span>
+          <input type="text" class="rule-input-inline" id="ruleWhen" placeholder="[condition]">
+          <span>what follows is</span>
+          <input type="text" class="rule-input-inline" id="ruleThen" placeholder="[consequence]">
+          <span>because</span>
+          <input type="text" class="rule-input-inline" id="ruleBecause" placeholder="[mechanism]">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="l6next1()">Test this rule →</button>
+      </div>
+    </div>
+
+    <div id="l6step2" style="display:none">
+      <div class="pattern-display" style="margin-bottom:24px">
+        <div class="label">Your rule</div>
+        <div class="pattern-text" id="ruleDisplay"></div>
+      </div>
+      <div class="instruction">
+        Test your rule in each world. Does it hold? Does it bend? Does it break entirely? Your one-sentence explanation matters more than the rating.
+      </div>
+      <div class="transfer-worlds">
+        ${worlds.map((w,i) => `
+          <div class="transfer-world">
+            <div class="world-header">
+              <div class="world-icon">${w.icon}</div>
+              <div class="world-name">${w.name}</div>
+            </div>
+            <textarea class="world-textarea" id="wt${i}" placeholder="${w.placeholder}"></textarea>
+            <div class="world-verdict">
+              <button class="verdict-btn yes" onclick="setVerdict(${i},'yes',this)">Holds</button>
+              <button class="verdict-btn kinda" onclick="setVerdict(${i},'kinda',this)">Bends</button>
+              <button class="verdict-btn no" onclick="setVerdict(${i},'no',this)">Breaks</button>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="field-group">
+        <label class="field-label">What does the range of results tell you about how universal or specific this principle actually is?</label>
+        <textarea id="l6insight" placeholder="The rule holds in… but breaks in… This suggests that Ishiguro/the author is not making a universal claim — they are specifically arguing that…"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+      </div>
+    </div>
+  `;
+}
+
+function setVerdict(i, v, btn) {
+  btn.closest('.world-verdict').querySelectorAll('.verdict-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (!state.workData.verdicts) state.workData.verdicts = {};
+  state.workData.verdicts[i] = v;
+}
+
+function l6next1() {
+  const w = document.getElementById('ruleWhen').value.trim();
+  const t = document.getElementById('ruleThen').value.trim();
+  const b = document.getElementById('ruleBecause').value.trim();
+  if (!w || !t || !b) { alert('Complete all three parts of the rule.'); return; }
+  state.workData.rule = `Whenever ${w}, what follows is ${t}, because ${b}`;
+  document.getElementById('ruleDisplay').textContent = state.workData.rule;
+  setDot(0,'done'); setDot(1,'active');
+  document.getElementById('l6step1').style.display = 'none';
+  document.getElementById('l6step2').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
+// LEVEL 7: ANALOGICAL CHAINS
+// Visual chain builder
+// ═══════════════════════════════════════════════════════
+async function buildL7() {
+  const screen = document.getElementById('screen2');
+
+  screen.innerHTML = activityShell(6, 1) + `
+    <div class="instruction">
+      Build a chain of connected comparisons. Start with <strong>${state.element}</strong>. Each new link takes the destination of the last link and finds something it connects to. After 3–4 links, you'll be asked to look at where you started and where you ended.
+    </div>
+    <div class="chain-container">
+      <div class="chain-track" id="chainTrack">
+        <div class="chain-node locked" id="cn0">
+          <div class="chain-node-label">Start</div>
+          <div class="chain-node-text">${state.element}</div>
+        </div>
+        <div class="chain-node-connector">→</div>
+        <div class="chain-node active-node" id="cn1">
+          <div class="chain-node-label">Link 1 — where does this take you?</div>
+          <textarea id="ct1" placeholder="Name what ${state.element} reminds you of, operates like, or parallels in another domain…" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="chain-suggestions" id="chainSuggestions"></div>
+    </div>
+    <div class="btn-row" id="chainBtns">
+      <button class="btn btn-primary" onclick="addChainLink()">Add next link →</button>
+      <button class="btn btn-secondary" id="btnCollapse" style="display:none" onclick="collapseChain()">What connects the ends? →</button>
+    </div>
+    <div class="collapse-zone" id="collapseZone">
+      <div class="collapse-endpoints">
+        <div class="endpoint-card" id="ep0">${state.element}</div>
+        <div class="endpoint-arrow">⟷</div>
+        <div class="endpoint-card" id="epLast">…</div>
+      </div>
+      <div class="collapse-prompt">You started here and ended there. Without retracing the steps — what is the hidden connection between these two things?</div>
+      <textarea id="collapseInsight" placeholder="The hidden connection is that both… which reveals that in the text…" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:.88rem;min-height:80px;outline:none;resize:vertical"></textarea>
+      <div class="btn-row" style="margin-top:14px">
+        <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+      </div>
+    </div>
+  `;
+
+  state.workData.chain = [state.element];
+  state.workData.chainLinks = 1;
+  await generateChainSuggestions(state.element);
+}
+
+async function generateChainSuggestions(from) {
+  const s = document.getElementById('chainSuggestions');
+  if (!s) return;
+  s.innerHTML = '<span style="font-size:.75rem;color:var(--muted);font-family:\'JetBrains Mono\',monospace;letter-spacing:.08em">Generating options…</span>';
+  const result = await callAIJson(
+    `Given a concept, generate 3 brief "next destination" suggestions for an analogical chain. Each should be a different domain and show where the same essential pattern or logic might appear next. Return JSON: { "suggestions": ["option1", "option2", "option3"] }. Keep each suggestion under 10 words. They should open up thinking, not close it down.`,
+    [{ role:'user', content:`Current point in chain: "${from}"\nText context: "${state.text}" — element: "${state.element}"\n\nSuggest 3 possible next links.` }]
+  );
+  const suggestions = result?.suggestions || ['the gradual erosion of coastal landmass','an immune system tolerating a foreign body','a nation revising its constitution after crisis'];
+  s.innerHTML = '<span style="font-size:.72rem;color:var(--muted);font-family:\'JetBrains Mono\',monospace;letter-spacing:.08em;margin-right:8px;text-transform:uppercase">Or try:</span>' +
+    suggestions.map(sg => `<div class="chain-suggestion" onclick="useChainSuggestion('${sg.replace(/'/g,"\\'")}')"><em>→</em> ${sg}</div>`).join('');
+}
+
+function useChainSuggestion(text) {
+  const n = state.workData.chainLinks;
+  const ta = document.getElementById('ct'+n);
+  if (ta) ta.value = text;
+}
+
+async function addChainLink() {
+  const n = state.workData.chainLinks;
+  const ta = document.getElementById('ct'+n);
+  if (!ta || !ta.value.trim()) { alert('Write your link before adding the next one.'); return; }
+  const linkText = ta.value.trim();
+
+  // Lock current node
+  const currentNode = document.getElementById('cn'+n);
+  currentNode.classList.remove('active-node');
+  currentNode.classList.add('locked');
+  currentNode.innerHTML = `<div class="chain-node-label">Link ${n}</div><div class="chain-node-text">${linkText}</div>`;
+
+  state.workData.chain.push(linkText);
+  state.workData.chainLinks++;
+  const newN = state.workData.chainLinks;
+
+  const track = document.getElementById('chainTrack');
+  const conn = document.createElement('div');
+  conn.className = 'chain-node-connector';
+  conn.textContent = '→';
+  track.appendChild(conn);
+
+  const newNode = document.createElement('div');
+  newNode.className = 'chain-node active-node';
+  newNode.id = 'cn'+newN;
+  newNode.innerHTML = `<div class="chain-node-label">Link ${newN} — and from there?</div><textarea id="ct${newN}" placeholder="What does '${linkText.split(' ').slice(0,4).join(' ')}…' connect to?" rows="3"></textarea>`;
+  track.appendChild(newNode);
+  track.scrollLeft = track.scrollWidth;
+
+  // Show collapse button after 3 links
+  if (newN >= 3) {
+    document.getElementById('btnCollapse').style.display = 'inline-flex';
+  }
+
+  await generateChainSuggestions(linkText);
+}
+
+function collapseChain() {
+  const chain = state.workData.chain;
+  const lastLink = document.getElementById('ct'+state.workData.chainLinks)?.value.trim() || chain[chain.length-1];
+  if (lastLink && lastLink !== chain[chain.length-1]) state.workData.chain.push(lastLink);
+
+  document.getElementById('ep0').textContent = state.element;
+  document.getElementById('epLast').textContent = state.workData.chain[state.workData.chain.length-1];
+  document.getElementById('collapseZone').classList.add('visible');
+  document.getElementById('chainBtns').style.display = 'none';
+  document.getElementById('collapseZone').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ═══════════════════════════════════════════════════════
+// FINISH / COMPLETION
+// ═══════════════════════════════════════════════════════
+async function finishLevel() {
+  showLoading(true);
+  const lv = LEVELS[state.levelIdx];
+
+  // Collect work data summary
+  const workSummary = JSON.stringify(state.workData, null, 2);
+
+  // Get AI synthesis
+  const synthesis = await callAI(
+    `You give brief, precise synthesis feedback on student analogical thinking. 2–3 short paragraphs maximum. 
+Be specific about what they actually produced — quote or paraphrase their work. 
+Identify one strong move and one place to push further.
+Do NOT be generic. Do NOT say "great work" or "well done". Write as a thoughtful intellectual peer.
+Do NOT use the phrase "like" to make analogies — model sophisticated language.`,
+    [{ role:'user', content:`Level: ${lv.name}\nText: "${state.text}"\nElement: "${state.element}"\n\nStudent's work:\n${workSummary}\n\nGive a brief synthesis.` }]
+  );
+
+  showLoading(false);
+
+  // Build summary cards
+  const summaryData = buildSummaryData();
+
+  // Populate completion screen
+  document.getElementById('completionSub').textContent = `${lv.num} · ${lv.name} · ${state.element}`;
+  document.getElementById('aiFeedback').className = 'ai-feedback';
+  document.getElementById('aiFeedback').innerHTML = `<div class="ai-feedback-label">Synthesis</div>${synthesis.split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('')}`;
+
+  const sc = document.getElementById('summaryCards');
+  sc.innerHTML = summaryData.map(s => `
+    <div class="summary-card">
+      <div class="s-label">${s.label}</div>
+      <div class="s-value">${s.value || '<span style="color:var(--muted);font-style:italic">Not completed</span>'}</div>
+    </div>`).join('');
+
+  const checkTexts = [
+    'My comparison is based on how something works, not what it looks like',
+    'I can explain what specifically corresponds to what',
+    'This reveals something about the text I couldn\'t articulate before',
+    'I\'ve considered where the comparison stops being useful',
+    'I could use this thinking in formal analytical writing',
+    'I went beyond my first, most obvious answer',
+  ];
+  document.getElementById('checkItems').innerHTML = checkTexts.map(t => `
+    <div class="check-item" onclick="this.classList.toggle('checked');this.querySelector('.check-box').textContent=this.classList.contains('checked')?'✓':''">
+      <div class="check-box"></div>
+      <span>${t}</span>
+    </div>`).join('');
+
+  showScreen(9);
+}
+
+function buildSummaryData() {
+  const d = state.workData;
+  const idx = state.levelIdx;
+  if (idx === 0) return [
+    { label:'Observations selected', value: d.selectedObs?.join('; ') },
+    { label:'Domain chosen', value: d.domain },
+    { label:'Insight', value: document.getElementById('l1insight')?.value },
+  ];
+  if (idx === 1) return [
+    { label:'Pattern', value: d.when ? `Whenever ${d.when} → ${d.then}` : '' },
+    { label:'Deepest domain match', value: document.getElementById('l2insight')?.value },
+  ];
+  if (idx === 2) return [
+    { label:'Given analogy', value: d.givenAnalogy?.substring(0,120)+'…' },
+    { label:'Final reading', value: document.getElementById('l3final')?.value },
+  ];
+  if (idx === 3) return [
+    { label:'The crux', value: d.crux ? `${d.crux.q1} — ${d.crux.q2}` : '' },
+    { label:'Field imported', value: d.field },
+    { label:'What it resolves', value: document.getElementById('is4')?.value },
+  ];
+  if (idx === 4) return [
+    { label:'Metaphor analysed', value: d.metaphor },
+    { label:'Ideological assumption', value: document.getElementById('l5insight')?.value },
+  ];
+  if (idx === 5) return [
+    { label:'Rule', value: d.rule },
+    { label:'Range of transfer', value: document.getElementById('l6insight')?.value },
+  ];
+  if (idx === 6) return [
+    { label:'Chain', value: d.chain?.join(' → ') },
+    { label:'Hidden connection', value: document.getElementById('collapseInsight')?.value },
+  ];
+  return [];
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+buildLevelTiles();
 </script>
 </body>
 </html>
