@@ -1252,7 +1252,115 @@ textarea { min-height: 80px; }
 .check-item.checked .check-box { background: var(--sage); border-color: var(--sage); color: white; }
 .check-item span { font-size: 0.85rem; line-height: 1.4; }
 
-/* ── LOADING overlay ── */
+/* ── BRIDGE SCAFFOLD (L1 step 3) ── */
+.bridge-item {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.bridge-item.complete { border-color: var(--accent-dim); }
+.bridge-obs {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border-bottom: 1px solid var(--border2);
+  padding: 12px 18px;
+  font-size: 0.88rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+.bridge-moves {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.bridge-move {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.bridge-move-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--faint);
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 3px;
+  transition: all 0.2s;
+}
+.bridge-move.active .bridge-move-num {
+  background: var(--accent-dim);
+  color: var(--bg);
+}
+.bridge-move.done .bridge-move-num {
+  background: var(--sage);
+  color: white;
+}
+.bridge-move-body { flex: 1; }
+.bridge-move-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.bridge-move.active .bridge-move-label { color: var(--accent); }
+.bridge-hint {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent-dim);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.bridge-input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  resize: none;
+  min-height: 54px;
+}
+.bridge-input:focus { border-color: var(--accent); }
+.bridge-input::placeholder { color: var(--muted); }
+.bridge-locked {
+  font-size: 0.85rem;
+  color: var(--text);
+  padding: 6px 0;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+.bridge-move-btn {
+  margin-top: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--accent-dim);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.bridge-move-btn:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
 .loading-overlay {
   display: none;
   position: fixed;
@@ -1278,6 +1386,67 @@ textarea { min-height: 80px; }
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+}
+
+/* ── MATCH OPTIONS (L1 Move 2) ── */
+.match-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.match-option {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.18s;
+  user-select: none;
+}
+.match-option:hover { border-color: var(--accent-dim); background: var(--faint); }
+.match-option.selected {
+  border-color: var(--sage);
+  background: color-mix(in srgb, var(--sage) 10%, var(--surface2));
+}
+.match-option.wrong {
+  border-color: var(--rust);
+  background: color-mix(in srgb, var(--rust) 8%, var(--surface2));
+  cursor: default;
+}
+.match-option-letter {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--faint);
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.15s;
+}
+.match-option.selected .match-option-letter { background: var(--sage); color: white; }
+.match-option.wrong .match-option-letter { background: var(--rust); color: white; }
+.match-option-text { font-size: 0.83rem; line-height: 1.5; color: var(--text); }
+.match-feedback {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.match-feedback.correct {
+  background: color-mix(in srgb, var(--sage) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--sage) 30%, transparent);
+}
+.match-feedback.incorrect {
+  background: color-mix(in srgb, var(--rust) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--rust) 25%, transparent);
 }
 
 /* ── mobile ── */
@@ -1592,23 +1761,15 @@ async function buildL1() {
 
     <div id="l1step3" style="display:none">
       <div class="instruction">
-        For each behaviour you selected, find what plays that same role in <strong id="chosenDomainLabel">your chosen domain</strong>. Write it in the right column. You don't need to force every row — leave blank if it genuinely doesn't map.
+        For each observation, work through three moves to build the connection to <strong id="chosenDomainLabel">your chosen domain</strong>. Don't skip steps — the thinking in between is the point.
       </div>
-      <table class="mapping-table">
-        <thead>
-          <tr>
-            <th>In "${state.element}"</th>
-            <th>In <span id="mappingDomainLabel">the domain</span></th>
-          </tr>
-        </thead>
-        <tbody id="mappingBody"></tbody>
-      </table>
-      <div class="field-group" style="margin-top:8px">
+      <div id="bridgeContainer"></div>
+      <div class="field-group" style="margin-top:20px">
         <label class="field-label">What does this mapping reveal about the text?</label>
         <textarea id="l1insight" placeholder="What can you now see about ${state.element} that you couldn't articulate without this comparison?"></textarea>
       </div>
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="finishLevel()">Complete →</button>
+        <button class="btn btn-primary" id="btnL1Finish" disabled onclick="finishLevel()">Complete all mappings to continue</button>
       </div>
     </div>
   `;
@@ -1638,22 +1799,197 @@ function l1next1() {
   document.getElementById('l1step2').style.display = 'block';
 }
 
-function l1next2() {
+async function l1next2() {
   if (selectedDomainIdx === null) return;
   const domain = state.workData._domains[selectedDomainIdx];
   state.workData.domain = domain.name;
+  state.workData.bridges = {};
+
+  showLoading(true);
+  const hints = await callAIJson(
+    `For each observation about a textual element, generate scaffolding to help a student who knows nothing about the chosen domain find the structural equivalent.
+
+For each observation generate:
+1. "mechanism": One sentence stripping the observation to its bare abstract process. No literary language. e.g. "Something presents itself as reliable, but contains internal details that quietly contradict that reliability."
+
+2. "options": Exactly 4 short concrete examples from the domain. Written as plain descriptions of real situations — NOT questions. One is the BEST structural match. One is close but subtly wrong. Two are plausible but off. Do NOT label which is correct. Max 2 sentences each. Make them specific and genuine to that domain.
+
+3. "correct_idx": The index (0-3) of the best-matching option.
+
+4. "why_correct": One sentence explaining what makes the correct option the best structural match — used as feedback AFTER the student answers.
+
+5. "why_wrong": One sentence about what makes incorrect choices misleading — used as feedback AFTER the student answers.
+
+Return JSON: { "bridges": [ { "mechanism": "...", "options": ["...", "...", "...", "..."], "correct_idx": N, "why_correct": "...", "why_wrong": "..." }, ... ] }
+Plain language throughout. Domain examples must feel genuinely specific, not vague.`,
+    [{ role:'user', content:`Text: "${state.text}"\nElement: "${state.element}"\nDomain: "${domain.name}"\n\nObservations:\n${state.workData.selectedObs.map((o,i)=>`${i+1}. ${o}`).join('\n')}` }]
+  );
+  showLoading(false);
+
+  const bridges = hints?.bridges || state.workData.selectedObs.map(() => ({
+    mechanism: 'Something presents itself as reliable, but contains internal details that quietly undermine that reliability.',
+    options: [
+      `A witness gives a confident account of events, but their testimony contains small inconsistencies that a cross-examiner uses to cast doubt on the whole story.`,
+      `A judge reads two conflicting character references and must decide which account of the defendant to believe.`,
+      `A lawyer summarises evidence selectively in closing argument, emphasising details that favour their client.`,
+      `A contract contains ambiguous language that both parties later interpret differently in court.`
+    ],
+    correct_idx: 0,
+    why_correct: 'Both involve an account that appears reliable on the surface but carries within it details that undermine its own credibility.',
+    why_wrong: 'The other options involve competing accounts or selective presentation — different mechanisms from a single account undermining itself from within.'
+  }));
+
+  state.workData.bridgeHints = bridges;
   document.getElementById('chosenDomainLabel').textContent = domain.name;
-  document.getElementById('mappingDomainLabel').textContent = domain.name;
-  const tbody = document.getElementById('mappingBody');
-  tbody.innerHTML = state.workData.selectedObs.map((o,i) => `
-    <tr>
-      <td>${o}</td>
-      <td><input type="text" placeholder="What does this in ${domain.name}?" id="map${i}"></td>
-    </tr>`).join('');
+
+  const bridgeHTML = state.workData.selectedObs.map((obs, i) => {
+    const b = bridges[i] || bridges[0];
+    const shuffled = b.options.map((opt, origIdx) => ({ opt, origIdx }));
+    state.workData[`bridgeShuffle${i}`] = shuffled;
+
+    return `
+    <div class="bridge-item" id="bridge${i}">
+      <div class="bridge-obs">${obs}</div>
+      <div class="bridge-moves">
+        <div class="bridge-move active" id="bm${i}_1">
+          <div class="bridge-move-num">1</div>
+          <div class="bridge-move-body">
+            <div class="bridge-move-label">Strip away the text — what is actually happening here?</div>
+            <div class="bridge-hint">${b.mechanism}</div>
+            <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">Does this feel right? Adjust it in your own words if needed.</div>
+            <textarea class="bridge-input" id="bi${i}_1" placeholder="In my own words, what's actually happening is…" rows="2"></textarea>
+            <button class="bridge-move-btn" onclick="bridgeNext(${i},1)">That's it →</button>
+          </div>
+        </div>
+        <div class="bridge-move" id="bm${i}_2" style="opacity:0.35;pointer-events:none">
+          <div class="bridge-move-num">2</div>
+          <div class="bridge-move-body">
+            <div class="bridge-move-label">Which of these from ${domain.name} matches what you just described?</div>
+            <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">Read each carefully. Pick the one where the same underlying thing is happening — not just the same topic.</div>
+            <div class="match-options" id="mo${i}">
+              ${shuffled.map((s, dispIdx) => `
+                <div class="match-option" id="mopt${i}_${dispIdx}" data-obs="${i}" data-disp="${dispIdx}" data-orig="${s.origIdx}" onclick="selectOption(${i},${dispIdx})">
+                  <div class="match-option-letter">${String.fromCharCode(65+dispIdx)}</div>
+                  <div class="match-option-text">${s.opt}</div>
+                </div>`).join('')}
+            </div>
+            <div class="match-feedback" id="mf${i}" style="display:none"></div>
+            <textarea class="bridge-input" id="bi${i}_2" placeholder="I chose this because the same thing is happening: …" rows="2" style="display:none;margin-top:10px"></textarea>
+            <button class="bridge-move-btn" id="bmb${i}_2" onclick="bridgeNext(${i},2)" style="display:none">That's my reasoning →</button>
+          </div>
+        </div>
+        <div class="bridge-move" id="bm${i}_3" style="opacity:0.35;pointer-events:none">
+          <div class="bridge-move-num">3</div>
+          <div class="bridge-move-body">
+            <div class="bridge-move-label">Now say it cleanly</div>
+            <div style="font-size:.8rem;color:var(--muted);line-height:1.5;margin-bottom:8px">
+              You have the mechanism and you have the domain equivalent. Write one clear statement — no hedging.
+              <br><em style="color:var(--accent)">In ${domain.name}, the equivalent of "${obs.replace(/^It /i,'').toLowerCase()}" is…</em>
+            </div>
+            <textarea class="bridge-input" id="bi${i}_3" placeholder="…" rows="2"></textarea>
+            <button class="bridge-move-btn" onclick="bridgeComplete(${i})">Mapped ✓</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
   setDot(1,'done'); setDot(2,'active');
   document.getElementById('l1step2').style.display = 'none';
   document.getElementById('l1step3').style.display = 'block';
+  document.getElementById('bridgeContainer').innerHTML = bridgeHTML;
+  checkAllBridgesDone();
 }
+
+function selectOption(obsIdx, dispIdx) {
+  const b = state.workData.bridgeHints[obsIdx];
+  const shuffle = state.workData[`bridgeShuffle${obsIdx}`];
+  document.querySelectorAll(`#mo${obsIdx} .match-option`).forEach(el => el.classList.remove('selected','wrong'));
+  const chosen = document.getElementById(`mopt${obsIdx}_${dispIdx}`);
+  const chosenOrigIdx = shuffle[dispIdx].origIdx;
+  const isCorrect = chosenOrigIdx === b.correct_idx;
+  const fb = document.getElementById(`mf${obsIdx}`);
+  fb.style.display = 'block';
+
+  if (isCorrect) {
+    chosen.classList.add('selected');
+    fb.className = 'match-feedback correct';
+    fb.innerHTML = `<strong>Good match.</strong> ${b.why_correct} Explain in your own words why you picked it.`;
+    document.getElementById(`bi${obsIdx}_2`).style.display = 'block';
+    document.getElementById(`bmb${obsIdx}_2`).style.display = 'inline-block';
+    state.workData[`bridgeChoice${obsIdx}`] = { dispIdx, origIdx: chosenOrigIdx, optText: shuffle[dispIdx].opt };
+  } else {
+    chosen.classList.add('wrong');
+    fb.className = 'match-feedback incorrect';
+    fb.innerHTML = `<strong>Not quite.</strong> ${b.why_wrong} Look again — focus on the mechanism you described, not the surface topic.`;
+  }
+}
+
+function bridgeNext(i, move) {
+  if (move === 1) {
+    const input = document.getElementById(`bi${i}_1`);
+    if (!input?.value.trim()) { alert('Write something before moving on.'); return; }
+  } else if (move === 2) {
+    if (!state.workData[`bridgeChoice${i}`]) { alert('Select the matching example first.'); return; }
+    const input = document.getElementById(`bi${i}_2`);
+    if (!input?.value.trim()) { alert('Explain your reasoning before moving on.'); return; }
+  }
+  const currMove = document.getElementById(`bm${i}_${move}`);
+  currMove.classList.remove('active');
+  currMove.classList.add('done');
+  currMove.querySelectorAll('textarea').forEach(ta => {
+    if (ta.value.trim()) {
+      const locked = document.createElement('div');
+      locked.className = 'bridge-locked';
+      locked.textContent = ta.value.trim();
+      ta.parentNode.insertBefore(locked, ta);
+    }
+    ta.style.display = 'none';
+  });
+  currMove.querySelectorAll('.bridge-move-btn').forEach(b => b.style.display = 'none');
+  const nextMove = document.getElementById(`bm${i}_${move+1}`);
+  if (nextMove) {
+    nextMove.style.opacity = '1';
+    nextMove.style.pointerEvents = 'auto';
+    nextMove.classList.add('active');
+    setTimeout(() => nextMove.scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
+  }
+}
+
+function bridgeComplete(i) {
+  const input = document.getElementById(`bi${i}_3`);
+  if (!input?.value.trim()) { alert('Write the final mapping before completing.'); return; }
+  const move = document.getElementById(`bm${i}_3`);
+  move.classList.remove('active');
+  move.classList.add('done');
+  const locked = document.createElement('div');
+  locked.className = 'bridge-locked';
+  locked.textContent = input.value.trim();
+  input.parentNode.insertBefore(locked, input);
+  input.style.display = 'none';
+  move.querySelector('.bridge-move-btn').style.display = 'none';
+  document.getElementById('bridge'+i).classList.add('complete');
+  state.workData.bridges[i] = {
+    obs: state.workData.selectedObs[i],
+    mechanism: document.getElementById(`bi${i}_1`)?.value || '',
+    chosen_example: state.workData[`bridgeChoice${i}`]?.optText || '',
+    reasoning: document.getElementById(`bi${i}_2`)?.value || '',
+    mapping: input.value.trim(),
+  };
+  checkAllBridgesDone();
+}
+
+function checkAllBridgesDone() {
+  const total = state.workData.selectedObs?.length || 0;
+  const done = Object.keys(state.workData.bridges || {}).length;
+  const btn = document.getElementById('btnL1Finish');
+  if (!btn) return;
+  btn.disabled = done < total;
+  btn.textContent = done < total
+    ? `${total - done} mapping${total - done > 1 ? 's' : ''} still to complete`
+    : 'Continue →';
+}
+
 
 // ═══════════════════════════════════════════════════════
 // LEVEL 2: PATTERN TRANSLATION
@@ -2325,8 +2661,9 @@ function buildSummaryData() {
   const d = state.workData;
   const idx = state.levelIdx;
   if (idx === 0) return [
-    { label:'Observations selected', value: d.selectedObs?.join('; ') },
-    { label:'Domain chosen', value: d.domain },
+    { label:'Observations selected', value: state.workData.selectedObs?.join('; ') },
+    { label:'Domain', value: state.workData.domain },
+    { label:'Mappings built', value: Object.values(state.workData.bridges||{}).map(b=>`"${b.obs}" → ${b.mapping}`).join(' · ') },
     { label:'Insight', value: document.getElementById('l1insight')?.value },
   ];
   if (idx === 1) return [
