@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machines & Machinery — Class Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f3ed;
+    --ink: #1a1a2e;
+    --blue: #2b4590;
+    --red: #c0392b;
+    --green: #1a7a4a;
+    --gold: #c8920e;
+    --border: #e0d8ce;
+    --shadow: rgba(26,26,46,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    padding: 48px 24px 80px;
+  }
+  .page { max-width: 1000px; margin: 0 auto; }
+
+  header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  header .kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--blue);
+    opacity: 0.6;
+    margin-bottom: 12px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    line-height: 1.05;
+  }
+  header p { margin-top: 10px; font-size: 13px; color: #999; font-style: italic; }
+  .rule { width: 48px; height: 2px; background: var(--gold); margin: 18px auto; }
+
+  .section { margin-bottom: 72px; }
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .section-head .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--border);
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .section-head .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 4px;
+  }
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+  }
+
+  /* ── SPECTRUM BOARD ── */
+  .spectrum-wrap {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+  /* PIN SYSTEM */
+  .pin {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    transform: translateX(-50%);
+  }
+  .pin.above {
+    bottom: 50%;
+    margin-bottom: -2px;
+    flex-direction: column-reverse;
+  }
+  .pin.below {
+    top: 50%;
+    margin-top: -2px;
+    flex-direction: column;
+  }
+  .pin-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    z-index: 2;
+  }
+  .pin-line {
+    width: 1px;
+    height: 28px;
+    background: #ddd;
+    flex-shrink: 0;
+  }
+  .pin-label {
+    font-size: 11px;
+    line-height: 1.35;
+    padding: 5px 9px;
+    border-radius: 6px;
+    border: 1px solid;
+    text-align: center;
+    max-width: 110px;
+  }
+
+  .spectrum-track {
+    height: 5px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #c0392b, #9a8fa0, #2b4590);
+    margin: 36px 0 8px;
+  }
+
+  /* ── BINARY BOARD ── */
+  .binary-panel {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .binary-header {
+    background: var(--ink);
+    color: white;
+    padding: 28px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .binary-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    line-height: 1.2;
+  }
+  .binary-header .subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    opacity: 0.45;
+    text-align: right;
+    max-width: 220px;
+    line-height: 1.5;
+  }
+  .binary-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .bcol {
+    padding: 28px 28px 32px;
+    background: white;
+  }
+  .bcol.counts { border-right: 1px solid var(--border); }
+  .bcol-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid;
+  }
+  .bcol.counts .bcol-head { border-color: var(--blue); }
+  .bcol.doesnt .bcol-head { border-color: var(--red); }
+  .bcol-icon {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .bcol.counts .bcol-icon { background: #e8f0fe; color: var(--blue); }
+  .bcol.doesnt .bcol-icon { background: #fce8e6; color: var(--red); }
+  .bcol-head h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+  }
+  .bcol-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 3px;
+  }
+  .bcol.counts .bcol-eyebrow { color: var(--blue); }
+  .bcol.doesnt .bcol-eyebrow { color: var(--red); }
+  .criteria { display: flex; flex-direction: column; gap: 9px; }
+  .crit {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: #333;
+  }
+  .crit-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+    opacity: 0.45;
+  }
+  .bcol.counts .crit-dot { background: var(--blue); }
+  .bcol.doesnt .crit-dot { background: var(--red); }
+
+  /* ── BELOW BINARY ── */
+  .sub-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .sub-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+  .sub-head {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sub-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 4px;
+  }
+  .sub-head h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+  .chip.green { background: #eaf5ee; color: var(--green); border: 1px solid #b8dcc8; }
+  .chip.both { background: #f4f0fc; color: #6b48c8; border: 1px solid #d4c8f0; }
+  .both-note { font-size: 12px; color: #999; font-style: italic; margin-top: 10px; line-height: 1.5; }
+
+  /* DIVIDER */
+  .inner-div {
+    display: flex; align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: #bbb;
+    margin: 24px 0 0; gap: 12px;
+  }
+  .inner-div::before, .inner-div::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* HOMEWORK */
+  .homework {
+    margin-top: 16px;
+    background: var(--ink);
+    color: white;
+    border-radius: 12px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-shadow: 0 4px 20px rgba(26,26,46,0.18);
+  }
+  .hw-badge {
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .hw-steps { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+  .hw-step { display: flex; align-items: center; gap: 8px; font-size: 13px; opacity: 0.85; }
+  .hw-n {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-family: 'DM Mono', monospace; flex-shrink: 0;
+  }
+  .hw-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; margin-bottom: 4px; }
+
+  @media (max-width: 640px) {
+    .binary-cols, .sub-row { grid-template-columns: 1fr; }
+    .binary-header { flex-direction: column; }
+    .binary-header .subtitle { text-align: left; max-width: none; }
+    .homework { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="kicker">Class Activity — Whiteboard Capture</div>
+    <h1>Machines &amp; Machinery</h1>
+    <p>Two boards, organised</p>
+    <div class="rule"></div>
+  </header>
+
+  <!-- ══ BOARD 1: OPEN–CLOSED SPECTRUM ══ -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">1</div>
+      <div>
+        <div class="eyebrow">Inquiry Questions</div>
+        <h2>From Closed to Open</h2>
+      </div>
+    </div>
+
+    <div class="spectrum-wrap">
+      <p style="font-size:13px;color:#888;line-height:1.6;max-width:580px;">
+        Questions students raised, arranged from <strong style="color:var(--red)">closed</strong> (a yes/no or factual answer exists)
+        through to <strong style="color:var(--blue)">open</strong> (require reasoning, judgment, or debate — no single right answer).
+        This is a spectrum with shades of grey, not a binary.
+      </p>
+
+      <!-- HORIZONTAL SPECTRUM -->
+      <div style="position:relative; margin: 48px 0 24px;">
+
+        <!-- Track -->
+        <div style="height:5px; border-radius:3px; background:linear-gradient(to right, #c0392b, #9a8fa0, #2b4590); position:relative; z-index:1;"></div>
+
+        <!-- End labels -->
+        <div style="display:flex; justify-content:space-between; margin-top:8px;">
+          <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);">← Closed</span>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);">Open →</span>
+        </div>
+
+        <!-- Questions pinned at % positions along the track -->
+        <!-- Each .pin is absolutely positioned; alternates above/below to avoid overlap -->
+        <div style="position:relative; height: 260px; margin-top: -14px;">
+
+          <!-- pos 5% — Do we need machines? — ABOVE -->
+          <div class="pin above" style="left:5%;">
+            <div class="pin-label above" style="border-color:#f5c8c4;background:#fff5f5;color:#333;">Do we need<br>machines?</div>
+            <div class="pin-line above"></div>
+            <div class="pin-dot" style="background:#c0392b;box-shadow:0 0 0 3px rgba(192,57,43,0.2);"></div>
+          </div>
+
+          <!-- pos 16% — Are we too paranoid? — BELOW -->
+          <div class="pin below" style="left:16%;">
+            <div class="pin-dot" style="background:#c05040;box-shadow:0 0 0 3px rgba(192,80,64,0.18);"></div>
+            <div class="pin-line below"></div>
+            <div class="pin-label below" style="border-color:#f0d0cc;background:#fdf4f3;color:#333;">Are we too paranoid<br>about machines?</div>
+          </div>
+
+          <!-- pos 30% — What counts as a machine? — ABOVE -->
+          <div class="pin above" style="left:30%;">
+            <div class="pin-label above" style="border-color:#e4ddd4;background:#fafafa;color:#333;">What counts<br>as a machine?</div>
+            <div class="pin-line above"></div>
+            <div class="pin-dot" style="background:#a07880;box-shadow:0 0 0 3px rgba(160,120,128,0.18);"></div>
+          </div>
+
+          <!-- pos 43% — Is AI considered a machine? — BELOW -->
+          <div class="pin below" style="left:43%;">
+            <div class="pin-dot" style="background:#9080a8;box-shadow:0 0 0 3px rgba(144,128,168,0.18);"></div>
+            <div class="pin-line below"></div>
+            <div class="pin-label below" style="border-color:#dcdaf0;background:#f8f7fc;color:#333;">Is AI considered<br>a machine?</div>
+          </div>
+
+          <!-- pos 55% — Are machines important? — ABOVE -->
+          <div class="pin above" style="left:55%;">
+            <div class="pin-label above" style="border-color:#d0d8f0;background:#f5f7fc;color:#333;">Are machines<br>important?</div>
+            <div class="pin-line above"></div>
+            <div class="pin-dot" style="background:#6878b8;box-shadow:0 0 0 3px rgba(104,120,184,0.18);"></div>
+          </div>
+
+          <!-- pos 65% — Do machines know about themselves? — BELOW -->
+          <div class="pin below" style="left:65%;">
+            <div class="pin-dot" style="background:#4a68b4;box-shadow:0 0 0 3px rgba(74,104,180,0.18);"></div>
+            <div class="pin-line below"></div>
+            <div class="pin-label below" style="border-color:#c8d4f0;background:#f2f5fc;color:#333;">Do machines know<br>about themselves?</div>
+          </div>
+
+          <!-- pos 74% — Why do we treat machines badly? — ABOVE -->
+          <div class="pin above" style="left:74%;">
+            <div class="pin-label above" style="border-color:#c0ceee;background:#eff3fc;color:#333;">Why do we treat<br>machines badly?</div>
+            <div class="pin-line above"></div>
+            <div class="pin-dot" style="background:#3458a8;box-shadow:0 0 0 3px rgba(52,88,168,0.18);"></div>
+          </div>
+
+          <!-- pos 82% — Should machines be violent? — BELOW -->
+          <div class="pin below" style="left:82%;">
+            <div class="pin-dot" style="background:#2b4590;box-shadow:0 0 0 3px rgba(43,69,144,0.2);"></div>
+            <div class="pin-line below"></div>
+            <div class="pin-label below" style="border-color:#b8c8f5;background:#eaf0ff;color:#333;">Should machines be<br>allowed to be violent?</div>
+          </div>
+
+          <!-- pos 90% — Do robots need ethics? — ABOVE -->
+          <div class="pin above" style="left:90%;">
+            <div class="pin-label above" style="border-color:#b8c8f5;background:#eaf0ff;color:#333;">Do robots<br>need ethics?</div>
+            <div class="pin-line above"></div>
+            <div class="pin-dot" style="background:#2b4590;box-shadow:0 0 0 3px rgba(43,69,144,0.2);"></div>
+          </div>
+
+          <!-- pos 98% — Should AI self-improvement be stopped? — BELOW -->
+          <div class="pin below" style="left:98%;">
+            <div class="pin-dot" style="background:#2b4590;box-shadow:0 0 0 3px rgba(43,69,144,0.2);"></div>
+            <div class="pin-line below"></div>
+            <div class="pin-label below" style="border-color:#b8c8f5;background:#eaf0ff;color:#333;">Should AI<br>self-improvement<br>be stopped?</div>
+          </div>
+
+        </div><!-- end pin container -->
+      </div><!-- end spectrum -->
+
+      <p style="font-size:11px;color:#ccc;margin-top:8px;text-align:right;font-style:italic;">Dot &amp; label colour indicates position on the closed → open spectrum</p>
+    </div>
+  </div>
+
+  <!-- ══ BOARD 2: WHAT IS A MACHINE? ══ -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">2</div>
+      <div>
+        <div class="eyebrow">Concept Definition Activity</div>
+        <h2>What Is a Machine?</h2>
+      </div>
+    </div>
+
+    <!-- BINARY PANEL -->
+    <div class="binary-panel">
+      <div class="binary-header">
+        <h3>The Binary:<br>Machine or Not?</h3>
+        <div class="subtitle">"Does something count as a machine — or doesn't it?"</div>
+      </div>
+      <div class="binary-cols">
+        <div class="bcol counts">
+          <div class="bcol-head">
+            <div class="bcol-icon">✓</div>
+            <div>
+              <div class="bcol-eyebrow">Criteria</div>
+              <h4>Counts as a Machine</h4>
+            </div>
+          </div>
+          <div class="criteria">
+            <div class="crit"><div class="crit-dot"></div><span>Has programming</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Physical existence</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Has a use, expertise, or purpose</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Made by a human</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>In some way helps or assists us</span></div>
+          </div>
+        </div>
+        <div class="bcol doesnt">
+          <div class="bcol-head">
+            <div class="bcol-icon">✗</div>
+            <div>
+              <div class="bcol-eyebrow">Criteria</div>
+              <h4>Doesn't Count</h4>
+            </div>
+          </div>
+          <div class="criteria">
+            <div class="crit"><div class="crit-dot"></div><span>Alive</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Biological</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Has autonomy</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Has memories</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Has senses</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Has emotions or free will</span></div>
+            <div class="crit"><div class="crit-dot"></div><span>Classified as a living being</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAMPLES + EDGE CASES -->
+    <div class="inner-div">Supporting material</div>
+    <div class="sub-row">
+      <div class="sub-card">
+        <div class="sub-head">
+          <div class="sub-eyebrow">Student examples — confirmed as machines</div>
+          <h4>Things That Count</h4>
+        </div>
+        <div class="chips">
+          <span class="chip green">Computer</span>
+          <span class="chip green">Car</span>
+          <span class="chip green">Treadmill</span>
+          <span class="chip green">TV</span>
+          <span class="chip green">Internet</span>
+          <span class="chip green">Building</span>
+          <span class="chip green">A.I.</span>
+        </div>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-head">
+          <div class="sub-eyebrow">Edge cases — share criteria from both sides</div>
+          <h4>Both?</h4>
+        </div>
+        <div class="chips">
+          <span class="chip both">Genetically engineered animals</span>
+          <span class="chip both">Biological implants</span>
+          <span class="chip both">Humans?</span>
+        </div>
+        <p class="both-note">These cases complicate the binary — they hold elements of both "counts" and "doesn't count" criteria.</p>
+      </div>
+    </div>
+
+    <!-- HOMEWORK -->
+    <div class="homework">
+      <div class="hw-badge">Homework</div>
+      <div>
+        <div class="hw-title">Research Task</div>
+        <div class="hw-steps">
+          <div class="hw-step"><span class="hw-n">1</span> Know it (KW&amp;H)</div>
+          <div class="hw-step"><span class="hw-n">2</span> Interrogate it</div>
+          <div class="hw-step"><span class="hw-n">3</span> Answer questions</div>
+          <div class="hw-step"><span class="hw-n">+</span> 5 more steps</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
