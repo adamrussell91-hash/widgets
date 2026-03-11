@@ -82,45 +82,6 @@
     padding: 32px;
     box-shadow: 0 2px 16px var(--shadow);
   }
-  /* PIN SYSTEM */
-  .pin {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    transform: translateX(-50%);
-  }
-  .pin.above {
-    bottom: 50%;
-    margin-bottom: -2px;
-    flex-direction: column-reverse;
-  }
-  .pin.below {
-    top: 50%;
-    margin-top: -2px;
-    flex-direction: column;
-  }
-  .pin-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    z-index: 2;
-  }
-  .pin-line {
-    width: 1px;
-    height: 28px;
-    background: #ddd;
-    flex-shrink: 0;
-  }
-  .pin-label {
-    font-size: 11px;
-    line-height: 1.35;
-    padding: 5px 9px;
-    border-radius: 6px;
-    border: 1px solid;
-    text-align: center;
-    max-width: 110px;
-  }
-
   .spectrum-track {
     height: 5px;
     border-radius: 3px;
@@ -342,96 +303,140 @@
         This is a spectrum with shades of grey, not a binary.
       </p>
 
-      <!-- HORIZONTAL SPECTRUM -->
-      <div style="position:relative; margin: 48px 0 24px;">
+      <!-- HORIZONTAL SPECTRUM — pure SVG, no foreignObject -->
+      <div id="spectrum-container" style="width:100%; margin: 48px 0 16px; overflow:visible;"></div>
+      <p style="font-size:11px;color:#ccc;margin-top:8px;text-align:right;font-style:italic;">Label colour indicates position on the closed → open spectrum</p>
 
-        <!-- Track -->
-        <div style="height:5px; border-radius:3px; background:linear-gradient(to right, #c0392b, #9a8fa0, #2b4590); position:relative; z-index:1;"></div>
+      <script>
+      (function() {
+        const questions = [
+          { lines: ["Do we need","machines?"],                    pct: 15, above: true,  rc: "#c0392b", bc: "#f5c5c0", bg: "#fff5f5" },
+          { lines: ["Are machines","important?"],                  pct: 25, above: false, rc: "#b04838", bc: "#eeccc8", bg: "#fdf0ee" },
+          { lines: ["Is AI considered","a machine?"],              pct: 37, above: true,  rc: "#906858", bc: "#e0d4d0", bg: "#f8f4f2" },
+          { lines: ["What counts","as a machine?"],                pct: 48, above: false, rc: "#807890", bc: "#dcdaf0", bg: "#f7f6fc" },
+          { lines: ["Do machines know","about themselves?"],       pct: 58, above: true,  rc: "#6070a8", bc: "#d0d8f0", bg: "#f4f6fc" },
+          { lines: ["Are we too paranoid","about machines?"],      pct: 67, above: false, rc: "#4a5eac", bc: "#c8d0f0", bg: "#f0f3fc" },
+          { lines: ["Why do we treat","machines badly?"],          pct: 76, above: true,  rc: "#3a54a8", bc: "#c0ccee", bg: "#ecf0fc" },
+          { lines: ["Should AI self-","improvement be stopped?"],  pct: 84, above: false, rc: "#2b4590", bc: "#b8c8f5", bg: "#eaf0ff" },
+          { lines: ["Should machines be","allowed to be violent?"],pct: 91, above: true,  rc: "#2b4590", bc: "#b0c0f5", bg: "#e8eeff" },
+          { lines: ["Do robots","need ethics?"],                   pct: 97, above: false, rc: "#2b4590", bc: "#b0c0f5", bg: "#e8eeff" },
+        ];
 
-        <!-- End labels -->
-        <div style="display:flex; justify-content:space-between; margin-top:8px;">
-          <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);">← Closed</span>
-          <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);">Open →</span>
-        </div>
+        const ns    = 'http://www.w3.org/2000/svg';
+        const cEl   = document.getElementById('spectrum-container');
+        const W     = cEl.offsetWidth || 880;
 
-        <!-- Questions pinned at % positions along the track -->
-        <!-- Each .pin is absolutely positioned; alternates above/below to avoid overlap -->
-        <div style="position:relative; height: 260px; margin-top: -14px;">
+        // Layout constants
+        const TRACK   = 180;   // y of track centre
+        const DOT_R   = 7;
+        const STEM    = 40;    // gap between dot surface and label edge
+        const LW      = 116;  // label box width
+        const LPAD_X  = 8;
+        const LPAD_Y  = 7;
+        const FS      = 11.5; // font size
+        const LH      = 16;   // line height in px
+        const CORNER  = 6;
 
-          <!-- pos 5% — Do we need machines? — ABOVE -->
-          <div class="pin above" style="left:5%;">
-            <div class="pin-label above" style="border-color:#f5c8c4;background:#fff5f5;color:#333;">Do we need<br>machines?</div>
-            <div class="pin-line above"></div>
-            <div class="pin-dot" style="background:#c0392b;box-shadow:0 0 0 3px rgba(192,57,43,0.2);"></div>
-          </div>
+        // Compute label box height from line count
+        const boxH = (q) => q.lines.length * LH + LPAD_Y * 2;
 
-          <!-- pos 16% — Are we too paranoid? — BELOW -->
-          <div class="pin below" style="left:16%;">
-            <div class="pin-dot" style="background:#c05040;box-shadow:0 0 0 3px rgba(192,80,64,0.18);"></div>
-            <div class="pin-line below"></div>
-            <div class="pin-label below" style="border-color:#f0d0cc;background:#fdf4f3;color:#333;">Are we too paranoid<br>about machines?</div>
-          </div>
+        // Total SVG height: enough for above labels + track + below labels
+        const maxAboveH = Math.max(...questions.filter(q=>q.above).map(q => boxH(q) + STEM + DOT_R));
+        const maxBelowH = Math.max(...questions.filter(q=>!q.above).map(q => boxH(q) + STEM + DOT_R));
+        const SVG_H = TRACK + maxBelowH + 28;
 
-          <!-- pos 30% — What counts as a machine? — ABOVE -->
-          <div class="pin above" style="left:30%;">
-            <div class="pin-label above" style="border-color:#e4ddd4;background:#fafafa;color:#333;">What counts<br>as a machine?</div>
-            <div class="pin-line above"></div>
-            <div class="pin-dot" style="background:#a07880;box-shadow:0 0 0 3px rgba(160,120,128,0.18);"></div>
-          </div>
+        const svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('width', W);
+        svg.setAttribute('height', SVG_H);
+        svg.style.cssText = 'display:block;overflow:visible;';
 
-          <!-- pos 43% — Is AI considered a machine? — BELOW -->
-          <div class="pin below" style="left:43%;">
-            <div class="pin-dot" style="background:#9080a8;box-shadow:0 0 0 3px rgba(144,128,168,0.18);"></div>
-            <div class="pin-line below"></div>
-            <div class="pin-label below" style="border-color:#dcdaf0;background:#f8f7fc;color:#333;">Is AI considered<br>a machine?</div>
-          </div>
+        // Gradient
+        const defs = document.createElementNS(ns, 'defs');
+        defs.innerHTML = `
+          <linearGradient id="tg3" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#c0392b"/>
+            <stop offset="50%"  stop-color="#9a8fa0"/>
+            <stop offset="100%" stop-color="#2b4590"/>
+          </linearGradient>`;
+        svg.appendChild(defs);
 
-          <!-- pos 55% — Are machines important? — ABOVE -->
-          <div class="pin above" style="left:55%;">
-            <div class="pin-label above" style="border-color:#d0d8f0;background:#f5f7fc;color:#333;">Are machines<br>important?</div>
-            <div class="pin-line above"></div>
-            <div class="pin-dot" style="background:#6878b8;box-shadow:0 0 0 3px rgba(104,120,184,0.18);"></div>
-          </div>
+        // Track
+        const track = document.createElementNS(ns, 'rect');
+        track.setAttribute('x', 0); track.setAttribute('y', TRACK - 2.5);
+        track.setAttribute('width', W); track.setAttribute('height', 5);
+        track.setAttribute('rx', 2.5); track.setAttribute('fill', 'url(#tg3)');
+        svg.appendChild(track);
 
-          <!-- pos 65% — Do machines know about themselves? — BELOW -->
-          <div class="pin below" style="left:65%;">
-            <div class="pin-dot" style="background:#4a68b4;box-shadow:0 0 0 3px rgba(74,104,180,0.18);"></div>
-            <div class="pin-line below"></div>
-            <div class="pin-label below" style="border-color:#c8d4f0;background:#f2f5fc;color:#333;">Do machines know<br>about themselves?</div>
-          </div>
+        // Axis labels
+        const mkT = (x, y, anchor, color, txt, size=10) => {
+          const t = document.createElementNS(ns, 'text');
+          t.setAttribute('x', x); t.setAttribute('y', y);
+          t.setAttribute('text-anchor', anchor);
+          t.setAttribute('fill', color);
+          t.setAttribute('font-family', 'monospace');
+          t.setAttribute('font-size', size);
+          t.setAttribute('letter-spacing', 1.5);
+          t.textContent = txt;
+          return t;
+        };
+        svg.appendChild(mkT(2,     TRACK + 18, 'start', '#c0392b', '← CLOSED'));
+        svg.appendChild(mkT(W - 2, TRACK + 18, 'end',   '#2b4590', 'OPEN →'));
 
-          <!-- pos 74% — Why do we treat machines badly? — ABOVE -->
-          <div class="pin above" style="left:74%;">
-            <div class="pin-label above" style="border-color:#c0ceee;background:#eff3fc;color:#333;">Why do we treat<br>machines badly?</div>
-            <div class="pin-line above"></div>
-            <div class="pin-dot" style="background:#3458a8;box-shadow:0 0 0 3px rgba(52,88,168,0.18);"></div>
-          </div>
+        questions.forEach(q => {
+          const x   = Math.round((q.pct / 100) * W);
+          const bh  = boxH(q);
 
-          <!-- pos 82% — Should machines be violent? — BELOW -->
-          <div class="pin below" style="left:82%;">
-            <div class="pin-dot" style="background:#2b4590;box-shadow:0 0 0 3px rgba(43,69,144,0.2);"></div>
-            <div class="pin-line below"></div>
-            <div class="pin-label below" style="border-color:#b8c8f5;background:#eaf0ff;color:#333;">Should machines be<br>allowed to be violent?</div>
-          </div>
+          // Stem endpoints: from dot surface to label edge (no gap)
+          const stemY1 = q.above ? TRACK - DOT_R     : TRACK + DOT_R;
+          const stemY2 = q.above ? TRACK - DOT_R - STEM : TRACK + DOT_R + STEM;
 
-          <!-- pos 90% — Do robots need ethics? — ABOVE -->
-          <div class="pin above" style="left:90%;">
-            <div class="pin-label above" style="border-color:#b8c8f5;background:#eaf0ff;color:#333;">Do robots<br>need ethics?</div>
-            <div class="pin-line above"></div>
-            <div class="pin-dot" style="background:#2b4590;box-shadow:0 0 0 3px rgba(43,69,144,0.2);"></div>
-          </div>
+          // Label box top-left
+          const bx = x - LW / 2;
+          const by = q.above ? stemY2 - bh : stemY2;
 
-          <!-- pos 98% — Should AI self-improvement be stopped? — BELOW -->
-          <div class="pin below" style="left:98%;">
-            <div class="pin-dot" style="background:#2b4590;box-shadow:0 0 0 3px rgba(43,69,144,0.2);"></div>
-            <div class="pin-line below"></div>
-            <div class="pin-label below" style="border-color:#b8c8f5;background:#eaf0ff;color:#333;">Should AI<br>self-improvement<br>be stopped?</div>
-          </div>
+          // 1. Stem (behind dot)
+          const stem = document.createElementNS(ns, 'line');
+          stem.setAttribute('x1', x); stem.setAttribute('y1', stemY1);
+          stem.setAttribute('x2', x); stem.setAttribute('y2', stemY2);
+          stem.setAttribute('stroke', q.bc);
+          stem.setAttribute('stroke-width', 1.5);
+          svg.appendChild(stem);
 
-        </div><!-- end pin container -->
-      </div><!-- end spectrum -->
+          // 2. Label box background
+          const rect = document.createElementNS(ns, 'rect');
+          rect.setAttribute('x', bx); rect.setAttribute('y', by);
+          rect.setAttribute('width', LW); rect.setAttribute('height', bh);
+          rect.setAttribute('rx', CORNER); rect.setAttribute('ry', CORNER);
+          rect.setAttribute('fill', q.bg);
+          rect.setAttribute('stroke', q.bc);
+          rect.setAttribute('stroke-width', 1);
+          svg.appendChild(rect);
 
-      <p style="font-size:11px;color:#ccc;margin-top:8px;text-align:right;font-style:italic;">Dot &amp; label colour indicates position on the closed → open spectrum</p>
+          // 3. Label text lines
+          q.lines.forEach((line, i) => {
+            const ty = by + LPAD_Y + (i + 0.82) * LH;
+            const t = document.createElementNS(ns, 'text');
+            t.setAttribute('x', x);
+            t.setAttribute('y', ty);
+            t.setAttribute('text-anchor', 'middle');
+            t.setAttribute('fill', q.rc);
+            t.setAttribute('font-family', "'DM Sans', sans-serif");
+            t.setAttribute('font-size', FS);
+            t.textContent = line;
+            svg.appendChild(t);
+          });
+
+          // 4. Dot (on top of everything)
+          const dot = document.createElementNS(ns, 'circle');
+          dot.setAttribute('cx', x); dot.setAttribute('cy', TRACK);
+          dot.setAttribute('r', DOT_R); dot.setAttribute('fill', q.rc);
+          dot.setAttribute('stroke', 'white'); dot.setAttribute('stroke-width', 1.5);
+          svg.appendChild(dot);
+        });
+
+        cEl.appendChild(svg);
+      })();
+      </script>
     </div>
   </div>
 
