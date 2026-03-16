@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflection Writing Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1c1c1e;
+  --ink-2: #48484a;
+  --ink-3: #8e8e93;
+  --rule: #e5e5ea;
+  --page: #f9f9fb;
+  --surface: #ffffff;
+  --cream: #f2f2f7;
+  --teal: #2a7a6b;
+  --teal-light: #e8f4f1;
+  --teal-mid: #3d9e8c;
+  --teal-dark: #1a5c50;
+  --coral: #c0533a;
+  --coral-light: #fdf0ec;
+  --amber: #a06820;
+  --amber-light: #fdf6ea;
+  --purple: #5a4a8a;
+  --purple-light: #f0eef8;
+  --shadow: 0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.04);
+  --t: 0.18s ease;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.6}
+
+/* ── APP SHELL ── */
+.app{display:grid;grid-template-columns:256px 1fr;grid-template-rows:56px 1fr;min-height:100vh}
+header{grid-column:1/-1;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:2.5px solid var(--teal)}
+header h1{font-family:'Lora',serif;font-size:17px;font-weight:600;letter-spacing:-.02em}
+.header-right{display:flex;align-items:center;gap:14px}
+.prog-wrap{display:flex;align-items:center;gap:8px}
+.prog-label{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap}
+.prog-track{width:100px;height:3px;background:rgba(255,255,255,.12);border-radius:2px}
+.prog-fill{height:3px;background:var(--teal);border-radius:2px;transition:width .4s ease}
+.mode-pill{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;background:var(--teal);color:#fff;padding:3px 10px;border-radius:20px;cursor:pointer;border:none;transition:background var(--t)}
+.mode-pill:hover{background:var(--teal-mid)}
+.mode-pill.reading{background:var(--coral)}
+
+aside{background:var(--surface);border-right:1px solid var(--rule);padding:20px 0;overflow-y:auto}
+.aside-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding:0 18px;margin-bottom:8px}
+.step{display:flex;align-items:flex-start;gap:9px;padding:8px 18px;cursor:pointer;border-left:2.5px solid transparent;border-radius:0 6px 6px 0;margin-right:8px;transition:all var(--t)}
+.step:hover{background:var(--cream)}
+.step.active{background:var(--teal-light);border-left-color:var(--teal)}
+.step.rdone{background:#fff0ed;border-left-color:var(--coral)}
+.step.done .snum,.step.done .snum{background:var(--teal);color:#fff}
+.step.rdone .snum{background:var(--coral);color:#fff}
+.snum{width:21px;height:21px;border-radius:50%;background:var(--rule);color:var(--ink-3);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all var(--t)}
+.stext strong{display:block;font-size:12px;font-weight:500}
+.stext span{font-size:11px;color:var(--ink-3)}
+.aside-note{margin:16px 18px 0;background:var(--teal-light);border-radius:8px;padding:10px 12px}
+.aside-note.rmode{background:var(--coral-light)}
+.aside-note-label{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.aside-note.rmode .aside-note-label{color:var(--coral)}
+.aside-note p{font-size:11.5px;color:var(--ink-2);line-height:1.5;font-style:italic;font-family:'Lora',serif}
+
+main{padding:24px 28px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+
+.mode-tabs{display:flex;gap:6px;background:var(--surface);border:1px solid var(--rule);border-radius:9px;padding:4px;width:fit-content;margin-bottom:2px}
+.mtab{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--ink-3);transition:all var(--t)}
+.mtab.active{background:var(--ink);color:#fff}
+.mtab.active.rtab{background:var(--coral)}
+
+/* ── SECTION CARD ── */
+.sc{background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);display:none}
+.sc.vis{display:block}
+.sc-head{padding:14px 20px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;background:#fff}
+.sc-head-l{display:flex;align-items:center;gap:10px}
+.sc-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;font-family:'Lora',serif;flex-shrink:0}
+.ic-teal{background:var(--teal-light);color:var(--teal)}
+.ic-amber{background:var(--amber-light);color:var(--amber)}
+.ic-purple{background:var(--purple-light);color:var(--purple)}
+.ic-coral{background:var(--coral-light);color:var(--coral)}
+.sc-title{font-size:14px;font-weight:500}
+.sc-sub{font-size:11.5px;color:var(--ink-3);margin-top:1px}
+.wc{font-size:11px;color:var(--ink-3);background:var(--cream);padding:2px 8px;border-radius:20px}
+.wc.ok{color:var(--teal);background:var(--teal-light)}
+.sc-body{padding:16px 20px}
+
+/* ── ACTIVITY BADGE ── */
+.activity-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:12px}
+.tag-map{background:#e8f4f1;color:var(--teal)}
+.tag-sort{background:var(--amber-light);color:var(--amber)}
+.tag-rate{background:var(--purple-light);color:var(--purple)}
+.tag-write{background:var(--cream);color:var(--ink-3)}
+
+/* ── GUIDING QS ── */
+.gqs{background:var(--cream);border-radius:7px;padding:10px 13px;margin-bottom:13px}
+.gqs-title{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin-bottom:7px}
+.gqs ol{padding-left:15px}
+.gqs li{font-size:12px;color:var(--ink-2);margin-bottom:3px;line-height:1.5}
+
+/* ── TEXTAREA ── */
+textarea{width:100%;border:1.5px solid var(--rule);border-radius:8px;padding:12px 14px;font-family:'Lora',serif;font-size:13.5px;line-height:1.85;color:var(--ink);background:#fff;resize:vertical;transition:border-color var(--t);outline:none}
+textarea:focus{border-color:var(--teal)}
+textarea.rfocus:focus{border-color:var(--coral)}
+textarea::placeholder{color:#c5c5c8;font-style:italic}
+
+/* ── STARTERS ── */
+.starters{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.chip{background:var(--cream);border:1px solid var(--rule);border-radius:20px;padding:4px 11px;font-size:11px;color:var(--ink-2);cursor:pointer;font-style:italic;transition:all var(--t);font-family:'Lora',serif}
+.chip:hover{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
+.chip.r:hover{background:var(--coral-light);border-color:var(--coral);color:var(--coral)}
+
+/* ── ACTION ROW ── */
+.act-row{display:flex;align-items:center;justify-content:space-between;margin-top:11px;flex-wrap:wrap;gap:7px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--rule);background:var(--surface);color:var(--ink-2);transition:all var(--t);font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:var(--ink-3);color:var(--ink);background:var(--cream)}
+.btn-p{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-p:hover{background:var(--teal-dark);border-color:var(--teal-dark)}
+.btn-p.r{background:var(--coral);border-color:var(--coral)}
+.btn-p.r:hover{background:#a34530;border-color:#a34530}
+
+/* ── FEEDBACK PANEL ── */
+.fb{background:#fff;border:1px solid var(--rule);border-radius:9px;overflow:hidden;display:none;margin-top:11px}
+.fb.vis{display:block}
+.fb-head{padding:9px 14px;background:var(--teal-light);border-bottom:1px solid rgba(42,122,107,.12);display:flex;align-items:center;justify-content:space-between}
+.fb-head.r{background:var(--coral-light);border-color:rgba(192,83,58,.12)}
+.fb-head-l{display:flex;align-items:center;gap:7px}
+.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+.fb-dot.r{background:var(--coral)}
+.fb-label{font-size:11.5px;font-weight:500;color:var(--teal)}
+.fb-label.r{color:var(--coral)}
+.fb-close{background:none;border:none;color:var(--ink-3);cursor:pointer;font-size:16px;padding:1px 3px;line-height:1}
+.fb-close:hover{color:var(--ink)}
+.fb-body{padding:12px 14px;font-size:12.5px;color:var(--ink-2);line-height:1.75}
+.spin-wrap{display:flex;align-items:center;gap:8px;color:var(--ink-3);font-style:italic}
+.spin{width:13px;height:13px;border:2px solid var(--rule);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite}
+.spin.r{border-top-color:var(--coral)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══════════════════════════════
+   ACTIVITY 1 — MIND MAP
+══════════════════════════════ */
+.mindmap-wrap{margin-bottom:14px}
+.mm-canvas{position:relative;width:100%;height:340px;background:var(--cream);border-radius:10px;border:1.5px dashed var(--rule);overflow:hidden;user-select:none}
+.mm-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--teal);color:#fff;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:500;font-family:'Lora',serif;white-space:nowrap;z-index:10;text-align:center;min-width:100px}
+.mm-node{position:absolute;background:#fff;border:1.5px solid var(--rule);border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;transition:all var(--t);z-index:5;max-width:140px;text-align:center;font-family:'Lora',serif;line-height:1.3}
+.mm-node:hover{border-color:var(--teal);background:var(--teal-light);color:var(--teal)}
+.mm-node.filled{border-color:var(--teal);background:var(--teal-light);color:var(--teal-dark);font-weight:500}
+.mm-node.editing{border-color:var(--teal);background:#fff;padding:2px}
+.mm-node-input{border:none;outline:none;font-family:'Lora',serif;font-size:12px;color:var(--ink);width:120px;padding:4px 7px;background:transparent}
+.mm-add{position:absolute;bottom:10px;right:10px;background:var(--teal);color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:500;cursor:pointer;transition:background var(--t);font-family:'DM Sans',sans-serif}
+.mm-add:hover{background:var(--teal-dark)}
+.mm-hint{font-size:11px;color:var(--ink-3);margin-top:7px;font-style:italic}
+.mm-to-prose{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 13px;background:var(--teal-light);border-radius:8px;cursor:pointer;transition:background var(--t);border:none;width:100%;text-align:left}
+.mm-to-prose:hover{background:#d4ede8}
+.mm-to-prose span{font-size:12.5px;color:var(--teal-dark);font-weight:500}
+svg.mm-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+/* ══════════════════════════════
+   ACTIVITY 2 — CARD SORT
+══════════════════════════════ */
+.cardsort-wrap{margin-bottom:14px}
+.cs-instruction{font-size:12px;color:var(--ink-2);margin-bottom:12px;line-height:1.5;padding:9px 12px;background:var(--amber-light);border-radius:7px;font-family:'Lora',serif}
+.cs-board{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+.cs-col{background:var(--cream);border-radius:9px;border:1.5px dashed var(--rule);padding:10px;min-height:180px;transition:background var(--t)}
+.cs-col.drag-over{background:var(--teal-light);border-color:var(--teal)}
+.cs-col-head{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cs-col-head.used-head{color:var(--teal)}
+.cs-col-head.notused-head{color:var(--ink-3)}
+.cs-col-count{font-size:10px;background:var(--surface);border-radius:20px;padding:1px 7px;color:inherit}
+.tc{background:#fff;border:1.5px solid var(--rule);border-radius:8px;padding:9px 12px;margin-bottom:7px;cursor:grab;transition:all var(--t);font-size:12.5px}
+.tc:hover{border-color:var(--teal);box-shadow:0 2px 8px rgba(42,122,107,.12)}
+.tc.dragging{opacity:.5;cursor:grabbing}
+.tc-name{font-weight:500;color:var(--ink);font-size:12.5px;margin-bottom:3px}
+.tc-desc{font-size:11px;color:var(--ink-3);font-style:italic;line-height:1.4}
+.tc-purpose{margin-top:7px;padding-top:7px;border-top:1px solid var(--rule);display:none}
+.tc-purpose.show{display:block}
+.tc-purpose-label{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.tc-purpose input{width:100%;border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:12px;font-family:'Lora',serif;color:var(--ink);outline:none;transition:border-color var(--t)}
+.tc-purpose input:focus{border-color:var(--teal)}
+.tc-purpose input::placeholder{color:#c5c5c8;font-style:italic}
+.cs-to-prose{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 13px;background:var(--amber-light);border-radius:8px;cursor:pointer;transition:background var(--t);border:none;width:100%;text-align:left}
+.cs-to-prose:hover{background:#f5ddb0}
+.cs-to-prose span{font-size:12.5px;color:var(--amber);font-weight:500}
+
+/* ══════════════════════════════
+   ACTIVITY 3 — EVAL SLIDERS
+══════════════════════════════ */
+.eval-wrap{margin-bottom:14px}
+.eval-intro{font-size:12px;color:var(--ink-2);margin-bottom:12px;line-height:1.5;font-family:'Lora',serif}
+.eval-criterion{background:#fff;border:1px solid var(--rule);border-radius:9px;padding:12px 14px;margin-bottom:9px}
+.eval-crit-name{font-size:13px;font-weight:500;margin-bottom:8px}
+.eval-slider-row{display:flex;align-items:center;gap:10px}
+.eval-slider-row input[type=range]{flex:1;accent-color:var(--purple)}
+.eval-score{font-size:13px;font-weight:500;color:var(--purple);min-width:22px;text-align:center}
+.eval-score-label{font-size:11px;color:var(--ink-3);min-width:60px}
+.eval-justify{margin-top:9px;display:none}
+.eval-justify.show{display:block}
+.eval-justify-prompt{font-size:11px;color:var(--coral);margin-bottom:5px;font-style:italic}
+.eval-justify textarea{min-height:60px;font-size:12.5px;margin-top:0}
+.eval-to-prose{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 13px;background:var(--purple-light);border-radius:8px;cursor:pointer;transition:background var(--t);border:none;width:100%;text-align:left}
+.eval-to-prose:hover{background:#e0daef}
+.eval-to-prose span{font-size:12.5px;color:var(--purple);font-weight:500}
+
+/* ── DRAFT PREVIEW ── */
+.draft-card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:24px 28px;display:none;box-shadow:var(--shadow)}
+.draft-card.vis{display:block}
+.draft-card h3{font-family:'Lora',serif;font-size:15px;font-weight:600;margin-bottom:16px;padding-bottom:11px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center}
+.draft-text{font-family:'Lora',serif;font-size:13.5px;line-height:1.95;color:var(--ink);white-space:pre-wrap}
+.draft-meta{font-size:11px;color:var(--ink-3);margin-top:14px;padding-top:10px;border-top:1px solid var(--rule);display:flex;gap:14px}
+
+/* ── OVERALL COACH ── */
+.coach-card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;display:none;box-shadow:var(--shadow)}
+.coach-card.vis{display:block}
+.coach-head{padding:13px 20px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between}
+.coach-head h4{font-size:14px;font-weight:500}
+.coach-body{padding:14px 20px;font-size:13px;color:var(--ink-2);line-height:1.8}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<header>
+  <h1>Reflection Writing Coach</h1>
+  <div class="header-right">
+    <div class="prog-wrap">
+      <span class="prog-label" id="progLabel">0 of 3</span>
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside>
+  <div style="padding:0 18px 14px">
+    <div class="mode-tabs">
+      <button class="mtab active" onclick="setMode('creative')">Creative</button>
+      <button class="mtab rtab" onclick="setMode('reading')">Reading</button>
+    </div>
+  </div>
+
+  <div id="sideCreative">
+    <div class="aside-label" style="margin-bottom:8px">Sections</div>
+    <div class="step active" id="step-intro" onclick="scrollTo('intro')">
+      <div class="snum" id="sn-intro">1</div>
+      <div class="stext"><strong>Introduction</strong><span>Mind map → prose</span></div>
+    </div>
+    <div class="step" id="step-evidence" onclick="scrollTo('evidence')">
+      <div class="snum" id="sn-evidence">2</div>
+      <div class="stext"><strong>Evidence &amp; Analysis</strong><span>Card sort → prose</span></div>
+    </div>
+    <div class="step" id="step-conclusion" onclick="scrollTo('conclusion')">
+      <div class="snum" id="sn-conclusion">3</div>
+      <div class="stext"><strong>Conclusion</strong><span>Sliders → prose</span></div>
+    </div>
+  </div>
+
+  <div id="sideReading" style="display:none">
+    <div class="aside-label" style="margin-bottom:8px">Sections</div>
+    <div class="step" id="step-r1" onclick="scrollTo('r1')">
+      <div class="snum" id="sn-r1">1</div>
+      <div class="stext"><strong>Text &amp; Context</strong><span>Title, composer, genre</span></div>
+    </div>
+    <div class="step" id="step-r2" onclick="scrollTo('r2')">
+      <div class="snum" id="sn-r2">2</div>
+      <div class="stext"><strong>Style &amp; Form</strong><span>Card sort → prose</span></div>
+    </div>
+    <div class="step" id="step-r3" onclick="scrollTo('r3')">
+      <div class="snum" id="sn-r3">3</div>
+      <div class="stext"><strong>Subject Matter</strong><span>Engagement &amp; value</span></div>
+    </div>
+    <div class="step" id="step-r4" onclick="scrollTo('r4')">
+      <div class="snum" id="sn-r4">4</div>
+      <div class="stext"><strong>Comparison</strong><span>One other text</span></div>
+    </div>
+    <div class="step" id="step-r5" onclick="scrollTo('r5')">
+      <div class="snum" id="sn-r5">5</div>
+      <div class="stext"><strong>Reader Response</strong><span>Sliders → prose</span></div>
+    </div>
+  </div>
+
+  <div style="margin-top:16px" id="sideNote">
+    <div class="aside-note" id="sideNoteBox">
+      <div class="aside-note-label">Remember</div>
+      <p id="sideNoteText">Each activity builds your ideas. Then write them up in flowing first-person paragraphs.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main id="mainArea">
+<div class="mode-tabs" style="margin-bottom:4px">
+  <button class="mtab active" id="mt-creative" onclick="setMode('creative')">Creative reflection</button>
+  <button class="mtab rtab" id="mt-reading" onclick="setMode('reading')">Reading reflection</button>
+</div>
+
+<!-- ══ CREATIVE: INTRO ══ -->
+<div class="sc vis" id="card-intro">
+  <div class="sc-head">
+    <div class="sc-head-l">
+      <div class="sc-icon ic-teal">I</div>
+      <div><div class="sc-title">Introduction</div><div class="sc-sub">Build your ideas, then write them up</div></div>
+    </div>
+    <span class="wc" id="wc-intro">0 words</span>
+  </div>
+  <div class="sc-body">
+
+    <div class="activity-tag tag-map">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="2" fill="currentColor"/><circle cx="2" cy="2" r="1.2" fill="currentColor"/><circle cx="10" cy="2" r="1.2" fill="currentColor"/><circle cx="2" cy="10" r="1.2" fill="currentColor"/><circle cx="10" cy="10" r="1.2" fill="currentColor"/><line x1="3" y1="3" x2="5" y2="5" stroke="currentColor" stroke-width="1"/><line x1="9" y1="3" x2="7" y2="5" stroke="currentColor" stroke-width="1"/><line x1="3" y1="9" x2="5" y2="7" stroke="currentColor" stroke-width="1"/><line x1="9" y1="9" x2="7" y2="7" stroke="currentColor" stroke-width="1"/></svg>
+      Activity: Mind map
+    </div>
+
+    <div class="mindmap-wrap">
+      <div class="mm-canvas" id="mmCanvas">
+        <svg class="mm-lines" id="mmLines"></svg>
+        <div class="mm-center" id="mmCenter">My piece</div>
+        <button class="mm-add" onclick="addMmNode()">+ Add idea</button>
+      </div>
+      <p class="mm-hint">Click a node to edit it. Build your web — form, purpose, themes, prescribed text link — then convert to prose.</p>
+      <button class="mm-to-prose" onclick="mmToProse()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Convert mind map to prose scaffold →</span>
+      </button>
+    </div>
+
+    <div class="activity-tag tag-write" style="margin-top:4px">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 10L4 9l5-5-2-2-5 5-1 2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/></svg>
+      Write up
+    </div>
+
+    <div class="gqs">
+      <div class="gqs-title">Your intro should cover</div>
+      <ol>
+        <li>Form and title of your piece</li>
+        <li>Purpose — to entertain, persuade, challenge, reflect?</li>
+        <li>Key themes and how you intended to convey them</li>
+        <li>Connection to a prescribed text (if relevant)</li>
+      </ol>
+    </div>
+    <textarea id="text-intro" rows="5" placeholder="My [form], titled '…', explores…" oninput="onType('intro')"></textarea>
+    <div class="starters">
+      <span class="chip" onclick="ins('intro','My [form], titled \'…\', explores the theme of…')">My [form], titled '…'…</span>
+      <span class="chip" onclick="ins('intro','The purpose of my composition is to…')">The purpose of my composition is to…</span>
+      <span class="chip" onclick="ins('intro','I composed this [form] in order to…')">I composed this in order to…</span>
+      <span class="chip" onclick="ins('intro','Inspired by [text], my piece…')">Inspired by [text]…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('intro')">Get feedback</button>
+      <button class="btn btn-p" onclick="done('intro')">Done →</button>
+    </div>
+    <div class="fb" id="fb-intro">
+      <div class="fb-head"><div class="fb-head-l"><div class="fb-dot"></div><span class="fb-label">Coach</span></div><button class="fb-close" onclick="closeFb('intro')">×</button></div>
+      <div class="fb-body" id="fbb-intro"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CREATIVE: EVIDENCE ══ -->
+<div class="sc" id="card-evidence">
+  <div class="sc-head">
+    <div class="sc-head-l">
+      <div class="sc-icon ic-amber">E</div>
+      <div><div class="sc-title">Evidence &amp; Analysis</div><div class="sc-sub">Sort your techniques, then write your analysis</div></div>
+    </div>
+    <span class="wc" id="wc-evidence">0 words</span>
+  </div>
+  <div class="sc-body">
+
+    <div class="activity-tag tag-sort">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="7" y="1" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="1" y="7" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="7" y="7" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/></svg>
+      Activity: Card sort
+    </div>
+
+    <div class="cardsort-wrap">
+      <p class="cs-instruction">Drag each technique card into the correct column. For every card you mark as "used", fill in your purpose — why did you use it, and what effect did you want?</p>
+      <div class="cs-board">
+        <div class="cs-col" id="col-bank" ondragover="doDragOver(event,'bank')" ondrop="doDrop(event,'bank')" ondragleave="doDragLeave('bank')">
+          <div class="cs-col-head">Technique bank</div>
+          <div id="bank-cards"></div>
+        </div>
+        <div class="cs-col" id="col-used" ondragover="doDragOver(event,'used')" ondrop="doDrop(event,'used')" ondragleave="doDragLeave('used')">
+          <div class="cs-col-head used-head">I used this <span class="cs-col-count" id="used-count">0</span></div>
+          <div id="used-cards"></div>
+        </div>
+      </div>
+      <button class="cs-to-prose" onclick="csToProse()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Build prose scaffold from sorted cards →</span>
+      </button>
+    </div>
+
+    <div class="activity-tag tag-write">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 10L4 9l5-5-2-2-5 5-1 2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/></svg>
+      Write up
+    </div>
+
+    <div class="gqs">
+      <div class="gqs-title">For each technique cover</div>
+      <ol>
+        <li>Name it and give a brief example from your piece</li>
+        <li>Why you chose it and what you wanted to achieve</li>
+        <li>How a prescribed text used the same technique</li>
+        <li>Effect on language, character, theme or audience</li>
+      </ol>
+    </div>
+    <textarea id="text-evidence" rows="7" placeholder="My personal essay opens with an anecdote in order to…" oninput="onType('evidence')"></textarea>
+    <div class="starters">
+      <span class="chip" onclick="ins('evidence','My [form] opens with [technique] in order to quickly establish…')">opens with [technique] in order to…</span>
+      <span class="chip" onclick="ins('evidence','I deliberately [choice] so that my reader…')">I deliberately… so that…</span>
+      <span class="chip" onclick="ins('evidence','By referring to [device], I effectively…')">By referring to… I effectively…</span>
+      <span class="chip" onclick="ins('evidence','Drawing on [prescribed text], I…')">Drawing on [prescribed text]…</span>
+      <span class="chip" onclick="ins('evidence','However, in the second paragraph, I deliberately…')">However, in the second paragraph…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('evidence')">Get feedback</button>
+      <button class="btn btn-p" onclick="done('evidence')">Done →</button>
+    </div>
+    <div class="fb" id="fb-evidence">
+      <div class="fb-head"><div class="fb-head-l"><div class="fb-dot"></div><span class="fb-label">Coach</span></div><button class="fb-close" onclick="closeFb('evidence')">×</button></div>
+      <div class="fb-body" id="fbb-evidence"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CREATIVE: CONCLUSION ══ -->
+<div class="sc" id="card-conclusion">
+  <div class="sc-head">
+    <div class="sc-head-l">
+      <div class="sc-icon ic-purple">C</div>
+      <div><div class="sc-title">Conclusion</div><div class="sc-sub">Rate your achievements, then write your evaluation</div></div>
+    </div>
+    <span class="wc" id="wc-conclusion">0 words</span>
+  </div>
+  <div class="sc-body">
+
+    <div class="activity-tag tag-rate">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.4 2.8L11 4.3l-2.5 2.4.6 3.4L6 8.5 2.9 10.1l.6-3.4L1 4.3l3.6-.5L6 1z" stroke="currentColor" stroke-width="1.1" fill="none"/></svg>
+      Activity: Evaluate your work
+    </div>
+
+    <div class="eval-wrap" id="evalWrap">
+      <p class="eval-intro">Rate how well your composition achieved each goal. Any rating of 3 or below — you must explain why, and what you'd change.</p>
+      <div id="evalCriteria"></div>
+      <button class="eval-to-prose" onclick="evalToProse()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Build evaluative scaffold from ratings →</span>
+      </button>
+    </div>
+
+    <div class="activity-tag tag-write">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 10L4 9l5-5-2-2-5 5-1 2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/></svg>
+      Write up
+    </div>
+
+    <textarea id="text-conclusion" rows="4" placeholder="Overall, I believe my composition successfully…" oninput="onType('conclusion')"></textarea>
+    <div class="starters">
+      <span class="chip" onclick="ins('conclusion','Overall, I believe my composition successfully…')">Overall, I believe…</span>
+      <span class="chip" onclick="ins('conclusion','Through my use of [techniques], I have effectively…')">Through my use of…</span>
+      <span class="chip" onclick="ins('conclusion','In retrospect, I would revise…')">In retrospect…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('conclusion')">Get feedback</button>
+      <button class="btn btn-p" onclick="done('conclusion')">Done →</button>
+    </div>
+    <div class="fb" id="fb-conclusion">
+      <div class="fb-head"><div class="fb-head-l"><div class="fb-dot"></div><span class="fb-label">Coach</span></div><button class="fb-close" onclick="closeFb('conclusion')">×</button></div>
+      <div class="fb-body" id="fbb-conclusion"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ READING SECTIONS ══ -->
+
+<div class="sc" id="card-r1">
+  <div class="sc-head">
+    <div class="sc-head-l">
+      <div class="sc-icon ic-coral">1</div>
+      <div><div class="sc-title">Text &amp; Context</div><div class="sc-sub">Title, composer, genre</div></div>
+    </div>
+    <span class="wc" id="wc-r1">0 words</span>
+  </div>
+  <div class="sc-body">
+    <div class="gqs"><div class="gqs-title">Include</div><ol><li>Title and composer</li><li>Genre or form</li><li>Why you chose this text to reflect on</li></ol></div>
+    <textarea id="text-r1" class="rfocus" rows="4" placeholder="The text I have chosen to reflect on is…" oninput="onType('r1')"></textarea>
+    <div class="starters">
+      <span class="chip r" onclick="ins('r1','The text I have chosen to reflect on is…')">The text I have chosen…</span>
+      <span class="chip r" onclick="ins('r1','[Title] by [Composer] is a [genre] that…')">[Title] by [Composer] is a [genre]…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('r1')">Get feedback</button>
+      <button class="btn btn-p r" onclick="done('r1')">Done →</button>
+    </div>
+    <div class="fb" id="fb-r1">
+      <div class="fb-head r"><div class="fb-head-l"><div class="fb-dot r"></div><span class="fb-label r">Coach</span></div><button class="fb-close" onclick="closeFb('r1')">×</button></div>
+      <div class="fb-body" id="fbb-r1"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sc" id="card-r2">
+  <div class="sc-head">
+    <div class="sc-head-l">
+      <div class="sc-icon ic-coral">2</div>
+      <div><div class="sc-title">Style &amp; Form</div><div class="sc-sub">Sort the features you observed in the text</div></div>
+    </div>
+    <span class="wc" id="wc-r2">0 words</span>
+  </div>
+  <div class="sc-body">
+    <div class="activity-tag" style="background:#fff0ed;color:var(--coral)">
+      Activity: Feature sort
+    </div>
+    <div class="cardsort-wrap" id="r2SortWrap">
+      <p class="cs-instruction" style="background:#fff0ed;color:#7a2a18">Drag the stylistic features you noticed in the text into the right column. For each one, note the effect it had on you as a reader.</p>
+      <div class="cs-board">
+        <div class="cs-col" id="r2col-bank" ondragover="doDragOver(event,'r2bank')" ondrop="doDrop(event,'r2bank')" ondragleave="doDragLeave('r2bank')">
+          <div class="cs-col-head">Feature bank</div>
+          <div id="r2bank-cards"></div>
+        </div>
+        <div class="cs-col" id="r2col-used" ondragover="doDragOver(event,'r2used')" ondrop="doDrop(event,'r2used')" ondragleave="doDragLeave('r2used')">
+          <div class="cs-col-head" style="color:var(--coral)">Present in this text <span class="cs-col-count" id="r2used-count">0</span></div>
+          <div id="r2used-cards"></div>
+        </div>
+      </div>
+      <button class="cs-to-prose" style="background:#fff0ed" onclick="r2ToProse()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="color:var(--coral)">Build prose scaffold →</span>
+      </button>
+    </div>
+    <div class="activity-tag tag-write">Write up</div>
+    <div class="gqs"><div class="gqs-title">Cover</div><ol><li>What is most distinctive about the style and form?</li><li>Specific features — voice, diction, structure, imagery, tone</li><li>The effect each feature creates on the reader</li></ol></div>
+    <textarea id="text-r2" class="rfocus" rows="5" placeholder="What is distinctive about this text is its use of…" oninput="onType('r2')"></textarea>
+    <div class="starters">
+      <span class="chip r" onclick="ins('r2','What is distinctive about this text is its use of…')">What is distinctive…</span>
+      <span class="chip r" onclick="ins('r2','The writer\'s use of [feature] creates an effect of…')">The writer's use of [feature]…</span>
+      <span class="chip r" onclick="ins('r2','The structure is notable because…')">The structure is notable because…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('r2')">Get feedback</button>
+      <button class="btn btn-p r" onclick="done('r2')">Done →</button>
+    </div>
+    <div class="fb" id="fb-r2">
+      <div class="fb-head r"><div class="fb-head-l"><div class="fb-dot r"></div><span class="fb-label r">Coach</span></div><button class="fb-close" onclick="closeFb('r2')">×</button></div>
+      <div class="fb-body" id="fbb-r2"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sc" id="card-r3">
+  <div class="sc-head">
+    <div class="sc-head-l"><div class="sc-icon ic-coral">3</div><div><div class="sc-title">Subject Matter</div><div class="sc-sub">What is engaging or relevant about its ideas?</div></div></div>
+    <span class="wc" id="wc-r3">0 words</span>
+  </div>
+  <div class="sc-body">
+    <div class="gqs"><div class="gqs-title">Consider</div><ol><li>What ideas, themes or arguments does the text explore?</li><li>Why might a reader find it engaging or relevant?</li><li>Even if you didn't find it engaging — what is its academic value?</li></ol></div>
+    <textarea id="text-r3" class="rfocus" rows="5" placeholder="The subject matter of this text is engaging because…" oninput="onType('r3')"></textarea>
+    <div class="starters">
+      <span class="chip r" onclick="ins('r3','The subject matter is engaging because…')">The subject matter is engaging because…</span>
+      <span class="chip r" onclick="ins('r3','Although I did not personally find this text engaging, its value lies in…')">Although I didn't find this engaging…</span>
+      <span class="chip r" onclick="ins('r3','This text is relevant to contemporary readers because…')">This text is relevant because…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('r3')">Get feedback</button>
+      <button class="btn btn-p r" onclick="done('r3')">Done →</button>
+    </div>
+    <div class="fb" id="fb-r3">
+      <div class="fb-head r"><div class="fb-head-l"><div class="fb-dot r"></div><span class="fb-label r">Coach</span></div><button class="fb-close" onclick="closeFb('r3')">×</button></div>
+      <div class="fb-body" id="fbb-r3"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sc" id="card-r4">
+  <div class="sc-head">
+    <div class="sc-head-l"><div class="sc-icon ic-coral">4</div><div><div class="sc-title">Comparison</div><div class="sc-sub">Compare or contrast with one other text from the unit</div></div></div>
+    <span class="wc" id="wc-r4">0 words</span>
+  </div>
+  <div class="sc-body">
+    <div class="gqs"><div class="gqs-title">Consider</div><ol><li>How does this text connect thematically or formally to another?</li><li>Where do they differ in purpose, style or effect?</li><li>What does the comparison reveal about both texts?</li></ol></div>
+    <textarea id="text-r4" class="rfocus" rows="5" placeholder="In comparison to [other text], this text…" oninput="onType('r4')"></textarea>
+    <div class="starters">
+      <span class="chip r" onclick="ins('r4','In comparison to [text], this text…')">In comparison to [text]…</span>
+      <span class="chip r" onclick="ins('r4','Both texts explore [theme], however…')">Both texts explore [theme], however…</span>
+      <span class="chip r" onclick="ins('r4','Unlike [text], this text…')">Unlike [text]…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('r4')">Get feedback</button>
+      <button class="btn btn-p r" onclick="done('r4')">Done →</button>
+    </div>
+    <div class="fb" id="fb-r4">
+      <div class="fb-head r"><div class="fb-head-l"><div class="fb-dot r"></div><span class="fb-label r">Coach</span></div><button class="fb-close" onclick="closeFb('r4')">×</button></div>
+      <div class="fb-body" id="fbb-r4"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sc" id="card-r5">
+  <div class="sc-head">
+    <div class="sc-head-l"><div class="sc-icon ic-coral">5</div><div><div class="sc-title">Reader Response</div><div class="sc-sub">Are you compelled to read on?</div></div></div>
+    <span class="wc" id="wc-r5">0 words</span>
+  </div>
+  <div class="sc-body">
+    <div class="activity-tag tag-rate">Activity: Rate your response</div>
+    <div class="eval-wrap" id="evalWrapR">
+      <p class="eval-intro">Rate your experience of reading this text. Any score below 4 — explain your reasoning.</p>
+      <div id="evalCriteriaR"></div>
+      <button class="eval-to-prose" onclick="evalToProseR()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Build scaffold from ratings →</span>
+      </button>
+    </div>
+    <div class="activity-tag tag-write">Write up</div>
+    <textarea id="text-r5" class="rfocus" rows="5" placeholder="I am / am not compelled to read on because…" oninput="onType('r5')"></textarea>
+    <div class="starters">
+      <span class="chip r" onclick="ins('r5','I am compelled to read on because…')">I am compelled to read on because…</span>
+      <span class="chip r" onclick="ins('r5','While I did not find this text immediately engaging, I acknowledge that…')">While I didn't find this engaging…</span>
+      <span class="chip r" onclick="ins('r5','The [opening/voice/structure] draws the reader in by…')">The [opening] draws the reader in by…</span>
+    </div>
+    <div class="act-row">
+      <button class="btn" onclick="coach('r5')">Get feedback</button>
+      <button class="btn btn-p r" onclick="done('r5')">Done →</button>
+    </div>
+    <div class="fb" id="fb-r5">
+      <div class="fb-head r"><div class="fb-head-l"><div class="fb-dot r"></div><span class="fb-label r">Coach</span></div><button class="fb-close" onclick="closeFb('r5')">×</button></div>
+      <div class="fb-body" id="fbb-r5"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAFT -->
+<div class="draft-card" id="draftCard">
+  <h3><span style="font-family:'Lora',serif">Your draft</span>
+    <button class="btn" onclick="overallCoach()" style="font-size:12px">Overall feedback</button>
+  </h3>
+  <div class="draft-text" id="draftText"></div>
+  <div class="draft-meta"><span id="draftWC"></span><span id="draftSec"></span></div>
+</div>
+
+<div class="coach-card" id="coachCard">
+  <div class="coach-head"><h4>Overall reflection feedback</h4><button class="fb-close" onclick="document.getElementById('coachCard').classList.remove('vis')">×</button></div>
+  <div class="coach-body" id="coachBody"></div>
+</div>
+
+</main>
+</div>
+
+<script>
+const PROXY = 'https://jade-melomakarona-ea20fe.netlify.app/api/openai';
+let mode = 'creative';
+const doneSet = new Set();
+
+// ══ MODE ══
+function setMode(m){
+  mode = m;
+  const r = m==='reading';
+  ['mt-creative','mt-reading'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.toggle('active',id===(r?'mt-reading':'mt-creative'));
+  });
+  document.getElementById('sideCreative').style.display=r?'none':'block';
+  document.getElementById('sideReading').style.display=r?'block':'none';
+  document.getElementById('sideNoteBox').className='aside-note'+(r?' rmode':'');
+  document.getElementById('sideNoteText').textContent=r
+    ?'Written in flowing paragraphs — the activities help you think first, not answer each question separately.'
+    :'Each activity builds your thinking. Then write it up in formal first-person prose.';
+  const creativeCards=['intro','evidence','conclusion'];
+  const readingCards=['r1','r2','r3','r4','r5'];
+  creativeCards.forEach(id=>document.getElementById('card-'+id).classList.toggle('vis',!r));
+  readingCards.forEach(id=>document.getElementById('card-'+id).classList.toggle('vis',r));
+  document.getElementById('draftCard').classList.remove('vis');
+  updateProg();
+}
+
+// ══ WORD COUNT ══
+function wc(s){return s.trim()===''?0:s.trim().split(/\s+/).length}
+function onType(id){
+  const v=document.getElementById('text-'+id).value;
+  const n=wc(v);
+  const el=document.getElementById('wc-'+id);
+  el.textContent=n+' word'+(n!==1?'s':'');
+  el.className='wc'+(n>=40?' ok':'');
+  updateDraft();
+}
+
+// ══ NAV ══
+function scrollTo(id){
+  document.getElementById('card-'+id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function done(id){
+  doneSet.add(id);
+  const sn=document.getElementById('sn-'+id);
+  if(sn){sn.textContent='✓';sn.closest('.step')?.classList.add(mode==='reading'?'rdone':'done')}
+  updateProg();updateDraft();
+}
+function updateProg(){
+  const secs=mode==='creative'?['intro','evidence','conclusion']:['r1','r2','r3','r4','r5'];
+  const n=secs.filter(s=>doneSet.has(s)).length;
+  const pct=Math.round(n/secs.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLabel').textContent=n+' of '+secs.length;
+  if(n===secs.length){updateDraft();document.getElementById('draftCard').classList.add('vis');setTimeout(()=>document.getElementById('draftCard').scrollIntoView({behavior:'smooth'}),300)}
+}
+
+// ══ DRAFT ══
+function updateDraft(){
+  const secs=mode==='creative'?['intro','evidence','conclusion']:['r1','r2','r3','r4','r5'];
+  let txt='',total=0;
+  secs.forEach(id=>{const v=document.getElementById('text-'+id)?.value?.trim();if(v){txt+=v+'\n\n';total+=wc(v)}});
+  document.getElementById('draftText').textContent=txt.trim();
+  document.getElementById('draftWC').textContent=total+' words';
+  document.getElementById('draftSec').textContent=secs.filter(s=>doneSet.has(s)).length+' of '+secs.length+' sections complete';
+}
+
+// ══ STARTERS ══
+function ins(id,text){
+  const ta=document.getElementById('text-'+id);if(!ta)return;
+  ta.value=ta.value.trim()===''?text:ta.value+' '+text;
+  ta.focus();onType(id);
+}
+
+// ══ FEEDBACK ══
+function closeFb(id){document.getElementById('fb-'+id).classList.remove('vis')}
+function showFb(id,html){
+  const p=document.getElementById('fb-'+id);
+  const b=document.getElementById('fbb-'+id);
+  if(!p||!b)return;
+  b.innerHTML=html;p.classList.add('vis');
+}
+
+const coachMeta={
+  intro:{name:'Introduction',goal:'Names form, states purpose clearly, introduces themes, signals prescribed text link, first person formal register.'},
+  evidence:{name:'Evidence & Analysis',goal:'Identifies specific techniques, explains why chosen, links to prescribed text, connects to audience effect. Needs 2–3 techniques.'},
+  conclusion:{name:'Conclusion',goal:'Makes a final evaluative statement on whether the composition achieved its purpose. May note what would be revised.'},
+  r1:{name:'Text & Context',goal:'Names title, composer, genre, contextualises the choice.'},
+  r2:{name:'Style & Form',goal:'Identifies distinctive style features using metalanguage, notes effect on reader.'},
+  r3:{name:'Subject Matter',goal:'Discusses ideas/themes, evaluates engagement or value, shows critical thinking.'},
+  r4:{name:'Comparison',goal:'Names comparison text, makes a specific thematic or formal link, shows what the comparison reveals.'},
+  r5:{name:'Reader Response',goal:'Takes a clear position on whether compelled to read on, justifies with specific textual evidence.'}
+};
+
+async function coach(id){
+  const text=document.getElementById('text-'+id)?.value?.trim();
+  const isR=id.startsWith('r');
+  if(!text||text.length<15){showFb(id,'Write a sentence or two first, then ask for feedback.');return}
+  const m=coachMeta[id];
+  showFb(id,`<div class="spin-wrap"><div class="spin${isR?' r':''}"></div>Coaching your writing…</div>`);
+  const prompt=`You are a supportive, rigorous secondary English writing coach (Years 9–12, Australia).
+Section: ${m.name}
+Goal: ${m.goal}
+Student's writing:
+"""
+${text}
+"""
+Give concise coaching: 1 sentence acknowledging what works (specific), 1–2 actionable suggestions referencing their words, 1 example sentence starter to try. Warm, direct tone. No bullet points. Max 110 words.`;
+  try{
+    const res=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'gpt-4o',max_tokens:280,messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    showFb(id,d.choices?.[0]?.message?.content||'Could not get feedback. Try again.');
+  }catch{showFb(id,'Could not connect. Try again.')}
+}
+
+async function overallCoach(){
+  const secs=mode==='creative'?['intro','evidence','conclusion']:['r1','r2','r3','r4','r5'];
+  let txt='';
+  secs.forEach(id=>{const v=document.getElementById('text-'+id)?.value?.trim();if(v)txt+=`[${coachMeta[id].name}]\n${v}\n\n`});
+  if(!txt){document.getElementById('coachBody').textContent='Complete some sections first.';document.getElementById('coachCard').classList.add('vis');return}
+  document.getElementById('coachBody').innerHTML='<div class="spin-wrap"><div class="spin"></div>Analysing your full reflection…</div>';
+  document.getElementById('coachCard').classList.add('vis');
+  const prompt=`Secondary English teacher marking a ${mode==='creative'?'Creative Writing Reflection':'Reading Reflection'} (Australian Years 9–12).
+Full student reflection:
+"""
+${txt}
+"""
+Holistic feedback: 1–2 sentences on what is strongest (specific). Single most important development area with concrete example. Observation on formal first-person register. Encouraging closing statement. No bullet points. Max 170 words.`;
+  try{
+    const res=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'gpt-4o',max_tokens:380,messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    document.getElementById('coachBody').textContent=d.choices?.[0]?.message?.content||'Could not get feedback.';
+  }catch{document.getElementById('coachBody').textContent='Could not connect. Try again.'}
+}
+
+// ══════════════════════════════
+// ACTIVITY 1: MIND MAP
+// ══════════════════════════════
+const mmNodes=[];
+const mmDefaults=[
+  {label:'Form',hint:'personal essay, story, poem…'},
+  {label:'Purpose',hint:'entertain, persuade, challenge…'},
+  {label:'Theme 1',hint:''},
+  {label:'Prescribed text',hint:''},
+  {label:'Audience',hint:''},
+  {label:'Theme 2',hint:''}
+];
+
+function initMindMap(){
+  const canvas=document.getElementById('mmCanvas');
+  const W=canvas.offsetWidth||560;
+  const H=canvas.offsetHeight||340;
+  const cx=W/2, cy=H/2;
+  const angles=[300,340,20,70,130,200,230,260];
+  const radii=[110,110,110,110,110,130,130,130];
+  mmDefaults.forEach((d,i)=>{
+    const angle=(angles[i]||i*45)*Math.PI/180;
+    const r=radii[i]||110;
+    const x=cx+r*Math.cos(angle);
+    const y=cy+r*Math.sin(angle);
+    addMmNodeAt(x,y,d.label,false);
+  });
+  drawLines();
+}
+
+let mmIdCounter=0;
+function addMmNodeAt(x,y,label,isNew){
+  const canvas=document.getElementById('mmCanvas');
+  const id='mm'+mmIdCounter++;
+  const node={id,x,y,label:label||'',filled:false};
+  mmNodes.push(node);
+  const el=document.createElement('div');
+  el.className='mm-node'+(label?' filled':'');
+  el.id=id;
+  el.style.left=(x-70)+'px';
+  el.style.top=(y-18)+'px';
+  el.textContent=label||'click to add';
+  el.onclick=()=>editMmNode(id);
+  if(isNew)el.classList.remove('filled');
+  canvas.appendChild(el);
+  drawLines();
+  return id;
+}
+function addMmNode(){
+  const canvas=document.getElementById('mmCanvas');
+  const W=canvas.offsetWidth||560;
+  const H=canvas.offsetHeight||340;
+  const angle=Math.random()*Math.PI*2;
+  const r=100+Math.random()*40;
+  addMmNodeAt(W/2+r*Math.cos(angle),H/2+r*Math.sin(angle),'',true);
+}
+function editMmNode(id){
+  const node=mmNodes.find(n=>n.id===id);if(!node)return;
+  const el=document.getElementById(id);if(!el)return;
+  const inp=document.createElement('input');
+  inp.className='mm-node-input';
+  inp.value=node.label;
+  inp.placeholder='Type an idea…';
+  el.className='mm-node editing';
+  el.textContent='';
+  el.appendChild(inp);
+  inp.focus();
+  inp.select();
+  const finish=()=>{
+    node.label=inp.value.trim();
+    el.className='mm-node'+(node.label?' filled':'');
+    el.textContent=node.label||'click to add';
+    el.onclick=()=>editMmNode(id);
+    drawLines();
+  };
+  inp.onblur=finish;
+  inp.onkeydown=e=>{if(e.key==='Enter')inp.blur()};
+}
+function drawLines(){
+  const canvas=document.getElementById('mmCanvas');
+  const W=canvas.offsetWidth||560;
+  const H=canvas.offsetHeight||340;
+  const svg=document.getElementById('mmLines');
+  const cx=W/2, cy=H/2;
+  svg.innerHTML='';
+  mmNodes.forEach(n=>{
+    const el=document.getElementById(n.id);
+    if(!el)return;
+    const nx=n.x, ny=n.y;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',cx);line.setAttribute('y1',cy);
+    line.setAttribute('x2',nx);line.setAttribute('y2',ny);
+    line.setAttribute('stroke','#d0cdc8');
+    line.setAttribute('stroke-width','1.2');
+    line.setAttribute('stroke-dasharray','3 3');
+    svg.appendChild(line);
+  });
+}
+function mmToProse(){
+  const filled=mmNodes.filter(n=>n.label);
+  if(filled.length<2){alert('Add at least 2 ideas to your mind map first.');return}
+  const ta=document.getElementById('text-intro');
+  if(ta.value.trim()!==''){if(!confirm('This will add to your existing text. Continue?'))return}
+  const scaffold='My [form] is a piece about '+filled.map(n=>n.label.toLowerCase()).join(', ')+'. '
+    +'The purpose of my composition is to… I composed this piece in order to… '
+    +'Key themes include: '+filled.filter(n=>n.label.toLowerCase().includes('theme')).map(n=>n.label).join(', ')+(filled.filter(n=>n.label.toLowerCase().includes('theme')).length?'. ':'…. ')
+    +'[Continue from here]';
+  ta.value=(ta.value.trim()?ta.value+'\n\n':'')+scaffold;
+  ta.focus();onType('intro');
+}
+
+// ══════════════════════════════
+// ACTIVITY 2: CARD SORT (Creative)
+// ══════════════════════════════
+const techCards=[
+  {id:'tc1',name:'Anecdote / personal narrative',desc:'Opening with a personal story'},
+  {id:'tc2',name:'Imagery / figurative language',desc:'Metaphor, simile, personification'},
+  {id:'tc3',name:'Tone shift',desc:'Deliberate change in register or mood'},
+  {id:'tc4',name:'Structural choice',desc:'Non-linear order, fragmentation, circularity'},
+  {id:'tc5',name:'Voice / perspective',desc:'First person, unreliable narrator'},
+  {id:'tc6',name:'Diction / word choice',desc:'Specific vocabulary decisions'},
+  {id:'tc7',name:'Dialogue',desc:'Character voices, subtext'},
+  {id:'tc8',name:'Historical / contextual reference',desc:'Citing sources or context'},
+  {id:'tc9',name:'Contrast / juxtaposition',desc:'Placing opposites side by side'},
+  {id:'tc10',name:'Repetition / motif',desc:'Recurring image, phrase or idea'}
+];
+const readingFeatureCards=[
+  {id:'rf1',name:'Voice',desc:'Distinctive narrative or authorial voice'},
+  {id:'rf2',name:'Tone',desc:'Mood or attitude conveyed throughout'},
+  {id:'rf3',name:'Imagery',desc:'Figurative language, sensory detail'},
+  {id:'rf4',name:'Structure',desc:'How the text is organised or sequenced'},
+  {id:'rf5',name:'Diction',desc:'Distinctive word choices'},
+  {id:'rf6',name:'Dialogue',desc:'Use of characters speaking'},
+  {id:'rf7',name:'Setting',desc:'Place, time, atmosphere'},
+  {id:'rf8',name:'Point of view',desc:'First person, omniscient, close third'},
+  {id:'rf9',name:'Rhythm / pace',desc:'How fast or slow the text moves'},
+  {id:'rf10',name:'Logic / argument',desc:'How claims are structured and supported'}
+];
+
+let dragCard=null,dragSource=null;
+
+function buildCards(cards,bankId,usedId,countId,purposeColor){
+  const bank=document.getElementById(bankId);
+  const used=document.getElementById(usedId);
+  bank.innerHTML='';used.innerHTML='';
+  cards.forEach(c=>{
+    const el=createCard(c,bankId,usedId,countId,purposeColor);
+    bank.appendChild(el);
+  });
+}
+function createCard(c,bankId,usedId,countId,purposeColor){
+  const div=document.createElement('div');
+  div.className='tc';div.draggable=true;div.id='card-tc-'+c.id;
+  div.dataset.cardId=c.id;
+  div.dataset.bankId=bankId;div.dataset.usedId=usedId;div.dataset.countId=countId;
+  div.innerHTML=`<div class="tc-name">${c.name}</div><div class="tc-desc">${c.desc}</div>
+    <div class="tc-purpose" id="purpose-${c.id}">
+      <div class="tc-purpose-label">My purpose</div>
+      <input type="text" placeholder="I used this to…" oninput="updateCsProse('${bankId}','${usedId}')">
+    </div>`;
+  div.ondragstart=e=>{dragCard=c.id;dragSource=div.parentElement.id;div.classList.add('dragging')};
+  div.ondragend=e=>{div.classList.remove('dragging');dragCard=null;dragSource=null};
+  return div;
+}
+function doDragOver(e,col){
+  e.preventDefault();
+  const colEl=document.getElementById('col-'+col)||document.getElementById('r2col-'+col.replace('r2',''));
+  if(colEl)colEl.classList.add('drag-over');
+}
+function doDragLeave(col){
+  const colEl=document.getElementById('col-'+col)||document.getElementById('r2col-'+col.replace('r2',''));
+  if(colEl)colEl.classList.remove('drag-over');
+}
+function doDrop(e,col){
+  e.preventDefault();
+  if(!dragCard)return;
+  const el=document.getElementById('card-tc-'+dragCard);if(!el)return;
+  const isUsed=col==='used'||col==='r2used';
+  const bankId=el.dataset.bankId;
+  const usedId=el.dataset.usedId;
+  const countId=el.dataset.countId;
+  const destId=isUsed?usedId:bankId;
+  const destEl=document.getElementById(destId);
+  if(destEl){destEl.appendChild(el)}
+  const purposeEl=document.getElementById('purpose-'+dragCard);
+  if(purposeEl){
+    if(isUsed)purposeEl.classList.add('show');
+    else purposeEl.classList.remove('show');
+  }
+  doDragLeave(col);
+  updateUsedCount(usedId,countId);
+}
+function updateUsedCount(usedId,countId){
+  const usedEl=document.getElementById(usedId);
+  const countEl=document.getElementById(countId);
+  if(usedEl&&countEl)countEl.textContent=usedEl.children.length;
+}
+function csToProse(){
+  const used=document.getElementById('used-cards');
+  const cards=[...used.children];
+  if(cards.length===0){alert('Drag at least one technique to the "I used this" column first.');return}
+  const ta=document.getElementById('text-evidence');
+  let scaffold='';
+  cards.forEach(c=>{
+    const name=c.querySelector('.tc-name')?.textContent||'';
+    const purpose=c.querySelector('input')?.value?.trim();
+    scaffold+=`My [form] uses ${name.toLowerCase()}${purpose?' in order to '+purpose:'. [Explain your purpose here]'}. `;
+    scaffold+='Drawing on [prescribed text], I… [link to prescribed text here]. This technique effectively [effect on audience]. ';
+    scaffold+='\n\n';
+  });
+  ta.value=(ta.value.trim()?ta.value+'\n\n':'')+scaffold.trim();
+  ta.focus();onType('evidence');
+}
+function r2ToProse(){
+  const used=document.getElementById('r2used-cards');
+  const cards=[...used.children];
+  if(cards.length===0){alert('Drag at least one feature to the "Present in this text" column first.');return}
+  const ta=document.getElementById('text-r2');
+  let scaffold='What is most distinctive about this text is its use of ';
+  const names=cards.map(c=>c.querySelector('.tc-name')?.textContent?.toLowerCase()||'');
+  scaffold+=names.join(', ')+'. ';
+  cards.forEach(c=>{
+    const name=c.querySelector('.tc-name')?.textContent||'';
+    const effect=c.querySelector('input')?.value?.trim();
+    scaffold+=`The writer's use of ${name.toLowerCase()} ${effect?'creates an effect of '+effect:'[note the effect here]'}. `;
+  });
+  ta.value=(ta.value.trim()?ta.value+'\n\n':'')+scaffold.trim();
+  ta.focus();onType('r2');
+}
+
+// ══════════════════════════════
+// ACTIVITY 3: EVAL SLIDERS
+// ══════════════════════════════
+const evalCriteria=[
+  {id:'e1',name:'Fulfilment of purpose',label:'Did the piece achieve what you set out to do?'},
+  {id:'e2',name:'Effective use of technique',label:'Did your techniques create the intended effect?'},
+  {id:'e3',name:'Connection to prescribed text',label:'Did you successfully draw on the prescribed text?'},
+  {id:'e4',name:'Register and voice',label:'Did the writing maintain a consistent voice?'}
+];
+const evalCriteriaR=[
+  {id:'er1',name:'Engagement with subject matter',label:'How engaging did you find the ideas?'},
+  {id:'er2',name:'Clarity of the writing',label:'How clearly was the text written?'},
+  {id:'er3',name:'Compelled to read on',label:'How strongly do you want to continue reading?'},
+  {id:'er4',name:'Personal relevance',label:'How relevant is this text to your own experience?'}
+];
+const ratingLabels=['','Very weak','Weak','Developing','Solid','Strong'];
+
+function buildEval(criteria,containerId){
+  const wrap=document.getElementById(containerId);
+  criteria.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='eval-criterion';
+    div.innerHTML=`
+      <div class="eval-crit-name">${c.name}</div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-bottom:7px;font-style:italic">${c.label}</div>
+      <div class="eval-slider-row">
+        <input type="range" min="1" max="5" value="3" step="1" id="sl-${c.id}" oninput="onSlider('${c.id}')">
+        <span class="eval-score" id="score-${c.id}">3</span>
+        <span class="eval-score-label" id="slabel-${c.id}">Developing</span>
+      </div>
+      <div class="eval-justify" id="just-${c.id}">
+        <div class="eval-justify-prompt">You rated this below 4 — what would you change or improve?</div>
+        <textarea placeholder="I would revise… because…" rows="2" oninput="updateEvalProse()"></textarea>
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+function onSlider(id){
+  const val=parseInt(document.getElementById('sl-'+id).value);
+  document.getElementById('score-'+id).textContent=val;
+  document.getElementById('slabel-'+id).textContent=ratingLabels[val]||'';
+  const just=document.getElementById('just-'+id);
+  if(just){val<=3?just.classList.add('show'):just.classList.remove('show')}
+}
+function getCriteriaData(criteria){
+  return criteria.map(c=>{
+    const val=parseInt(document.getElementById('sl-'+c.id)?.value||3);
+    const justEl=document.getElementById('just-'+c.id)?.querySelector('textarea');
+    return{name:c.name,score:val,label:ratingLabels[val],justify:justEl?.value?.trim()||''};
+  });
+}
+function evalToProse(){
+  const data=getCriteriaData(evalCriteria);
+  const ta=document.getElementById('text-conclusion');
+  let scaffold='Overall, I believe my composition ';
+  const avg=data.reduce((s,d)=>s+d.score,0)/data.length;
+  scaffold+=avg>=4?'successfully achieved its purpose. ':'partially achieved its purpose, though there are areas I would develop further. ';
+  data.filter(d=>d.score>=4).forEach(d=>{scaffold+=`In terms of ${d.name.toLowerCase()}, I feel I ${d.label.toLowerCase()}ly achieved my goal. `});
+  data.filter(d=>d.score<=3).forEach(d=>{scaffold+=`However, I would revise my ${d.name.toLowerCase()}: ${d.justify||'[explain what you would change]'}. `});
+  ta.value=(ta.value.trim()?ta.value+'\n\n':'')+scaffold.trim();
+  ta.focus();onType('conclusion');
+}
+function evalToProseR(){
+  const data=getCriteriaData(evalCriteriaR);
+  const ta=document.getElementById('text-r5');
+  const compelled=data.find(d=>d.name.includes('Compelled'));
+  let scaffold='';
+  if(compelled){
+    scaffold+=compelled.score>=4
+      ?'I am compelled to read on because '
+      :'I am not strongly compelled to read on, though I acknowledge its value. ';
+  }
+  data.filter(d=>d.score<=3&&d.justify).forEach(d=>{scaffold+=`Regarding ${d.name.toLowerCase()}: ${d.justify}. `});
+  ta.value=(ta.value.trim()?ta.value+'\n\n':'')+scaffold.trim();
+  ta.focus();onType('r5');
+}
+
+// ══ INIT ══
+window.onload=()=>{
+  initMindMap();
+  buildCards(techCards,'bank-cards','used-cards','used-count','var(--teal)');
+  buildCards(readingFeatureCards,'r2bank-cards','r2used-cards','r2used-count','var(--coral)');
+  buildEval(evalCriteria,'evalCriteria');
+  buildEval(evalCriteriaR,'evalCriteriaR');
+};
+</script>
+</body>
+</html>
