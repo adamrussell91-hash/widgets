@@ -139,18 +139,21 @@ textarea::placeholder{color:#c5c5c8;font-style:italic}
    ACTIVITY 1 — MIND MAP
 ══════════════════════════════ */
 .mindmap-wrap{margin-bottom:14px}
-.mm-canvas{position:relative;width:100%;height:340px;background:var(--cream);border-radius:10px;border:1.5px dashed var(--rule);overflow:hidden;user-select:none}
+.mm-layout{display:grid;grid-template-columns:1fr 200px;gap:12px;align-items:stretch;margin-bottom:10px}
+.mm-canvas{position:relative;height:300px;background:var(--cream);border-radius:10px;border:1.5px dashed var(--rule);overflow:hidden;user-select:none;touch-action:none}
 .mm-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--teal);color:#fff;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:500;font-family:'Lora',serif;white-space:nowrap;z-index:10;text-align:center;min-width:100px}
 .mm-node{position:absolute;background:#fff;border:1.5px solid var(--rule);border-radius:8px;padding:6px 11px;font-size:12px;cursor:grab;touch-action:none;user-select:none;transition:border-color .15s,background .15s,color .15s;z-index:5;max-width:140px;text-align:center;font-family:'Lora',serif;line-height:1.3}
 .mm-node:hover{border-color:var(--teal);background:var(--teal-light);color:var(--teal)}
 .mm-node.filled{border-color:var(--teal);background:var(--teal-light);color:var(--teal-dark);font-weight:500}
 .mm-node.editing{border-color:var(--teal);background:#fff;padding:2px;cursor:default}
 .mm-node-input{border:none;outline:none;font-family:'Lora',serif;font-size:12px;color:var(--ink);width:120px;padding:4px 7px;background:transparent;cursor:text}
-.mm-canvas{touch-action:none}
 .mm-add{position:absolute;bottom:10px;right:10px;background:var(--teal);color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:500;cursor:pointer;transition:background var(--t);font-family:'DM Sans',sans-serif}
 .mm-add:hover{background:var(--teal-dark)}
-.mm-hint{font-size:11px;color:var(--ink-3);margin-top:7px;font-style:italic}
-.mm-to-prose{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 13px;background:var(--teal-light);border-radius:8px;cursor:pointer;transition:background var(--t);border:none;width:100%;text-align:left}
+.mm-prompts{background:var(--cream);border-radius:10px;border:1px solid var(--rule);padding:12px 13px;display:flex;flex-direction:column;gap:6px}
+.mm-prompts-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:2px}
+.mm-prompt-q{font-size:11.5px;color:var(--ink-2);line-height:1.45;font-family:'Lora',serif;font-style:italic;padding-left:8px;border-left:2px solid var(--rule)}
+.mm-prompts-hint{font-size:10.5px;color:var(--ink-3);margin-top:4px;line-height:1.4}
+.mm-to-prose{display:flex;align-items:center;gap:8px;padding:10px 13px;background:var(--teal-light);border-radius:8px;cursor:pointer;transition:background var(--t);border:none;width:100%;text-align:left}
 .mm-to-prose:hover{background:#d4ede8}
 .mm-to-prose span{font-size:12.5px;color:var(--teal-dark);font-weight:500}
 svg.mm-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
@@ -314,12 +317,23 @@ svg.mm-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-event
     </div>
 
     <div class="mindmap-wrap">
-      <div class="mm-canvas" id="mmCanvas">
-        <svg class="mm-lines" id="mmLines"></svg>
-        <div class="mm-center" id="mmCenter">My piece</div>
-        <button class="mm-add" onclick="addMmNode()">+ Add idea</button>
+      <div class="mm-layout">
+        <div class="mm-canvas" id="mmCanvas">
+          <svg class="mm-lines" id="mmLines"></svg>
+          <div class="mm-center" id="mmCenter">My piece</div>
+          <button class="mm-add" onclick="addMmNode()">+ Add node</button>
+        </div>
+        <div class="mm-prompts">
+          <div class="mm-prompts-label">Think about…</div>
+          <div class="mm-prompt-q">What form is your piece — essay, story, poem, speech?</div>
+          <div class="mm-prompt-q">What is your purpose — to entertain, persuade, challenge, reflect?</div>
+          <div class="mm-prompt-q">What are the key themes or ideas?</div>
+          <div class="mm-prompt-q">Which prescribed text connects to your piece, and how?</div>
+          <div class="mm-prompt-q">Who is your intended audience?</div>
+          <div class="mm-prompt-q">What tone or mood did you want to create?</div>
+          <div class="mm-prompts-hint">Click + Add node, then drag nodes anywhere on the canvas.</div>
+        </div>
       </div>
-      <p class="mm-hint">Click a node to edit it. Build your web — form, purpose, themes, prescribed text link — then convert to prose.</p>
       <button class="mm-to-prose" onclick="mmToProse()">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>Convert mind map to prose scaffold →</span>
@@ -787,37 +801,17 @@ Holistic feedback: 1–2 sentences on what is strongest (specific). Single most 
 // ACTIVITY 1: MIND MAP
 // ══════════════════════════════
 const mmNodes=[];
-const mmDefaults=[
-  {label:'Form'},
-  {label:'Purpose'},
-  {label:'Theme 1'},
-  {label:'Prescribed text'},
-  {label:'Audience'},
-  {label:'Theme 2'}
-];
 
 // Pointer drag state
-let mmDrag=null; // {id, offX, offY}
-let mmMoved=false; // distinguish drag from click
+let mmDrag=null;
+let mmMoved=false;
 
 function initMindMap(){
   const canvas=document.getElementById('mmCanvas');
-  const W=canvas.offsetWidth||560;
-  const H=canvas.offsetHeight||340;
-  const cx=W/2, cy=H/2;
-  const angles=[300,345,30,80,140,210];
-  const radii=[120,120,120,115,120,120];
-  mmDefaults.forEach((d,i)=>{
-    const angle=angles[i]*Math.PI/180;
-    const r=radii[i];
-    addMmNodeAt(cx+r*Math.cos(angle), cy+r*Math.sin(angle), d.label);
-  });
-  // Canvas-level pointer events handle all node dragging
   canvas.addEventListener('pointerdown', mmPointerDown);
   canvas.addEventListener('pointermove', mmPointerMove);
   canvas.addEventListener('pointerup',   mmPointerUp);
   canvas.addEventListener('pointercancel', mmPointerUp);
-  drawLines();
 }
 
 let mmIdCounter=0;
