@@ -141,11 +141,12 @@ textarea::placeholder{color:#c5c5c8;font-style:italic}
 .mindmap-wrap{margin-bottom:14px}
 .mm-canvas{position:relative;width:100%;height:340px;background:var(--cream);border-radius:10px;border:1.5px dashed var(--rule);overflow:hidden;user-select:none}
 .mm-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--teal);color:#fff;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:500;font-family:'Lora',serif;white-space:nowrap;z-index:10;text-align:center;min-width:100px}
-.mm-node{position:absolute;background:#fff;border:1.5px solid var(--rule);border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;transition:all var(--t);z-index:5;max-width:140px;text-align:center;font-family:'Lora',serif;line-height:1.3}
+.mm-node{position:absolute;background:#fff;border:1.5px solid var(--rule);border-radius:8px;padding:6px 11px;font-size:12px;cursor:grab;touch-action:none;user-select:none;transition:border-color .15s,background .15s,color .15s;z-index:5;max-width:140px;text-align:center;font-family:'Lora',serif;line-height:1.3}
 .mm-node:hover{border-color:var(--teal);background:var(--teal-light);color:var(--teal)}
 .mm-node.filled{border-color:var(--teal);background:var(--teal-light);color:var(--teal-dark);font-weight:500}
-.mm-node.editing{border-color:var(--teal);background:#fff;padding:2px}
-.mm-node-input{border:none;outline:none;font-family:'Lora',serif;font-size:12px;color:var(--ink);width:120px;padding:4px 7px;background:transparent}
+.mm-node.editing{border-color:var(--teal);background:#fff;padding:2px;cursor:default}
+.mm-node-input{border:none;outline:none;font-family:'Lora',serif;font-size:12px;color:var(--ink);width:120px;padding:4px 7px;background:transparent;cursor:text}
+.mm-canvas{touch-action:none}
 .mm-add{position:absolute;bottom:10px;right:10px;background:var(--teal);color:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:500;cursor:pointer;transition:background var(--t);font-family:'DM Sans',sans-serif}
 .mm-add:hover{background:var(--teal-dark)}
 .mm-hint{font-size:11px;color:var(--ink-3);margin-top:7px;font-style:italic}
@@ -787,60 +788,117 @@ Holistic feedback: 1–2 sentences on what is strongest (specific). Single most 
 // ══════════════════════════════
 const mmNodes=[];
 const mmDefaults=[
-  {label:'Form',hint:'personal essay, story, poem…'},
-  {label:'Purpose',hint:'entertain, persuade, challenge…'},
-  {label:'Theme 1',hint:''},
-  {label:'Prescribed text',hint:''},
-  {label:'Audience',hint:''},
-  {label:'Theme 2',hint:''}
+  {label:'Form'},
+  {label:'Purpose'},
+  {label:'Theme 1'},
+  {label:'Prescribed text'},
+  {label:'Audience'},
+  {label:'Theme 2'}
 ];
+
+// Pointer drag state
+let mmDrag=null; // {id, offX, offY}
+let mmMoved=false; // distinguish drag from click
 
 function initMindMap(){
   const canvas=document.getElementById('mmCanvas');
   const W=canvas.offsetWidth||560;
   const H=canvas.offsetHeight||340;
   const cx=W/2, cy=H/2;
-  const angles=[300,340,20,70,130,200,230,260];
-  const radii=[110,110,110,110,110,130,130,130];
+  const angles=[300,345,30,80,140,210];
+  const radii=[120,120,120,115,120,120];
   mmDefaults.forEach((d,i)=>{
-    const angle=(angles[i]||i*45)*Math.PI/180;
-    const r=radii[i]||110;
-    const x=cx+r*Math.cos(angle);
-    const y=cy+r*Math.sin(angle);
-    addMmNodeAt(x,y,d.label,false);
+    const angle=angles[i]*Math.PI/180;
+    const r=radii[i];
+    addMmNodeAt(cx+r*Math.cos(angle), cy+r*Math.sin(angle), d.label);
   });
+  // Canvas-level pointer events handle all node dragging
+  canvas.addEventListener('pointerdown', mmPointerDown);
+  canvas.addEventListener('pointermove', mmPointerMove);
+  canvas.addEventListener('pointerup',   mmPointerUp);
+  canvas.addEventListener('pointercancel', mmPointerUp);
   drawLines();
 }
 
 let mmIdCounter=0;
-function addMmNodeAt(x,y,label,isNew){
+function addMmNodeAt(x,y,label){
   const canvas=document.getElementById('mmCanvas');
+  const W=canvas.offsetWidth||560;
+  const H=canvas.offsetHeight||340;
+  // Clamp so node starts inside canvas
+  x=Math.max(70, Math.min(W-70, x));
+  y=Math.max(18, Math.min(H-18, y));
   const id='mm'+mmIdCounter++;
-  const node={id,x,y,label:label||'',filled:false};
-  mmNodes.push(node);
+  mmNodes.push({id, x, y, label:label||''});
   const el=document.createElement('div');
   el.className='mm-node'+(label?' filled':'');
   el.id=id;
+  el.dataset.mmid=id;
   el.style.left=(x-70)+'px';
   el.style.top=(y-18)+'px';
-  el.textContent=label||'click to add';
-  el.onclick=()=>editMmNode(id);
-  if(isNew)el.classList.remove('filled');
+  el.textContent=label||'click to edit';
   canvas.appendChild(el);
   drawLines();
   return id;
 }
+
 function addMmNode(){
   const canvas=document.getElementById('mmCanvas');
   const W=canvas.offsetWidth||560;
   const H=canvas.offsetHeight||340;
   const angle=Math.random()*Math.PI*2;
-  const r=100+Math.random()*40;
-  addMmNodeAt(W/2+r*Math.cos(angle),H/2+r*Math.sin(angle),'',true);
+  const r=90+Math.random()*50;
+  addMmNodeAt(W/2+r*Math.cos(angle), H/2+r*Math.sin(angle), '');
 }
+
+// ── Pointer drag handlers ──
+function mmPointerDown(e){
+  const node=e.target.closest('[data-mmid]');
+  if(!node) return;
+  // Don't intercept clicks on the input (editing mode)
+  if(e.target.tagName==='INPUT') return;
+  const canvas=document.getElementById('mmCanvas');
+  const rect=canvas.getBoundingClientRect();
+  const id=node.dataset.mmid;
+  const curX=parseFloat(node.style.left)+70;
+  const curY=parseFloat(node.style.top)+18;
+  mmDrag={id, el:node, offX:(e.clientX-rect.left)-curX, offY:(e.clientY-rect.top)-curY};
+  mmMoved=false;
+  canvas.setPointerCapture(e.pointerId);
+  e.preventDefault();
+}
+
+function mmPointerMove(e){
+  if(!mmDrag) return;
+  const canvas=document.getElementById('mmCanvas');
+  const rect=canvas.getBoundingClientRect();
+  const W=canvas.offsetWidth;
+  const H=canvas.offsetHeight;
+  const nx=Math.max(70, Math.min(W-70, (e.clientX-rect.left)-mmDrag.offX));
+  const ny=Math.max(18, Math.min(H-18, (e.clientY-rect.top)-mmDrag.offY));
+  mmDrag.el.style.left=(nx-70)+'px';
+  mmDrag.el.style.top=(ny-18)+'px';
+  // Update stored position
+  const node=mmNodes.find(n=>n.id===mmDrag.id);
+  if(node){node.x=nx; node.y=ny}
+  mmMoved=true;
+  drawLines();
+  e.preventDefault();
+}
+
+function mmPointerUp(e){
+  if(!mmDrag) return;
+  const id=mmDrag.id;
+  mmDrag=null;
+  // If barely moved, treat as a click → edit
+  if(!mmMoved) editMmNode(id);
+}
+
+// ── Edit node label ──
 function editMmNode(id){
-  const node=mmNodes.find(n=>n.id===id);if(!node)return;
-  const el=document.getElementById(id);if(!el)return;
+  const node=mmNodes.find(n=>n.id===id); if(!node) return;
+  const el=document.getElementById(id);   if(!el)   return;
+  if(el.querySelector('input')) return; // already editing
   const inp=document.createElement('input');
   inp.className='mm-node-input';
   inp.value=node.label;
@@ -848,18 +906,19 @@ function editMmNode(id){
   el.className='mm-node editing';
   el.textContent='';
   el.appendChild(inp);
-  inp.focus();
-  inp.select();
+  inp.focus(); inp.select();
   const finish=()=>{
     node.label=inp.value.trim();
     el.className='mm-node'+(node.label?' filled':'');
-    el.textContent=node.label||'click to add';
-    el.onclick=()=>editMmNode(id);
+    el.textContent=node.label||'click to edit';
     drawLines();
   };
-  inp.onblur=finish;
-  inp.onkeydown=e=>{if(e.key==='Enter')inp.blur()};
+  inp.addEventListener('blur', finish);
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') inp.blur(); e.stopPropagation(); });
+  inp.addEventListener('pointerdown', e=>e.stopPropagation()); // prevent drag starting on input
 }
+
+// ── Draw connecting lines from centre to each node ──
 function drawLines(){
   const canvas=document.getElementById('mmCanvas');
   const W=canvas.offsetWidth||560;
@@ -868,29 +927,32 @@ function drawLines(){
   const cx=W/2, cy=H/2;
   svg.innerHTML='';
   mmNodes.forEach(n=>{
-    const el=document.getElementById(n.id);
-    if(!el)return;
-    const nx=n.x, ny=n.y;
+    const el=document.getElementById(n.id); if(!el) return;
+    // Read live position from DOM (accurate after drag)
+    const nx=parseFloat(el.style.left)+70;
+    const ny=parseFloat(el.style.top)+18;
     const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1',cx);line.setAttribute('y1',cy);
-    line.setAttribute('x2',nx);line.setAttribute('y2',ny);
+    line.setAttribute('x1',cx); line.setAttribute('y1',cy);
+    line.setAttribute('x2',nx); line.setAttribute('y2',ny);
     line.setAttribute('stroke','#d0cdc8');
-    line.setAttribute('stroke-width','1.2');
-    line.setAttribute('stroke-dasharray','3 3');
+    line.setAttribute('stroke-width','1.5');
+    line.setAttribute('stroke-dasharray','4 3');
     svg.appendChild(line);
   });
 }
+
 function mmToProse(){
   const filled=mmNodes.filter(n=>n.label);
   if(filled.length<2){alert('Add at least 2 ideas to your mind map first.');return}
   const ta=document.getElementById('text-intro');
   if(ta.value.trim()!==''){if(!confirm('This will add to your existing text. Continue?'))return}
+  const themes=filled.filter(n=>n.label.toLowerCase().includes('theme')).map(n=>n.label);
   const scaffold='My [form] is a piece about '+filled.map(n=>n.label.toLowerCase()).join(', ')+'. '
     +'The purpose of my composition is to… I composed this piece in order to… '
-    +'Key themes include: '+filled.filter(n=>n.label.toLowerCase().includes('theme')).map(n=>n.label).join(', ')+(filled.filter(n=>n.label.toLowerCase().includes('theme')).length?'. ':'…. ')
+    +(themes.length?'Key themes include: '+themes.join(' and ')+'. ':'')
     +'[Continue from here]';
   ta.value=(ta.value.trim()?ta.value+'\n\n':'')+scaffold;
-  ta.focus();onType('intro');
+  ta.focus(); onType('intro');
 }
 
 // ══════════════════════════════
