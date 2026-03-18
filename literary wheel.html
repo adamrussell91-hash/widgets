@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Four Literary Technique Taxonomy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100vh;overflow-x:hidden}
+body{
+  font-family:'Crimson Pro',Georgia,serif;
+  background:#090806;
+  color:#ede8da;
+  display:flex;flex-direction:column;align-items:center;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 48%, rgba(201,168,76,0.05) 0%, transparent 70%);
+}
+
+header{
+  position:relative;z-index:2;width:100%;text-align:center;
+  padding:40px 40px 24px;
+  border-bottom:1px solid rgba(201,168,76,0.1);
+}
+.eyebrow{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.65rem;letter-spacing:.45em;text-transform:uppercase;
+  color:#c9a84c;opacity:.65;margin-bottom:11px;display:block;
+}
+h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:900;
+  color:#ede8da;letter-spacing:.015em;line-height:1.1;
+}
+h1 em{font-style:italic;color:#c9a84c}
+.hline{width:40px;height:1px;background:#c9a84c;opacity:.3;margin:12px auto 0}
+
+/* hint bar */
+.hint-bar{
+  position:relative;z-index:2;
+  width:100%;text-align:center;padding:9px 20px;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.88rem;color:rgba(237,232,218,.3);
+  letter-spacing:.04em;
+  border-bottom:1px solid rgba(201,168,76,.07);
+}
+
+/* ── MAIN LAYOUT ── */
+.main{
+  position:relative;z-index:1;
+  display:flex;
+  width:100%;max-width:1500px;
+  padding:0;
+  align-items:flex-start;
+}
+
+/* SVG canvas */
+.wheel-wrap{
+  flex:1 1 auto;
+  min-width:0;
+  /* height set by JS */
+}
+#wheel{display:block;width:100%;cursor:default}
+
+/* ── SIDE PANEL ── */
+.side{
+  flex:0 0 300px;
+  padding:32px 28px 32px 24px;
+  min-height:500px;
+  border-left:1px solid rgba(201,168,76,.1);
+}
+
+.panel{display:none}
+.panel.on{display:block}
+
+.p-idle .legend-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;margin-bottom:4px;
+  font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;
+  color:rgba(237,232,218,.5);cursor:pointer;
+  border:1px solid transparent;transition:all .2s;
+}
+.p-idle .legend-item:hover{
+  background:rgba(237,232,218,.04);border-color:rgba(237,232,218,.1);
+  color:#ede8da;
+}
+.ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.lname{font-style:normal;font-weight:600}
+.p-idle-hint{
+  font-size:.78rem;color:rgba(237,232,218,.22);
+  font-style:italic;margin-top:14px;line-height:1.65;
+}
+
+.bc{
+  font-size:.58rem;text-transform:uppercase;letter-spacing:.25em;
+  color:rgba(237,232,218,.28);margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.bc span{cursor:pointer;transition:color .2s}
+.bc span:hover{color:#ede8da}
+.bc .sep{opacity:.25;cursor:default}
+.p-bar{height:2px;width:32px;margin-bottom:12px;border-radius:1px}
+.p-type{font-size:.56rem;text-transform:uppercase;letter-spacing:.3em;opacity:.48;display:block;margin-bottom:4px}
+.p-name{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;line-height:1.05;margin-bottom:7px}
+.p-tag{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;opacity:.48;margin-bottom:14px;line-height:1.4}
+.p-div{height:1px;background:rgba(237,232,218,.08);margin:10px 0}
+.p-sl{font-size:.54rem;text-transform:uppercase;letter-spacing:.28em;opacity:.3;display:block;margin-bottom:5px}
+.p-def{font-size:1rem;line-height:1.72;color:rgba(237,232,218,.74);margin-bottom:10px}
+.p-diag{padding:10px 13px;border-left:2px solid;background:rgba(237,232,218,.03);
+  font-style:italic;font-size:.96rem;color:rgba(237,232,218,.58);line-height:1.6;margin-bottom:9px}
+.p-logic{font-size:.9rem;color:rgba(237,232,218,.38);font-style:italic;line-height:1.58}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+.ptag{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;padding:2px 8px;border:1px solid;border-radius:1px}
+.ptag-p{background:rgba(201,168,76,.08);border-color:#c9a84c;color:#c9a84c}
+.ptag-s{background:rgba(237,232,218,.04);border-color:rgba(237,232,218,.2);color:rgba(237,232,218,.38)}
+.ptag-x{background:rgba(237,232,218,.04);border-color:rgba(237,232,218,.35);color:rgba(237,232,218,.55)}
+
+.flow-strip{display:flex;gap:0;margin-top:3px}
+.fstep{flex:1;padding:9px 8px;background:rgba(237,232,218,.04);
+  border:1px solid rgba(237,232,218,.08);text-align:center}
+.fstep+.fstep{border-left:none}
+.fsl{display:block;font-size:.49rem;text-transform:uppercase;letter-spacing:.18em;opacity:.28;margin-bottom:3px}
+.fsv{font-size:.78rem;font-style:italic;color:rgba(237,232,218,.62);line-height:1.25}
+
+footer{
+  position:relative;z-index:2;
+  font-size:.73rem;color:rgba(237,232,218,.14);
+  font-style:italic;letter-spacing:.05em;
+  padding:16px 24px 30px;text-align:center;
+  border-top:1px solid rgba(201,168,76,.07);width:100%;
+}
+
+/* SVG node styles (applied via class on <g>) */
+.node-family{cursor:pointer}
+.node-subgroup{cursor:pointer}
+.node-tech{cursor:pointer}
+.node-overlap{}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="eyebrow">A Relational Classification System</span>
+  <h1>The <em>Big Four</em> Literary Technique Taxonomy</h1>
+  <div class="hline"></div>
+</header>
+<div class="hint-bar">Click any node to explore · Click again to collapse · Wheel rotates active family to reading position</div>
+
+<div class="main">
+  <div class="wheel-wrap" id="wheelWrap">
+    <svg id="wheel" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="side" id="side">
+
+    <!-- IDLE -->
+    <div class="panel p-idle on" id="pIdle">
+      <div id="legendItems"></div>
+      <p class="p-idle-hint">Select a node to explore the taxonomy. The wheel branches outward: families → subgroups → techniques → overlaps.</p>
+    </div>
+
+    <!-- FAMILY -->
+    <div class="panel" id="pFamily">
+      <div class="bc" id="bcF"></div>
+      <div class="p-bar" id="fBar"></div>
+      <span class="p-type" id="fType"></span>
+      <h2 class="p-name" id="fName"></h2>
+      <p class="p-tag" id="fTag"></p>
+      <div class="p-div"></div>
+      <span class="p-sl">Definition</span>
+      <p class="p-def" id="fDef"></p>
+      <div class="p-diag" id="fDiag"></div>
+      <p class="p-logic" id="fLogic"></p>
+    </div>
+
+    <!-- SUBGROUP -->
+    <div class="panel" id="pSub">
+      <div class="bc" id="bcS"></div>
+      <div class="p-bar" id="sBar"></div>
+      <span class="p-type" id="sType"></span>
+      <h2 class="p-name" id="sName"></h2>
+      <p class="p-tag" id="sTag"></p>
+      <div class="p-div"></div>
+      <span class="p-sl">Techniques in this subgroup</span>
+      <p class="p-def" id="sTechs"></p>
+    </div>
+
+    <!-- TECHNIQUE -->
+    <div class="panel" id="pTech">
+      <div class="bc" id="bcT"></div>
+      <div class="p-bar" id="tBar"></div>
+      <span class="p-type" id="tType"></span>
+      <h2 class="p-name" id="tName"></h2>
+      <div class="tag-row" id="tTags"></div>
+      <p class="p-def" id="tDef"></p>
+      <div class="p-div"></div>
+      <span class="p-sl">Analysis Flow</span>
+      <div class="flow-strip" id="tFlow"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>St Aloysius' College · English &amp; Gifted Education · Big Four Literary Technique Taxonomy</footer>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const FAMILIES = [
+  {
+    id:0, name:"Comparatives", numeral:"I",
+    tag:"meaning through similarity, contrast & relation",
+    col:"#d4854a", dark:"#5c3318", light:"#f5b07a",
+    def:"Techniques which create meaning by linking two or more ideas through similarity, difference, contrast, opposition, or analogy.",
+    diag:"Is the technique making the reader understand one thing in relation to another thing?",
+    logic:"If meaning is produced through comparison, opposition, or relational thinking — classify as Comparative.",
+    subs:[
+      { name:"Direct Comparison", desc:"Techniques that explicitly link a primary subject to another to illuminate it.",
+        techs:[
+          {name:"Simile",       def:"Direct comparison using 'like' or 'as' to link two unlike things.",               sec:null},
+          {name:"Metaphor",     def:"Implicit comparison asserting one thing is another, collapsing tenor and vehicle.",sec:"Descriptives"},
+          {name:"Analogy",      def:"Extended comparison illuminating a complex idea through a familiar one.",          sec:null},
+        ]},
+      { name:"Opposition & Contrast", desc:"Techniques generating meaning through difference, inversion, or contradiction.",
+        techs:[
+          {name:"Juxtaposition",def:"Contrasting ideas placed in proximity to highlight difference.",                  sec:"Structurals"},
+          {name:"Contrast",     def:"The deliberate opposing of two elements to emphasise their differences.",         sec:null},
+          {name:"Antithesis",   def:"Opposing ideas held within a balanced grammatical structure.",                    sec:"Repetitives"},
+          {name:"Oxymoron",     def:"Contradictory terms combined to produce paradoxical meaning.",                    sec:null},
+          {name:"Paradox",      def:"A statement appearing self-contradictory yet revealing a deeper truth.",          sec:null},
+        ]},
+      { name:"Character Relation", desc:"Relational devices working through character positioning.",
+        techs:[
+          {name:"Foil",         def:"A character whose contrasting traits highlight the qualities of another.",        sec:"Structurals"},
+          {name:"Personification",def:"Attribution of human qualities or actions to non-human entities.",             sec:"Descriptives"},
+        ]},
+    ]
+  },
+  {
+    id:1, name:"Repetitives", numeral:"II",
+    tag:"meaning through recurrence, pattern & echo",
+    col:"#4baabf", dark:"#1a4d5c", light:"#80d4e8",
+    def:"Techniques which create meaning by repeating sounds, words, phrases, images, structures, or patterns.",
+    diag:"Is the technique emphasising an idea through recurrence or pattern?",
+    logic:"If meaning is strengthened because something returns, echoes, or recurs — classify as Repetitive.",
+    subs:[
+      { name:"Sound Repetition", desc:"Techniques operating through the recurrence of phonetic units.",
+        techs:[
+          {name:"Alliteration",  def:"Repetition of consonant sounds at the beginnings of closely connected words.",   sec:null},
+          {name:"Assonance",     def:"Repetition of vowel sounds within closely connected words.",                     sec:null},
+          {name:"Consonance",    def:"Repetition of consonant sounds within or at the ends of words.",                 sec:null},
+        ]},
+      { name:"Word & Phrase Repetition", desc:"Techniques built from returning specific words or phrases.",
+        techs:[
+          {name:"Repetition",    def:"Deliberate recurrence of a word or phrase to emphasise meaning or rhythm.",      sec:null},
+          {name:"Anaphora",      def:"Repetition of a word or phrase at the beginning of successive clauses.",         sec:null},
+          {name:"Epistrophe",    def:"Repetition of a word or phrase at the end of successive clauses.",               sec:null},
+          {name:"Refrain",       def:"A phrase or line repeated at intervals throughout a poem or song.",              sec:null},
+        ]},
+      { name:"Structural Repetition", desc:"Patterned form or recurring elements carry meaning at the macro level.",
+        techs:[
+          {name:"Parallelism",   def:"Matching grammatical structures to express ideas of equal weight.",              sec:"Structurals"},
+          {name:"Motif",         def:"A recurring element — image, symbol, or phrase — that builds thematic meaning.", sec:"Descriptives"},
+        ]},
+    ]
+  },
+  {
+    id:2, name:"Descriptives", numeral:"III",
+    tag:"meaning through imagery, symbolism & representation",
+    col:"#72b85e", dark:"#27491f", light:"#a4e08c",
+    def:"Techniques which create meaning by building imagery, sensory detail, symbolism, connotation, mood, tone, or vivid representation.",
+    diag:"Is the technique helping the reader picture, sense, feel, or interpret the subject more vividly?",
+    logic:"If meaning is produced through representation, vivid detail, symbolic suggestion, or language choice — classify as Descriptive.",
+    subs:[
+      { name:"Imagery & Sensation", desc:"Techniques that directly activate sensory or mental impression.",
+        techs:[
+          {name:"Imagery",          def:"Language used to create mental pictures or sensory impressions.",             sec:null},
+          {name:"Sensory Language", def:"Language appealing to sight, sound, smell, taste, or touch.",                sec:null},
+        ]},
+      { name:"Symbolic & Figurative", desc:"Meaning through substitution, representation, or symbolic extension.",
+        techs:[
+          {name:"Symbolism",     def:"An object, person, or event representing an abstract idea or concept.",         sec:null},
+          {name:"Metonymy",      def:"Substitution of a word with a closely associated concept.",                     sec:null},
+          {name:"Synecdoche",    def:"A part representing the whole, or the whole representing a part.",              sec:null},
+        ]},
+      { name:"Language & Tone", desc:"Word choice and deployment shaping reader perception of subject and atmosphere.",
+        techs:[
+          {name:"Diction",       def:"Deliberate word choice for connotative, denotative, or tonal effect.",          sec:null},
+          {name:"Connotation",   def:"Emotional or associative meanings attached to a word beyond its literal definition.", sec:null},
+          {name:"Tone",          def:"The narrator's attitude toward the subject, revealed through language choices.", sec:null},
+          {name:"Mood",          def:"The emotional atmosphere created for the reader through setting, tone, and diction.", sec:null},
+        ]},
+    ]
+  },
+  {
+    id:3, name:"Structurals", numeral:"IV",
+    tag:"meaning through arrangement, sequence & form",
+    col:"#ae7de0", dark:"#3e2060", light:"#d4aaff",
+    def:"Techniques which create meaning through arrangement, ordering, sequencing, framing, pacing, or overall text organisation.",
+    diag:"Is the technique shaping how the text is built, sequenced, or revealed?",
+    logic:"If meaning comes from how the text is organised across time, sequence, placement, or form — classify as Structural.",
+    subs:[
+      { name:"Temporal Organisation", desc:"Techniques that manipulate the order and movement of time within a narrative.",
+        techs:[
+          {name:"Flashback",           def:"A narrative interruption transporting the reader to events prior to the present.", sec:null},
+          {name:"Foreshadowing",       def:"Hints introduced that anticipate later events in the narrative.",             sec:null},
+          {name:"Non-Linear Structure",def:"Narrative organised outside chronological order, requiring reconstruction.",   sec:null},
+        ]},
+      { name:"Macro Structure", desc:"Techniques operating at the level of whole-text architecture.",
+        techs:[
+          {name:"Narrative Structure", def:"The deliberate arrangement of story events to shape meaning across a whole text.", sec:null},
+          {name:"Cyclical Structure",  def:"A narrative returning to its starting point — completion, entrapment, or inevitability.", sec:null},
+          {name:"Fragmentation",       def:"Deliberate breaking of narrative or syntax to reflect disorientation.",       sec:null},
+        ]},
+      { name:"Revelation & Pacing", desc:"Controlling the rate and manner in which information reaches the reader.",
+        techs:[
+          {name:"Pacing",              def:"Rate of narrative movement, controlled through sentence length and detail density.", sec:null},
+          {name:"Withholding",         def:"Deliberate delay or omission of information to create suspense or ambiguity.", sec:null},
+          {name:"Revelation",          def:"Strategic disclosure of withheld information at a moment of maximum impact.", sec:null},
+          {name:"Shift in Perspective",def:"A change in narrative point of view altering the reader's access to meaning.", sec:null},
+          {name:"Juxtaposed Scenes",   def:"Contrasting scenes placed in sequence to produce meaning through proximity.",  sec:"Comparatives"},
+        ]},
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════
+// SVG SETUP
+// ══════════════════════════════════════════════
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('wheel');
+const wrap = document.getElementById('wheelWrap');
+
+// Responsive sizing
+let W, H, CX, CY;
+function resize() {
+  W = wrap.clientWidth;
+  H = Math.max(W * 0.88, 520);
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  CX = W / 2;
+  CY = H / 2;
+}
+resize();
+window.addEventListener('resize', () => { resize(); renderAll(); });
+
+function E(tag, a={}) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k,v] of Object.entries(a)) e.setAttribute(k,v);
+  return e;
+}
+
+function pt(angleDeg, r) {
+  const a = (angleDeg - 90) * Math.PI / 180;
+  return [r * Math.cos(a), r * Math.sin(a)];
+}
+
+// Cubic bezier path from point to point, curving via control points at given radii
+function branchPath(a1, r1, a2, r2) {
+  const [x1,y1] = pt(a1, r1);
+  const [x2,y2] = pt(a2, r2);
+  // control points: push outward along the radial direction
+  const rm = (r1 + r2) / 2;
+  const [cx1,cy1] = pt(a1, rm);
+  const [cx2,cy2] = pt(a2, rm);
+  return `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
+}
+
+// Arc-shaped node pill
+function arcPill(midAngle, r, halfSpan, innerR, outerR, fill, stroke, strokeW=1) {
+  const s = midAngle - halfSpan;
+  const e = midAngle + halfSpan;
+  const gap = 0.5;
+  const s2 = s + gap, e2 = e - gap;
+  const la = (e2 - s2) > 180 ? 1 : 0;
+  const [x1,y1] = pt(s2, outerR), [x2,y2] = pt(e2, outerR);
+  const [x3,y3] = pt(e2, innerR), [x4,y4] = pt(s2, innerR);
+  return `M${x1},${y1} A${outerR},${outerR} 0 ${la} 1 ${x2},${y2} L${x3},${y3} A${innerR},${innerR} 0 ${la} 0 ${x4},${y4} Z`;
+}
+
+// ══════════════════════════════════════════════
+// LAYOUT CONSTANTS (relative to CX,CY)
+// ══════════════════════════════════════════════
+const R_CORE      = 52;
+const R_FAM_IN    = 60,   R_FAM_OUT    = 118;
+const R_SUB_IN    = 134,  R_SUB_OUT    = 188;
+const R_TECH_IN   = 204,  R_TECH_OUT   = 264;
+const R_OVR_IN    = 276,  R_OVR_OUT    = 316;
+
+// Branch connector radii (tips of nodes)
+const R_FAM_TIP   = R_FAM_OUT;
+const R_SUB_ROOT  = R_SUB_IN;
+const R_SUB_TIP   = R_SUB_OUT;
+const R_TECH_ROOT = R_TECH_IN;
+const R_TECH_TIP  = R_TECH_OUT;
+const R_OVR_ROOT  = R_OVR_IN;
+
+// ══════════════════════════════════════════════
+// ANGULAR LAYOUT
+// ══════════════════════════════════════════════
+// Active family expands to ~160°, others share remaining 200°
+const ACTIVE_FAM_SPAN = 160;
+const REST_FAM_SPAN   = (360 - ACTIVE_FAM_SPAN) / 3;
+
+// When no family active, equal 90° each
+function getFamilyAngles(activeFid) {
+  if (activeFid === null) {
+    return FAMILIES.map((f,i) => ({ mid: 45 + i*90, span: 88 }));
+  }
+  // Place active family at bottom (270°)
+  const spans = FAMILIES.map(f => f.id === activeFid ? ACTIVE_FAM_SPAN : REST_FAM_SPAN);
+  // Active mid = 270
+  const activeMid = 270;
+  const angles = new Array(4);
+  angles[activeFid] = { mid: activeMid, span: ACTIVE_FAM_SPAN };
+  // Distribute others evenly around remaining arc
+  // Going clockwise from active's end
+  const activeEnd = activeMid + ACTIVE_FAM_SPAN / 2;
+  let cursor = activeEnd;
+  // clockwise: activeFid+1, +2, +3
+  for (let i = 1; i <= 3; i++) {
+    const fid = (activeFid + i) % 4;
+    cursor += REST_FAM_SPAN / 2;
+    angles[fid] = { mid: cursor % 360, span: REST_FAM_SPAN };
+    cursor += REST_FAM_SPAN / 2;
+  }
+  return angles;
+}
+
+function getSubAngles(famMid, famSpan, nSubs) {
+  const usable = famSpan * 0.9;
+  const step = usable / nSubs;
+  const start = famMid - usable/2 + step/2;
+  return Array.from({length: nSubs}, (_,i) => ({
+    mid: start + i * step,
+    span: step * 0.82
+  }));
+}
+
+function getTechAngles(subMid, subSpan, nTechs) {
+  const usable = subSpan * 0.92;
+  const step = usable / nTechs;
+  const start = subMid - usable/2 + step/2;
+  return Array.from({length: nTechs}, (_,i) => ({
+    mid: start + i * step,
+    span: Math.min(step * 0.85, 14)
+  }));
+}
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let activeFid = null, activeSub = null, activeTech = null;
+
+// Animation target angles (we tween these)
+let currentFamAngles = FAMILIES.map((_,i) => ({ mid: 45 + i*90, span: 88 }));
+
+// ══════════════════════════════════════════════
+// SVG LAYERS
+// ══════════════════════════════════════════════
+let rootG = null;
+
+function clearSVG() {
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+}
+
+// ══════════════════════════════════════════════
+// RENDER — builds the whole tree into SVG
+// ══════════════════════════════════════════════
+function renderAll() {
+  clearSVG();
+
+  // DEFS
+  const defs = E('defs');
+
+  // Radial gradient for core
+  const cg = E('radialGradient', {id:'cg',cx:'50%',cy:'50%',r:'50%'});
+  [['0%','#2e2415'],['100%','#0e0c09']].forEach(([o,c])=>{
+    const s = E('stop',{offset:o}); s.setAttribute('stop-color',c); cg.appendChild(s);
+  });
+  defs.appendChild(cg);
+
+  // Glow filter
+  const gf = E('filter',{id:'gf',x:'-60%',y:'-60%',width:'220%',height:'220%'});
+  const gb = E('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'6',result:'b'});
+  const gm = E('feMerge');
+  [E('feMergeNode',{in:'b'}),E('feMergeNode',{in:'SourceGraphic'})].forEach(n=>gm.appendChild(n));
+  gf.appendChild(gb); gf.appendChild(gm);
+  defs.appendChild(gf);
+
+  // Drop shadow
+  const ds = E('filter',{id:'ds',x:'-20%',y:'-20%',width:'140%',height:'140%'});
+  const dsg = E('feDropShadow',{dx:'0',dy:'0','flood-opacity':'0.5',stdDeviation:'3'});
+  ds.appendChild(dsg);
+  defs.appendChild(ds);
+
+  svg.appendChild(defs);
+
+  // Noise overlay
+  const noiseRect = E('rect',{x:0,y:0,width:W,height:H,opacity:'0.025',
+    fill:'url(#noise)'});
+  // (skip noise for simplicity)
+
+  // Root group centred
+  rootG = E('g',{transform:`translate(${CX},${CY})`});
+  svg.appendChild(rootG);
+
+  // Faint guide circles
+  [R_FAM_IN-1, R_FAM_OUT+1, R_SUB_IN-1, R_SUB_OUT+1,
+   R_TECH_IN-1, R_TECH_OUT+1, R_OVR_OUT+2].forEach(r => {
+    rootG.appendChild(E('circle',{cx:0,cy:0,r,fill:'none',
+      stroke:'rgba(201,168,76,0.055)','stroke-width':'0.8'}));
+  });
+
+  // Layer groups (back to front)
+  const connG  = E('g',{id:'connG'});   // connector lines
+  const nodeG  = E('g',{id:'nodeG'});   // arc nodes
+  const labelG = E('g',{id:'labelG'});  // text labels
+  rootG.appendChild(connG);
+  rootG.appendChild(nodeG);
+  rootG.appendChild(labelG);
+
+  // Ring annotation labels at angle 355° (just before top, clockwise gap)
+  const ringLabels = [
+    {r:(R_FAM_IN+R_FAM_OUT)/2,   text:'FAMILIES',    op:.32},
+    {r:(R_SUB_IN+R_SUB_OUT)/2,   text:'SUBGROUPS',   op:.26},
+    {r:(R_TECH_IN+R_TECH_OUT)/2, text:'TECHNIQUES',  op:.20},
+    {r:(R_OVR_IN+R_OVR_OUT)/2,   text:'SECONDARY',   op:.16},
+  ];
+  ringLabels.forEach(({r,text,op}) => {
+    const [rx,ry] = pt(4, r); // near top, slight clockwise offset
+    const t = E('text',{x:rx+3,y:ry,
+      'dominant-baseline':'middle',
+      fill:`rgba(201,168,76,${op})`,
+      'font-family':"'Cormorant Garamond',serif",
+      'font-size':'7','font-style':'italic','letter-spacing':'0.12em'});
+    t.textContent = text;
+    labelG.appendChild(t);
+  });
+
+  // ── DRAW FAMILIES ──
+  const famAngles = currentFamAngles;
+
+  FAMILIES.forEach(f => {
+    const fa = famAngles[f.id];
+    const isActive = activeFid === f.id;
+    const isDim    = activeFid !== null && !isActive;
+    const baseOp   = isDim ? 0.15 : 1.0;
+
+    // ── Family node (arc pill) ──
+    const famG = E('g',{
+      class:'node-family',
+      opacity: baseOp,
+      style:'transition:opacity 0.5s'
+    });
+
+    const famPath = arcPill(fa.mid, 0, fa.span/2, R_FAM_IN, R_FAM_OUT,
+      isActive ? f.col : f.dark, f.col, isActive ? 1.4 : 0.8);
+    const famP = E('path',{d:famPath, fill: isActive ? f.dark : '#1a1510',
+      stroke: f.col, 'stroke-width': isActive?1.4:0.7});
+    if (isActive) famP.setAttribute('filter','url(#gf)');
+    famG.appendChild(famP);
+
+    // Bright inner fill for active
+    if (isActive) {
+      const famHi = E('path',{d:arcPill(fa.mid,0,fa.span/2,R_FAM_IN,R_FAM_IN+18,f.col,f.col,0),
+        fill:f.col, opacity:'0.22'});
+      famG.appendChild(famHi);
+    }
+
+    // Family label
+    famG.appendChild(makeLabel(fa.mid, (R_FAM_IN+R_FAM_OUT)/2, f.name,
+      {fs: isActive?13:10, fw:'700', ff:"'Playfair Display',serif",
+       fill: isActive ? f.light : '#ede8da', ls:'0.05em'}));
+
+    if (isActive) {
+      famG.appendChild(makeLabel(fa.mid, R_FAM_IN+9, `Family ${f.numeral}`,
+        {fs:7, fw:'300', ff:"'Cormorant Garamond',serif",
+         fill:f.col, italic:true, ls:'0.12em', nowrap:true}));
+    }
+
+    famG.style.cursor = 'pointer';
+    famG.addEventListener('click', () => handleFam(f.id));
+    nodeG.appendChild(famG);
+
+    // Spoke from core to family inner edge
+    {
+      const [sx,sy] = pt(fa.mid, R_CORE+1);
+      const [ex,ey] = pt(fa.mid, R_FAM_IN-1);
+      const spk = E('line',{x1:sx,y1:sy,x2:ex,y2:ey,
+        stroke:f.col,'stroke-width':'0.6',opacity: isDim?'0.08':'0.3',
+        style:'transition:opacity 0.5s'});
+      connG.appendChild(spk);
+    }
+
+    if (!isActive) return;
+
+    // ── SUBGROUPS ──
+    const subAs = getSubAngles(fa.mid, fa.span, f.subs.length);
+
+    f.subs.forEach((sg, si) => {
+      const sa = subAs[si];
+      const isActiveSg = activeSub === si;
+      const isDimSg    = activeSub !== null && !isActiveSg;
+      const sgOp       = isDimSg ? 0.18 : 1.0;
+
+      // Branch: family tip → subgroup root (cubic bezier)
+      const branchSG = E('path',{
+        d: branchPath(fa.mid, R_FAM_TIP, sa.mid, R_SUB_ROOT),
+        fill:'none', stroke:f.col, 'stroke-width':'0.9',
+        opacity: isDimSg?'0.1':'0.4',
+        style:'transition:opacity 0.5s'
+      });
+      connG.appendChild(branchSG);
+
+      // Branch label midpoint
+      {
+        const bMid = (fa.mid + sa.mid) / 2;
+        const [blx,bly] = pt(bMid, (R_FAM_TIP + R_SUB_ROOT)/2);
+        const bg = E('rect',{x:blx-14,y:bly-5,width:28,height:10,
+          fill:'#09080600',rx:'1'});
+        connG.appendChild(bg);
+        const bl = E('text',{x:blx,y:bly,
+          'text-anchor':'middle','dominant-baseline':'middle',
+          fill:f.col,'font-family':"'Cormorant Garamond',serif",
+          'font-size':'6.5','font-style':'italic',
+          opacity: isDimSg?'0.1':'0.55',
+          style:'transition:opacity 0.5s'});
+        bl.textContent = 'contains';
+        connG.appendChild(bl);
+      }
+
+      // Subgroup node
+      const sgG = E('g',{class:'node-subgroup', opacity:sgOp,
+        style:'cursor:pointer;transition:opacity 0.5s'});
+
+      const sgPath = arcPill(sa.mid, 0, sa.span/2, R_SUB_IN, R_SUB_OUT,
+        f.col, f.col, isActiveSg?1.2:0.55);
+      const sgP = E('path',{d:sgPath,
+        fill: isActiveSg ? f.dark : '#14110e',
+        stroke:f.col,'stroke-width':isActiveSg?1.2:0.55});
+      if (isActiveSg) sgP.setAttribute('filter','url(#gf)');
+      sgG.appendChild(sgP);
+
+      if (isActiveSg) {
+        sgG.appendChild(E('path',{d:arcPill(sa.mid,0,sa.span/2,R_SUB_IN,R_SUB_IN+14,f.col,f.col,0),
+          fill:f.col,opacity:'0.2'}));
+      }
+
+      sgG.appendChild(makeLabel(sa.mid, (R_SUB_IN+R_SUB_OUT)/2, sg.name,
+        {fs:isActiveSg?9:8, ff:"'Cormorant Garamond',serif",
+         fw:isActiveSg?'600':'400',
+         fill:isActiveSg?f.light:'#ede8da',
+         italic:!isActiveSg}));
+
+      sgG.addEventListener('click', e => { e.stopPropagation(); handleSub(f.id, si); });
+      nodeG.appendChild(sgG);
+
+      if (!isActiveSg) return;
+
+      // ── TECHNIQUES ──
+      const techAs = getTechAngles(sa.mid, sa.span, sg.techs.length);
+
+      sg.techs.forEach((t, ti) => {
+        const ta = techAs[ti];
+        const isActiveTech = activeTech !== null && activeTech[0]===si && activeTech[1]===ti;
+        const isDimTech     = activeTech !== null && !isActiveTech;
+        const tOp           = isDimTech ? 0.16 : 1.0;
+
+        // Branch: subgroup tip → tech root
+        const branchT = E('path',{
+          d: branchPath(sa.mid, R_SUB_TIP, ta.mid, R_TECH_ROOT),
+          fill:'none',stroke:f.col,'stroke-width':'0.7',
+          opacity: isDimTech?'0.08':'0.35',
+          style:'transition:opacity 0.5s'
+        });
+        connG.appendChild(branchT);
+
+        // Branch label
+        {
+          const bMid = (sa.mid + ta.mid)/2;
+          const [blx,bly] = pt(bMid, (R_SUB_TIP+R_TECH_ROOT)/2);
+          const bl = E('text',{x:blx,y:bly,
+            'text-anchor':'middle','dominant-baseline':'middle',
+            fill:f.col,'font-family':"'Cormorant Garamond',serif",
+            'font-size':'6','font-style':'italic',
+            opacity: isDimTech?'0.06':'0.45',
+            style:'transition:opacity 0.5s'});
+          bl.textContent = 'includes';
+          connG.appendChild(bl);
+        }
+
+        // Tech node
+        const tG = E('g',{class:'node-tech', opacity:tOp,
+          style:'cursor:pointer;transition:opacity 0.5s'});
+
+        const tPath = arcPill(ta.mid, 0, ta.span/2, R_TECH_IN, R_TECH_OUT,
+          f.col, f.col, isActiveTech?1.1:0.4);
+        const tP = E('path',{d:tPath,
+          fill: isActiveTech ? f.dark : (ti%2===0?'#13110e':'#0f0e0c'),
+          stroke:f.col,'stroke-width':isActiveTech?1.1:0.4});
+        if (isActiveTech) tP.setAttribute('filter','url(#gf)');
+        tG.appendChild(tP);
+
+        if (isActiveTech) {
+          tG.appendChild(E('path',{d:arcPill(ta.mid,0,ta.span/2,R_TECH_IN,R_TECH_IN+12,f.col,f.col,0),
+            fill:f.col,opacity:'0.22'}));
+        }
+
+        // Technique label
+        const span = ta.span;
+        const tfs = span < 7 ? 6.5 : span < 10 ? 7.5 : 8.5;
+        tG.appendChild(makeLabel(ta.mid, (R_TECH_IN+R_TECH_OUT)/2, t.name,
+          {fs:isActiveTech?9:tfs, fw:isActiveTech?'600':'300',
+           fill:isActiveTech?f.light:'rgba(237,232,218,0.88)'}));
+
+        tG.addEventListener('click', e => { e.stopPropagation(); handleTech(f.id, si, ti); });
+        nodeG.appendChild(tG);
+
+        // ── OVERLAP/SECONDARY ring ──
+        if (t.sec) {
+          const secF = FAMILIES.find(x => x.name === t.sec);
+          if (secF) {
+            // Branch: tech tip → overlap root
+            const branchO = E('path',{
+              d: branchPath(ta.mid, R_TECH_TIP, ta.mid, R_OVR_ROOT),
+              fill:'none',stroke:secF.col,'stroke-width':'0.6',
+              opacity:'0.4','stroke-dasharray':'3,2'
+            });
+            connG.appendChild(branchO);
+
+            // Overlap label
+            const [olx,oly] = pt(ta.mid, (R_TECH_TIP+R_OVR_ROOT)/2);
+            const ol = E('text',{x:olx,y:oly-2,
+              'text-anchor':'middle','dominant-baseline':'middle',
+              fill:secF.col,'font-family':"'Cormorant Garamond',serif",
+              'font-size':'6','font-style':'italic',opacity:'0.6'});
+            ol.textContent = 'also';
+            connG.appendChild(ol);
+
+            // Overlap node
+            const ovG = E('g',{class:'node-overlap'});
+            const ovP = E('path',{
+              d: arcPill(ta.mid, 0, ta.span/2, R_OVR_IN, R_OVR_OUT,
+                secF.col, secF.col, 0.5),
+              fill:`${secF.dark}`,
+              stroke:secF.col,'stroke-width':'0.5',
+              'stroke-dasharray':'2.5,1.5',opacity:'0.75'
+            });
+            ovG.appendChild(ovP);
+            ovG.appendChild(makeLabel(ta.mid, (R_OVR_IN+R_OVR_OUT)/2,
+              `→ ${t.sec}`,{fs:6.5,fill:secF.light,italic:true}));
+            nodeG.appendChild(ovG);
+          }
+        }
+      });
+    });
+  });
+
+  // ── CORE ──
+  rootG.appendChild(E('circle',{cx:0,cy:0,r:R_CORE,fill:'url(#cg)',
+    stroke:'rgba(201,168,76,0.32)','stroke-width':'1'}));
+  rootG.appendChild(E('circle',{cx:0,cy:0,r:R_CORE-7,fill:'none',
+    stroke:'rgba(201,168,76,0.1)','stroke-width':'0.8'}));
+
+  [
+    {text:'BIG FOUR', y:-16, fs:10.5, fw:'700', ff:"'Playfair Display',serif",
+     fill:'rgba(201,168,76,0.95)',ls:'0.15em'},
+    {text:'Literary',  y:-3,  fs:8,   fw:'300', ff:"'Cormorant Garamond',serif",
+     fill:'rgba(237,232,218,0.36)',italic:true},
+    {text:'Technique', y:8,   fs:8,   fw:'300', ff:"'Cormorant Garamond',serif",
+     fill:'rgba(237,232,218,0.36)',italic:true},
+    {text:'Taxonomy',  y:20,  fs:8,   fw:'300', ff:"'Cormorant Garamond',serif",
+     fill:'rgba(237,232,218,0.36)',italic:true},
+  ].forEach(l => {
+    const t = E('text',{x:0,y:l.y,'text-anchor':'middle','dominant-baseline':'middle',
+      fill:l.fill,'font-family':l.ff,'font-size':l.fs,'font-weight':l.fw,
+      'font-style':l.italic?'italic':'normal','letter-spacing':l.ls||'0'});
+    t.textContent = l.text;
+    rootG.appendChild(t);
+  });
+}
+
+// ══════════════════════════════════════════════
+// LABEL HELPER — radially rotated
+// ══════════════════════════════════════════════
+function makeLabel(angleDeg, r, text, opts={}) {
+  const [x,y] = pt(angleDeg, r);
+  const rot = angleDeg > 90 && angleDeg < 270 ? angleDeg + 180 : angleDeg;
+  const g = E('g',{transform:`translate(${x},${y}) rotate(${rot-90})`});
+
+  const fs    = opts.fs    || 9;
+  const fw    = opts.fw    || '400';
+  const ff    = opts.ff    || "'Crimson Pro',serif";
+  const fill  = opts.fill  || '#ede8da';
+  const ls    = opts.ls    || '0';
+  const words = text.split(' ');
+
+  if (!opts.nowrap && words.length > 1 && text.length > 11) {
+    const mid = Math.ceil(words.length / 2);
+    const l1  = words.slice(0, mid).join(' ');
+    const l2  = words.slice(mid).join(' ');
+    const dy  = fs * 0.62;
+    [l1,l2].forEach((line, i) => {
+      const t = E('text',{x:'0',y: i===0 ? -dy : dy,
+        'text-anchor':'middle','dominant-baseline':'middle',
+        fill, 'font-family':ff,'font-size':fs,'font-weight':fw,
+        'letter-spacing':ls,'font-style':opts.italic?'italic':'normal'});
+      t.textContent = line;
+      g.appendChild(t);
+    });
+  } else {
+    const t = E('text',{x:'0',y:'0',
+      'text-anchor':'middle','dominant-baseline':'middle',
+      fill,'font-family':ff,'font-size':fs,'font-weight':fw,
+      'letter-spacing':ls,'font-style':opts.italic?'italic':'normal'});
+    t.textContent = text;
+    g.appendChild(t);
+  }
+  return g;
+}
+
+// ══════════════════════════════════════════════
+// SMOOTH ANIMATION
+// ══════════════════════════════════════════════
+let animFrame = null;
+let animStart = null;
+let fromAngles = null;
+let toAngles   = null;
+const ANIM_MS  = 600;
+
+function easeInOut(t) {
+  return t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+}
+
+function lerpAngles(a, b, t) {
+  return a.map((fa, i) => {
+    // Handle wrap-around for mid angle
+    let dMid = b[i].mid - fa.mid;
+    // Normalize to [-180, 180]
+    while (dMid >  180) dMid -= 360;
+    while (dMid < -180) dMid += 360;
+    return {
+      mid:  fa.mid + dMid * t,
+      span: fa.span + (b[i].span - fa.span) * t
+    };
+  });
+}
+
+function animateTo(target, onDone) {
+  if (animFrame) cancelAnimationFrame(animFrame);
+  fromAngles = currentFamAngles.map(a => ({...a}));
+  toAngles   = target;
+  animStart  = null;
+
+  function step(ts) {
+    if (!animStart) animStart = ts;
+    const elapsed = ts - animStart;
+    const t = Math.min(elapsed / ANIM_MS, 1);
+    const e = easeInOut(t);
+
+    currentFamAngles = lerpAngles(fromAngles, toAngles, e);
+    renderAll();
+
+    if (t < 1) {
+      animFrame = requestAnimationFrame(step);
+    } else {
+      currentFamAngles = toAngles;
+      renderAll();
+      if (onDone) onDone();
+    }
+  }
+  animFrame = requestAnimationFrame(step);
+}
+
+// ══════════════════════════════════════════════
+// INTERACTION HANDLERS
+// ══════════════════════════════════════════════
+function handleFam(fid) {
+  if (activeFid === fid) {
+    // Collapse back to equal
+    activeFid = null; activeSub = null; activeTech = null;
+    animateTo(FAMILIES.map((_,i) => ({mid:45+i*90, span:88})));
+    showPanel('idle');
+  } else {
+    activeFid = fid; activeSub = null; activeTech = null;
+    animateTo(getFamilyAngles(fid));
+    showPanel('family', fid);
+  }
+}
+
+function handleSub(fid, si) {
+  if (activeSub === si) {
+    activeSub = null; activeTech = null;
+    renderAll();
+    showPanel('family', fid);
+  } else {
+    activeSub = si; activeTech = null;
+    renderAll();
+    showPanel('subgroup', fid, si);
+  }
+}
+
+function handleTech(fid, si, ti) {
+  if (activeTech && activeTech[0]===si && activeTech[1]===ti) {
+    activeTech = null;
+    renderAll();
+    showPanel('subgroup', fid, si);
+  } else {
+    activeTech = [si, ti];
+    renderAll();
+    showPanel('tech', fid, si, ti);
+  }
+}
+
+// ══════════════════════════════════════════════
+// PANEL POPULATION
+// ══════════════════════════════════════════════
+function allPanelsOff() {
+  ['pIdle','pFamily','pSub','pTech'].forEach(id => {
+    document.getElementById(id).classList.remove('on');
+  });
+}
+
+function makeBc(items) {
+  return items.map((item, i) => {
+    const sep = i < items.length-1 ? '<span class="sep">›</span>' : '';
+    const cls = item.click ? '' : ' style="cursor:default"';
+    const span = `<span${cls} data-idx="${i}">${item.label}</span>${sep}`;
+    return span;
+  }).join('');
+}
+
+function showPanel(which, fid, si, ti) {
+  allPanelsOff();
+
+  if (which === 'idle') {
+    document.getElementById('pIdle').classList.add('on');
+    return;
+  }
+
+  const f  = FAMILIES[fid];
+  const sg = si !== undefined ? f.subs[si] : null;
+
+  // Breadcrumb click handlers
+  function bcReset()         { handleFam(fid); }
+  function bcToFamily()      { activeSub=null; activeTech=null; renderAll(); showPanel('family',fid); }
+  function bcToSub()         { activeTech=null; renderAll(); showPanel('subgroup',fid,si); }
+  function bcToRoot()        { activeFid=null; activeSub=null; activeTech=null;
+                               animateTo(FAMILIES.map((_,i)=>({mid:45+i*90,span:88}))); showPanel('idle'); }
+
+  if (which === 'family') {
+    document.getElementById('pFamily').classList.add('on');
+    const bcEl = document.getElementById('bcF');
+    bcEl.innerHTML = makeBc([{label:'Taxonomy',click:bcToRoot},{label:f.name}]);
+    bcEl.children[0].addEventListener('click', bcToRoot);
+
+    document.getElementById('fBar').style.background = f.col;
+    document.getElementById('fType').textContent = `Family ${f.numeral}`;
+    document.getElementById('fType').style.color = f.col;
+    document.getElementById('fName').textContent = f.name;
+    document.getElementById('fName').style.color = f.col;
+    document.getElementById('fTag').textContent  = f.tag;
+    document.getElementById('fDef').textContent  = f.def;
+    const fd = document.getElementById('fDiag');
+    fd.textContent = f.diag; fd.style.borderColor = f.col;
+    document.getElementById('fLogic').textContent = f.logic;
+  }
+
+  if (which === 'subgroup' && sg) {
+    document.getElementById('pSub').classList.add('on');
+    const bcEl = document.getElementById('bcS');
+    bcEl.innerHTML = makeBc([
+      {label:'Taxonomy',click:bcToRoot},
+      {label:f.name,click:bcToFamily},
+      {label:sg.name}
+    ]);
+    bcEl.querySelectorAll('span').forEach((s,i) => {
+      if (i===0) s.addEventListener('click', bcToRoot);
+      if (i===1) s.addEventListener('click', bcToFamily);
+    });
+
+    document.getElementById('sBar').style.background = f.col;
+    document.getElementById('sType').textContent = `Subgroup · ${f.name}`;
+    document.getElementById('sType').style.color = f.col;
+    document.getElementById('sName').textContent = sg.name;
+    document.getElementById('sName').style.color = f.col;
+    document.getElementById('sTag').textContent  = sg.desc;
+    document.getElementById('sTechs').textContent = sg.techs.map(t => t.name).join('  ·  ');
+  }
+
+  if (which === 'tech' && sg && ti !== undefined) {
+    document.getElementById('pTech').classList.add('on');
+    const t = sg.techs[ti];
+    const bcEl = document.getElementById('bcT');
+    bcEl.innerHTML = makeBc([
+      {label:'Taxonomy',click:bcToRoot},
+      {label:f.name,click:bcToFamily},
+      {label:sg.name,click:bcToSub},
+      {label:t.name}
+    ]);
+    bcEl.querySelectorAll('span').forEach((s,i) => {
+      if(i===0) s.addEventListener('click',bcToRoot);
+      if(i===1) s.addEventListener('click',bcToFamily);
+      if(i===2) s.addEventListener('click',bcToSub);
+    });
+
+    document.getElementById('tBar').style.background = f.col;
+    document.getElementById('tType').textContent = `${f.name} › ${sg.name}`;
+    document.getElementById('tType').style.color = f.col;
+    document.getElementById('tName').textContent = t.name;
+    document.getElementById('tName').style.color = f.col;
+
+    const secF = t.sec ? FAMILIES.find(x => x.name === t.sec) : null;
+    document.getElementById('tTags').innerHTML =
+      `<span class="ptag ptag-p" style="color:${f.col};border-color:${f.col}88">Primary: ${f.name}</span>
+       <span class="ptag ptag-x">Subgroup: ${sg.name}</span>
+       ${t.sec ? `<span class="ptag ptag-s" style="color:${secF.col};border-color:${secF.col}66">Secondary: ${t.sec}</span>` : ''}`;
+
+    document.getElementById('tDef').textContent = t.def;
+    document.getElementById('tFlow').innerHTML = `
+      <div class="fstep"><span class="fsl">Family</span><span class="fsv" style="color:${f.col}">${f.name}</span></div>
+      <div class="fstep"><span class="fsl">Subgroup</span><span class="fsv">${sg.name}</span></div>
+      <div class="fstep"><span class="fsl">Technique</span><span class="fsv">${t.name}</span></div>
+      <div class="fstep"><span class="fsl">Effect</span><span class="fsv" style="opacity:.3">analyse →</span></div>
+    `;
+  }
+}
+
+// ══════════════════════════════════════════════
+// LEGEND (idle panel)
+// ══════════════════════════════════════════════
+const li = document.getElementById('legendItems');
+FAMILIES.forEach(f => {
+  const d = document.createElement('div');
+  d.className = 'legend-item';
+  d.innerHTML = `<div class="ldot" style="background:${f.col}"></div>
+    <span><span class="lname" style="color:${f.col}">${f.name}</span> — ${f.tag}</span>`;
+  d.addEventListener('click', () => handleFam(f.id));
+  li.appendChild(d);
+});
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+renderAll();
+</script>
+</body>
+</html>
