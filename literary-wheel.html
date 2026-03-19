@@ -191,6 +191,45 @@ footer {
 }
 
 .clickable { cursor: pointer; }
+
+/* ── ZOOM CONTROLS ── */
+.zoom-bar {
+  position: absolute;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex; gap: 6px;
+  background: rgba(242,236,224,0.92);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  box-shadow: 0 2px 12px rgba(30,26,20,0.10);
+  backdrop-filter: blur(6px);
+}
+.zbtn {
+  width: 30px; height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--ink2);
+  font-size: 1.1rem; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, color .15s, transform .1s;
+  font-family: 'Crimson Pro', serif;
+}
+.zbtn:hover { background: var(--bg2); color: var(--ink); transform: scale(1.1); }
+.zbtn:active { transform: scale(0.95); }
+.zoom-hint {
+  font-size: .62rem; color: var(--ink3); font-style: italic;
+  display: flex; align-items: center;
+  padding: 0 4px;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: .04em;
+}
+.wheel-wrap { position: relative; }
+#wheel { cursor: grab; }
+#wheel:active { cursor: grabbing; }
 </style>
 </head>
 <body>
@@ -204,6 +243,12 @@ footer {
 <div class="main">
   <div class="wheel-wrap" id="wheelWrap">
     <svg id="wheel" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="zoom-bar">
+      <button class="zbtn" id="btnZoomOut" title="Zoom out">−</button>
+      <span class="zoom-hint">scroll or pinch to zoom · drag to pan</span>
+      <button class="zbtn" id="btnZoomIn" title="Zoom in">+</button>
+      <button class="zbtn" id="btnZoomReset" title="Reset view" style="font-size:.75rem">⟳</button>
+    </div>
   </div>
   <div class="side" id="side">
 
@@ -401,7 +446,7 @@ function el(tag, attrs = {}) {
   return e;
 }
 
-function arcPath(midDeg, halfSpan, innerR, outerR, gap = 0.8) {
+function arcPath(midDeg, halfSpan, innerR, outerR, gap = 1.4) {
   const s = midDeg - halfSpan + gap;
   const e = midDeg + halfSpan - gap;
   const large = (e - s) > 180 ? 1 : 0;
@@ -414,13 +459,16 @@ function arcPath(midDeg, halfSpan, innerR, outerR, gap = 0.8) {
 }
 
 function bezierBranch(a1, r1, a2, r2) {
-  // Start at the point on the parent ring at the child's angle (true branching)
-  const [x1, y1] = polar(a2, r1);
+  // True family-tree branching: ALL siblings diverge from the same parent point.
+  // Start: outer edge of PARENT node at parent's midpoint angle.
+  // End:   inner edge of CHILD node at child's midpoint angle.
+  // Control points hold parent angle for ~50% of the distance (trunk),
+  // then curve toward child angle (branch) — produces clear Y-branch silhouette.
+  const [x1, y1] = polar(a1, r1);
   const [x2, y2] = polar(a2, r2);
-  const rq1 = r1 + (r2 - r1) * 0.35;
-  const rq2 = r1 + (r2 - r1) * 0.65;
-  const [cx1, cy1] = polar(a1, rq1);
-  const [cx2, cy2] = polar(a2, rq2);
+  const d = r2 - r1;
+  const [cx1, cy1] = polar(a1, r1 + d * 0.55);
+  const [cx2, cy2] = polar(a2, r2 - d * 0.22);
   return `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
 }
 
@@ -433,7 +481,9 @@ function radialTextGroup(deg, r, lines, opts = {}) {
   const ls    = opts.ls    || '0';
   const italic= opts.italic|| false;
   const normDeg = ((deg % 360) + 360) % 360;
-  const isLeft = normDeg > 90 && normDeg <= 270;
+  // LEFT HALF = angles > 180° (past the bottom, through left, up to top)
+  // These need +90 flip so text reads L→R. Right half (0–180°) uses deg-90.
+  const isLeft = normDeg > 180;
   const baseRot = isLeft ? (deg + 90) : (deg - 90);
   const g = el('g', { transform: `translate(${tx},${ty}) rotate(${baseRot})` });
   lines.forEach((line, i) => {
@@ -497,12 +547,12 @@ function computeDims() {
   svg.setAttribute('width', W);
   svg.setAttribute('height', H);
   CX = W / 2; CY = H / 2;
-  const maxR = Math.min(CX, CY) * 0.93;
-  R_CORE = maxR * 0.135;
-  R_F1   = maxR * 0.160; R_F2 = maxR * 0.295;
-  R_S1   = maxR * 0.325; R_S2 = maxR * 0.470;
-  R_T1   = maxR * 0.500; R_T2 = maxR * 0.700;
-  R_O1   = maxR * 0.725; R_O2 = maxR * 0.870;
+  const maxR = Math.min(CX, CY) * 0.94;
+  R_CORE = maxR * 0.105;
+  R_F1   = maxR * 0.130; R_F2 = maxR * 0.280;
+  R_S1   = maxR * 0.305; R_S2 = maxR * 0.490;
+  R_T1   = maxR * 0.515; R_T2 = maxR * 0.775;
+  R_O1   = maxR * 0.800; R_O2 = maxR * 0.960;
 }
 
 let curAngles = FAM.map((_, i) => ({ mid: 45 + i * 90, span: 88 }));
@@ -590,7 +640,7 @@ function render() {
   G.appendChild(connLayer); G.appendChild(nodeLayer); G.appendChild(labelLayer);
 
   [R_F1-1, R_F2+1, R_S1-1, R_S2+1, R_T1-1, R_T2+1, R_O2+3].forEach(r => {
-    ringGuides.appendChild(el('circle', {cx:0,cy:0,r,fill:'none',stroke:'rgba(154,124,48,0.12)','stroke-width':'0.8'}));
+    ringGuides.appendChild(el('circle', {cx:0,cy:0,r,fill:'none',stroke:'rgba(154,124,48,0.28)','stroke-width':'1.4'}));
   });
   G.insertBefore(ringGuides, connLayer);
 
@@ -610,7 +660,7 @@ function render() {
 
     const [sx,sy] = polar(fa.mid, R_CORE+1), [ex,ey] = polar(fa.mid, R_F1-1);
     connLayer.appendChild(el('line', {x1:sx,y1:sy,x2:ex,y2:ey,
-      stroke:f.col,'stroke-width':'1.2',opacity:isDim?'0.08':'0.5'}));
+      stroke:f.col,'stroke-width':'2.2',opacity:isDim?'0.1':'0.75'}));
 
     const fG = el('g', {opacity, class:'clickable'});
     fG.style.cssText = 'transition:opacity 0.5s;';
@@ -619,7 +669,7 @@ function render() {
       filter:isActive?'url(#sh)':''});
     fG.appendChild(fNode);
     if (isActive) fG.appendChild(el('path', {d:arcPath(fa.mid,fa.span/2,R_F1,R_F1+(R_F2-R_F1)*0.22),fill:'#ffffff',opacity:'0.18'}));
-    const fFS = Math.max(9, Math.min(14, R_F1*0.30));
+    const fFS = Math.max(12, Math.min(20, R_F1*0.55));
     fG.appendChild(radialTextGroup(fa.mid,(R_F1+R_F2)/2,fitText(f.name,fa.mid,(R_F1+R_F2)/2,fa.span/2,fFS),
       {fs:isActive?fFS*1.1:fFS*0.9,fw:'700',ff:"'Playfair Display',serif",fill:isActive?'#fff':f.colDark,ls:'0.04em'}));
     fG.addEventListener('click', () => handleFam(f.id));
@@ -636,14 +686,14 @@ function render() {
       const sOp = isDimSg ? 0.15 : 1.0;
 
       connLayer.appendChild(el('path', {d:bezierBranch(fa.mid,R_F2,sMid,R_S1),fill:'none',
-        stroke:f.col,'stroke-width':'1',opacity:isDimSg?'0.08':'0.45'}));
+        stroke:f.col,'stroke-width':'2.0','stroke-linecap':'round',opacity:isDimSg?'0.1':'0.72'}));
       if (isActiveSg) connLayer.appendChild(connectorLabel(fa.mid,R_F2,sMid,R_S1,'contains',f.col));
 
       const sG = el('g', {opacity:sOp,class:'clickable'}); sG.style.cssText='transition:opacity 0.4s;';
       sG.appendChild(el('path', {d:arcPath(sMid,sHalf,R_S1,R_S2),
         fill:isActiveSg?f.col:'#f8f3ea',stroke:f.col,'stroke-width':isActiveSg?'1.2':'0.7',
         filter:isActiveSg?'url(#sh)':''}));
-      const sFS = Math.max(8, Math.min(11, R_S1*0.14));
+      const sFS = Math.max(10, Math.min(16, R_S1*0.24));
       sG.appendChild(radialTextGroup(sMid,(R_S1+R_S2)/2,fitText(sg.name,sMid,(R_S1+R_S2)/2,sHalf,sFS),
         {fs:sFS,fw:isActiveSg?'600':'400',ff:"'Cormorant Garamond',serif",fill:isActiveSg?'#fff':f.colDark,italic:!isActiveSg}));
       sG.addEventListener('click', e => { e.stopPropagation(); handleSub(f.id,si); });
@@ -662,11 +712,11 @@ function render() {
         const tOp = isDimTech ? 0.15 : 1.0;
 
         connLayer.appendChild(el('path', {d:bezierBranch(sMid,R_S2,tM,R_T1),fill:'none',
-          stroke:f.col,'stroke-width':'0.8',opacity:isDimTech?'0.06':'0.38'}));
+          stroke:f.col,'stroke-width':'1.7','stroke-linecap':'round',opacity:isDimTech?'0.08':'0.68'}));
         if (isActiveTech) connLayer.appendChild(connectorLabel(sMid,R_S2,tM,R_T1,'includes',f.col));
 
         const tG = el('g', {opacity:tOp,class:'clickable'}); tG.style.cssText='transition:opacity 0.35s;';
-        const tFS = Math.max(7, Math.min(10, R_T1*0.10));
+        const tFS = Math.max(9, Math.min(14, R_T1*0.16));
         tG.appendChild(el('path', {d:arcPath(tM,tHalf,R_T1,R_T2),
           fill:isActiveTech?f.col:(ti%2===0?'#f5f0e8':'#ede8d8'),stroke:f.col,
           'stroke-width':isActiveTech?'1.1':'0.5',filter:isActiveTech?'url(#sh)':''}));
@@ -786,8 +836,94 @@ FAM.forEach(f => {
 });
 
 computeDims(); render();
+
+// ── ZOOM & PAN ────────────────────────────────────────────────────────────
+let zoomLevel = 1.0, panDX = 0, panDY = 0;
+let isPanning = false, panSX = 0, panSY = 0;
+let lastPinchDist = null;
+
+function applyViewBox() {
+  const vW = W / zoomLevel, vH = H / zoomLevel;
+  const vX = CX - vW / 2 - panDX / zoomLevel;
+  const vY = CY - vH / 2 - panDY / zoomLevel;
+  svg.setAttribute('viewBox', `${vX} ${vY} ${vW} ${vH}`);
+}
+
+function zoomTo(level, keepPan) {
+  zoomLevel = Math.max(1, Math.min(5, level));
+  if (!keepPan || zoomLevel === 1) { panDX = 0; panDY = 0; }
+  applyViewBox();
+}
+
+document.getElementById('btnZoomIn').addEventListener('click',    () => zoomTo(zoomLevel * 1.35, true));
+document.getElementById('btnZoomOut').addEventListener('click',   () => zoomTo(zoomLevel / 1.35, true));
+document.getElementById('btnZoomReset').addEventListener('click', () => zoomTo(1, false));
+
+// Mouse wheel zoom
+svg.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomTo(zoomLevel * (e.deltaY < 0 ? 1.12 : 1 / 1.12), true);
+}, { passive: false });
+
+// Mouse pan
+svg.addEventListener('mousedown', e => {
+  if (zoomLevel <= 1 || e.button !== 0) return;
+  isPanning = true; panSX = e.clientX - panDX; panSY = e.clientY - panDY;
+});
+window.addEventListener('mousemove', e => {
+  if (!isPanning) return;
+  panDX = e.clientX - panSX; panDY = e.clientY - panSY; applyViewBox();
+});
+window.addEventListener('mouseup', () => { isPanning = false; });
+
+// Touch pinch-to-zoom
+svg.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastPinchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY);
+  }
+}, { passive: true });
+svg.addEventListener('touchmove', e => {
+  if (e.touches.length === 2 && lastPinchDist) {
+    e.preventDefault();
+    const d = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY);
+    zoomTo(zoomLevel * (d / lastPinchDist), true);
+    lastPinchDist = d;
+  }
+}, { passive: false });
+svg.addEventListener('touchend', () => { lastPinchDist = null; });
+
+// Auto-zoom when a family is activated / deactivated
+const _origHandleFam = handleFam;
+// Patch handleFam to auto-zoom:
+// (Already defined above — we patch via a wrapper approach below)
+// Instead, integrate zoom into handleFam directly:
+// (Note: handleFam is already defined; we extend it by re-assigning)
+const _handleFamBase = handleFam;
+// We'll override at call-site level by patching handleFam after its definition.
+// Since handleFam is already set, we patch the global:
+window.handleFam = function(fid) {
+  _handleFamBase(fid);
+  if (activeFid === null) { zoomTo(1, false); }
+  else { zoomTo(1.55, false); panDY = H * 0.13; applyViewBox(); }
+};
+// Re-wire legend clicks to use patched version:
+document.querySelectorAll('.legend-item').forEach((d,i) => {
+  d.replaceWith(d.cloneNode(true)); // remove old listener
+});
+const _li2 = document.getElementById('legendItems');
+_li2.innerHTML = '';
+FAM.forEach(f => {
+  const d = document.createElement('div'); d.className='legend-item';
+  d.innerHTML=`<div class="ldot" style="background:${f.col}"></div><span><span class="lname" style="color:${f.col}">${f.name}</span> — ${f.tag}</span>`;
+  d.addEventListener('click', ()=>window.handleFam(f.id)); _li2.appendChild(d);
+});
+
 let resizeTimer;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>{computeDims();render();},120); });
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>{computeDims();applyViewBox();render();},120); });
 </script>
 </body>
 </html>
