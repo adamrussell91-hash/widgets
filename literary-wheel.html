@@ -4,283 +4,452 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Literary Techniques Taxonomy</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Georgia, serif;
       background: #f5f0e8;
+      color: #1c1c1c;
       overflow: hidden;
     }
-    #container {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+
     #header {
-      background: linear-gradient(135deg, #2c2c2c 0%, #1c1c1c 100%);
-      color: #f5f0e8;
-      padding: 12px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #f5f0e8;
+      border-bottom: 1px solid #d0cac0;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    #header h1 {
-      font-size: 22px;
-      font-weight: 300;
-      letter-spacing: 0.5px;
+
+    #header > div:first-child h1 {
+      font-size: 28px;
+      font-weight: bold;
+      color: #1c1c1c;
+      margin-bottom: 4px;
     }
-    .controls {
+
+    .subtitle {
+      font-size: 12px;
+      color: #7a7a7a;
+      font-style: italic;
+    }
+
+    #controls {
       display: flex;
       gap: 10px;
     }
-    button {
-      background: #4a6fa5;
-      color: #f5f0e8;
-      border: none;
+
+    .btn {
       padding: 8px 16px;
-      border-radius: 3px;
+      background: #c0674f;
+      color: white;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      font-weight: 600;
       transition: background 0.2s;
     }
-    button:hover {
-      background: #5a7fb5;
+
+    .btn:hover {
+      background: #a8564a;
     }
-    button:active {
-      transform: scale(0.98);
+
+    .btn:active {
+      background: #935745;
     }
-    #svg-container {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-    svg {
+
+    #main-svg {
+      display: block;
       width: 100%;
-      height: 100%;
+      height: calc(100vh - 65px);
+      margin-top: 65px;
     }
-    .link {
-      fill: none;
-      stroke: #888;
-      stroke-width: 1.5px;
-    }
-    .node circle {
-      cursor: pointer;
-      stroke-width: 2px;
-    }
-    .node text {
-      font-weight: 500;
-      pointer-events: none;
-      user-select: none;
-    }
-    .label-bg {
-      pointer-events: none;
-    }
-    .rel-arc {
-      fill: none;
-      stroke-width: 2px;
-      stroke-dasharray: 4,3;
-      opacity: 0.7;
-    }
-    .rel-node-marker {
-      fill-opacity: 0.3;
-      pointer-events: none;
-    }
-    #info-panel {
+
+    /* Legend */
+    #legend {
       position: fixed;
-      right: 20px;
-      top: 68px;
-      width: 320px;
-      max-height: 85vh;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 200;
-      overflow-y: auto;
-      display: none;
-      cursor: move;
-      touch-action: none;
+      bottom: 90px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #d0cac0;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 11px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 90;
+      max-width: 200px;
     }
-    #info-panel.visible {
-      display: block;
-    }
-    #info-panel.dragging {
-      opacity: 0.95;
-    }
-    .panel-header {
-      background: #2c2c2c;
-      color: #f5f0e8;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      border-bottom: 1px solid #ccc;
-      cursor: move;
-    }
-    .panel-body {
-      padding: 12px;
-    }
-    .info-section {
-      margin-bottom: 12px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    .info-label {
-      font-weight: 600;
-      color: #2c2c2c;
-      margin-bottom: 4px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-    .info-text {
-      color: #444;
-      font-size: 13px;
-    }
-    .related-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-    .related-tag {
-      display: inline-block;
-      background: #e8e0d0;
-      border: 1px solid #c9962a;
-      padding: 4px 8px;
-      border-radius: 3px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #5a3a0a;
-      font-weight: 500;
-    }
-    .related-tag:hover {
-      background: #c9962a;
-      color: #f5f0e8;
-    }
-    #axis-legend {
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 190;
-      display: none;
-      font-size: 12px;
-    }
-    #axis-legend.visible {
-      display: block;
-    }
-    .ax-title {
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #2c2c2c;
-      font-size: 13px;
-    }
-    .ax-row {
+
+    .legend-item {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 6px;
     }
-    .ax-color {
+
+    .legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    #axis-legend {
+      position: fixed;
+      bottom: 20px;
+      right: 90px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #d0cac0;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 11px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 90;
+      display: none;
+      max-width: 200px;
+    }
+
+    .axis-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .axis-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .axis-line {
       width: 16px;
-      height: 16px;
-      border-radius: 2px;
+      height: 2px;
+      flex-shrink: 0;
     }
-    .ax-label {
-      color: #555;
-      font-size: 12px;
-    }
-    .zoom-controls {
+
+    /* Zoom controls */
+    #zoom-controls {
       position: fixed;
       bottom: 20px;
       right: 20px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      z-index: 190;
+      gap: 4px;
+      z-index: 90;
     }
+
     .zoom-btn {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #d0cac0;
       border-radius: 4px;
-      background: #4a6fa5;
-      color: #f5f0e8;
-      border: none;
       cursor: pointer;
       font-size: 18px;
       font-weight: bold;
+      color: #1c1c1c;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: background 0.2s;
     }
+
     .zoom-btn:hover {
-      background: #5a7fb5;
+      background: #f0e8e0;
+    }
+
+    /* Info panel */
+    #info-panel {
+      position: fixed;
+      right: 20px;
+      top: 68px;
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid #d0cac0;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 95;
+      max-width: 320px;
+      max-height: 70vh;
+      overflow-y: auto;
+      display: none;
+      cursor: grab;
+    }
+
+    #info-panel.dragging {
+      cursor: grabbing;
+    }
+
+    #info-panel.visible {
+      display: block;
+    }
+
+    #info-panel h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #1c1c1c;
+      word-wrap: break-word;
+    }
+
+    .info-badge {
+      display: inline-block;
+      background: #4a6fa5;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+      margin-bottom: 10px;
+      margin-right: 6px;
+      font-family: Arial, sans-serif;
+      font-weight: 600;
+    }
+
+    .info-section {
+      margin-bottom: 12px;
+    }
+
+    .info-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #7a7a7a;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-section-text {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #3a3a3a;
+    }
+
+    .info-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .info-tag {
+      background: #e0dcd0;
+      border: 1px solid #d0cac0;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      font-family: Arial, sans-serif;
+    }
+
+    .info-tag:hover {
+      background: #d0cac0;
+      border-color: #b0a8a0;
+    }
+
+    #info-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #7a7a7a;
+      transition: color 0.2s;
+    }
+
+    #info-close:hover {
+      color: #1c1c1c;
+    }
+
+    /* SVG styles */
+    .node circle {
+      transition: r 0.2s, fill 0.2s;
+    }
+
+    .node:hover circle {
+      filter: brightness(1.15);
+    }
+
+    .node--root circle {
+      fill: #1c1c1c;
+      stroke: #0a0a0a;
+      stroke-width: 2;
+    }
+
+    .node--family circle {
+      fill: #c0674f;
+      stroke: #a8564a;
+      stroke-width: 1.5;
+    }
+
+    .node--subgroup circle {
+      fill: #4a6fa5;
+      stroke: #3a5a8a;
+      stroke-width: 1.5;
+    }
+
+    .node text {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .node--root text {
+      font-size: 18px;
+      font-weight: bold;
+      fill: #1c1c1c;
+    }
+
+    .node--family text {
+      font-size: 17px;
+      font-weight: 600;
+      fill: #1c1c1c;
+    }
+
+    .node--subgroup text {
+      font-size: 16px;
+      font-weight: 500;
+      fill: #1c1c1c;
+    }
+
+    .node-label-bg {
+      pointer-events: none;
+    }
+
+    .link {
+      fill: none;
+      stroke: #5a5a5a;
+      stroke-width: 1px;
+      stroke-opacity: 0.4;
+      marker-end: none;
+    }
+
+    .relation-arc {
+      fill: none;
+      stroke-width: 2px;
+      stroke-dasharray: 5,4;
+      pointer-events: none;
+    }
+
+    #zoom-group {
+      pointer-events: all;
+    }
+
+    svg {
+      background: #f5f0e8;
+    }
+
+    #info-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #info-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #info-panel::-webkit-scrollbar-thumb {
+      background: #c0c0c0;
+      border-radius: 3px;
+    }
+
+    #info-panel::-webkit-scrollbar-thumb:hover {
+      background: #a0a0a0;
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <div id="header">
-      <h1>Literary Techniques Taxonomy</h1>
-      <div class="controls">
-        <button id="expand-all">Expand All</button>
-        <button id="collapse-all">Collapse All</button>
-        <button id="reset-view">Reset View</button>
-      </div>
+  <div id="header">
+    <div>
+      <h1>Literary Techniques</h1>
+      <div class="subtitle">Click families to expand · Click subgroups to burst techniques · Scroll to zoom</div>
     </div>
-    <div id="svg-container">
-      <svg id="main-svg"></svg>
+    <div id="controls">
+      <button class="btn" id="btn-expand-all">Expand All</button>
+      <button class="btn" id="btn-collapse-all">Collapse All</button>
+      <button class="btn" id="btn-reset">Reset View</button>
     </div>
+  </div>
+
+  <svg id="main-svg">
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0 0, 10 3, 0 6" fill="#5a5a5a" />
+      </marker>
+    </defs>
+    <g id="zoom-group">
+      <g id="links-group"></g>
+      <g id="spokes-group"></g>
+      <g id="relations-group"></g>
+      <g id="nodes-group"></g>
+      <g id="techniques-group"></g>
+    </g>
+  </svg>
+
+  <div id="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #1c1c1c;"></div>
+      <span>Root</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #c0674f;"></div>
+      <span>Family</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #4a6fa5;"></div>
+      <span>Subgroup</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background: #6a7a6a;"></div>
+      <span>Technique</span>
+    </div>
+  </div>
+
+  <div id="axis-legend"></div>
+
+  <div id="zoom-controls">
+    <button class="zoom-btn" id="btn-zoom-in">+</button>
+    <button class="zoom-btn" id="btn-zoom-out">−</button>
   </div>
 
   <div id="info-panel">
-    <div class="panel-header">Node Information</div>
-    <div class="panel-body">
-      <div class="info-section">
-        <div class="info-label">Type</div>
-        <div class="info-text" id="info-type"></div>
-      </div>
-      <div class="info-section">
-        <div class="info-label">Definition</div>
-        <div class="info-text" id="info-definition"></div>
-      </div>
-      <div class="info-section">
-        <div class="info-label">Effect</div>
-        <div class="info-text" id="info-effect"></div>
-      </div>
-      <div class="info-section">
-        <div class="info-label">Example</div>
-        <div class="info-text" id="info-example"></div>
-      </div>
-      <div class="info-section" id="related-section" style="display:none;">
-        <div class="info-label">Related</div>
-        <div class="related-tags" id="info-related"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="axis-legend">
-    <div class="ax-title">Relationship Axes</div>
-    <div id="axis-legend-body"></div>
-  </div>
-
-  <div class="zoom-controls">
-    <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
-    <button class="zoom-btn" id="zoom-out" title="Zoom Out">−</button>
+    <button id="info-close">✕</button>
+    <h3 id="info-title"></h3>
+    <div id="info-badge-container"></div>
+    <div id="info-content"></div>
   </div>
 
   <script>
+    // ==================== GLOBAL STATE ====================
+    const state = {
+      expandedSubgroups: new Set(),
+      techniquePositions: new Map(),
+      currentInfoNode: null,
+      nodeMap: new Map(),
+      relatedArcsVisible: false
+    };
+
+    const W = window.innerWidth;
+    const H = window.innerHeight - 65;
+
+    // ==================== CONSTANTS ====================
     const AXES = {
       gradient: { color: "#c9962a", label: "Specificity / scope gradient" },
       subtype: { color: "#8878c0", label: "Type / subtype" },
@@ -290,242 +459,1002 @@
     };
 
     const RELATIONS = [
-      {from:"Analogy",to:"Metaphor",axis:"gradient"},{from:"Metaphor",to:"Simile",axis:"gradient"},{from:"Metaphor",to:"Hypocatastasis",axis:"gradient"},{from:"Metaphor",to:"Extended Metaphor",axis:"subtype"},{from:"Extended Metaphor",to:"Conceit",axis:"subtype"},{from:"Extended Metaphor",to:"Allegory",axis:"gradient"},{from:"Personification",to:"Anthropomorphism",axis:"gradient"},{from:"Personification",to:"Apostrophe",axis:"gradient"},{from:"Personification",to:"Pathetic Fallacy",axis:"subtype"},{from:"Personification",to:"Transferred Epithet",axis:"subtype"},{from:"Metonymy",to:"Synecdoche",axis:"subtype"},{from:"Verbal Irony",to:"Sarcasm",axis:"subtype"},{from:"Verbal Irony",to:"Dramatic Irony",axis:"cross"},{from:"Verbal Irony",to:"Situational Irony",axis:"cross"},{from:"Understatement",to:"Litotes",axis:"subtype"},{from:"Understatement",to:"Meiosis",axis:"subtype"},{from:"Hyperbole",to:"Understatement",axis:"mirror"},{from:"Bathos",to:"Anticlimax",axis:"effect"},{from:"Gradatio",to:"Anticlimax",axis:"mirror"},{from:"Anaphora",to:"Epistrophe",axis:"mirror"},{from:"Anaphora",to:"Symploce",axis:"subtype"},{from:"Epizeuxis",to:"Diacope",axis:"gradient"},{from:"Anadiplosis",to:"Epanalepsis",axis:"effect"},{from:"Asyndeton",to:"Polysyndeton",axis:"mirror"},{from:"Parataxis",to:"Hypotaxis",axis:"mirror"},{from:"Parallelism",to:"Chiasmus",axis:"subtype"},{from:"Parallelism",to:"Isocolon",axis:"subtype"},{from:"Parallelism",to:"Tricolon",axis:"subtype"},{from:"Antithesis",to:"Juxtaposition",axis:"gradient"},{from:"Antithesis",to:"Oxymoron",axis:"gradient"},{from:"Oxymoron",to:"Paradox",axis:"gradient"},{from:"Pathetic Fallacy",to:"Visual Imagery",axis:"cross"},{from:"Leitmotif",to:"Symbol",axis:"cross"},{from:"Leitmotif",to:"Motif",axis:"subtype"},{from:"Foreshadowing",to:"Dramatic Irony",axis:"cross"},{from:"Foreshadowing",to:"Chekhov's Gun",axis:"effect"},{from:"Stream of Consciousness",to:"Interior Monologue",axis:"gradient"},{from:"Free Indirect Discourse",to:"Stream of Consciousness",axis:"cross"},{from:"Parody",to:"Pastiche",axis:"mirror"},{from:"Allusion",to:"Quotation",axis:"subtype"},{from:"Quotation",to:"Epigraph",axis:"subtype"},{from:"Mise en Abyme",to:"Frame Narrative",axis:"cross"},{from:"Zeugma",to:"Syllepsis",axis:"gradient"},{from:"Flashback (Analepsis)",to:"Flash-Forward (Prolepsis)",axis:"mirror"},{from:"Accumulation",to:"Gradatio",axis:"subtype"},{from:"Alliteration",to:"Consonance",axis:"gradient"},{from:"Alliteration",to:"Sibilance",axis:"subtype"},{from:"Rhyme",to:"Slant Rhyme",axis:"gradient"},{from:"Rhyme",to:"Internal Rhyme",axis:"subtype"},{from:"Cacophony",to:"Euphony",axis:"mirror"},{from:"Symbol",to:"Motif",axis:"cross"},{from:"Archetype",to:"Symbol",axis:"cross"},{from:"Unreliable Narrator",to:"Naive Narrator",axis:"subtype"},{from:"Dramatic Monologue",to:"Interior Monologue",axis:"cross"},{from:"Antanaclasis",to:"Polyptoton",axis:"effect"},{from:"Periodic Sentence",to:"Loose Sentence",axis:"mirror"},{from:"Ethos",to:"Pathos",axis:"effect"},{from:"Pathos",to:"Logos",axis:"effect"},{from:"Hyperbaton",to:"Anastrophe",axis:"subtype"},{from:"Frame Narrative",to:"Non-Linear Narrative",axis:"effect"},{from:"Synaesthesia",to:"Visual Imagery",axis:"cross"},{from:"Binary Opposition",to:"Antithesis",axis:"effect"},{from:"Intertextuality (Explicit)",to:"Intertextuality (Implicit)",axis:"gradient"},{from:"Metafiction",to:"Breaking the Fourth Wall",axis:"subtype"},{from:"Mise en Abyme",to:"Self-Referentiality",axis:"subtype"}
+      {from:"Analogy",to:"Metaphor",axis:"gradient"},
+      {from:"Metaphor",to:"Simile",axis:"gradient"},
+      {from:"Metaphor",to:"Hypocatastasis",axis:"gradient"},
+      {from:"Metaphor",to:"Extended Metaphor",axis:"subtype"},
+      {from:"Extended Metaphor",to:"Conceit",axis:"subtype"},
+      {from:"Extended Metaphor",to:"Allegory",axis:"gradient"},
+      {from:"Personification",to:"Anthropomorphism",axis:"gradient"},
+      {from:"Personification",to:"Apostrophe",axis:"gradient"},
+      {from:"Personification",to:"Pathetic Fallacy",axis:"subtype"},
+      {from:"Personification",to:"Transferred Epithet",axis:"subtype"},
+      {from:"Metonymy",to:"Synecdoche",axis:"subtype"},
+      {from:"Verbal Irony",to:"Sarcasm",axis:"subtype"},
+      {from:"Verbal Irony",to:"Dramatic Irony",axis:"cross"},
+      {from:"Verbal Irony",to:"Situational Irony",axis:"cross"},
+      {from:"Understatement",to:"Litotes",axis:"subtype"},
+      {from:"Understatement",to:"Meiosis",axis:"subtype"},
+      {from:"Hyperbole",to:"Understatement",axis:"mirror"},
+      {from:"Bathos",to:"Anticlimax",axis:"effect"},
+      {from:"Gradatio",to:"Anticlimax",axis:"mirror"},
+      {from:"Anaphora",to:"Epistrophe",axis:"mirror"},
+      {from:"Anaphora",to:"Symploce",axis:"subtype"},
+      {from:"Epizeuxis",to:"Diacope",axis:"gradient"},
+      {from:"Asyndeton",to:"Polysyndeton",axis:"mirror"},
+      {from:"Parataxis",to:"Hypotaxis",axis:"mirror"},
+      {from:"Parallelism",to:"Chiasmus",axis:"subtype"},
+      {from:"Parallelism",to:"Isocolon",axis:"subtype"},
+      {from:"Parallelism",to:"Tricolon",axis:"subtype"},
+      {from:"Antithesis",to:"Juxtaposition",axis:"gradient"},
+      {from:"Antithesis",to:"Oxymoron",axis:"gradient"},
+      {from:"Oxymoron",to:"Paradox",axis:"gradient"},
+      {from:"Pathetic Fallacy",to:"Visual Imagery",axis:"cross"},
+      {from:"Leitmotif",to:"Symbol",axis:"cross"},
+      {from:"Leitmotif",to:"Motif",axis:"subtype"},
+      {from:"Foreshadowing",to:"Dramatic Irony",axis:"cross"},
+      {from:"Foreshadowing",to:"Chekhov's Gun",axis:"effect"},
+      {from:"Stream of Consciousness",to:"Interior Monologue",axis:"gradient"},
+      {from:"Free Indirect Discourse",to:"Stream of Consciousness",axis:"cross"},
+      {from:"Parody",to:"Pastiche",axis:"mirror"},
+      {from:"Allusion",to:"Quotation",axis:"subtype"},
+      {from:"Quotation",to:"Epigraph",axis:"subtype"},
+      {from:"Mise en Abyme",to:"Frame Narrative",axis:"cross"},
+      {from:"Zeugma",to:"Syllepsis",axis:"gradient"},
+      {from:"Flashback (Analepsis)",to:"Flash-Forward (Prolepsis)",axis:"mirror"},
+      {from:"Accumulation",to:"Gradatio",axis:"subtype"},
+      {from:"Alliteration",to:"Consonance",axis:"gradient"},
+      {from:"Alliteration",to:"Sibilance",axis:"subtype"},
+      {from:"Rhyme",to:"Slant Rhyme",axis:"gradient"},
+      {from:"Rhyme",to:"Internal Rhyme",axis:"subtype"},
+      {from:"Cacophony",to:"Euphony",axis:"mirror"},
+      {from:"Symbol",to:"Motif",axis:"cross"},
+      {from:"Unreliable Narrator",to:"Naive Narrator",axis:"subtype"},
+      {from:"Dramatic Monologue",to:"Interior Monologue",axis:"cross"},
+      {from:"Antanaclasis",to:"Polyptoton",axis:"effect"},
+      {from:"Periodic Sentence",to:"Loose Sentence",axis:"mirror"},
+      {from:"Ethos",to:"Pathos",axis:"effect"},
+      {from:"Pathos",to:"Logos",axis:"effect"},
+      {from:"Hyperbaton",to:"Anastrophe",axis:"subtype"},
+      {from:"Binary Opposition",to:"Antithesis",axis:"effect"},
+      {from:"Intertextuality (Explicit)",to:"Intertextuality (Implicit)",axis:"gradient"},
+      {from:"Metafiction",to:"Breaking the Fourth Wall",axis:"subtype"},
+      {from:"Mise en Abyme",to:"Self-Referentiality",axis:"subtype"},
+      {from:"Synaesthesia",to:"Visual Imagery",axis:"cross"}
     ];
 
-    const colors = {
-      root: { fill: "#1c1c1c", stroke: "#1c1c1c", text: "#1c1c1c" },
-      family: { fill: "#c0674f", stroke: "#c0674f", text: "#c0674f" },
-      subgroup: { fill: "#4a6fa5", stroke: "#4a6fa5", text: "#4a6fa5" },
-      technique: { fill: "#6a7a6a", stroke: "#6a7a6a", text: "#5a6a5a" }
-    };
-
-    const radii = { root: 14, family: 11, subgroup: 9, technique: 7 };
-    const NODE_X = 230, NODE_Y = 175, DURATION = 500;
-    const W = window.innerWidth, H = window.innerHeight;
-
-    const taxonomyData = {"name":"Literary Techniques","type":"root","info":{definition:"A comprehensive taxonomy of literary devices and techniques.",effect:"",example:"",related:[]},"children":[{"name":"Descriptive","type":"family","info":{definition:"Techniques that create vivid sensory impressions and establish diction/tone.",effect:"",example:"",related:[]},"children":[{"name":"Imagery","type":"subgroup","info":{definition:"The use of concrete sensory language to evoke mental images.",effect:"",example:"",related:[]},"children":[{name:"Visual Imagery",type:"technique",info:{definition:"Language that appeals to the sense of sight.",effect:"Creates mental pictures for the reader.",example:"Keats: 'Season of mists and mellow fruitfulness'",related:["Auditory Imagery","Tactile Imagery","Synaesthesia","Ekphrasis"]}},{name:"Auditory Imagery",type:"technique",info:{definition:"Language describing sounds and auditory experiences.",effect:"Engages the reader's sense of hearing.",example:"Poe: 'The tintinnabulation of the bells'",related:["Visual Imagery","Onomatopoeia","Cacophony","Euphony"]}},{name:"Olfactory Imagery",type:"technique",info:{definition:"Language that appeals to the sense of smell.",effect:"Evokes powerful sensory and emotional memories.",example:"Proust: descriptions of madeleines and tea",related:["Gustatory Imagery","Tactile Imagery","Synaesthesia"]}},{name:"Gustatory Imagery",type:"technique",info:{definition:"Language that appeals to the sense of taste.",effect:"Creates intimate, immediate sensory experience.",example:"Joyce: sensory food descriptions in Ulysses",related:["Olfactory Imagery","Tactile Imagery","Synaesthesia"]}},{name:"Tactile Imagery",type:"technique",info:{definition:"Language describing physical sensations and textures.",effect:"Engages the reader's tactile sense.",example:"Hardy: 'the rough texture of bark'",related:["Kinaesthetic Imagery","Visual Imagery","Synaesthesia"]}},{name:"Kinaesthetic Imagery",type:"technique",info:{definition:"Language evoking physical movement and body sensation.",effect:"Makes readers feel physically engaged with the text.",example:"D.H. Lawrence descriptions of movement and energy",related:["Tactile Imagery","Synaesthesia"]}},{name:"Synaesthesia",type:"technique",info:{definition:"Describing one sensory experience using language of another sense.",effect:"Creates unexpected, striking sensory juxtapositions.",example:"Baudelaire: 'I love the beautiful spring—colored sounds'",related:["Visual Imagery","Auditory Imagery","Kinaesthetic Imagery"]}},{name:"Pathetic Fallacy",type:"technique",info:{definition:"Attributing human emotions to nature or inanimate objects.",effect:"Reflects character states through environmental description.",example:"Shakespeare: stormy weather during emotional turmoil",related:["Personification","Transferred Epithet","Visual Imagery"]}},{name:"Ekphrasis",type:"technique",info:{definition:"Detailed description of a work of art within a literary work.",effect:"Allows exploration of aesthetic and philosophical themes.",example:"Keats: 'Ode on a Grecian Urn'",related:["Visual Imagery","Allusion"]}},{name:"Sensory Accumulation",type:"technique",info:{definition:"Piling multiple sensory images in sequence.",effect:"Overwhelms and immerses the reader in an atmosphere.",example:"Modernist poetry: multiple sensory impressions layered together",related:["Accumulation","Visual Imagery","Cataloguing"]}}]},{"name":"Diction","type":"subgroup","info":{definition:"The choice and use of words and their effects.",effect:"",example:"",related:[]},"children":[{name:"Connotation",type:"technique",info:{definition:"The emotional or cultural associations of a word beyond its definition.",effect:"Shapes the reader's emotional response to language.",example:"'Slim' vs 'skinny': same meaning, different connotations",related:["Denotation","Loaded Language","Register Shift"]}},{name:"Denotation",type:"technique",info:{definition:"The literal, dictionary definition of a word.",effect:"Provides precise meaning independent of emotion.",example:"'Chair' denotes: a piece of furniture for sitting",related:["Connotation","Abstract Diction","Concrete Diction"]}},{name:"Archaism",type:"technique",info:{definition:"Use of outdated or obsolete words.",effect:"Creates a sense of historical distance or formality.",example:"Shakespeare: 'thee,' 'thou,' 'hath'",related:["Latinate Diction","Register Shift","Neologism"]}},{name:"Neologism",type:"technique",info:{definition:"A newly created or recently adopted word.",effect:"Conveys innovation, strangeness, or novelty.",example:"Joyce: 'quiddity,' 'snollygoster' in experimental fiction",related:["Archaism","Jargon","Register Shift"]}},{name:"Colloquialism",type:"technique",info:{definition:"Informal, conversational language or idioms.",effect:"Creates voice, accessibility, and realism.",example:"'Gonna,' 'ain't,' 'that's cool'",related:["Slang","Jargon","Register Shift"]}},{name:"Jargon",type:"technique",info:{definition:"Technical or specialized vocabulary of a field.",effect:"Creates authenticity within a professional context.",example:"Medical jargon in clinical novels; legal jargon in courtroom drama",related:["Colloquialism","Slang","Loaded Language"]}},{name:"Slang",type:"technique",info:{definition:"Very informal, often youth-oriented language.",effect:"Establishes voice, character, and temporal setting.",example:"Street slang in urban fiction; dated slang shows era",related:["Colloquialism","Jargon","Register Shift"]}},{name:"Euphemism",type:"technique",info:{definition:"A mild or indirect word substituted for something harsh or blunt.",effect:"Softens difficult topics or maintains politeness.",example:"'Passed away' for died; 'ladies' room' for bathroom",related:["Dysphemism","Loaded Language","Understatement"]}},{name:"Dysphemism",type:"technique",info:{definition:"A harsh or blunt term substituted for a mild one.",effect:"Creates shock, vulgarity, or brutal honesty.",example:"'Croak' for die; offensive slurs for clinical terms",related:["Euphemism","Loaded Language","Sarcasm"]}},{name:"Register Shift",type:"technique",info:{definition:"Sudden change in formality or style of language.",effect:"Creates jarring effects or highlights character duality.",example:"Mixing 'thee' with modern slang; formal speech suddenly becoming crude",related:["Archaism","Colloquialism","Connotation"]}},{name:"Abstract Diction",type:"technique",info:{definition:"Use of general, intangible words (ideas, emotions, concepts).",effect:"Creates philosophical tone and emotional distance.",example:"'Love,' 'freedom,' 'truth' without concrete referents",related:["Concrete Diction","Denotation","Loaded Language"]}},{name:"Concrete Diction",type:"technique",info:{definition:"Use of specific, tangible, sensory words.",effect:"Creates vividness and immediate sensory engagement.",example:"'Red rose' instead of 'symbol of love'",related:["Abstract Diction","Denotation","Visual Imagery"]}},{name:"Latinate Diction",type:"technique",info:{definition:"Vocabulary derived from Latin, often polysyllabic and formal.",effect:"Creates elevated, scholarly, or archaic tone.",example:"Legal and academic writing; 'perspicacious' instead of 'sharp'",related:["Anglo-Saxon Diction","Archaism","Register Shift"]}},{name:"Anglo-Saxon Diction",type:"technique",info:{definition:"Vocabulary from Germanic roots, typically short and plain.",effect:"Creates immediacy, directness, and simplicity.",example:"'Help' instead of 'assistance'; 'way' instead of 'pathway'",related:["Latinate Diction","Concrete Diction","Colloquialism"]}},{name:"Loaded Language",type:"technique",info:{definition:"Words chosen for their strong emotional associations.",effect:"Manipulates the reader's emotional response.",example:"'Freedom fighter' vs 'terrorist' for the same person",related:["Connotation","Dysphemism","Jargon"]}},{name:"Nominalization",type:"technique",info:{definition:"Converting verbs or adjectives into nouns.",effect:"Creates abstraction and distance from action.",example:"'Beauty' (noun) instead of 'beautify' (verb)",related:["Abstract Diction","Verbing"]}},{name:"Verbing",type:"technique",info:{definition:"Converting nouns or other words into verbs.",effect:"Creates energy and unconventional usage.",example:"'Google it,' 'Xerox this,' 'to author a book'",related:["Nominalization","Neologism"]}}]},{"name":"Tone & Mood","type":"subgroup","info":{definition:"The emotional atmosphere and author's attitude conveyed in text.",effect:"",example:"",related:[]},"children":[{name:"Irony",type:"technique",info:{definition:"Expression where the intended meaning contradicts the literal meaning.",effect:"Creates depth and invites interpretation.",example:"Saying 'Great job!' when someone fails catastrophically",related:["Sarcasm","Verbal Irony","Dramatic Irony","Situational Irony"]}},{name:"Sarcasm",type:"technique",info:{definition:"Bitter, cutting irony often using exaggeration.",effect:"Conveys contempt or mockery.",example:"'Oh sure, that's a brilliant idea!' (when it isn't)",related:["Verbal Irony","Cynicism","Dysphemism"]}},{name:"Cynicism",type:"technique",info:{definition:"Belief that people are motivated by self-interest; tone of contempt.",effect:"Creates world-weary, disillusioned atmosphere.",example:"Dostoevsky's Underground Man; noir fiction",related:["Sarcasm","Detachment","Sardonic Tone"]}},{name:"Melancholy",type:"technique",info:{definition:"Tone of deep, reflective sadness.",effect:"Evokes contemplative, nostalgic mood.",example:"Keats: 'When I Have Fears'; Romantic poetry generally",related:["Wistfulness","Elegy"]}},{name:"Wistfulness",type:"technique",info:{definition:"Tone of yearning for something lost or unattainable.",effect:"Creates bittersweet, longing atmosphere.",example:"Fitzgerald: The Great Gatsby's nostalgic tone",related:["Melancholy","Nostalgia","Elegy"]}},{name:"Reverence",type:"technique",info:{definition:"Tone of deep respect or awe.",effect:"Elevates subject matter and invites admiration.",example:"Religious poetry; Milton's treatment of divinity",related:["Lyric Intensity","Archaism","Elevated Diction"]}},{name:"Detachment",type:"technique",info:{definition:"Tone of emotional distance or clinical observation.",effect:"Creates objectivity or alienation.",example:"Hemingway's sparse, emotionally distant prose",related:["Cynicism","Understatement","Stream of Consciousness"]}},{name:"Urgency",type:"technique",info:{definition:"Tone conveying pressure, haste, or imminent action.",effect:"Increases pacing and reader tension.",example:"Exclamatory syntax; short, breathless sentences",related:["Caesura","Enjambment","Free Verse"]}},{name:"Ambivalence",type:"technique",info:{definition:"Tone expressing mixed or contradictory feelings.",effect:"Reflects psychological complexity.",example:"Sylvia Plath's simultaneous love and hatred",related:["Paradox","Oxymoron","Irony"]}},{name:"Elegy",type:"technique",info:{definition:"Mournful tone expressing grief or lamentation.",effect:"Evokes solemn, contemplative response to loss.",example:"Gray: 'Elegy Written in a Country Churchyard'",related:["Melancholy","Wistfulness","Reverence"]}},{name:"Sardonic Tone",type:"technique",info:{definition:"Bitterly mocking or scornfully ironic tone.",effect:"Conveys scathing criticism wrapped in humor.",example:"Oscar Wilde; Jonathan Swift's satirical works",related:["Sarcasm","Cynicism","Verbal Irony"]}},{name:"Lyric Intensity",type:"technique",info:{definition:"Heightened emotional expression in personal, subjective tone.",effect:"Draws reader into immediate emotional experience.",example:"Romantic and contemporary lyric poetry",related:["Reverence","Ambivalence","Free Verse"]}},{name:"Understatement",type:"technique",info:{definition:"Expressing something with less force than warranted.",effect:"Creates subtlety, irony, or understated elegance.",example:"British comedy: 'That's rather unpleasant' for disasters",related:["Litotes","Meiosis","Irony","Hyperbole"]}},{name:"Hyperbole",type:"technique",info:{definition:"Extreme exaggeration for emphasis or effect.",effect:"Creates emphasis, humor, or emotional intensity.",example:"'I've told you a million times!' 'I'm so hungry I could eat a horse'",related:["Understatement","Bathos","Anticlimax"]}}]}]},{"name":"Repetitive","type":"family","info":{definition:"Techniques using recurring patterns of sound, words, or structure.",effect:"",example:"",related:[]},"children":[{"name":"Phonetic","type":"subgroup","info":{definition:"Repetition and patterns of sounds within words.",effect:"",example:"",related:[]},"children":[{name:"Alliteration",type:"technique",info:{definition:"Repetition of initial consonant sounds in nearby words.",effect:"Creates musicality, emphasis, and mnemonic quality.",example:"'Peter Piper picked a peck of pickled peppers'",related:["Assonance","Consonance","Sibilance"]}},{name:"Assonance",type:"technique",info:{definition:"Repetition of vowel sounds within or across words.",effect:"Creates musicality and internal harmony.",example:"'The cat sat on the mat' (repetition of 'a' sound)",related:["Alliteration","Consonance"]}},{name:"Consonance",type:"technique",info:{definition:"Repetition of consonant sounds within or at the end of words.",effect:"Creates subtle sonic reinforcement.",example:"'Click, clack, clock' (repetition of 'ck')",related:["Alliteration","Assonance","Plosive Sounds"]}},{name:"Sibilance",type:"technique",info:{definition:"Repetition of 's' and 'sh' sounds.",effect:"Creates hissing, whispered, or menacing quality.",example:"'Surely the pale princess saw the sunset'",related:["Alliteration","Fricative Sounds","Cacophony"]}},{name:"Onomatopoeia",type:"technique",info:{definition:"Words that imitate the sounds they represent.",effect:"Creates immediate sensory engagement through sound.",example:"'Buzz,' 'hiss,' 'splash,' 'crash'",related:["Auditory Imagery","Cacophony","Fricative Sounds"]}},{name:"Rhyme",type:"technique",info:{definition:"Correspondence of sound between words, typically at line endings.",effect:"Creates musicality, expectation, and unity.",example:"End rhyme: 'night' and 'light'; 'sing' and 'ring'",related:["Internal Rhyme","Slant Rhyme","Eye Rhyme"]}},{name:"Internal Rhyme",type:"technique",info:{definition:"Rhyme occurring within a line rather than at the end.",effect:"Creates internal rhythm and musicality.",example:"Poe: 'Once upon a midnight dreary, while I pondered, weary'",related:["Rhyme","Slant Rhyme","Rhythm"]}},{name:"Slant Rhyme",type:"technique",info:{definition:"Words that are close but not perfect rhymes.",effect:"Creates tension and modernity; avoids predictability.",example:"'Home' and 'come'; 'soul' and 'shell'",related:["Rhyme","Eye Rhyme","Free Verse"]}},{name:"Eye Rhyme",type:"technique",info:{definition:"Words that look similar but don't sound alike.",effect:"Creates visual rhyme effect.",example:"'Love' and 'move'; 'through' and 'tough'",related:["Rhyme","Slant Rhyme"]}},{name:"Cacophony",type:"technique",info:{definition:"Harsh, discordant sounds that are difficult to pronounce.",effect:"Creates discomfort or negative emotional response.",example:"Plosive consonants: 'blunt brick bat'",related:["Euphony","Sibilance","Plosive Sounds"]}},{name:"Euphony",type:"technique",info:{definition:"Pleasant, smooth, easy-to-pronounce sounds.",effect:"Creates musical, pleasant auditory effect.",example:"Soft vowels and liquid consonants: 'Louisa, the lilies float'",related:["Cacophony","Assonance","Fricative Sounds"]}},{name:"Rhythm",type:"technique",info:{definition:"The pattern of stressed and unstressed syllables in language.",effect:"Creates musicality and emphasis.",example:"da-DUM da-DUM da-DUM (iambic)",related:["Metre","Enjambment","Caesura"]}},{name:"Metre",type:"technique",info:{definition:"Regular pattern of stressed and unstressed syllables.",effect:"Creates predictable, musical structure.",example:"Iambic pentameter; trochaic tetrameter",related:["Rhythm","Iambic Pentameter","Enjambment"]}},{name:"Iambic Pentameter",type:"technique",info:{definition:"Five iambic feet (unstressed-stressed) per line.",effect:"Creates natural speech rhythm in English poetry.",example:"Shakespeare: 'Shall I | com-PARE | thee TO | a SUM | mer's DAY'",related:["Metre","Rhythm","Pentameter"]}},{name:"Free Verse",type:"technique",info:{definition:"Poetry without regular metre or rhyme scheme.",effect:"Allows natural speech rhythms and emotional emphasis.",example:"Modern poetry; Whitman; contemporary poetics",related:["Rhyme","Metre","Enjambment"]}},{name:"Plosive Sounds",type:"technique",info:{definition:"Abrupt, explosive consonant sounds (p, b, t, d, k, g).",effect:"Creates percussive, emphasized quality.",example:"'Pit, pat, pit' or 'Bad, big, bag'",related:["Cacophony","Alliteration","Rhythm"]}},{name:"Fricative Sounds",type:"technique",info:{definition:"Consonant sounds created by friction (f, v, s, z, sh, th).",effect:"Creates hissing or whooshing quality.",example:"'Soft, swift, swish' or 'The thief's feathered van'",related:["Euphony","Sibilance","Assonance"]}}]},{"name":"Lexical","type":"subgroup","info":{definition:"Repetition of words, phrases, and meanings.",effect:"",example:"",related:[]},"children":[{name:"Anaphora",type:"technique",info:{definition:"Repetition of a word or phrase at the beginning of successive clauses.",effect:"Creates emphasis, rhythm, and building intensity.",example:"King: 'I have a dream that...I have a dream that...'",related:["Epistrophe","Symploce","Refrain"]}},{name:"Epistrophe",type:"technique",info:{definition:"Repetition of a word or phrase at the end of successive clauses.",effect:"Creates emphasis and circularity.",example:"'Never give up. The fight gives up. We never give up.'",related:["Anaphora","Symploce","Refrain"]}},{name:"Symploce",type:"technique",info:{definition:"Combination of anaphora and epistrophe.",effect:"Creates powerful, memorable rhythm.",example:"'Where there is hate, let me sow love; where there is injury, let me sow pardon'",related:["Anaphora","Epistrophe","Parallelism"]}},{name:"Epizeuxis",type:"technique",info:{definition:"Immediate repetition of a word for emphasis.",effect:"Creates urgency and intensity.",example:"'Never, never, never!' or 'No, no, no!'",related:["Diacope","Refrain","Anaphora"]}},{name:"Diacope",type:"technique",info:{definition:"Repetition of a word with words between the repetitions.",effect:"Creates emphasis and echoing effect.",example:"'To be or not to be'; 'Then he went, he went, he went'",related:["Epizeuxis","Anadiplosis","Refrain"]}},{name:"Antanaclasis",type:"technique",info:{definition:"Repetition of a word in different senses.",effect:"Creates wordplay and semantic irony.",example:"'If we do not hang together, we shall surely hang separately' (hang=unite vs. hang=execute)",related:["Polyptoton","Zeugma","Pun"]}},{name:"Polyptoton",type:"technique",info:{definition:"Repetition of a word in different grammatical forms.",effect:"Creates emphasis through semantic variation.",example:"'Love is love and love is pain'; 'speak, speech, speaker'",related:["Antanaclasis","Zeugma","Anaphora"]}},{name:"Leitmotif",type:"technique",info:{definition:"A recurring word, phrase, image, or theme associated with a character or idea.",effect:"Creates cohesion and psychological depth.",example:"Wuthering Heights: repeated references to the moor",related:["Motif","Symbol","Refrain"]}},{name:"Refrain",type:"technique",info:{definition:"A line or phrase repeated at intervals within a poem.",effect:"Creates musical structure and mnemonic effect.",example:"Poe: 'Nevermore' in The Raven",related:["Anaphora","Epistrophe","Leitmotif"]}},{name:"Anadiplosis",type:"technique",info:{definition:"Repetition of the last word of one clause at the beginning of the next.",effect:"Creates linking, flowing effect.",example:"'The end of a thing is the beginning of thought.'",related:["Epanalepsis","Conduplicatio","Diacope"]}},{name:"Epanalepsis",type:"technique",info:{definition:"Repetition of a word at the beginning and end of a clause.",effect:"Creates circularity and emphasis.",example:"'Myself, I see myself in you.'",related:["Anadiplosis","Conduplicatio"]}},{name:"Conduplicatio",type:"technique",info:{definition:"Repetition of words at the end of one clause at the start of the next.",effect:"Creates links and intensification.",example:"'Peace, if you understand peace. Peace demands truth.'",related:["Anadiplosis","Epanalepsis"]}}]},{"name":"Structural","type":"subgroup","info":{definition:"Repetition in structure, syntax, and composition.",effect:"",example:"",related:[]},"children":[{name:"Parallelism",type:"technique",info:{definition:"Repeated grammatical structures expressing related ideas.",effect:"Creates balance, emphasis, and aesthetic satisfaction.",example:"'I came, I saw, I conquered'; Bible: parallel psalms",related:["Chiasmus","Isocolon","Tricolon"]}},{name:"Tricolon",type:"technique",info:{definition:"A series of three parallel structures.",effect:"Creates rhythm and emphasis through rule of three.",example:"'Life, liberty, and the pursuit of happiness'",related:["Parallelism","Isocolon","Cataloguing"]}},{name:"Antithesis (Structural)",type:"technique",info:{definition:"Juxtaposing contrasting ideas in parallel structures.",effect:"Creates emphasis and reveals relationship between opposites.",example:"'It was the best of times, it was the worst of times'",related:["Parallelism","Oxymoron","Binary Opposition"]}},{name:"Chiasmus",type:"technique",info:{definition:"Reversal of grammatical structures in successive phrases.",effect:"Creates memorable, punchy effect.",example:"'Ask not what your country can do for you; ask what you can do for your country'",related:["Parallelism","Antithesis (Structural)","Isocolon"]}},{name:"Isocolon",type:"technique",info:{definition:"Successive clauses of equal length and similar structure.",effect:"Creates rhythmic balance and harmony.",example:"Balanced clauses of identical syllable count or stress pattern",related:["Parallelism","Tricolon","Symmetry"]}},{name:"Accumulation",type:"technique",info:{definition:"Piling of similar items or clauses to build emphasis.",effect:"Creates crescendo effect and overwhelm.",example:"'He was strong, determined, ambitious, tireless, and brilliant'",related:["Cataloguing","Gradatio","Amplification"]}},{name:"Cataloguing",type:"technique",info:{definition:"Listing items, people, or qualities in sequence.",effect:"Creates comprehensiveness and abundance.",example:"Whitman: extensive lists; Homer's catalogs of ships",related:["Accumulation","Amplification","Sensory Accumulation"]}},{name:"Incremental Repetition",type:"technique",info:{definition:"Repetition of phrases with slight additions or changes.",effect:"Creates building, developmental effect.",example:"Folk songs and ballads: repeated verses with minor variations",related:["Anadiplosis","Conduplicatio","Refrain"]}},{name:"Amplification",type:"technique",info:{definition:"Expanding a statement through repetition and elaboration.",effect:"Provides emphasis and detailed development.",example:"'It was not merely bad; it was atrocious, repugnant, and destructive'",related:["Accumulation","Cataloguing","Gradatio"]}},{name:"Gradatio",type:"technique",info:{definition:"Arrangement of ideas in ascending or descending order of emphasis.",effect:"Creates climactic or anti-climactic effect.",example:"'The thought annoyed him, angered him, enraged him, destroyed him'",related:["Accumulation","Amplification","Climax"]}}]}]},{"name":"Comparative","type":"family","info":{definition:"Techniques drawing relationships between unlike things or opposing forces.",effect:"",example:"",related:[]},"children":[{"name":"Figurative","type":"subgroup","info":{definition:"Non-literal language comparing or transforming one thing into another.",effect:"",example:"",related:[]},"children":[{name:"Simile",type:"technique",info:{definition:"Direct comparison between two unlike things using 'like' or 'as'.",effect:"Makes abstract concepts concrete and memorable.",example:"'Her voice was like a bell' or 'as pale as death'",related:["Metaphor","Analogy","Hypocatastasis"]}},{name:"Metaphor",type:"technique",info:{definition:"Comparison between two unlike things stated as if identical.",effect:"Transforms understanding through imaginative identification.",example:"'Life is a journey' or 'Time is money'",related:["Simile","Extended Metaphor","Dead Metaphor"]}},{name:"Extended Metaphor",type:"technique",info:{definition:"Sustained metaphor developed throughout a passage or work.",effect:"Creates coherence and philosophical depth.",example:"Shakespeare: life as a stage; Dante: spiritual journey",related:["Metaphor","Conceit","Allegory"]}},{name:"Conceit",type:"technique",info:{definition:"An elaborate, far-fetched metaphor or simile.",effect:"Creates intellectual wit and surprise.",example:"Metaphysical poets: comparing love to geometry or alchemy",related:["Extended Metaphor","Metaphor","Oxymoron"]}},{name:"Personification",type:"technique",info:{definition:"Attributing human characteristics to non-human entities.",effect:"Creates accessibility and emotional resonance.",example:"'Death came knocking at the door'; 'The wind whispered secrets'",related:["Anthropomorphism","Apostrophe","Pathetic Fallacy"]}},{name:"Anthropomorphism",type:"technique",info:{definition:"Attributing specifically human form or traits to non-humans.",effect:"Creates familiarity and emotional connection.",example:"Fables: animals with human characteristics and dialogue",related:["Personification","Apostrophe","Allegory"]}},{name:"Apostrophe",type:"technique",info:{definition:"Directly addressing an absent person, object, or abstract idea.",effect:"Creates intimacy and emotional immediacy.",example:"'O Death, where is thy sting?' or 'Hello, old friend'",related:["Personification","Rhetorical Question","Address"]}},{name:"Metonymy",type:"technique",info:{definition:"Substituting the name of one thing with something associated with it.",effect:"Creates concision and layers of meaning.",example:"'The Crown declared it law' (Crown=the king); 'Hollywood loves celebrities'",related:["Synecdoche","Symbol","Zeugma"]}},{name:"Synecdoche",type:"technique",info:{definition:"Using a part to represent the whole or vice versa.",effect:"Creates compression and unexpected perspective.",example:"'All hands on deck' (hands=people); 'He is a good heart' (heart=person)",related:["Metonymy","Symbol","Zeugma"]}},{name:"Allegory",type:"technique",info:{definition:"A narrative in which characters and events represent abstract ideas or moral lessons.",effect:"Allows exploration of universal themes through story.",example:"Pilgrim's Progress; Animal Farm; Medieval morality plays",related:["Extended Metaphor","Symbol","Parable"]}},{name:"Analogy",type:"technique",info:{definition:"Extended comparison explaining one thing by comparing it to another.",effect:"Clarifies complex concepts through familiar comparisons.",example:"'A cell is like a factory' (biology explanation)",related:["Simile","Metaphor","Allegory"]}},{name:"Transferred Epithet",type:"technique",info:{definition:"Attributing a quality to something that logically belongs to something else.",effect:"Creates surprising and poetic image.",example:"'A cheerful fire' (fire isn't cheerful, but seems so); 'a sleepless night'",related:["Personification","Pathetic Fallacy","Metaphor"]}},{name:"Dead Metaphor",type:"technique",info:{definition:"A metaphor so common it's lost its figurative impact.",effect:"Functions as literal language; often unnoticed.",example:"'Leg of a table,' 'head of a department,' 'run out of time'",related:["Metaphor","Cliché","Idiom"]}},{name:"Mixed Metaphor",type:"technique",info:{definition:"Combining two or more inconsistent metaphors.",effect:"Can be unintentionally comic or deliberately discordant.",example:"'Swimming through the chess match of life'; 'the heart of the storm is burning'",related:["Metaphor","Extended Metaphor","Oxymoron"]}},{name:"Vehicle & Tenor",type:"technique",info:{definition:"Tenor: what is being described; Vehicle: what it's compared to.",effect:"Analytical tool for understanding metaphor structure.",example:"In 'Love is a rose': tenor=love, vehicle=rose",related:["Metaphor","Simile","Analogy"]}},{name:"Hypocatastasis",type:"technique",info:{definition:"An implied comparison where the comparison is suggested but not stated.",effect:"Creates subtle connection and reader participation.",example:"'He was a lion in battle' (implies: he was as brave/fierce as a lion)",related:["Metaphor","Simile","Understatement"]}}]},{"name":"Symbolic","type":"subgroup","info":{definition:"Objects, characters, and images representing abstract ideas or concepts.",effect:"",example:"",related:[]},"children":[{name:"Symbol",type:"technique",info:{definition:"A person, object, or image representing an abstract concept or idea.",effect:"Adds layers of meaning and universality to narrative.",example:"The green light in Gatsby (hope/dreams); the white whale in Moby Dick (nature's power)",related:["Motif","Archetype","Metaphor"]}},{name:"Motif",type:"technique",info:{definition:"A recurring image, idea, or pattern that develops a theme.",effect:"Creates coherence and reinforces thematic concerns.",example:"Repeated mirrors in gothic fiction; journeys in adventure tales",related:["Symbol","Leitmotif","Theme"]}},{name:"Archetype",type:"technique",info:{definition:"A universal character type or situation recurring across literature and culture.",effect:"Taps into collective unconscious and universal recognition.",example:"The hero, the mentor, the shadow; the quest, the journey, the fall",related:["Symbol","Motif","Foil"]}},{name:"Colour Symbolism",type:"technique",info:{definition:"Using colour to represent abstract concepts or emotional states.",effect:"Creates mood and thematic resonance.",example:"Red: passion/danger; white: purity/death; black: evil/mystery",related:["Symbol","Visual Imagery","Symbolism"]}},{name:"Object Symbolism",type:"technique",info:{definition:"Specific objects representing larger ideas or themes.",effect:"Makes abstract concepts tangible and memorable.",example:"The ring in LOTR (power/corruption); the scarlet letter (shame/sin)",related:["Symbol","Metaphor","Leitmotif"]}},{name:"Animal Symbolism",type:"technique",info:{definition:"Animals representing character traits or thematic concepts.",effect:"Taps into cultural and literary associations.",example:"Fox: cunning; owl: wisdom; snake: betrayal/temptation",related:["Symbol","Archetype","Allegory"]}},{name:"Mythological Allusion",type:"technique",info:{definition:"Reference to characters, events, or themes from mythology.",effect:"Enriches text with cultural and universal resonance.",example:"Joyce: Ulysses as modern Odysseus; Ovid references in literature",related:["Allusion","Archetype","Symbol"]}},{name:"Biblical Allusion",type:"technique",info:{definition:"Reference to characters, events, or passages from the Bible.",effect:"Invokes moral and spiritual dimensions.",example:"Scapegoat; sacrifice; resurrection; fall from paradise",related:["Allusion","Mythological Allusion","Symbol"]}},{name:"Literary Allusion",type:"technique",info:{definition:"Reference to another literary work, character, or passage.",effect:"Creates intertextual dialogue and enriches meaning.",example:"Referencing Shakespearean themes; quoting Dante",related:["Allusion","Quotation","Intertextuality (Explicit)"]}},{name:"Cultural Allusion",type:"technique",info:{definition:"Reference to events, figures, or concepts from culture or history.",effect:"Grounds text in historical and social context.",example:"References to historical events, famous figures, or cultural moments",related:["Allusion","Historical Reference","Contextual Meaning"]}},{name:"Emblem",type:"technique",info:{definition:"A visual or symbolic representation of an abstract concept.",effect:"Makes ideas immediately recognizable and memorable.",example:"Dove: peace; scales: justice; skull: death/mortality",related:["Symbol","Iconography","Allegory"]}},{name:"Iconography",type:"technique",info:{definition:"The use of images and symbols with specific cultural or religious meanings.",effect:"Communicates complex ideas through visual/symbolic shorthand.",example:"Christian iconography: halo=holiness; cross=redemption",related:["Symbol","Emblem","Colour Symbolism"]}}]},{"name":"Contrast","type":"subgroup","info":{definition:"Opposing forces, ideas, or qualities creating emphasis and meaning.",effect:"",example:"",related:[]},"children":[{name:"Antithesis",type:"technique",info:{definition:"Contrasting ideas placed in parallel structures for effect.",effect:"Creates emphasis and reveals relationships between opposites.",example:"'Man proposes; God disposes' or 'Give me liberty or give me death'",related:["Juxtaposition","Parallelism","Oxymoron"]}},{name:"Juxtaposition",type:"technique",info:{definition:"Placing two contrasting things side by side for comparison.",effect:"Highlights differences and creates meaning through contrast.",example:"Placing wealthy character next to poor; beauty next to ugliness",related:["Antithesis","Oxymoron","Foil"]}},{name:"Oxymoron",type:"technique",info:{definition:"Combining two contradictory terms or ideas.",effect:"Creates paradox and intellectual surprise.",example:"'Deafening silence,' 'bitter sweet,' 'living death'",related:["Paradox","Antithesis","Conceit"]}},{name:"Paradox",type:"technique",info:{definition:"A seemingly contradictory statement that may be true.",effect:"Forces reconsideration and reveals deeper truths.",example:"'The only way to win is to lose'; 'This statement is false'",related:["Oxymoron","Irony","Ambivalence"]}},{name:"Foil",type:"technique",info:{definition:"A character whose traits contrast with and highlight another character's.",effect:"Reveals character traits through comparison.",example:"Iago emphasizes Othello's nobility; Watson highlights Holmes's deduction",related:["Character Foiling","Juxtaposition","Archetype"]}},{name:"Situational Irony",type:"technique",info:{definition:"When what happens contradicts what is expected to happen.",effect:"Creates surprise and often tragic or comic effect.",example:"Fireman's house burns down; traffic accident on way to avoid accident",related:["Verbal Irony","Dramatic Irony","Paradox"]}},{name:"Dramatic Irony",type:"technique",info:{definition:"When audience knows something characters don't, creating tension.",effect:"Creates suspense and emotional investment.",example:"Audience knows villain's identity; Oedipus unknowingly marrying mother",related:["Verbal Irony","Situational Irony","Foreshadowing"]}},{name:"Verbal Irony",type:"technique",info:{definition:"Saying the opposite of what is meant.",effect:"Creates tone and deeper meaning.",example:"Saying 'Great job!' when someone fails catastrophically",related:["Sarcasm","Dramatic Irony","Situational Irony"]}},{name:"Bathos",type:"technique",info:{definition:"Sudden drop from elevated to mundane, creating anticlimax.",effect:"Creates humorous or disappointed effect.",example:"Building grand narrative then ending triviality: 'He died valiantly...of hiccups'",related:["Anticlimax","Batetic Effect","Irony"]}},{name:"Anticlimax",type:"technique",info:{definition:"A descent in intensity or importance at a crucial moment.",effect:"Creates deflation or humorous effect.",example:"Buildup of tension resolving in something mundane",related:["Bathos","Gradatio","Irony"]}},{name:"Binary Opposition",type:"technique",info:{definition:"Structuring a text around fundamental opposing concepts.",effect:"Reveals underlying assumptions and power structures.",example:"Nature vs. civilization; good vs. evil; male vs. female",related:["Antithesis","Juxtaposition","Dualism"]}},{name:"Chiaroscuro",type:"technique",info:{definition:"Striking contrast between light and dark (visual or metaphorical).",effect:"Creates dramatic visual and thematic impact.",example:"Gothic literature: darkness suggesting mystery and danger",related:["Contrast","Juxtaposition","Visual Imagery"]}}]}]},{"name":"Structural","type":"family","info":{definition:"Techniques organizing narrative, syntax, and narrative perspective.",effect:"",example:"",related:[]},"children":[{"name":"Narrative","type":"subgroup","info":{definition:"Techniques organizing how a story is told and ordered.",effect:"",example:"",related:[]},"children":[{name:"In Medias Res",type:"technique",info:{definition:"Beginning a story in the middle of action rather than at the beginning.",effect:"Creates immediate engagement and dramatic tension.",example:"The Odyssey: Odysseus's journey already underway; Catch-22",related:["Flashback (Analepsis)","Flash-Forward (Prolepsis)","Exposition"]}},{name:"Flashback (Analepsis)",type:"technique",info:{definition:"Interrupting the narrative to show events from the past.",effect:"Provides context and deepens character understanding.",example:"The Kite Runner; Beloved; film noir",related:["Flash-Forward (Prolepsis)","Non-Linear Narrative","Frame Narrative"]}},{name:"Flash-Forward (Prolepsis)",type:"technique",info:{definition:"Interrupting the narrative to show events from the future.",effect:"Creates foreshadowing and anticipation.",example:"Speculative sections of future outcomes; prophecies",related:["Flashback (Analepsis)","Foreshadowing","Non-Linear Narrative"]}},{name:"Frame Narrative",type:"technique",info:{definition:"A story within a story, with an outer narrative framing inner narratives.",effect:"Creates layers of meaning and perspective shifts.",example:"Thousand and One Nights; The Canterbury Tales; Mise en Abyme structure",related:["Non-Linear Narrative","Mise en Abyme","Narrative Structure"]}},{name:"Non-Linear Narrative",type:"technique",info:{definition:"Narrating events out of chronological order.",effect:"Creates complexity and invites active reader interpretation.",example:"Pulp Fiction; Memento; modernist literature",related:["Flashback (Analepsis)","Flash-Forward (Prolepsis)","Frame Narrative"]}},{name:"Circular Narrative",type:"technique",info:{definition:"A narrative that returns to its beginning, creating closure.",effect:"Creates sense of completion or cyclical return.",example:"The Great Gatsby: ending where it began; Joyce: Finnegans Wake (circular)",related:["Frame Narrative","Non-Linear Narrative","Closure"]}},{name:"Foreshadowing",type:"technique",info:{definition:"Hints suggesting future events without fully revealing them.",effect:"Creates suspense and invites rereading.",example:"Three witches in Macbeth; the gun in Act 1",related:["Chekhov's Gun","Dramatic Irony","Flashback (Analepsis)"]}},{name:"Chekhov's Gun",type:"technique",info:{definition:"An object mentioned early that becomes crucial later; efficient narration.",effect:"Satisfies reader expectations through narrative coherence.",example:"Gun mentioned Act 1 goes off Act 3; mysterious object revealed as important",related:["Foreshadowing","Red Herring","Plot Device"]}},{name:"Red Herring",type:"technique",info:{definition:"A misleading clue or false lead distracting from the truth.",effect:"Creates misdirection and reader suspense.",example:"Mystery novels: suspect seems guilty but isn't",related:["Misdirection","Dramatic Irony","Unreliable Narrator"]}},{name:"Cliffhanger",type:"technique",info:{definition:"Ending a section or episode on unresolved tension.",effect:"Compels reader to continue; creates suspense.",example:"Serial fiction; TV episode endings; chapter breaks in novels",related:["Suspense","Rising Action","Denouement"]}},{name:"Denouement",type:"technique",info:{definition:"The final unwinding of plot threads; the resolution.",effect:"Provides closure and significance.",example:"Final scenes resolving conflicts; the 'after' in narratives",related:["Climax","Resolution","Falling Action"]}},{name:"Rising Action",type:"technique",info:{definition:"Events building tension toward the climax.",effect:"Creates escalating emotional intensity.",example:"Middle section of three-act structure",related:["Climax","Denouement","Plot Structure"]}},{name:"Falling Action",type:"technique",info:{definition:"Events after the climax showing consequences.",effect:"Provides transition to resolution.",example:"After the battle, showing character reactions",related:["Climax","Denouement","Rising Action"]}},{name:"Anagnorisis",type:"technique",info:{definition:"A character's moment of sudden recognition or realization.",effect:"Creates emotional turning point.",example:"Oedipus recognizing his identity; tragic recognition",related:["Peripeteia","Climax","Revelation"]}},{name:"Peripeteia",type:"technique",info:{definition:"A sudden reversal of fortune or circumstance.",effect:"Creates dramatic surprise and plot twist.",example:"Twist ending; unexpected defeat of hero",related:["Anagnorisis","Climax","Plot Twist"]}},{name:"Hamartia",type:"technique",info:{definition:"A tragic flaw in a protagonist leading to downfall.",effect:"Makes tragedy inevitable and cathartic.",example:"Macbeth's ambition; Oedipus's hubris; Othello's jealousy",related:["Peripeteia","Tragic Flaw","Tragedy"]}},{name:"Deus Ex Machina",type:"technique",info:{definition:"An unexpected external solution resolving an insoluble problem.",effect:"Can feel contrived; sometimes used intentionally for effect.",example:"Gods intervening in Greek plays; convenient coincidence",related:["Plotting","Resolution","Conventionality"]}},{name:"Ellipsis (Narrative)",type:"technique",info:{definition:"Omitting events or time periods from narrative.",effect:"Allows focus on significant moments.",example:"'Years passed.' or jumping seasons without detail",related:["Time Leap","Narrative Concision","Pacing"]}},{name:"Subplot",type:"technique",info:{definition:"A secondary narrative running parallel to the main plot.",effect:"Adds complexity and thematic resonance.",example:"B-plot in films; secondary relationships in novels",related:["Plot Structure","Narrative Complexity","Theme"]}},{name:"Parallel Narrative",type:"technique",info:{definition:"Multiple storylines occurring simultaneously or alternating.",effect:"Creates comparison and thematic connection.",example:"Intercut scenes; multiple POV chapters",related:["Non-Linear Narrative","Frame Narrative","Multiple Narratives"]}}]},{"name":"Syntactic","type":"subgroup","info":{definition:"Techniques shaping sentence structure and grammatical patterns.",effect:"",example:"",related:[]},"children":[{name:"Syndeton",type:"technique",info:{definition:"Using conjunctions between all items in a series.",effect:"Creates careful, measured, formal effect.",example:"'Apples and oranges and bananas and pears' vs. 'apples, oranges, bananas, pears'",related:["Asyndeton","Polysyndeton","Coordination"]}},{name:"Asyndeton",type:"technique",info:{definition:"Omitting conjunctions between items in a series.",effect:"Creates rapid-fire effect and staccato rhythm.",example:"'I came, I saw, I conquered' (no 'and')",related:["Polysyndeton","Syndeton","Parataxis"]}},{name:"Polysyndeton",type:"technique",info:{definition:"Using many conjunctions between items.",effect:"Creates emphatic, flowing, expansive effect.",example:"'And then and then and then...'; 'Blood and death and destruction and horror'",related:["Asyndeton","Syndeton","Conjunction Overload"]}},{name:"Parataxis",type:"technique",info:{definition:"Arranging clauses in parallel structure without subordination.",effect:"Creates equal importance and fragmentary effect.",example:"Hemingway: 'The sun rose. The day began. Life continued.'",related:["Hypotaxis","Asyndeton","Juxtaposition"]}},{name:"Hypotaxis",type:"technique",info:{definition:"Using subordination to create hierarchy among clauses.",effect:"Creates complex relationships and dependent meaning.",example:"Subordinate clauses create layers: 'After the rain, which had been cold, the sun appeared'",related:["Parataxis","Subordination","Sentence Complexity"]}},{name:"Periodic Sentence",type:"technique",info:{definition:"A sentence with the main clause at the end.",effect:"Builds suspense; creates elegant formality.",example:"'After years of struggle, heartbreak, and perseverance, she finally succeeded'",related:["Loose Sentence","Sentence Structure","Syntax"]}},{name:"Loose Sentence",type:"technique",info:{definition:"A sentence with the main clause at the beginning.",effect:"Creates clear, direct, conversational effect.",example:"'She finally succeeded, after years of struggle, heartbreak, and perseverance'",related:["Periodic Sentence","Sentence Structure","Directness"]}},{name:"Rhetorical Question",type:"technique",info:{definition:"A question asked not expecting an answer but for effect.",effect:"Creates engagement and emphasizes a point.",example:"'Who doesn't want happiness?' (obviously everyone)",related:["Question","Apostrophe","Address"]}},{name:"Sentence Fragment",type:"technique",info:{definition:"An incomplete sentence missing subject or predicate.",effect:"Creates emphasis and stylistic effect.",example:"'Not good. Not good at all.' or 'Why? Because.'",related:["Run-On Sentence","Ellipsis (Grammatical)","Stylistic Syntax"]}},{name:"Run-On Sentence",type:"technique",info:{definition:"Multiple independent clauses without proper punctuation.",effect:"Creates breathlessness or lack of control.",example:"'I ran and ran and couldn't stop and kept going and finally collapsed'",related:["Sentence Fragment","Stream of Consciousness","Comma Splice"]}},{name:"Anastrophe",type:"technique",info:{definition:"Inversion of normal word order in a sentence.",effect:"Creates emphasis and poetic effect.",example:"'Yoda-like, his speech was' or 'Fled the warrior'",related:["Hyperbaton","Inversion","Word Order"]}},{name:"Parenthesis",type:"technique",info:{definition:"Inserting a word, phrase, or clause as an aside.",effect:"Creates interjection and secondary information.",example:"'The war (which lasted four years) devastated the country'",related:["Apposition","Aside","Interruption"]}},{name:"Apposition",type:"technique",info:{definition:"Placing two noun phrases side by side with one explaining the other.",effect:"Creates clarity and emphasis.",example:"'My brother, a surgeon, saved the day' or 'Shakespeare, the bard, wrote sonnets'",related:["Parenthesis","Juxtaposition","Noun Phrase"]}},{name:"Ellipsis (Grammatical)",type:"technique",info:{definition:"Omitting words that are understood from context.",effect:"Creates concision and rhythm.",example:"'He likes apples; I, oranges' (I like is understood)",related:["Sentence Fragment","Zeugma","Omission"]}},{name:"Caesura",type:"technique",info:{definition:"A pause or break within a metrical line of poetry.",effect:"Creates rhythm and emphasis.",example:"Punctuation marks or natural breaks in verse",related:["Enjambment","Rhythm","Metre"]}},{name:"Enjambment",type:"technique",info:{definition:"Continuing a line of poetry into the next without terminal punctuation.",effect:"Creates fluidity and forces connection between lines.",example:"Line ends mid-phrase; thought continues on next line",related:["Caesura","Line Break","Poetry Technique"]}},{name:"End-Stopping",type:"technique",info:{definition:"Ending a line of poetry with terminal punctuation.",effect:"Creates closure and separateness.",example:"Each line ends with comma, period, or other mark",related:["Enjambment","Line Break","Punctuation"]}}]},{"name":"Point of View","type":"subgroup","info":{definition:"Techniques establishing narrative perspective and authority.",effect:"",example:"",related:[]},"children":[{name:"First-Person Narrator",type:"technique",info:{definition:"Narrative from the perspective of 'I', a character in the story.",effect:"Creates intimacy and character-specific bias.",example:"Gatsby from Nick's perspective; The Hunger Games; Rebecca",related:["Second-Person Address","Third-Person Limited","Unreliable Narrator"]}},{name:"Second-Person Address",type:"technique",info:{definition:"Narrative using 'you', directly addressing the reader.",effect:"Creates direct engagement and unusual perspective.",example:"Choose-your-own-adventure; Jay McInerney's Bright Lights, Big City",related:["First-Person Narrator","Third-Person Limited","Address"]}},{name:"Third-Person Omniscient",type:"technique",info:{definition:"Narrative from outside perspective with access to all minds.",effect:"Creates broad scope and detached authority.",example:"Victorian novels; some fantasy epics",related:["Third-Person Limited","First-Person Narrator","Narrator Authority"]}},{name:"Third-Person Limited",type:"technique",info:{definition:"Narrative from outside perspective limited to one character's mind.",effect:"Creates objectivity with character-based focus.",example:"Most contemporary literary fiction; James: Portrait of a Lady",related:["Third-Person Omniscient","First-Person Narrator","Point of View"]}},{name:"Unreliable Narrator",type:"technique",info:{definition:"A narrator whose account is doubtful or distorted.",effect:"Creates ambiguity and invites reader suspicion.",example:"Lolita; Shutter Island; The Turn of the Screw",related:["Naive Narrator","Red Herring","Dramatic Irony"]}},{name:"Stream of Consciousness",type:"technique",info:{definition:"Representing the unfiltered flow of a character's thoughts.",effect:"Creates immediacy and psychological depth.",example:"Joyce: Ulysses; Faulkner: The Sound and the Fury",related:["Interior Monologue","Free Indirect Discourse","Psychological Realism"]}},{name:"Interior Monologue",type:"technique",info:{definition:"Direct representation of a character's unspoken thoughts.",effect:"Reveals inner life without external narration.",example:"Character thinking without quotation marks: 'What could she mean?'",related:["Stream of Consciousness","Free Indirect Discourse","Psychological Insight"]}},{name:"Free Indirect Discourse",type:"technique",info:{definition:"Representing character thoughts/speech without quotation marks or explicit attribution.",effect:"Blurs boundaries between narrator and character.",example:"'She wondered if he would come. Surely he would.'",related:["Stream of Consciousness","Interior Monologue","Narrative Voice"]}},{name:"Epistolary Mode",type:"technique",info:{definition:"Narrative told through letters, emails, or documents.",effect:"Creates authenticity and multiple perspectives.",example:"Pamela; The Perks of Being a Wallflower; Dracula",related:["Documentary Form","Multiple Narratives","Authenticity"]}},{name:"Dramatic Monologue",type:"technique",info:{definition:"A character speaking at length to a silent listener.",effect:"Reveals character psychology and situation.",example:"Browning poems; characters addressing absent others",related:["Interior Monologue","Apostrophe","Voice"]}},{name:"Collective Narrator",type:"technique",info:{definition:"Narrative from the perspective of a group using 'we'.",effect:"Creates communal perspective and group identity.",example:"Faulkner: 'The Hamlet'; stories narrated by community",related:["First-Person Narrator","Chorus","Group Perspective"]}},{name:"Naive Narrator",type:"technique",info:{definition:"A narrator innocent or limited in understanding, often a child.",effect:"Creates dramatic irony through gaps in comprehension.",example:"Huckleberry Finn; Catcher in the Rye; A Child's Christmas in Wales",related:["Unreliable Narrator","Innocence","Coming of Age"]}}]},{"name":"Rhetorical","type":"subgroup","info":{definition:"Techniques employing persuasion and classical rhetoric.",effect:"",example:"",related:[]},"children":[{name:"Ethos",type:"technique",info:{definition:"Appeal to credibility and character of the speaker.",effect:"Establishes trustworthiness and authority.",example:"'As a doctor, I can tell you...' or trusted character speaking",related:["Pathos","Logos","Persuasion"]}},{name:"Pathos",type:"technique",info:{definition:"Appeal to emotion and sympathy.",effect:"Creates emotional engagement and response.",example:"Tragic scenes; heartbreaking stories; descriptions of suffering",related:["Ethos","Logos","Emotional Appeal"]}},{name:"Logos",type:"technique",info:{definition:"Appeal to logic and reason.",effect:"Creates rational persuasion.",example:"Statistical evidence; logical arguments; syllogisms",related:["Ethos","Pathos","Logical Appeal"]}},{name:"Kairos",type:"technique",info:{definition:"Appeal to timely circumstances; the right moment.",effect:"Creates urgency and timeliness.",example:"'Now is the time to act'; seizing the moment",related:["Timing","Opportunity","Rhetoric"]}},{name:"Antistrophe",type:"technique",info:{definition:"In classical drama, the choral response after the strophe.",effect:"Creates symmetry in choral odes.",example:"Greek tragedy: strophe and antistrophe exchanges",related:["Strophe","Antiphony","Classical Technique"]}},{name:"Hendiadys",type:"technique",info:{definition:"Using two connected words to express one idea.",effect:"Creates emphasis and linguistic interest.",example:"'Nice and warm' (meaning comfortably warm); 'dead and gone'",related:["Figure of Speech","Rhetoric","Word Pairing"]}},{name:"Litotes",type:"technique",info:{definition:"Expressing idea by affirming the opposite; double negative.",effect:"Creates understatement and irony.",example:"'Not bad!' (meaning good); 'no small feat' (meaning significant)",related:["Understatement","Meiosis","Irony"]}},{name:"Meiosis",type:"technique",info:{definition:"Deliberate understatement or minimization.",effect:"Creates irony or comic effect.",example:"'It's just a scratch' (for major wound); 'slightly unfortunate'",related:["Litotes","Understatement","Irony"]}},{name:"Apophasis",type:"technique",info:{definition:"Rhetorically denying something while actually saying it.",effect:"Creates ironic emphasis.",example:"'I won't mention his stupidity' (while mentioning it); 'Let's not talk about his wealth'",related:["Irony","Denial","Rhetoric"]}},{name:"Procatalepsis",type:"technique",info:{definition:"Anticipating and answering an objection before it's raised.",effect:"Creates persuasive preemption.",example:"'You might say X, but actually...' or addressing counterarguments",related:["Rhetorical Question","Anticipation","Argument"]}},{name:"Enthymeme",type:"technique",info:{definition:"A rhetorical argument with an implicit premise.",effect:"Engages audience in completing the logic.",example:"'He's a lawyer, so he must be educated' (assuming lawyers are educated)",related:["Syllogism","Logic","Implication"]}},{name:"Anecdote",type:"technique",info:{definition:"A brief, illustrative story supporting a point.",effect:"Makes abstract ideas concrete and memorable.",example:"Opening a speech with a personal story",related:["Narrative","Illustration","Example"]}},{name:"Exemplum",type:"technique",info:{definition:"A narrative example illustrating a moral or lesson.",effect:"Creates moral instruction through story.",example:"Medieval exempla; fables; teaching tales",related:["Allegory","Anecdote","Moral Teaching"]}},{name:"Enumeratio",type:"technique",info:{definition:"Detailed listing of particulars.",effect:"Creates comprehensiveness and accumulation.",example:"Cataloguing details; itemized descriptions",related:["Accumulation","Cataloguing","Listing"]}},{name:"Hyperbaton",type:"technique",info:{definition:"Inversion of normal word order for effect.",effect:"Creates emphasis and poetic quality.",example:"'The book read I' (instead of 'I read the book')",related:["Anastrophe","Inversion","Word Order"]}},{name:"Zeugma",type:"technique",info:{definition:"Using a word in different senses with multiple parts of a sentence.",effect:"Creates wordplay and semantic wit.",example:"'He broke his heart and the vase'; 'He lost his temper and his keys'",related:["Syllepsis","Polyptoton","Wordplay"]}},{name:"Syllepsis",type:"technique",info:{definition:"Using a word in multiple senses simultaneously (literal and figurative).",effect:"Creates semantic complexity and humor.",example:"'He broke his heart and the law'; 'She lost her mind and her purse'",related:["Zeugma","Pun","Double Meaning"]}}]}]},{"name":"Intertextual & Metafictional","type":"family","info":{definition:"Techniques referencing other texts and calling attention to narrative construction.",effect:"",example:"",related:[]},"children":[{"name":"Intertextual","type":"subgroup","info":{definition:"References and connections between texts.",effect:"",example:"",related:[]},"children":[{name:"Allusion",type:"technique",info:{definition:"An indirect reference to another work, person, or event.",effect:"Enriches meaning through connection to larger tradition.",example:"Referencing mythology, history, or other literature without explanation",related:["Quotation","Epigraph","Intertextuality (Explicit)"]}},{name:"Quotation",type:"technique",info:{definition:"A direct excerpt from another text.",effect:"Brings authority and another voice into the text.",example:"Character quoting Shakespeare; dialogue incorporating exact phrases",related:["Allusion","Epigraph","Citation"]}},{name:"Epigraph",type:"technique",info:{definition:"A quotation placed at the beginning of a work.",effect:"Sets tone and thematic direction.",example:"Books opening with relevant quotes; dedication epigraphs",related:["Quotation","Allusion","Preface"]}},{name:"Parody",type:"technique",info:{definition:"Humorous imitation of a work, style, or genre.",effect:"Creates comedy through exaggeration and contrast.",example:"Spoof films; Shrek parodying fairy tales; Blazing Saddles",related:["Pastiche","Satire","Imitation"]}},{name:"Pastiche",type:"technique",info:{definition:"Imitation of a style, without necessarily mocking it.",effect:"Creates homage or homogenization of styles.",example:"Works imitating detective noir without mockery; loving tribute",related:["Parody","Homage","Imitation"]}},{name:"Homage",type:"technique",info:{definition:"A respectful reference or tribute to another work or artist.",effect:"Shows influence and builds literary conversation.",example:"Film dedicated to Hitchcock; novel in style of Jane Austen",related:["Allusion","Pastiche","Tribute"]}},{name:"Adaptation",type:"technique",info:{definition:"Remaking a work in a different form or context.",effect:"Extends life of source material; creates new interpretations.",example:"Film versions of novels; stage adaptations; modern retellings",related:["Remake","Translation","New Version"]}},{name:"Palimpsest",type:"technique",info:{definition:"A work built on or referring to earlier texts as layers.",effect:"Creates depth through textual layering.",example:"Texts referencing historical sources; literature built on tradition",related:["Intertextuality","Allusion","Layering"]}},{name:"Intertextuality (Explicit)",type:"technique",info:{definition:"Direct, obvious references making the connection obvious.",effect:"Creates clear conversation with source texts.",example:"Named quotations; attributed allusions; obvious references",related:["Allusion","Quotation","Intertextuality (Implicit)"]}},{name:"Intertextuality (Implicit)",type:"technique",info:{definition:"Subtle, indirect references that require reader knowledge.",effect:"Rewards knowledgeable readers; adds layers of meaning.",example:"Echoing themes or structures without explicit reference",related:["Allusion","Intertextuality (Explicit)","Hidden Reference"]}},{name:"Hypotext / Hypertext",type:"technique",info:{definition:"Hypotext: source text; Hypertext: new text based on it.",effect:"Establishes genealogy and intertextual relationships.",example:"Ulysses as hypertext to Homer's Odyssey (hypotext)",related:["Source Material","Intertextuality","Derivative Work"]}}]},{"name":"Metafictional","type":"subgroup","info":{definition:"Techniques calling attention to the fictional nature of narrative.",effect:"",example:"",related:[]},"children":[{name:"Breaking the Fourth Wall",type:"technique",info:{definition:"A character or narrator directly addressing the audience/reader.",effect:"Shatters illusion of narrative; creates complicity.",example:"Deadpool; Ferris Bueller; character addresses reader",related:["Metafiction","Address","Self-Referentiality"]}},{name:"Self-Referentiality",type:"technique",info:{definition:"A work calling attention to its own status as a created work.",effect:"Creates awareness of artifice and construction.",example:"Novel mentioning its own writing; discussing narrative choices",related:["Metafiction","Breaking the Fourth Wall","Self-Awareness"]}},{name:"Metafiction",type:"technique",info:{definition:"Fiction that is aware of and comments on its own fictionality.",effect:"Creates philosophical questions about fiction and reality.",example:"If on a winter's night a traveler; The Name of the Rose; Borges stories",related:["Self-Referentiality","Breaking the Fourth Wall","Narrative Self-Consciousness"]}},{name:"Postmodern Fragmentation",type:"technique",info:{definition:"Breaking narrative into fragments, questioning coherence.",effect:"Mirrors contemporary experience; disrupts linear understanding.",example:"Pound: The Cantos; experimental fiction with discontinuity",related:["Metafiction","Non-Linear Narrative","Modernism"]}},{name:"Unreliable Text",type:"technique",info:{definition:"A text that cannot be trusted; contradicting itself.",effect:"Creates uncertainty and reader confusion deliberately.",example:"Texts with inconsistencies; Barthelme's fragmented pieces",related:["Unreliable Narrator","Paradox","Ambiguity"]}},{name:"Mise en Abyme",type:"technique",info:{definition:"A work containing an image or version of itself; infinite regression.",effect:"Creates dizzying self-reference and mirroring.",example:"Painting of painting; story within story within story",related:["Frame Narrative","Self-Referentiality","Recursion"]}},{name:"Author Intrusion",type:"technique",info:{definition:"The author appearing or commenting within the fictional world.",effect:"Violates narrative distance; creates awareness of authorship.",example:"Cervantes in Don Quixote; authorial asides",related:["Breaking the Fourth Wall","Metafiction","Narrator Intrusion"]}},{name:"Narrative Self-Consciousness",type:"technique",info:{definition:"The narrative itself aware of its own telling.",effect:"Creates sophistication and philosophical depth.",example:"Novel discussing how it's being written; storytelling awareness",related:["Metafiction","Self-Referentiality","Author Intrusion"]}}]}]}]};
-
-    let nodeMap = new Map();
-    let currentSelectedNode = null;
-    let infoPanelDragOffset = { x: 0, y: 0 };
-    let isPanelDragging = false;
-
-    const svg = d3.select("#main-svg");
-    const container = svg.append("g").attr("id", "zoom-group");
-    const linksGroup = container.append("g").attr("id", "links-group");
-    const relationsGroup = container.append("g").attr("id", "relations-group");
-    const nodesGroup = container.append("g").attr("id", "nodes-group");
-
-    const zoom = d3.zoom().on("zoom", (e) => { container.attr("transform", e.transform); });
-    svg.call(zoom);
-
-    const initialTransform = d3.zoomIdentity.translate(W / 2, 90).scale(0.45);
-    svg.call(zoom.transform, initialTransform);
-
-    let root = d3.hierarchy(taxonomyData);
-    root.x0 = 0;
-    root.y0 = 0;
-    root.children.forEach(collapse);
-
-    function collapse(d) {
-      if (d.children) { d._children = d.children; d.children = null; }
-      if (d._children) d._children.forEach(collapse);
+    // ==================== HELPERS ====================
+    function T(name, def, effect, example, related) {
+      return { name, info: { definition: def, effect, example, related: related || [] } };
     }
 
-    function update(source) {
-      const tree = d3.tree().nodeSize([NODE_X, NODE_Y]);
-      const treeData = tree(root);
-      const nodes = treeData.descendants();
-      const links = treeData.links();
-
-      nodeMap.clear();
-      nodes.forEach(d => nodeMap.set(d.data.name, d));
-
-      const link = linksGroup.selectAll(".link").data(links, d => d.target.data.name);
-      link.exit().remove();
-      link.enter().insert("path", ":first-child").attr("class", "link").merge(link)
-        .transition().duration(DURATION).attr("d", d => stepPath(d.source, d.target));
-
-      const node = nodesGroup.selectAll(".node").data(nodes, d => d.data.name);
-      node.exit().transition().duration(DURATION).attr("opacity", 0).remove();
-
-      const nodeEnter = node.enter().append("g").attr("class", "node")
-        .attr("transform", d => `translate(${source.x0},${source.y0})`)
-        .on("click", (e, d) => { e.stopPropagation(); toggleNode(d); })
-        .on("dblclick", (e, d) => { e.stopPropagation(); showInfo(d); zoomToNode(d); });
-
-      nodeEnter.append("circle").attr("r", d => radii[d.data.type])
-        .attr("fill", d => colors[d.data.type].fill).attr("stroke", d => colors[d.data.type].stroke);
-
-      nodeEnter.append("rect").attr("class", "label-bg").attr("fill", "#f5f0e8").attr("fill-opacity", 0.92)
-        .attr("rx", 2).attr("x", d => radii[d.data.type] + 4).attr("y", -9).attr("height", 18)
-        .attr("width", d => { const fs = {root:18,family:17,subgroup:16,technique:15}[d.data.type]; return d.data.name.length * fs * 0.56 + 12; });
-
-      nodeEnter.append("text").attr("dy", ".31em").attr("x", d => radii[d.data.type] + 10).attr("text-anchor", "start")
-        .style("font-size", d => ({root:"18px",family:"17px",subgroup:"16px",technique:"15px"})[d.data.type])
-        .style("font-weight", "500").style("fill", d => colors[d.data.type].text).text(d => d.data.name);
-
-      nodeEnter.merge(node).transition().duration(DURATION)
-        .attr("transform", d => `translate(${d.x},${d.y})`).select("circle").attr("r", d => radii[d.data.type]);
+    function computeRadialPositions(cx, cy, n) {
+      const fanDeg = Math.min(160, 80 + n * 6);
+      const R = n <= 6 ? 140 : n <= 12 ? 170 : 200;
+      const startAngle = -fanDeg / 2;
+      return Array.from({length: n}, (_, i) => {
+        const angleDeg = n === 1 ? 0 : startAngle + i * (fanDeg / (n - 1));
+        const rad = angleDeg * Math.PI / 180;
+        return { x: cx + R * Math.sin(rad), y: cy + R * Math.cos(rad) };
+      });
     }
 
     function stepPath(s, t) {
       const midY = (s.y + t.y) / 2, dx = t.x - s.x;
       if (Math.abs(dx) < 1) return `M${s.x},${s.y}L${t.x},${t.y}`;
-      const r = Math.min(10, Math.abs(dx) / 2, (t.y - s.y) / 3), sign = dx > 0 ? 1 : -1;
-      return `M${s.x},${s.y}L${s.x},${midY - r}Q${s.x},${midY} ${s.x + sign * r},${midY}L${t.x - sign * r},${midY}Q${t.x},${midY} ${t.x},${midY + r}L${t.x},${t.y}`;
+      const r = Math.min(10, Math.abs(dx)/2, (t.y-s.y)/3), sign = dx > 0 ? 1 : -1;
+      return `M${s.x},${s.y}L${s.x},${midY-r}Q${s.x},${midY} ${s.x+sign*r},${midY}L${t.x-sign*r},${midY}Q${t.x},${midY} ${t.x},${midY+r}L${t.x},${t.y}`;
     }
 
     function relArcPath(sx, sy, tx, ty) {
-      const mx = (sx + tx) / 2, my = (sy + ty) / 2, dx = tx - sx, dy = ty - sy, len = Math.sqrt(dx*dx+dy*dy)||1;
-      const off = Math.min(100, len * 0.35), cx = mx + (-dy / len) * off, cy = my + (dx / len) * off;
-      return `M${sx},${sy}Q${cx},${cy}${tx},${ty}`;
+      const mx = (sx + tx) / 2, my = (sy + ty) / 2;
+      const dx = tx - sx, dy = ty - sy, len = Math.sqrt(dx*dx + dy*dy) || 1;
+      const off = Math.min(90, len * 0.3);
+      const cx = mx + (-dy / len) * off, cy = my + (dx / len) * off;
+      return `M${sx},${sy}Q${cx},${cy} ${tx},${ty}`;
     }
 
-    function toggleNode(d) {
-      if (d.children) { d._children = d.children; d.children = null; }
-      else if (d._children) { d.children = d._children; d._children = null; }
-      update(d);
-      showInfo(d);
-      drawRelationArcs(d);
-    }
+    // ==================== TAXONOMY DATA ====================
+    const taxonomyRoot = {
+      name: "Literary Techniques",
+      type: "root",
+      info: { definition: "Complete taxonomy of literary devices and techniques", effect: "Provides comprehensive reference framework", example: "All techniques below", related: [] },
+      children: [
+        {
+          name: "Descriptive",
+          type: "family",
+          info: { definition: "Techniques focused on vivid description and sensory detail", effect: "Engages reader's senses and creates immersive atmosphere", example: "Rich sensory language in narrative prose", related: [] },
+          children: [
+            {
+              name: "Imagery",
+              type: "subgroup",
+              info: { definition: "Language that appeals to the senses", effect: "Creates vivid mental pictures for the reader", example: "The golden sun melted across the horizon", related: [] },
+              techniques: [
+                T("Visual Imagery", "Language appealing to the sense of sight", "Helps reader visualize scenes and characters", "The scarlet dress hung like a flag in the wind", ["Auditory Imagery", "Metaphor"]),
+                T("Auditory Imagery", "Language that evokes sounds", "Intensifies emotional or sensory impact through sound", "The whisper of leaves in autumn wind", ["Visual Imagery", "Onomatopoeia"]),
+                T("Olfactory Imagery", "Language describing smells", "Triggers strong emotional and memory responses", "The acrid smell of smoke filled the room", ["Gustatory Imagery", "Sensory Accumulation"]),
+                T("Gustatory Imagery", "Language describing taste", "Creates intimate, visceral sensory experience", "The bitter pill of truth dissolved on his tongue", ["Olfactory Imagery", "Metaphor"]),
+                T("Tactile Imagery", "Language describing texture and physical sensation", "Engages reader through sense of touch", "The rough bark scraped her palms raw", ["Kinaesthetic Imagery", "Pathetic Fallacy"]),
+                T("Kinaesthetic Imagery", "Language describing movement and physical sensation", "Conveys bodily experience and motion", "Her limbs grew heavy; she sank into the chair", ["Tactile Imagery", "Stream of Consciousness"]),
+                T("Synaesthesia", "Mixing sensory perceptions (e.g., hearing colors)", "Creates striking, surreal effects and fresh perspectives", "The music was deep blue and resonant", ["Visual Imagery", "Metaphor"]),
+                T("Pathetic Fallacy", "Attributing human emotions to nature or objects", "Reflects character's inner state through external world", "The grey sky wept as she left", ["Personification", "Visual Imagery"]),
+                T("Ekphrasis", "Detailed, vivid description of a visual artwork or scene", "Creates intensity and draws reader into moment", "The marble statue's eyes seemed to follow her", ["Visual Imagery", "Metaphor"]),
+                T("Sensory Accumulation", "Layering multiple sensory details in close proximity", "Overwhelms reader with immersive sensory experience", "The hot sand, sharp cry of gulls, salt spray, blinding sun", ["Visual Imagery", "Auditory Imagery"])
+              ]
+            },
+            {
+              name: "Diction",
+              type: "subgroup",
+              info: { definition: "Choice and arrangement of words in writing", effect: "Shapes tone, register, and reader's perception", example: "A child's picture book uses simpler diction than a philosophical treatise", related: [] },
+              techniques: [
+                T("Connotation", "Implied or associated meaning beyond literal definition", "Adds layers of meaning and emotional resonance", "Home (warmth, safety) vs. house (neutral)", ["Denotation", "Loaded Language"]),
+                T("Denotation", "Literal, dictionary definition of a word", "Establishes precise, objective meaning", "Rose: a prickly flowering plant; also romantic symbol", ["Connotation", "Abstract Diction"]),
+                T("Archaism", "Use of outdated or archaic words", "Creates historical atmosphere or formal tone", "Thou, thee, hath, forsooth in Shakespeare", ["Neologism", "Register Shift"]),
+                T("Neologism", "Newly created or recently adopted words", "Signals modernity or innovation", "Selfie, cryptocurrency, binge-watch", ["Archaism", "Jargon"]),
+                T("Colloquialism", "Informal, conversational language", "Creates intimacy and realistic dialogue", "Gonna, wanna, ain't in everyday speech", ["Jargon", "Register Shift"]),
+                T("Jargon", "Specialized terminology of a profession or group", "Establishes expertise and insider perspective", "Binary, algorithm in programming; tort, statute in law", ["Colloquialism", "Slang"]),
+                T("Slang", "Very informal, often group-specific language", "Creates authenticity and generation/subculture specificity", "Lit, flex, salty in contemporary usage", ["Colloquialism", "Jargon"]),
+                T("Euphemism", "Mild or indirect term substituted for something harsh", "Softens blow of uncomfortable truth", "Passed away instead of died; let go instead of fired", ["Dysphemism", "Loaded Language"]),
+                T("Dysphemism", "Harsh or crude term substituted for neutral one", "Emphasizes negative aspects", "Croak instead of die; pig instead of police officer", ["Euphemism", "Loaded Language"]),
+                T("Register Shift", "Abrupt change from one level of formality to another", "Creates jarring effect or comic contrast", "Formal opening followed by slang", ["Colloquialism", "Archaism"]),
+                T("Abstract Diction", "Use of general, intangible concepts rather than concrete details", "Emphasizes ideas and themes over specifics", "Justice, love, freedom vs. the judge, her embrace, the border", ["Concrete Diction", "Nominalization"]),
+                T("Concrete Diction", "Use of specific, tangible, sensory words", "Creates vivid, immediate imagery and clarity", "Oak tree instead of vegetation; bitter cold instead of cold", ["Abstract Diction", "Visual Imagery"]),
+                T("Latinate Diction", "Use of words derived from Latin or Romance languages", "Creates formal, elevated, or sophisticated tone", "Commence, facilitate, ameliorate", ["Anglo-Saxon Diction", "Formal"]),
+                T("Anglo-Saxon Diction", "Use of words from Old English and Germanic roots", "Creates simple, direct, or earthy tone", "Begin, help, improve, quick", ["Latinate Diction", "Colloquialism"]),
+                T("Loaded Language", "Words chosen for emotional impact beyond denotation", "Manipulates reader's emotions and attitudes", "Freedom fighter vs. terrorist; slender vs. skeletal", ["Connotation", "Dysphemism"]),
+                T("Nominalization", "Converting a verb or adjective into a noun", "Creates abstraction or formality", "Destroy → destruction; happy → happiness", ["Abstract Diction", "Verbing"]),
+                T("Verbing", "Using a noun as a verb (verbifying)", "Creates energy and directness", "Google it, text me, access the database", ["Nominalization", "Neologism"])
+              ]
+            },
+            {
+              name: "Tone & Mood",
+              type: "subgroup",
+              info: { definition: "The emotional attitude of the narrator and the atmosphere of the text", effect: "Shapes reader's emotional response and interpretation", example: "A melancholic tone creates sadness; an urgent tone creates tension", related: [] },
+              techniques: [
+                T("Irony", "Expression of meaning using language that signifies the opposite", "Creates humor, social commentary, or reveals contradiction", "Saying 'Oh, great!' when something is terrible", ["Sarcasm", "Verbal Irony"]),
+                T("Sarcasm", "Sharp, bitter taunt or ironic utterance", "Creates mockery and often reveals contempt", "Oh, you're so smart—you failed the test", ["Irony", "Cynicism"]),
+                T("Cynicism", "Belief that people are motivated by self-interest", "Creates dark, pessimistic tone and detachment", "Everyone's got an agenda; no one acts from kindness", ["Sarcasm", "Detachment"]),
+                T("Melancholy", "Deep, persistent sadness or pensiveness", "Creates introspective, sorrowful atmosphere", "The fading light as day turns to dusk", ["Wistfulness", "Elegy"]),
+                T("Wistfulness", "Yearning sadness or nostalgic longing", "Evokes bittersweet remembrance of past", "Remembering childhood summers, now forever gone", ["Melancholy", "Nostalgia"]),
+                T("Reverence", "Deep respect, awe, or veneration", "Creates solemn, dignified, sacred atmosphere", "The cathedral's hushed tones and dim light", ["Detachment", "Lyric Intensity"]),
+                T("Detachment", "Emotional distance or objective observation without judgment", "Creates scientific or ironic perspective", "He described the disaster with clinical precision", ["Cynicism", "Understatement"]),
+                T("Urgency", "Sense of pressing importance or necessity", "Creates tension and compels reader action", "Short sentences, exclamation, present tense in action", ["Ambivalence", "Lyric Intensity"]),
+                T("Ambivalence", "Simultaneous presence of contradictory feelings", "Creates complexity and internal conflict", "Love and hatred for the same person simultaneously", ["Wistfulness", "Irony"]),
+                T("Elegy", "Mournful or contemplative poem; expresses sorrow", "Creates atmosphere of loss and reflection", "Formal mourning of the dead or passing of beauty", ["Melancholy", "Reverence"]),
+                T("Sardonic Tone", "Mocking, scornful, with dark humor", "Creates bitter critique with humor", "His earnest advice was met with sardonic laughter", ["Sarcasm", "Cynicism"]),
+                T("Lyric Intensity", "Heightened emotional expression with poetic force", "Creates passionate, deeply personal atmosphere", "Overwhelming love, fear, or wonder expressed lyrically", ["Urgency", "Reverence"]),
+                T("Understatement", "Representing something as less important than it is", "Creates humor or unexpected effect through contrast", "A nuclear explosion was 'rather loud'", ["Detachment", "Litotes"]),
+                T("Hyperbole", "Extreme exaggeration for effect", "Creates humor, emphasis, or surrealism", "I've told you a million times; I'm dying of hunger", ["Understatement", "Overstatement"])
+              ]
+            }
+          ]
+        },
+        {
+          name: "Repetitive",
+          type: "family",
+          info: { definition: "Techniques based on repeating sounds, words, or structures", effect: "Creates emphasis, rhythm, and memorable patterns", example: "The repetition of 'fire' in a poem emphasizes its importance", related: [] },
+          children: [
+            {
+              name: "Phonetic",
+              type: "subgroup",
+              info: { definition: "Repetition and arrangement of sounds in language", effect: "Creates musicality, emphasis, and auditory pleasure", example: "Alliteration and rhyme scheme in poetry", related: [] },
+              techniques: [
+                T("Alliteration", "Repetition of initial consonant sounds in nearby words", "Creates musicality and emphasizes phrases", "The silken, seductive snake slithered softly", ["Assonance", "Consonance"]),
+                T("Assonance", "Repetition of vowel sounds within or near each other", "Creates internal harmony and flow", "The rain in Spain falls mainly on the plain", ["Alliteration", "Consonance"]),
+                T("Consonance", "Repetition of consonant sounds within or near each other", "Creates texture and rhythmic cohesion", "The click and crack of broken sticks", ["Alliteration", "Assonance"]),
+                T("Sibilance", "Repetition of s, z, sh, ch sounds", "Creates hissing, whispered, or menacing effect", "The seashell's soft, subtle susurration", ["Alliteration", "Onomatopoeia"]),
+                T("Onomatopoeia", "Word that imitates the sound it represents", "Creates immediacy and auditory vividness", "Buzz, hiss, crack, bang, meow", ["Sibilance", "Cacophony"]),
+                T("Rhyme", "Repetition of terminal sounds in nearby words", "Creates closure, musicality, and predictability", "Cat/hat, moon/June in poetry", ["Internal Rhyme", "Slant Rhyme"]),
+                T("Internal Rhyme", "Rhyming words within the same line or clause", "Creates compressed musicality and patterning", "I held it as I held my breath, as still as stone", ["Rhyme", "Anaphora"]),
+                T("Slant Rhyme", "Words with similar but not identical sounds", "Creates modern, imperfect musicality", "Home/come, reason/prison", ["Rhyme", "Eye Rhyme"]),
+                T("Eye Rhyme", "Words spelled similarly but pronounced differently", "Creates visual rather than auditory rhyme", "Love/move, through/though", ["Rhyme", "Slant Rhyme"]),
+                T("Cacophony", "Harsh, discordant combination of sounds", "Creates jarring, ugly, or disturbing effect", "The grotesque crunch and screech of metal", ["Euphony", "Sibilance"]),
+                T("Euphony", "Pleasing, harmonious combination of sounds", "Creates smooth, beautiful, mellifluous effect", "Murmuring of innumerable bees; sweet silver sound", ["Cacophony", "Assonance"]),
+                T("Rhythm", "Pattern of stressed and unstressed syllables in language", "Creates pace and musicality", "The iambic heartbeat of a poem's meter", ["Metre", "Free Verse"]),
+                T("Metre", "Regular pattern of stressed and unstressed syllables", "Creates formal structure and predictable musicality", "Iambic pentameter: da-DUM, da-DUM, da-DUM", ["Rhythm", "Iambic Pentameter"]),
+                T("Iambic Pentameter", "Five iambs per line; common in English poetry", "Creates formal, traditional elegance", "Shall I compare thee to a summer's day?", ["Metre", "Enjambment"]),
+                T("Free Verse", "Poetry without regular meter or rhyme scheme", "Allows natural speech rhythms and flexibility", "Much modern and contemporary poetry", ["Rhythm", "Enjambment"]),
+                T("Plosive Sounds", "Hard consonants that stop the airflow", "Creates percussive, emphatic effect", "Pick and pack the packed picnic basket", ["Fricative Sounds", "Consonance"]),
+                T("Fricative Sounds", "Consonants produced by friction", "Creates hissing, sizzling, or flowing effect", "Soft and soothing; fierce and hissing", ["Plosive Sounds", "Sibilance"])
+              ]
+            },
+            {
+              name: "Lexical",
+              type: "subgroup",
+              info: { definition: "Repetition of words, phrases, and word patterns", effect: "Creates emphasis, rhythm, and memorability", example: "Repeating 'never' throughout a speech for emphasis", related: [] },
+              techniques: [
+                T("Anaphora", "Repetition of words at the beginning of successive clauses", "Creates emphasis, rhythm, and emotional power", "We shall fight, we shall prevail, we shall endure", ["Epistrophe", "Symploce"]),
+                T("Epistrophe", "Repetition of words at the end of successive clauses", "Creates strong closure and reinforcement", "When will you learn? When will you see? When will you grow?", ["Anaphora", "Symploce"]),
+                T("Symploce", "Combination of anaphora and epistrophe", "Creates complex rhythmic and emphatic patterns", "All for one, one for all; each for all, all for each", ["Anaphora", "Epistrophe"]),
+                T("Epizeuxis", "Repetition of a word with no intervening words", "Creates intense emphasis and immediacy", "No, no, NO! Never, never again!", ["Diacope", "Refrain"]),
+                T("Diacope", "Repetition of words with intervening words", "Creates emphasis with slight variation", "Never ever, again and again, far, far away", ["Epizeuxis", "Anadiplosis"]),
+                T("Antanaclasis", "Repetition of a word with different meanings", "Creates wordplay and philosophical complexity", "Live to work vs. work to live; light the light", ["Polyptoton", "Antithesis"]),
+                T("Polyptoton", "Repetition of words with the same root in different forms", "Creates cohesion and explores word relationships", "I love the lovingness of those who love life", ["Antanaclasis", "Conduplicatio"]),
+                T("Leitmotif", "Recurring word, phrase, or pattern representing a theme", "Reinforces central idea and creates textual unity", "The repeated word 'home' in stories about belonging", ["Symbol", "Refrain"]),
+                T("Refrain", "Line or phrase repeated at intervals throughout a text", "Creates musicality and emphasizes message", "The chorus of a song; repeated stanza in poetry", ["Leitmotif", "Anadiplosis"]),
+                T("Anadiplosis", "End of one clause repeated at the beginning of the next", "Creates flowing connection between ideas", "The end begins the next: strong leaders lead; leaders lead nations", ["Epanalepsis", "Diacope"]),
+                T("Epanalepsis", "Repetition of word(s) at the beginning and end of a clause", "Creates circular structure and emphasis", "Rage against the dying of the light; I came, I saw, I conquered", ["Anadiplosis", "Conduplicatio"]),
+                T("Conduplicatio", "Repetition of words in close succession for emphasis", "Creates intense emotional and rhythmic power", "Cowards die many times before their deaths; the valiant never taste death", ["Polyptoton", "Epanalepsis"])
+              ]
+            },
+            {
+              name: "Structural",
+              type: "subgroup",
+              info: { definition: "Repetition of grammatical structures and syntactic patterns", effect: "Creates parallelism, rhythm, and cognitive cohesion", example: "Three parallel clauses with identical structure", related: [] },
+              techniques: [
+                T("Parallelism", "Repetition of grammatical structures in successive phrases", "Creates balance, emphasis, and satisfying rhythm", "I came, I saw, I conquered", ["Tricolon", "Antithesis (Structural)"]),
+                T("Tricolon", "Series of three parallel items or clauses", "Creates completion and emphasis through triple rhythm", "Life, liberty, and the pursuit of happiness", ["Parallelism", "Isocolon"]),
+                T("Antithesis (Structural)", "Juxtaposition of parallel structures with opposing ideas", "Creates dramatic contrast through syntax", "To err is human; to forgive, divine", ["Parallelism", "Juxtaposition"]),
+                T("Chiasmus", "Reversal of grammatical structures in successive phrases", "Creates elegant symmetry and memorable phrasing", "Ask not what your country can do for you; ask what you can do for your country", ["Parallelism", "Antithesis (Structural)"]),
+                T("Isocolon", "Series of grammatically parallel clauses of equal length", "Creates mathematical balance and rhythm", "Veni, vidi, vici (I came, I saw, I conquered)", ["Tricolon", "Parallelism"]),
+                T("Accumulation", "Piling up of ideas, phrases, or clauses without conjunctions", "Creates overwhelming effect through quantity", "The sun, the moon, the stars, the sea, the sky stretched endlessly", ["Cataloguing", "Gradatio"]),
+                T("Cataloguing", "Listing items in succession", "Creates inventory of details or ideas", "Red, orange, yellow, green, blue, indigo, violet", ["Accumulation", "Asyndeton"]),
+                T("Incremental Repetition", "Repeating a phrase with added elements each time", "Creates building intensity and expansion", "I love her, I love her deeply, I love her with all my soul", ["Accumulation", "Amplification"]),
+                T("Amplification", "Expanding on an idea with additional details", "Creates emphasis through elaboration", "He was tall—six foot two, broad-shouldered, imposing", ["Incremental Repetition", "Accumulation"]),
+                T("Gradatio", "Series of words arranged in ascending order of intensity", "Creates building emotional or logical force", "From good to great, from great to magnificent", ["Accumulation", "Incremental Repetition"])
+              ]
+            }
+          ]
+        },
+        {
+          name: "Comparative",
+          type: "family",
+          info: { definition: "Techniques that compare or contrast ideas, things, and concepts", effect: "Creates clarity through comparison and generates meaning through difference", example: "A metaphor comparing love to a journey", related: [] },
+          children: [
+            {
+              name: "Figurative",
+              type: "subgroup",
+              info: { definition: "Language that deviates from literal meaning through comparison", effect: "Enriches expression and creates imaginative connections", example: "Like a rose, she bloomed in spring", related: [] },
+              techniques: [
+                T("Simile", "Direct comparison of two unlike things using 'like' or 'as'", "Creates concrete understanding through familiar comparison", "The snow was like a blanket covering the earth", ["Metaphor", "Analogy"]),
+                T("Metaphor", "Implied comparison without 'like' or 'as'", "Suggests deeper connection than simile", "Time is money; life is a journey; love is war", ["Simile", "Extended Metaphor"]),
+                T("Extended Metaphor", "Metaphor sustained throughout a work or long passage", "Creates unified symbolic framework", "An entire poem where life is a stage with acts", ["Metaphor", "Conceit"]),
+                T("Conceit", "Extended, elaborate metaphor; often intellectual or surprising", "Creates ingenious or witty comparison", "Donne comparing lovers' souls to a compass", ["Extended Metaphor", "Metaphor"]),
+                T("Personification", "Attributing human qualities to non-human things", "Creates intimacy and emotional connection", "The wind whispered secrets; the car refused to start", ["Apostrophe", "Anthropomorphism"]),
+                T("Anthropomorphism", "Giving animals or objects human characteristics", "Creates accessibility and emotional engagement", "The brave little toaster; the clever fox outsmarted them", ["Personification", "Transferred Epithet"]),
+                T("Apostrophe", "Directly addressing someone absent or something non-human", "Creates intimacy or dramatic intensity", "O death, where is thy sting? Oh, foolish pride!", ["Personification", "Rhetorical Question"]),
+                T("Metonymy", "Substituting the name of something with that of something associated", "Creates conciseness and interesting associations", "The White House announced...; Hollywood loves violence", ["Synecdoche", "Metaphor"]),
+                T("Synecdoche", "Part stands for whole, or whole stands for part", "Creates compressed reference and interesting perspectives", "All hands on deck; lend a hand", ["Metonymy", "Metaphor"]),
+                T("Allegory", "Extended narrative where characters/events represent abstract concepts", "Creates layered meaning and moral instruction", "The Pilgrim's Progress; Animal Farm", ["Extended Metaphor", "Symbol"]),
+                T("Analogy", "Extended comparison highlighting similarities", "Creates understanding of unfamiliar through familiar", "How cells work in a body is like workers in a factory", ["Simile", "Metaphor"]),
+                T("Transferred Epithet", "Applying an adjective to the wrong noun", "Creates surprising image and compressed meaning", "A sleepless night (night doesn't sleep); restless sleep", ["Personification", "Metaphor"]),
+                T("Dead Metaphor", "Metaphor that has become so common it's treated as literal", "Shows how language evolves and metaphors fade", "Light a fire; grasp an idea; run a business", ["Metaphor", "Cliché"]),
+                T("Mixed Metaphor", "Combining two or more incompatible metaphors", "Usually considered a flaw; creates confusion", "The ball is in your court and the chips are down", ["Metaphor", "Oxymoron"]),
+                T("Vehicle & Tenor", "Tenor is what's being compared; vehicle is what it's compared to", "Understanding this distinction clarifies metaphor mechanics", "In 'love is a rose': love is tenor, rose is vehicle", ["Metaphor", "Simile"]),
+                T("Hypocatastasis", "A metaphor that is hinted at rather than directly stated", "Creates subtlety and requires reader interpretation", "He's such a snake suggests treachery without stating it", ["Metaphor", "Implied Meaning"])
+              ]
+            },
+            {
+              name: "Symbolic",
+              type: "subgroup",
+              info: { definition: "Use of symbols and symbolic patterns to create layers of meaning", effect: "Enriches text with resonance and cultural/universal significance", example: "A dove symbolizing peace throughout a narrative", related: [] },
+              techniques: [
+                T("Symbol", "Object, person, or action representing something abstract", "Creates layers of meaning beyond literal reference", "The ring in LOTR symbolizes power, corruption, and desire", ["Motif", "Metaphor"]),
+                T("Motif", "Recurring pattern, image, or theme throughout a work", "Creates unity and reinforces central concerns", "The repeated motif of windows in a story about perspective", ["Leitmotif", "Symbol"]),
+                T("Archetype", "Universal symbol or character type recognized across cultures", "Creates instant resonance and deep psychological connection", "The Hero, the Shadow, the Wise Mentor", ["Symbol", "Mythological Allusion"]),
+                T("Colour Symbolism", "Colors assigned particular meanings in specific contexts", "Creates atmosphere and communicates symbolically", "Red for passion/danger, white for purity, black for evil", ["Symbol", "Visual Imagery"]),
+                T("Object Symbolism", "Objects representing abstract ideas or themes", "Creates concrete focus for abstract concepts", "Mirrors symbolizing self-reflection; cages symbolizing entrapment", ["Symbol", "Metaphor"]),
+                T("Animal Symbolism", "Animals carrying particular meanings based on cultural knowledge", "Creates instant association and meaning", "Owls = wisdom, foxes = cunning, ravens = death", ["Archetype", "Symbolism"]),
+                T("Mythological Allusion", "Reference to myths or classical stories", "Adds depth by invoking familiar cultural narratives", "Calling someone a Trojan horse or referring to Pandora's box", ["Archetype", "Allusion"]),
+                T("Biblical Allusion", "Reference to biblical stories, characters, or concepts", "Creates moral or spiritual resonance in secular texts", "Garden of Eden representing paradise; Judas representing betrayal", ["Archetype", "Allusion"]),
+                T("Literary Allusion", "Reference to other literary works or characters", "Creates intertextual dialogue and layers of meaning", "Referring to Gatsby when describing an eccentric wealthy person", ["Allusion", "Intertextuality"]),
+                T("Cultural Allusion", "Reference to cultural events, figures, or artifacts", "Creates contemporary relevance and cultural commentary", "References to September 11th or iconic speeches", ["Literary Allusion", "Allusion"]),
+                T("Emblem", "Visual representation of an abstract quality or concept", "Creates iconic recognition and symbolic power", "A crown emblematizes royalty; a skull emblematizes death", ["Symbol", "Iconography"]),
+                T("Iconography", "System of symbols and their meanings within a text or culture", "Creates recognizable visual language", "In medieval art, specific colors and objects carry consistent meanings", ["Symbol", "Archetype"])
+              ]
+            },
+            {
+              name: "Contrast",
+              type: "subgroup",
+              info: { definition: "Techniques emphasizing difference and opposition", effect: "Creates clarity, drama, and philosophical tension through juxtaposition", example: "Contrasting light and dark imagery", related: [] },
+              techniques: [
+                T("Antithesis", "Placing contrasting ideas in parallel grammatical structures", "Creates dramatic opposition and makes both ideas memorable", "It was the best of times, it was the worst of times", ["Juxtaposition", "Parallelism"]),
+                T("Juxtaposition", "Placing contrasting elements side by side without connectives", "Creates tension and forces comparison", "The palace next to the slum; the wedding and the funeral", ["Antithesis", "Contrast"]),
+                T("Oxymoron", "Combining contradictory or incongruous terms", "Creates paradoxical effect and forces reconsideration", "Bittersweet, deafening silence, living death", ["Paradox", "Antithesis"]),
+                T("Paradox", "Statement that seems contradictory but may be true", "Creates philosophical tension and requires interpretation", "Less is more; to find yourself, you must lose yourself", ["Oxymoron", "Irony"]),
+                T("Foil", "Character, plot point, or idea that contrasts with another", "Highlights qualities through opposition", "Enobarbus is a foil to Antony, highlighting different values", ["Juxtaposition", "Character Development"]),
+                T("Situational Irony", "When reality contradicts expectation in events", "Creates humor, pathos, or philosophical tension", "A fire station burning down; a marriage counselor's divorce", ["Verbal Irony", "Dramatic Irony"]),
+                T("Dramatic Irony", "Audience/reader knows something character doesn't", "Creates tension and emotional investment", "In Oedipus Rex, we know he's the killer he's seeking", ["Verbal Irony", "Foreshadowing"]),
+                T("Verbal Irony", "Saying one thing but meaning the opposite", "Creates humor, sarcasm, or critique", "Saying 'Oh great!' when something is terrible", ["Sarcasm", "Situational Irony"]),
+                T("Bathos", "Abrupt descent from elevated to trivial or comic", "Creates humor through anticlimax", "The hero charges into battle, then trips over a rock", ["Anticlimax", "Bathetic"]),
+                T("Anticlimax", "Deflating conclusion that disappoints after buildup", "Creates humor or undermines expectations", "After a dramatic opening, the villain monologues pointlessly", ["Bathos", "Comedic Effect"]),
+                T("Binary Opposition", "Division of concepts into opposing pairs", "Creates fundamental structure for understanding", "Nature/Culture, Self/Other, Nature/Nurture", ["Antithesis", "Paradox"]),
+                T("Chiaroscuro", "Contrast of light and dark, often used symbolically", "Creates drama, mood, and symbolic meaning", "Dark shadows surrounding a figure in spotlit relief", ["Visual Imagery", "Contrast"])
+              ]
+            }
+          ]
+        },
+        {
+          name: "Structural",
+          type: "family",
+          info: { definition: "Techniques involving organization, syntax, and narrative architecture", effect: "Shapes how meaning is conveyed and how reader processes information", example: "A non-linear narrative structure changes how we experience story", related: [] },
+          children: [
+            {
+              name: "Narrative",
+              type: "subgroup",
+              info: { definition: "Techniques involving plot structure and narrative ordering", effect: "Controls pacing, revelation, and reader understanding of events", example: "Starting in the middle of action with in medias res", related: [] },
+              techniques: [
+                T("In Medias Res", "Beginning a narrative in the middle of action", "Creates immediate engagement and requires exposition later", "The Odyssey begins with Odysseus already at sea", ["Flashback (Analepsis)", "Exposition"]),
+                T("Flashback (Analepsis)", "Interruption to show earlier events", "Provides context and expands temporal scope", "Remembering childhood while in present situation", ["In Medias Res", "Flash-Forward (Prolepsis)"]),
+                T("Flash-Forward (Prolepsis)", "Interruption showing future events", "Creates suspense or foreshadows outcomes", "A glimpse of the ending before we reach it", ["Flashback (Analepsis)", "Foreshadowing"]),
+                T("Frame Narrative", "Story within a story; outer frame provides context", "Creates nested narratives and multiple perspectives", "Stories told by characters in The Canterbury Tales", ["Mise en Abyme", "Narrative Structure"]),
+                T("Non-Linear Narrative", "Events presented out of chronological order", "Creates complexity and requires active reader engagement", "Pulp Fiction jumps between timelines", ["In Medias Res", "Circular Narrative"]),
+                T("Circular Narrative", "Ending returns to or echoes the beginning", "Creates completion and philosophical resonance", "Story that begins and ends with the same image", ["Frame Narrative", "Symmetry"]),
+                T("Foreshadowing", "Hints of future events or outcomes", "Creates suspense and invites rereading for discovery", "A character's comment that becomes prophetic later", ["Flash-Forward (Prolepsis)", "Dramatic Irony"]),
+                T("Chekhov's Gun", "Principle that introduced elements must be significant later", "Creates causality and meaningful detail", "If a gun is mentioned, it must fire by the end", ["Foreshadowing", "Plot Development"]),
+                T("Red Herring", "Misleading clue that diverts attention from truth", "Creates misdirection and surprise", "Detective fiction plants false evidence to mislead reader", ["Foreshadowing", "Misdirection"]),
+                T("Cliffhanger", "Abrupt ending on unresolved tension", "Creates urgency to continue reading or watching", "End of episode leaves character in danger", ["Dramatic Irony", "Suspense"]),
+                T("Denouement", "Resolution of plot after climax", "Provides closure and reveals consequences", "After the climax, events settle and resolve", ["Rising Action", "Falling Action"]),
+                T("Rising Action", "Events building toward climax", "Creates tension and emotional investment", "Complications and escalations leading to climax", ["Exposition", "Climax"]),
+                T("Falling Action", "Events after climax leading to resolution", "Shows consequences and moves toward denouement", "After the turning point, events move toward ending", ["Climax", "Denouement"]),
+                T("Anagnorisis", "Moment of recognition or self-discovery by protagonist", "Creates turning point in understanding", "Oedipus discovering he is the cause of the plague", ["Peripeteia", "Climax"]),
+                T("Peripeteia", "Sudden reversal of fortune or circumstances", "Creates dramatic turn in plot", "Expected ally reveals they're the villain", ["Anagnorisis", "Climax"]),
+                T("Hamartia", "Fatal flaw in protagonist leading to downfall", "Explains tragedy as consequence of character defect", "Macbeth's ambition leads to his destruction", ["Tragic Flaw", "Character Development"]),
+                T("Deus Ex Machina", "Unexpected resolution by intervention of outside force", "Creates artificial resolution", "A god appears to solve the otherwise unsolvable problem", ["Denouement", "Plot Device"]),
+                T("Ellipsis (Narrative)", "Omission of events or time periods", "Allows focus on important moments", "Skipping over uneventful weeks in a narrative", ["Fragmentation", "Non-Linear Narrative"]),
+                T("Subplot", "Secondary plot running parallel to main plot", "Creates complexity and thematic resonance", "Love story subplot in an adventure narrative", ["Plot Development", "Narrative Structure"]),
+                T("Parallel Narrative", "Two or more narratives progressing simultaneously", "Creates connection and comparison between stories", "Two characters' stories told side by side", ["Frame Narrative", "Non-Linear Narrative"])
+              ]
+            },
+            {
+              name: "Syntactic",
+              type: "subgroup",
+              info: { definition: "Techniques involving sentence structure and grammatical ordering", effect: "Controls rhythm, emphasis, and clarity of expression", example: "Short, clipped sentences create tension", related: [] },
+              techniques: [
+                T("Syndeton", "Joining phrases or clauses with conjunctions", "Creates connection and accumulation", "And we were hungry and tired and afraid", ["Asyndeton", "Polysyndeton"]),
+                T("Asyndeton", "Omitting conjunctions between phrases or clauses", "Creates speed, emphasis, or fragmentation", "We were hungry, tired, afraid, desperate", ["Syndeton", "Polysyndeton"]),
+                T("Polysyndeton", "Excessive use of conjunctions between phrases or clauses", "Creates rhythmic accumulation or overwhelming effect", "And we were hungry and tired and afraid and losing hope", ["Asyndeton", "Syndeton"]),
+                T("Parataxis", "Placing grammatical units side by side without connectives", "Creates equality and can feel abrupt", "I came, I saw, I conquered", ["Hypotaxis", "Asyndeton"]),
+                T("Hypotaxis", "Using subordinate clauses to show relationships", "Creates hierarchy and complex relationships", "When I arrived, since I was tired, although it was late", ["Parataxis", "Complex Sentences"]),
+                T("Periodic Sentence", "Main clause postponed until end after subordinate clauses", "Creates suspense and emphasis through delayed resolution", "Although we tried, though we failed, still we persevered", ["Loose Sentence", "Suspension"]),
+                T("Loose Sentence", "Main clause stated first, followed by elaborations", "Creates directness and adds information gradually", "We persevered, though we tried, despite our failures", ["Periodic Sentence", "Clarity"]),
+                T("Rhetorical Question", "Question posed not for answer but for effect", "Creates emphasis and engages reader", "Who could deny the beauty of the sunset?", ["Apostrophe", "Interrogative Sentence"]),
+                T("Sentence Fragment", "Incomplete sentence used intentionally for effect", "Creates emphasis, mimics speech", "Not a complete thought. Just fragments. Sharp. Direct.", ["Asyndeton", "Stylistic Device"]),
+                T("Run-On Sentence", "Independent clauses improperly joined", "Can create breathless or manic effect", "She ran through the door and down the hall and into his arms", ["Syndeton", "Sentence Length"]),
+                T("Anastrophe", "Inversion of normal word order", "Creates emphasis or archaic effect", "Strong was his conviction; backward he walked", ["Hyperbaton", "Inversion"]),
+                T("Parenthesis", "Insertion of a phrase or clause as interruption", "Allows interjection and creates aside effect", "The truth—hard as it is to admit—was obvious", ["Apposition", "Punctuation"]),
+                T("Apposition", "Placement of noun or noun phrase beside another as explanation", "Creates definition through juxtaposition", "My brother, the doctor, explained the procedure", ["Parenthesis", "Definition"]),
+                T("Ellipsis (Grammatical)", "Omission of words understood from context", "Creates conciseness and emphasis", "Some laughed; others cried", ["Asyndeton", "Compression"]),
+                T("Caesura", "Pause or break in metrical line", "Creates rhythm and allows emphasis in poetry", "The day breaks || silence grows", ["Enjambment", "Line Break"]),
+                T("Enjambment", "Line breaks that continue grammatical phrase to next line", "Creates flow across line breaks", "The day breaks / silently", ["End-Stopping", "Line Break"]),
+                T("End-Stopping", "Grammatical pause coinciding with line ending", "Creates completion and allows rest", "The day breaks. / Silence grows.", ["Enjambment", "Caesura"])
+              ]
+            },
+            {
+              name: "Point of View",
+              type: "subgroup",
+              info: { definition: "Techniques involving narrator's perspective and narrative distance", effect: "Controls what information reader has and emotional engagement", example: "First-person creates intimacy; omniscient creates detachment", related: [] },
+              techniques: [
+                T("First-Person Narrator", "Story told from perspective of 'I'", "Creates intimacy and direct reader connection", "I walked through the door and found the truth", ["Second-Person Address", "Interior Monologue"]),
+                T("Second-Person Address", "Story told to 'you'; addresses reader directly", "Creates immediate engagement and implicates reader", "You enter the room. You see the body. You freeze.", ["First-Person Narrator", "Audience Address"]),
+                T("Third-Person Omniscient", "Narrator knows all thoughts, feelings, and events", "Creates detachment and comprehensive perspective", "Traditional omniscient narration in Victorian novels", ["Third-Person Limited", "Narrative Distance"]),
+                T("Third-Person Limited", "Third person but from one character's perspective", "Creates objectivity with limited knowledge", "He saw the truth but didn't understand it", ["Third-Person Omniscient", "Restricted Perspective"]),
+                T("Unreliable Narrator", "Narrator whose account cannot be fully trusted", "Creates uncertainty and requires active interpretation", "An insane narrator whose perspective is skewed", ["Naive Narrator", "Dramatic Irony"]),
+                T("Stream of Consciousness", "Direct representation of character's mental processes", "Creates immediacy and psychological depth", "Molly Bloom's long, unpunctuated internal monologue", ["Interior Monologue", "Free Indirect Discourse"]),
+                T("Interior Monologue", "Character's unspoken thoughts represented", "Creates access to internal mental life", "His thoughts raced: did she know? Could she understand?", ["Stream of Consciousness", "Thought Representation"]),
+                T("Free Indirect Discourse", "Third-person narration with character's voice and perspective", "Creates intimacy without first-person commitment", "He wondered if she understood. But how could she?", ["Stream of Consciousness", "Narrative Style"]),
+                T("Epistolary Mode", "Narrative told through letters, emails, or documents", "Creates authenticity and varied perspectives", "The novel told entirely through exchanged letters", ["Frame Narrative", "Documentary Style"]),
+                T("Dramatic Monologue", "Character speaks directly to listener, revealing self", "Creates character development and psychological insight", "Browning's Duke speaking to a visitor", ["Interior Monologue", "Direct Speech"]),
+                T("Collective Narrator", "Multiple characters speaking as 'we' or unified voice", "Creates community perspective and shared experience", "Townspeople speaking collectively about an event", ["First-Person Narrator", "Multiple Perspectives"]),
+                T("Naive Narrator", "Narrator lacks understanding of what they describe", "Creates irony as reader understands more than narrator", "A child narrator unaware of adults' dark intentions", ["Unreliable Narrator", "Dramatic Irony"])
+              ]
+            },
+            {
+              name: "Rhetorical",
+              type: "subgroup",
+              info: { definition: "Techniques of argument, persuasion, and rhetorical effect", effect: "Appeals to audience through logic, emotion, credibility, and timing", example: "Using ethos to establish credibility before making an argument", related: [] },
+              techniques: [
+                T("Ethos", "Appeal to credibility and authority of the speaker", "Establishes trustworthiness and expertise", "A doctor speaking about medicine has ethos", ["Pathos", "Logos"]),
+                T("Pathos", "Appeal to emotion and sympathy of the audience", "Engages reader emotionally and motivates response", "A story about a child's suffering appeals to pathos", ["Logos", "Emotional Appeal"]),
+                T("Logos", "Appeal to logic and reason", "Uses evidence and rational argument to persuade", "Statistical evidence presented in logical sequence", ["Ethos", "Rational Argument"]),
+                T("Kairos", "Persuasion through timing and cultural moment", "Leverages opportune moment for maximum impact", "An ad released during a cultural event it references", ["Ethos", "Rhetorical Strategy"]),
+                T("Antistrophe", "Rhetorical device turning opponent's words back against them", "Creates clever refutation through reversal", "Your own argument proves my point, not yours", ["Rhetorical Turn", "Argument"]),
+                T("Hendiadys", "Expressing a single idea through two words or phrases", "Creates emphasis and semantic richness", "Nice and warm; safe and sound", ["Coordination", "Rhetorical Device"]),
+                T("Litotes", "Understatement expressed through negative construction", "Creates ironic emphasis through minimization", "That's not bad (meaning it's good); no small matter", ["Meiosis", "Understatement"]),
+                T("Meiosis", "Deliberate representation of something as less important", "Creates irony and humor through minimization", "The Black Death was merely a bit problematic", ["Litotes", "Understatement"]),
+                T("Apophasis", "Mentioning something by denying it explicitly", "Actually draws attention to what's ostensibly denied", "I won't even mention his terrible record", ["Rhetorical Device", "Negation"]),
+                T("Procatalepsis", "Anticipating and answering objections before they're raised", "Strengthens argument by addressing counterarguments", "You might argue costs are prohibitive; however, benefits...", ["Refutation", "Persuasion"]),
+                T("Enthymeme", "Rhetorical syllogism with premise implied rather than stated", "Uses shared understanding to persuade efficiently", "All humans are mortal; therefore, Socrates is mortal", ["Logical Argument", "Syllogism"]),
+                T("Anecdote", "Brief story illustrating a point or providing evidence", "Creates vivid, memorable example and human interest", "A personal story told to support a broader claim", ["Exemplum", "Narrative Evidence"]),
+                T("Exemplum", "Specific example used to illustrate general principle", "Provides concrete evidence for abstract claim", "George Washington's honesty exemplifying integrity", ["Anecdote", "Evidence"]),
+                T("Enumeratio", "Detailed listing of items, points, or arguments", "Creates comprehensive coverage and accumulative effect", "Point one, point two, point three...", ["Accumulation", "Cataloguing"]),
+                T("Hyperbaton", "Inversion of normal word order for rhetorical effect", "Creates emphasis and unusual phrasing", "Angry was he; strong the opposition grew", ["Anastrophe", "Word Order"]),
+                T("Zeugma", "Word used in two different senses within one phrase", "Creates wit and surprising connection", "Lost both her patience and her keys", ["Syllepsis", "Wordplay"]),
+                T("Syllepsis", "Word understood in different ways in successive clauses", "Creates wordplay and surprising connections", "Wore an old coat and a smile", ["Zeugma", "Pun"])
+              ]
+            }
+          ]
+        },
+        {
+          name: "Intertextual & Metafictional",
+          type: "family",
+          info: { definition: "Techniques involving references to other texts and self-conscious narrative", effect: "Creates layers of meaning through textual connection and narrative awareness", example: "A novel that references its own structure", related: [] },
+          children: [
+            {
+              name: "Intertextual",
+              type: "subgroup",
+              info: { definition: "Techniques referencing, incorporating, or dialoguing with other texts", effect: "Creates connection to broader literary tradition and cultural conversation", example: "Quoting Shakespeare to invoke literary authority", related: [] },
+              techniques: [
+                T("Allusion", "Indirect reference to another work, person, or event", "Enriches meaning through connection to external reference", "Calling an ambitious man an Icarus or Macbeth", ["Quotation", "Reference"]),
+                T("Quotation", "Direct reproduction of words from another source", "Provides authority or creates deliberate echo", "Citing a famous line from another work verbatim", ["Allusion", "Attribution"]),
+                T("Epigraph", "Quotation placed at beginning of work or section", "Sets tone and provides thematic context", "A poem beginning with a relevant Shakespeare quote", ["Quotation", "Framing"]),
+                T("Parody", "Humorous imitation of a style or work", "Creates humor through exaggeration of recognizable features", "Scary Movie parodying horror film conventions", ["Pastiche", "Satire"]),
+                T("Pastiche", "Imitation of style, often respectful or admiring", "Honors original while creating new work", "A painting in the style of Monet", ["Parody", "Homage"]),
+                T("Homage", "Work created as tribute to another work or artist", "Shows respect and creates intentional echo", "A novel dedicated to and influenced by a predecessor", ["Pastiche", "Tribute"]),
+                T("Adaptation", "Rewriting of work in new medium or context", "Translates story to new form while maintaining core", "Stage adaptation of a novel; film adaptation of a play", ["Transformation", "Literary Borrowing"]),
+                T("Palimpsest", "Text written over earlier text, or later text reusing earlier", "Creates layered meaning and historical echo", "Medieval manuscripts with previous text underneath", ["Intertextuality", "Layered Meaning"]),
+                T("Intertextuality (Explicit)", "Clear, named references to other texts", "Deliberately invokes connection reader can identify", "Title borrowed from another work", ["Intertextuality (Implicit)", "Allusion"]),
+                T("Intertextuality (Implicit)", "Subtle echoes and parallels without explicit naming", "Requires reader recognition; creates discovery", "Plot structure echoing earlier work without acknowledgment", ["Intertextuality (Explicit)", "Literary Echo"]),
+                T("Hypotext / Hypertext", "Hypotext is source text; hypertext is derived text", "Hypotext influences or is transformed by hypertext", "Odyssey (hypotext) → Joyce's Ulysses (hypertext)", ["Intertextuality", "Literary Genealogy"])
+              ]
+            },
+            {
+              name: "Metafictional",
+              type: "subgroup",
+              info: { definition: "Techniques involving self-awareness and self-referentiality of narrative", effect: "Creates distance and philosophical complexity", example: "A character discussing the book they're in", related: [] },
+              techniques: [
+                T("Breaking the Fourth Wall", "Character or narrator acknowledges audience or fictional nature", "Creates direct connection with reader; disrupts illusion", "Character looks at camera; narrator addresses reader directly", ["Metafiction", "Self-Referentiality"]),
+                T("Self-Referentiality", "Work referring to itself, its creation, or its status as fiction", "Creates philosophical paradox and self-awareness", "Novel discussing its own genre and conventions", ["Metafiction", "Self-Consciousness"]),
+                T("Metafiction", "Fiction that reflects on its own nature and conventions", "Creates commentary on narrative and meaning-making", "A novel about writing a novel; a film about filmmaking", ["Breaking the Fourth Wall", "Literary Consciousness"]),
+                T("Postmodern Fragmentation", "Disruptive, fragmented narrative structure", "Challenges coherence and linear meaning", "Non-sequiturs, missing pages, disrupted chronology", ["Non-Linear Narrative", "Experimental Form"]),
+                T("Unreliable Text", "Text itself seems flawed, inconsistent, or deliberately misleading", "Implicates reader in unreliability and interpretation", "Contradictory versions of events; missing pages", ["Unreliable Narrator", "Metafiction"]),
+                T("Mise en Abyme", "Text containing representation of itself; story within story", "Creates infinite regression and philosophical reflection", "A painting depicting the painter painting the painting", ["Frame Narrative", "Recursive Structure"]),
+                T("Author Intrusion", "Author's voice breaking into narrative explicitly", "Disrupts fiction and creates author presence", "Author commenting on character or plot directly", ["Narrative Intrusion", "Metafiction"]),
+                T("Narrative Self-Consciousness", "Narrator aware of being in narrative and commenting on it", "Creates philosophical reflection on storytelling", "Narrator discussing their own narrative strategies", ["Self-Referentiality", "Metafiction"])
+              ]
+            }
+          ]
+        }
+      ]
+    };
 
-    function drawRelationArcs(d) {
-      relationsGroup.selectAll("*").remove();
-      if (!d.data.info || !d.data.info.related || d.data.info.related.length === 0) {
-        d3.select("#axis-legend").classed("visible", false);
-        return;
+    // ==================== D3 SETUP ====================
+    const svg = d3.select("#main-svg");
+    const zoomGroup = d3.select("#zoom-group");
+    const nodesGroup = d3.select("#nodes-group");
+    const linksGroup = d3.select("#links-group");
+    const spokesGroup = d3.select("#spokes-group");
+    const relationsGroup = d3.select("#relations-group");
+    const techniquesGroup = d3.select("#techniques-group");
+
+    const treeLayout = d3.tree()
+      .nodeSize([180, 160])
+      .separation((a, b) => a.parent === b.parent ? 1.2 : 1.6);
+
+    const root = d3.hierarchy(taxonomyRoot);
+    const hierarchicalData = treeLayout(root);
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.5, 4])
+      .on("zoom", (event) => {
+        zoomGroup.attr("transform", event.transform);
+      });
+
+    svg.call(zoom);
+    svg.call(zoom.transform, d3.zoomIdentity.translate(W / 2, 90).scale(0.55));
+
+    // ==================== MAIN UPDATE FUNCTION ====================
+    function update(d) {
+      if (d._children) {
+        d.children = d._children;
+        d._children = null;
+      } else {
+        d._children = d.children;
+        d.children = null;
       }
 
-      const relatedNodes = [];
-      d.data.info.related.forEach(name => {
-        const rel = RELATIONS.find(r => (r.from === d.data.name && r.to === name) || (r.to === d.data.name && r.from === name));
-        if (rel && nodeMap.has(name)) {
-          relatedNodes.push({ node: nodeMap.get(name), axis: rel.axis });
+      treeLayout(root);
+
+      const nodes = root.descendants();
+      nodes.forEach((node, i) => {
+        node.id = i;
+        state.nodeMap.set(node.data.name, node);
+      });
+
+      const nodeSelection = nodesGroup.selectAll("g.node")
+        .data(nodes, d => d.id);
+
+      nodeSelection.exit().remove();
+
+      const nodeEnter = nodeSelection.enter().append("g")
+        .attr("class", d => `node node--${d.data.type}`)
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+
+      const nodeRadii = { root: 14, family: 11, subgroup: 9 };
+      const textSizes = { root: "18px", family: "17px", subgroup: "16px" };
+
+      nodeEnter.append("circle")
+        .attr("r", d => nodeRadii[d.data.type] || 8);
+
+      nodeEnter.append("rect")
+        .attr("class", "node-label-bg")
+        .attr("fill", "#f5f0e8")
+        .attr("fill-opacity", 0.92)
+        .attr("rx", 3);
+
+      nodeEnter.append("text")
+        .attr("dy", "0.32em")
+        .style("text-anchor", "middle")
+        .style("font-size", d => textSizes[d.data.type] || "14px")
+        .text(d => d.data.name);
+
+      const nodeUpdate = nodeSelection.merge(nodeEnter)
+        .on("click", function(event, d) {
+          event.stopPropagation();
+          if (d.data.type === "family") {
+            update(d);
+            renderBursts();
+          } else if (d.data.type === "subgroup") {
+            state.expandedSubgroups.has(d.data.name)
+              ? state.expandedSubgroups.delete(d.data.name)
+              : state.expandedSubgroups.add(d.data.name);
+            renderBursts();
+            showInfo(d, event);
+          }
+        })
+        .transition().duration(550)
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+
+      nodeUpdate.select("text")
+        .each(function(d) {
+          const textEl = d3.select(this);
+          const text = textEl.text();
+          textEl.text(text);
+          setTimeout(() => {
+            try {
+              const bb = this.getBBox();
+              textEl.select(function() { return this.parentNode; })
+                .select("rect.node-label-bg")
+                .attr("x", bb.x - 3)
+                .attr("y", bb.y - 2)
+                .attr("width", bb.width + 6)
+                .attr("height", bb.height + 4);
+            } catch(e) {}
+          }, 50);
+        });
+
+      const links = hierarchicalData.links();
+      const linkSelection = linksGroup.selectAll(".link")
+        .data(links, (d, i) => i);
+
+      linkSelection.exit().remove();
+
+      const linkEnter = linkSelection.enter().insert("path", ":first-child")
+        .attr("class", "link")
+        .attr("d", d => stepPath(d.source, d.target));
+
+      linkSelection.merge(linkEnter)
+        .transition().duration(550)
+        .attr("d", d => stepPath(d.source, d.target));
+    }
+
+    // ==================== RADIAL BURST RENDERING ====================
+    function renderBursts() {
+      const subgroupData = [];
+      nodesGroup.selectAll("g.node--subgroup").each(function(d) {
+        subgroupData.push(d);
+      });
+
+      state.techniquePositions.clear();
+
+      subgroupData.forEach(subgroupNode => {
+        const techs = subgroupNode.data.techniques || [];
+        const isExp = state.expandedSubgroups.has(subgroupNode.data.name);
+        const cx = subgroupNode.x, cy = subgroupNode.y;
+        const positions = computeRadialPositions(cx, cy, techs.length);
+
+        if (isExp) {
+          techs.forEach((t, i) => {
+            state.techniquePositions.set(t.name, { x: positions[i].x, y: positions[i].y });
+          });
+        }
+
+        // SPOKES
+        const spokeKey = d => `${subgroupNode.data.name}::${d.name}`;
+        const spokeData = isExp ? techs.map((t, i) => ({...t, pos: positions[i], sgNode: subgroupNode})) : [];
+        const spokeJoin = spokesGroup.selectAll(`line.spoke-${subgroupNode.id}`)
+          .data(spokeData, spokeKey);
+
+        spokeJoin.enter().append("line")
+          .attr("class", `spoke-${subgroupNode.id}`)
+          .attr("x1", cx).attr("y1", cy)
+          .attr("x2", cx).attr("y2", cy)
+          .attr("stroke", "#4a6fa5")
+          .attr("stroke-width", 0.9)
+          .attr("stroke-opacity", 0.45)
+          .transition().duration(550).ease(d3.easeBackOut.overshoot(0.5))
+          .attr("x2", d => d.pos.x)
+          .attr("y2", d => d.pos.y);
+
+        spokeJoin.transition().duration(550)
+          .attr("x1", cx).attr("y1", cy)
+          .attr("x2", d => d.pos.x)
+          .attr("y2", d => d.pos.y);
+
+        spokeJoin.exit()
+          .transition().duration(400)
+          .attr("x2", cx).attr("y2", cy)
+          .remove();
+
+        // TECHNIQUE NODES
+        const techData = isExp ? techs.map((t, i) => ({...t, pos: positions[i], sgNode: subgroupNode})) : [];
+        const techJoin = techniquesGroup.selectAll(`g.tn-${subgroupNode.id}`)
+          .data(techData, d => d.name);
+
+        const techEnter = techJoin.enter().append("g")
+          .attr("class", `tn-${subgroupNode.id}`)
+          .attr("transform", `translate(${cx},${cy})`)
+          .style("opacity", 0)
+          .style("cursor", "pointer")
+          .on("click", (event, d) => { event.stopPropagation(); showInfo(d, event); });
+
+        techEnter.append("circle")
+          .attr("r", 6)
+          .attr("fill", "#6a7a6a")
+          .attr("stroke", "#5a6a5a")
+          .attr("stroke-width", 1.5);
+
+        techEnter.append("rect")
+          .attr("class", "tech-label-bg")
+          .attr("fill", "#f5f0e8")
+          .attr("fill-opacity", 0.92)
+          .attr("rx", 2);
+
+        techEnter.append("text")
+          .attr("class", "tech-label")
+          .style("font-family", "Georgia, serif")
+          .style("font-size", "14px")
+          .style("fill", "#4a5a4a");
+
+        const techUpdate = techJoin.merge(techEnter);
+
+        techUpdate.transition().duration(550).ease(d3.easeBackOut.overshoot(0.6))
+          .attr("transform", d => `translate(${d.pos.x},${d.pos.y})`)
+          .style("opacity", 1);
+
+        techUpdate.select("text.tech-label").each(function(d) {
+          const dx = d.pos.x - cx, dy = d.pos.y - cy;
+          const angleDeg = Math.atan2(dx, dy) * 180 / Math.PI;
+          const el = d3.select(this);
+          let tx, ty, anchor;
+          if (angleDeg < -25) { tx = -10; ty = 4; anchor = "end"; }
+          else if (angleDeg > 25) { tx = 10; ty = 4; anchor = "start"; }
+          else { tx = 0; ty = 18; anchor = "middle"; }
+          el.attr("x", tx).attr("y", ty).attr("dy", "0.32em")
+            .style("text-anchor", anchor)
+            .text(d.name);
+        });
+
+        techUpdate.each(function(d) {
+          const g = d3.select(this);
+          const textEl = g.select("text.tech-label").node();
+          if (!textEl) return;
+          try {
+            setTimeout(() => {
+              const bb = textEl.getBBox();
+              g.select("rect.tech-label-bg")
+                .attr("x", bb.x - 2)
+                .attr("y", bb.y - 1)
+                .attr("width", bb.width + 4)
+                .attr("height", bb.height + 2);
+            }, 50);
+          } catch(e) {}
+        });
+
+        techJoin.exit()
+          .transition().duration(400).ease(d3.easeCubicIn)
+          .attr("transform", `translate(${cx},${cy})`)
+          .style("opacity", 0)
+          .remove();
+      });
+
+      // Badge on subgroup nodes
+      nodesGroup.selectAll("g.node--subgroup").each(function(d) {
+        const g = d3.select(this);
+        const n = (d.data.techniques || []).length;
+        const isExp = state.expandedSubgroups.has(d.data.name);
+        g.select(".tech-badge").remove();
+        if (n > 0 && !isExp) {
+          g.append("text")
+            .attr("class", "tech-badge")
+            .attr("x", 12)
+            .attr("y", -10)
+            .style("font-size", "11px")
+            .style("fill", "#4a6fa5")
+            .style("font-family", "Arial, sans-serif")
+            .style("pointer-events", "none")
+            .text(`×${n}`);
         }
       });
-
-      const legendBody = d3.select("#axis-legend-body");
-      legendBody.selectAll(".ax-row").remove();
-
-      const axesUsed = new Set(relatedNodes.map(r => r.axis));
-      axesUsed.forEach(axis => {
-        const row = legendBody.append("div").attr("class", "ax-row");
-        row.append("div").attr("class", "ax-color").style("background", AXES[axis].color);
-        row.append("div").attr("class", "ax-label").text(AXES[axis].label);
-      });
-
-      relatedNodes.forEach(({ node, axis }) => {
-        relationsGroup.append("path").attr("class", "rel-arc").attr("d", relArcPath(d.x, d.y, node.x, node.y)).attr("stroke", AXES[axis].color);
-        relationsGroup.append("circle").attr("class", "rel-node-marker").attr("cx", node.x).attr("cy", node.y)
-          .attr("r", radii[node.data.type] + 3).attr("fill", AXES[axis].color);
-      });
-
-      d3.select("#axis-legend").classed("visible", true);
     }
 
-    function showInfo(d) {
-      currentSelectedNode = d;
-      const info = d.data.info || {};
-      d3.select("#info-type").text(d.data.type.charAt(0).toUpperCase() + d.data.type.slice(1));
-      d3.select("#info-definition").text(info.definition || "");
-      d3.select("#info-effect").text(info.effect || "");
-      d3.select("#info-example").text(info.example || "");
+    // ==================== RELATION ARCS ====================
+    function drawRelationArcs(fromName) {
+      relationsGroup.selectAll("*").remove();
 
-      const relatedSection = d3.select("#related-section");
-      if (info.related && info.related.length > 0) {
-        relatedSection.style("display", "block");
-        const tags = d3.select("#info-related").selectAll(".related-tag").data(info.related);
-        tags.exit().remove();
-        tags.enter().append("div").attr("class", "related-tag").text(t => t)
-          .on("click", (e, t) => { e.stopPropagation(); navigateTo(t); }).merge(tags);
-      } else {
-        relatedSection.style("display", "none");
+      const relatedRels = RELATIONS.filter(r => r.from === fromName || r.to === fromName);
+      const usedAxes = new Set();
+
+      relatedRels.forEach(rel => {
+        const other = rel.from === fromName ? rel.to : rel.from;
+        const axis = AXES[rel.axis];
+        usedAxes.add(rel.axis);
+
+        let sx, sy, tx, ty, found = false;
+
+        if (state.nodeMap.has(fromName)) {
+          const fromNode = state.nodeMap.get(fromName);
+          sx = fromNode.x;
+          sy = fromNode.y;
+          found = true;
+        }
+
+        if (state.techniquePositions.has(fromName)) {
+          const pos = state.techniquePositions.get(fromName);
+          sx = pos.x;
+          sy = pos.y;
+          found = true;
+        }
+
+        if (!found) return;
+
+        found = false;
+        if (state.nodeMap.has(other)) {
+          const toNode = state.nodeMap.get(other);
+          tx = toNode.x;
+          ty = toNode.y;
+          found = true;
+        }
+
+        if (state.techniquePositions.has(other)) {
+          const pos = state.techniquePositions.get(other);
+          tx = pos.x;
+          ty = pos.y;
+          found = true;
+        }
+
+        if (!found) return;
+
+        relationsGroup.append("path")
+          .attr("class", "relation-arc")
+          .attr("d", relArcPath(sx, sy, tx, ty))
+          .attr("stroke", axis.color)
+          .style("opacity", 0.6);
+      });
+
+      const axisLegend = d3.select("#axis-legend");
+      if (usedAxes.size > 0) {
+        axisLegend.selectAll("*").remove();
+        usedAxes.forEach(axisKey => {
+          const axis = AXES[axisKey];
+          const item = axisLegend.append("div").attr("class", "axis-item");
+          item.append("div").attr("class", "axis-line").style("background", axis.color);
+          item.append("span").text(axis.label);
+        });
+        axisLegend.style("display", "block");
+        state.relatedArcsVisible = true;
+      }
+    }
+
+    // ==================== INFO PANEL ====================
+    function showInfo(d, event) {
+      const panel = d3.select("#info-panel");
+      const title = d3.select("#info-title");
+      const badgeContainer = d3.select("#info-badge-container");
+      const content = d3.select("#info-content");
+
+      title.text(d.data.name || d.name);
+      badgeContainer.selectAll("*").remove();
+
+      const type = d.data.type || (d.info ? "technique" : "unknown");
+      if (type !== "root") {
+        badgeContainer.append("span")
+          .attr("class", "info-badge")
+          .text(type.charAt(0).toUpperCase() + type.slice(1));
       }
 
-      d3.select("#info-panel").classed("visible", true);
+      content.selectAll("*").remove();
+
+      if (d.data.info || d.info) {
+        const info = d.data.info || d.info;
+
+        if (info.definition) {
+          const sec = content.append("div").attr("class", "info-section");
+          sec.append("div").attr("class", "info-section-label").text("Definition");
+          sec.append("div").attr("class", "info-section-text").text(info.definition);
+        }
+
+        if (info.effect) {
+          const sec = content.append("div").attr("class", "info-section");
+          sec.append("div").attr("class", "info-section-label").text("Effect");
+          sec.append("div").attr("class", "info-section-text").text(info.effect);
+        }
+
+        if (info.example) {
+          const sec = content.append("div").attr("class", "info-section");
+          sec.append("div").attr("class", "info-section-label").text("Example");
+          sec.append("div").attr("class", "info-section-text").text(info.example);
+        }
+
+        if (info.related && info.related.length > 0) {
+          const sec = content.append("div").attr("class", "info-section");
+          sec.append("div").attr("class", "info-section-label").text("Related");
+          const tags = sec.append("div").attr("class", "info-tags");
+          info.related.forEach(rel => {
+            tags.append("span")
+              .attr("class", "info-tag")
+              .text(rel)
+              .on("click", () => navigateTo(rel));
+          });
+        }
+      }
+
+      panel.classed("visible", true);
+      state.currentInfoNode = d;
+
+      drawRelationArcs(d.data.name || d.name);
     }
 
     function navigateTo(name) {
-      function findNodeByName(node, targetName) {
-        if (node.data.name === targetName) return node;
-        if (node.children) for (let child of node.children) { const found = findNodeByName(child, targetName); if (found) return found; }
-        if (node._children) for (let child of node._children) { const found = findNodeByName(child, targetName); if (found) return found; }
-        return null;
+      let found = null;
+      let path = [];
+
+      function search(node) {
+        if (node.data.name === name) {
+          found = node;
+          return true;
+        }
+        if (node.data.techniques) {
+          for (let t of node.data.techniques) {
+            if (t.name === name) {
+              found = { data: t, info: t.info, x: 0, y: 0 };
+              return true;
+            }
+          }
+        }
+        if (node.children) {
+          for (let child of node.children) {
+            if (search(child)) {
+              path.unshift(node);
+              return true;
+            }
+          }
+        }
+        return false;
       }
-      const targetNode = findNodeByName(root, name);
-      if (!targetNode) return;
-      let ancestor = targetNode.parent;
-      while (ancestor) {
-        if (ancestor._children) { ancestor.children = ancestor._children; ancestor._children = null; }
-        ancestor = ancestor.parent;
+
+      search(root);
+
+      if (!found) return;
+
+      for (let ancestor of path) {
+        if (ancestor.data.type === "family") {
+          if (!ancestor.children) {
+            ancestor.children = ancestor._children;
+            ancestor._children = null;
+          }
+        }
       }
+
+      if (found.info && found.info.definition) {
+        for (let node of root.descendants()) {
+          if (node.data.techniques) {
+            const tech = node.data.techniques.find(t => t.name === name);
+            if (tech) {
+              state.expandedSubgroups.add(node.data.name);
+              break;
+            }
+          }
+        }
+      }
+
       update(root);
-      setTimeout(() => { zoomToNode(targetNode); showInfo(targetNode); drawRelationArcs(targetNode); }, DURATION + 100);
+      setTimeout(() => {
+        renderBursts();
+        if (found.x !== undefined && found.y !== undefined) {
+          const scale = 1.5;
+          const x = -found.x * scale + W / 2;
+          const y = -found.y * scale + H / 2;
+          svg.transition().duration(600)
+            .call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale));
+        }
+        if (found.data && (found.data.info || found.info)) {
+          showInfo(found, null);
+        }
+      }, 600);
     }
 
-    function zoomToNode(d) {
-      const scale = 0.8, x = d.x, y = d.y;
-      const transform = d3.zoomIdentity.translate(W / 2, H / 2).scale(scale).translate(-x, -y);
-      svg.transition().duration(DURATION).call(zoom.transform, transform);
-    }
-
-    function expandAll() {
-      function expandRecursive(d) {
-        if (d._children) { d.children = d._children; d._children = null; }
-        if (d.children) d.children.forEach(expandRecursive);
-      }
-      expandRecursive(root);
-      update(root);
-      relationsGroup.selectAll("*").remove();
-      d3.select("#axis-legend").classed("visible", false);
-    }
-
-    function collapseAll() {
-      function collapseRecursive(d) {
-        if (d.children) { d._children = d.children; d.children = null; }
-        if (d._children) d._children.forEach(collapseRecursive);
-      }
-      collapseRecursive(root);
-      update(root);
-      relationsGroup.selectAll("*").remove();
-      d3.select("#axis-legend").classed("visible", false);
-    }
-
-    function resetView() {
-      collapseAll();
-      svg.transition().duration(DURATION).call(zoom.transform, initialTransform);
+    d3.select("#info-close").on("click", () => {
       d3.select("#info-panel").classed("visible", false);
       relationsGroup.selectAll("*").remove();
-      d3.select("#axis-legend").classed("visible", false);
-    }
-
-    const infoPanel = d3.select("#info-panel");
-    const panelHeader = d3.select(".panel-header");
-
-    panelHeader.on("mousedown", (e) => {
-      isPanelDragging = true;
-      const rect = infoPanel.node().getBoundingClientRect();
-      infoPanelDragOffset.x = e.clientX - rect.left;
-      infoPanelDragOffset.y = e.clientY - rect.top;
+      d3.select("#axis-legend").style("display", "none");
+      state.relatedArcsVisible = false;
     });
 
-    d3.select(document).on("mousemove", (e) => {
-      if (!isPanelDragging) return;
-      const x = e.clientX - infoPanelDragOffset.x, y = e.clientY - infoPanelDragOffset.y;
-      infoPanel.style("left", x + "px").style("right", "auto").style("top", y + "px");
+    let dragOffsetX = 0, dragOffsetY = 0;
+    d3.select("#info-panel")
+      .on("mousedown", function(event) {
+        if (event.target.id === "info-close") return;
+        dragOffsetX = event.clientX - this.offsetLeft;
+        dragOffsetY = event.clientY - this.offsetTop;
+      });
+
+    d3.select(window)
+      .on("mousemove", function(event) {
+        if (dragOffsetX || dragOffsetY) {
+          const panel = d3.select("#info-panel");
+          const newX = event.clientX - dragOffsetX;
+          const newY = event.clientY - dragOffsetY;
+          panel.style("left", "auto")
+            .style("right", "auto")
+            .style("top", newY + "px")
+            .style("left", newX + "px");
+        }
+      })
+      .on("mouseup", () => {
+        dragOffsetX = 0;
+        dragOffsetY = 0;
+      });
+
+    svg.on("click", () => {
+      relationsGroup.selectAll("*").remove();
+      d3.select("#axis-legend").style("display", "none");
+      state.relatedArcsVisible = false;
     });
 
-    d3.select(document).on("mouseup", () => { isPanelDragging = false; });
+    // ==================== BUTTON HANDLERS ====================
+    d3.select("#btn-expand-all").on("click", () => {
+      function expandAll(node) {
+        if (node._children) {
+          node.children = node._children;
+          node._children = null;
+        }
+        if (node.children) {
+          node.children.forEach(expandAll);
+        }
+      }
+      expandAll(root);
+      root.descendants().forEach(node => {
+        if (node.data.type === "subgroup" && node.data.techniques) {
+          state.expandedSubgroups.add(node.data.name);
+        }
+      });
+      update(root);
+      setTimeout(() => renderBursts(), 50);
+    });
 
-    d3.select("#expand-all").on("click", expandAll);
-    d3.select("#collapse-all").on("click", collapseAll);
-    d3.select("#reset-view").on("click", resetView);
-    d3.select("#zoom-in").on("click", () => { svg.transition().duration(300).call(zoom.scaleBy, 1.3); });
-    d3.select("#zoom-out").on("click", () => { svg.transition().duration(300).call(zoom.scaleBy, 0.77); });
+    d3.select("#btn-collapse-all").on("click", () => {
+      function collapseAll(node) {
+        if (node.children) {
+          node._children = node.children;
+          node.children = null;
+        }
+        if (node._children) {
+          node._children.forEach(collapseAll);
+        }
+      }
+      collapseAll(root);
+      state.expandedSubgroups.clear();
+      update(root);
+      setTimeout(() => renderBursts(), 50);
+    });
 
+    d3.select("#btn-reset").on("click", () => {
+      svg.transition().duration(600)
+        .call(zoom.transform, d3.zoomIdentity.translate(W / 2, 90).scale(0.55));
+    });
+
+    d3.select("#btn-zoom-in").on("click", () => {
+      svg.transition().duration(300).call(zoom.scaleBy, 1.3);
+    });
+
+    d3.select("#btn-zoom-out").on("click", () => {
+      svg.transition().duration(300).call(zoom.scaleBy, 0.77);
+    });
+
+    // ==================== INITIAL RENDER ====================
     update(root);
+    setTimeout(() => renderBursts(), 100);
   </script>
 </body>
 </html>
