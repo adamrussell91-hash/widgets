@@ -545,14 +545,17 @@
     }
 
     function computeRadialPositions(cx, cy, n) {
-      // Narrow fan (max 100°) keeps techniques below the subgroup node
-      // Large R ensures they drop far enough to avoid label collisions
-      const fanDeg = Math.min(100, 40 + n * 5);
-      const R = n <= 4 ? 180 : n <= 8 ? 215 : n <= 12 ? 250 : 280;
+      // Wider angle gives more breathing room between adjacent labels
+      const fanDeg = Math.min(130, 55 + n * 5);
+      // Alternate short / long radius on every other spoke so neighbouring
+      // labels land at different depths and can never sit at the same height
+      const Rshort = n <= 4 ? 180 : n <= 8 ? 205 : n <= 12 ? 230 : 255;
+      const Rlong  = n <= 4 ? 265 : n <= 8 ? 295 : n <= 12 ? 325 : 355;
       const startAngle = -fanDeg / 2;
       return Array.from({length: n}, (_, i) => {
         const angleDeg = n === 1 ? 0 : startAngle + i * (fanDeg / (n - 1));
         const rad = angleDeg * Math.PI / 180;
+        const R = i % 2 === 0 ? Rshort : Rlong;  // even spokes = short, odd = long
         return { x: cx + R * Math.sin(rad), y: cy + R * Math.cos(rad) };
       });
     }
