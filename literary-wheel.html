@@ -365,6 +365,143 @@
     #info-panel::-webkit-scrollbar-thumb:hover {
       background: #a0a0a0;
     }
+
+    /* ==================== LEARNING PANEL ==================== */
+    .btn-tools {
+      background: #4a6fa5;
+      margin-left: 10px;
+    }
+    .btn-tools:hover { background: #3a5a8a; }
+
+    #learning-panel {
+      position: fixed;
+      top: 65px; left: 0;
+      width: 400px;
+      height: calc(100vh - 65px);
+      background: #faf7f2;
+      border-right: 1px solid #d0cac0;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.13);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    #learning-panel.open { transform: translateX(0); }
+
+    .lp-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid #d0cac0;
+      background: #f5f0e8;
+      flex-shrink: 0;
+    }
+    .lp-header h2 { font-size: 16px; font-weight: 700; font-family: Georgia,serif; }
+    #lp-close { background:none; border:none; font-size:18px; cursor:pointer; color:#7a7a7a; padding:2px 6px; }
+    #lp-close:hover { color:#1c1c1c; }
+
+    .lp-tabs {
+      display: flex; flex-wrap: wrap; gap: 2px;
+      padding: 8px 10px 0;
+      background: #f5f0e8;
+      border-bottom: 1px solid #d0cac0;
+      flex-shrink: 0;
+    }
+    .lp-tab {
+      padding: 5px 9px; font-size: 11px; font-family: Arial,sans-serif; font-weight: 600;
+      background: none; border: 1px solid transparent; border-radius: 4px 4px 0 0;
+      cursor: pointer; color: #7a7a7a; transition: all 0.15s;
+    }
+    .lp-tab:hover { color:#1c1c1c; background:#ece7df; }
+    .lp-tab.active { color:#1c1c1c; background:#faf7f2; border-color:#d0cac0; border-bottom-color:#faf7f2; margin-bottom:-1px; }
+
+    .lp-content { flex:1; overflow-y:auto; padding:16px; }
+    .lp-pane { display:none; }
+    .lp-pane.active { display:block; }
+
+    .tool-desc { font-size:13px; color:#6a6a6a; margin-bottom:14px; line-height:1.5; font-family:Georgia,serif; font-style:italic; }
+    .tool-label { font-size:11px; font-weight:700; color:#4a4a4a; margin-bottom:4px; text-transform:uppercase; letter-spacing:.4px; font-family:Arial,sans-serif; }
+    .tool-input {
+      width:100%; padding:8px 10px; border:1px solid #d0cac0; border-radius:5px;
+      font-size:13px; font-family:Georgia,serif; background:white; color:#1c1c1c;
+      margin-bottom:10px; box-sizing:border-box;
+    }
+    .tool-textarea {
+      width:100%; padding:8px 10px; border:1px solid #d0cac0; border-radius:5px;
+      font-size:13px; font-family:Georgia,serif; background:white; color:#1c1c1c;
+      margin-bottom:10px; box-sizing:border-box; min-height:100px; resize:vertical; line-height:1.5;
+    }
+    .tool-textarea.tall { min-height:140px; }
+    .tool-btn {
+      width:100%; padding:10px; background:#c0674f; color:white; border:none; border-radius:5px;
+      font-size:13px; font-family:Arial,sans-serif; font-weight:700; cursor:pointer;
+      transition:background .2s; margin-bottom:12px;
+    }
+    .tool-btn:hover { background:#a8564a; }
+    .tool-btn:disabled { background:#b0a8a0; cursor:wait; }
+    .tool-btn.secondary { background:#4a6fa5; margin-top:6px; }
+    .tool-btn.secondary:hover { background:#3a5a8a; }
+
+    .result-area {
+      background:white; border:1px solid #d0cac0; border-radius:6px;
+      padding:14px; font-size:13px; line-height:1.7; color:#2a2a2a;
+      font-family:Georgia,serif; min-height:50px;
+    }
+    .result-area h4 {
+      font-size:12px; font-weight:700; color:#c0674f; margin:10px 0 4px;
+      font-family:Arial,sans-serif; text-transform:uppercase; letter-spacing:.4px;
+    }
+    .result-area h4:first-child { margin-top:0; }
+    .fam-tag {
+      display:inline-block; padding:2px 7px; border-radius:3px; font-size:10px;
+      font-weight:700; font-family:Arial,sans-serif; color:white; margin-right:4px; margin-bottom:4px;
+    }
+    .loading { display:flex; align-items:center; gap:8px; color:#7a7a7a; font-size:13px; font-family:Arial,sans-serif; }
+    .spinner {
+      width:14px; height:14px; border:2px solid #d0cac0; border-top-color:#c0674f;
+      border-radius:50%; animation:spin .8s linear infinite; flex-shrink:0;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+
+    .scan-highlight { border-radius:2px; padding:1px 2px; cursor:help; }
+    .scan-finding { margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #ece7df; }
+    .scan-finding:last-child { border-bottom:none; margin-bottom:0; }
+    .scan-tech-name { font-weight:700; font-family:Arial,sans-serif; font-size:13px; margin-bottom:3px; }
+    .scan-quote { font-style:italic; color:#5a5a5a; margin-bottom:3px; font-size:12px; }
+
+    .drill-score-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:13px; font-family:Arial,sans-serif; color:#5a5a5a; }
+    .drill-score-bar strong { color:#1c1c1c; font-size:17px; }
+    .drill-card { background:white; border:1px solid #d0cac0; border-radius:8px; padding:16px; margin-bottom:12px; text-align:center; }
+    .drill-name { font-size:19px; font-weight:700; font-family:Georgia,serif; color:#1c1c1c; margin-bottom:8px; }
+    .drill-def { font-size:12px; color:#5a5a5a; font-style:italic; line-height:1.5; }
+    .drill-options { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:10px; }
+    .drill-opt {
+      padding:9px 7px; border:1px solid #d0cac0; border-radius:6px; background:white;
+      font-size:11px; font-family:Arial,sans-serif; cursor:pointer; text-align:center;
+      transition:all .15s; line-height:1.3;
+    }
+    .drill-opt:hover:not(:disabled) { background:#f0ebe3; border-color:#b0a8a0; }
+    .drill-opt.correct { background:#e0f0e8; border-color:#5a8a70; color:#2a6a4a; font-weight:700; }
+    .drill-opt.wrong { background:#f5e0e0; border-color:#c07878; color:#7a3a3a; }
+    .drill-feedback { font-size:13px; font-family:Arial,sans-serif; text-align:center; min-height:20px; margin-bottom:8px; font-weight:600; }
+    .drill-feedback.correct { color:#5a8a70; }
+    .drill-feedback.wrong { color:#c07878; }
+
+    .rel-axis-group { margin-bottom:14px; }
+    .rel-axis-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; font-family:Arial,sans-serif; }
+    .rel-item { display:flex; align-items:flex-start; gap:8px; margin-bottom:5px; padding:8px; background:#f5f0e8; border-radius:4px; cursor:pointer; transition:background .15s; }
+    .rel-item:hover { background:#ece7df; }
+    .rel-arrow { font-size:15px; color:#888; flex-shrink:0; padding-top:1px; }
+    .rel-name { font-weight:600; font-size:13px; font-family:Arial,sans-serif; }
+    .rel-def { font-size:11px; color:#6a6a6a; font-style:italic; margin-top:2px; }
+    .etym-box { background:#f0ebe3; border-left:3px solid #b8893a; padding:10px 12px; border-radius:0 4px 4px 0; margin-bottom:14px; font-size:12px; line-height:1.5; color:#4a4a4a; font-family:Georgia,serif; }
+    .etym-label { font-weight:700; font-family:Arial,sans-serif; font-size:10px; text-transform:uppercase; color:#b8893a; letter-spacing:.4px; margin-bottom:3px; }
+
+    .lp-content::-webkit-scrollbar { width:5px; }
+    .lp-content::-webkit-scrollbar-track { background:transparent; }
+    .lp-content::-webkit-scrollbar-thumb { background:#c0c0c0; border-radius:3px; }
   </style>
 </head>
 <body>
@@ -377,6 +514,113 @@
       <button class="btn" id="btn-expand-all">Expand All</button>
       <button class="btn" id="btn-collapse-all">Collapse All</button>
       <button class="btn" id="btn-reset">Reset View</button>
+      <button class="btn btn-tools" id="btn-learning-tools">⚡ Learning Tools</button>
+    </div>
+  </div>
+
+  <!-- ==================== LEARNING PANEL ==================== -->
+  <div id="learning-panel">
+    <div class="lp-header">
+      <h2>Learning Tools</h2>
+      <button id="lp-close">✕</button>
+    </div>
+    <div class="lp-tabs">
+      <button class="lp-tab active" data-tab="compare">Compare</button>
+      <button class="lp-tab" data-tab="scanner">Scanner</button>
+      <button class="lp-tab" data-tab="drill">Drill</button>
+      <button class="lp-tab" data-tab="prompts">Prompts</button>
+      <button class="lp-tab" data-tab="revise">Revise</button>
+      <button class="lp-tab" data-tab="relations">Relations</button>
+    </div>
+    <div class="lp-content">
+
+      <!-- COMPARE -->
+      <div class="lp-pane active" id="pane-compare">
+        <p class="tool-desc">Select two techniques to see their key differences, when to use each, and a paired example.</p>
+        <div class="compare-grid">
+          <div>
+            <div class="tool-label">Technique 1</div>
+            <input class="tool-input" id="cmp-t1" placeholder="Search…" list="cmp-list-1" autocomplete="off">
+            <datalist id="cmp-list-1"></datalist>
+          </div>
+          <div>
+            <div class="tool-label">Technique 2</div>
+            <input class="tool-input" id="cmp-t2" placeholder="Search…" list="cmp-list-2" autocomplete="off">
+            <datalist id="cmp-list-2"></datalist>
+          </div>
+        </div>
+        <button class="tool-btn" id="cmp-btn">Compare →</button>
+        <div id="cmp-result" class="result-area" style="display:none"></div>
+      </div>
+
+      <!-- SCANNER -->
+      <div class="lp-pane" id="pane-scanner">
+        <p class="tool-desc">Paste any passage to identify every literary technique present, with colour-coded highlights by family.</p>
+        <div class="tool-label">Passage</div>
+        <textarea class="tool-textarea tall" id="scan-input" placeholder="Paste a sentence, paragraph, or stanza here…"></textarea>
+        <button class="tool-btn" id="scan-btn">Scan Passage →</button>
+        <div id="scan-result" style="display:none">
+          <div class="tool-label" style="margin-bottom:6px;">Annotated passage</div>
+          <div id="scan-highlighted" class="result-area" style="margin-bottom:12px;line-height:1.9;"></div>
+          <div class="tool-label" style="margin-bottom:6px;">Findings</div>
+          <div id="scan-findings" class="result-area"></div>
+        </div>
+      </div>
+
+      <!-- DRILL -->
+      <div class="lp-pane" id="pane-drill">
+        <p class="tool-desc">A technique name and definition appear — click the correct subgroup. Tests classification knowledge without rote memorisation.</p>
+        <div class="drill-score-bar">
+          <span>Score: <strong id="drill-score">0</strong> / <span id="drill-total">0</span></span>
+          <button class="tool-btn" id="drill-restart" style="width:auto;padding:5px 12px;margin:0;font-size:11px;">Restart</button>
+        </div>
+        <div class="drill-card">
+          <div class="drill-name" id="drill-name">—</div>
+          <div class="drill-def" id="drill-def">Press Start to begin</div>
+        </div>
+        <div class="drill-options" id="drill-options"></div>
+        <div class="drill-feedback" id="drill-feedback"></div>
+        <button class="tool-btn" id="drill-next">Start →</button>
+      </div>
+
+      <!-- PROMPTS -->
+      <div class="lp-pane" id="pane-prompts">
+        <p class="tool-desc">Get a writing prompt crafted specifically for one technique, write a response, then get detailed feedback.</p>
+        <div class="tool-label">Technique</div>
+        <input class="tool-input" id="pmt-tech" placeholder="Search technique…" list="pmt-list" autocomplete="off">
+        <datalist id="pmt-list"></datalist>
+        <button class="tool-btn" id="pmt-gen-btn">Generate Prompt →</button>
+        <div id="pmt-prompt-box" style="display:none">
+          <div class="result-area" id="pmt-prompt-text" style="margin-bottom:12px;background:#fffdf8;border-color:#b8893a;"></div>
+          <div class="tool-label">Your response</div>
+          <textarea class="tool-textarea" id="pmt-student" placeholder="Write your response here…"></textarea>
+          <button class="tool-btn secondary" id="pmt-check-btn">Check My Work →</button>
+          <div id="pmt-feedback" class="result-area" style="display:none;margin-top:10px;"></div>
+        </div>
+      </div>
+
+      <!-- REVISE -->
+      <div class="lp-pane" id="pane-revise">
+        <p class="tool-desc">Paste any text and apply a technique to see exactly how it transforms the writing, with an annotated before/after.</p>
+        <div class="tool-label">Your original text</div>
+        <textarea class="tool-textarea" id="rev-input" placeholder="Paste a sentence or short paragraph…"></textarea>
+        <div class="tool-label">Technique to apply</div>
+        <input class="tool-input" id="rev-tech" placeholder="Search technique…" list="rev-list" autocomplete="off">
+        <datalist id="rev-list"></datalist>
+        <button class="tool-btn" id="rev-btn">Revise →</button>
+        <div id="rev-result" class="result-area" style="display:none"></div>
+      </div>
+
+      <!-- RELATIONS -->
+      <div class="lp-pane" id="pane-relations">
+        <p class="tool-desc">Explore how a technique connects to others — with axis type, direction, etymology, and clickable navigation.</p>
+        <div class="tool-label">Technique</div>
+        <input class="tool-input" id="rel-search" placeholder="Search technique…" list="rel-list" autocomplete="off">
+        <datalist id="rel-list"></datalist>
+        <button class="tool-btn" id="rel-btn">Explore →</button>
+        <div id="rel-result" style="display:none"></div>
+      </div>
+
     </div>
   </div>
 
@@ -1682,6 +1926,434 @@
     // ==================== INITIAL RENDER ====================
     render(root);
     setTimeout(() => renderBursts(), 100);
+
+    // ==================== LEARNING TOOLS ====================
+    const PROXY = 'https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/openai-proxy';
+
+    async function aiCall(messages, maxTokens = 700) {
+      const res = await fetch(PROXY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'gpt-4o', max_tokens: maxTokens, messages })
+      });
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const data = await res.json();
+      return data.choices?.[0]?.message?.content || '';
+    }
+
+    function showLoading(el) {
+      el.innerHTML = '<div class="loading"><div class="spinner"></div>Thinking…</div>';
+      el.style.display = 'block';
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function fmtMd(text) {
+      return text
+        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+        .replace(/^(\d+\.\s)/gm,'<br><strong>$1</strong>')
+        .replace(/^[-•]\s/gm,'<br>• ')
+        .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+        .replace(/^<br>/,'');
+    }
+
+    // ---- BUILD FLAT TECHNIQUE + SUBGROUP INDEX ----
+    const allTechniques = [];
+    const allSubgroups  = [];
+
+    (function buildIndex() {
+      function walk(node, fam) {
+        if (node.type === 'subgroup') {
+          allSubgroups.push({ name: node.name, family: fam });
+          (node.techniques || []).forEach(t =>
+            allTechniques.push({ name: t.name, info: t.info, subgroup: node.name, family: fam })
+          );
+        }
+        (node.children || []).forEach(c => walk(c, node.type === 'family' ? node.name : fam));
+      }
+      taxonomyRoot.children.forEach(c => walk(c, c.name));
+    })();
+
+    function findTech(name) {
+      return allTechniques.find(t => t.name.toLowerCase() === name.trim().toLowerCase());
+    }
+
+    // Populate all datalists
+    ['cmp-list-1','cmp-list-2','pmt-list','rev-list','rel-list'].forEach(id => {
+      const dl = document.getElementById(id);
+      if (!dl) return;
+      allTechniques.forEach(t => {
+        const o = document.createElement('option'); o.value = t.name; dl.appendChild(o);
+      });
+    });
+
+    // ---- PANEL OPEN / CLOSE + TABS ----
+    document.getElementById('btn-learning-tools').addEventListener('click', () => {
+      document.getElementById('learning-panel').classList.toggle('open');
+    });
+    document.getElementById('lp-close').addEventListener('click', () => {
+      document.getElementById('learning-panel').classList.remove('open');
+    });
+    document.querySelectorAll('.lp-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.lp-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.lp-pane').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('pane-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ---- ETYMOLOGY DATA ----
+    const ETYMOLOGIES = {
+      "Metaphor":       "Greek metaphorá: meta- (across) + phérein (to carry) — 'carrying meaning across'",
+      "Simile":         "Latin similis: 'like, resembling' — an explicit comparison",
+      "Anaphora":       "Greek anaphora: ana- (again) + phérein — 'carrying back'; repetition at line starts",
+      "Epistrophe":     "Greek epistrophḗ: epi- (upon) + strephein (to turn) — 'turning upon' each line end",
+      "Symploce":       "Greek symplokḗ: syn- (together) + plékein (to weave) — weaving anaphora and epistrophe",
+      "Epizeuxis":      "Greek: epi- (upon) + zeûgma (yoke) — words yoked directly together",
+      "Diacope":        "Greek diakopḗ: dia- (through) + koptein (to cut) — word repeated with an interruption",
+      "Polysyndeton":   "Greek: polys (many) + syndeton (bound with 'and') — 'many bindings'",
+      "Asyndeton":      "Greek: a- (without) + syndeton — 'without binding'; conjunctions omitted",
+      "Parallelism":    "Greek parállēlos: para- (beside) + allēlos (one another) — beside one another",
+      "Chiasmus":       "Greek khiasmos, from letter chi (X) — crossing structure mirroring the X shape",
+      "Antithesis":     "Greek antíthesis: anti- (against) + títhēmi (to place) — 'placing against'",
+      "Oxymoron":       "Greek oxýmōron: oxys (sharp) + mōros (foolish) — itself an oxymoron",
+      "Hyperbole":      "Greek hyperbolḗ: hyper- (over) + bállein (to throw) — 'throwing over'; exaggeration",
+      "Litotes":        "Greek litótēs: litos (plain, simple) — understatement via double negation",
+      "Synecdoche":     "Greek synekdokhḗ: syn- (together) + ekdékhesthai (to receive) — part stands for whole",
+      "Metonymy":       "Greek metōnymía: meta- (change) + ónyma (name) — 'change of name'",
+      "Irony":          "Greek eirōneía: eirōn (dissembler) — one who says less than they mean",
+      "Sarcasm":        "Greek sarkazein: 'to tear flesh, gnash teeth' — cutting speech",
+      "Allegory":       "Greek allēgoría: allos (other) + agoreúein (to speak) — 'speaking otherwise'",
+      "Personification":"Latin persona (mask) + facere (to make) — 'making a character' of an object",
+      "Apostrophe":     "Greek apostrophḗ: apo- (away) + strephein (to turn) — 'turning away' to address the absent",
+      "Alliteration":   "Latin ad- (to) + littera (letter) — initial sounds repeated in adjacent words",
+      "Onomatopoeia":   "Greek: ónoma (name) + poieîn (to make) — 'name-making'; sound imitates meaning",
+      "Euphemism":      "Greek euphēmismós: eu- (good) + phḗmē (speech) — 'good speaking'; softening harsh truths",
+      "Ellipsis":       "Greek élleipsis: elleípein (to fall short) — deliberate omission of words",
+      "Anastrophe":     "Greek anastrophḗ: ana- (back) + strephein (to turn) — inverted word order",
+      "Hypotaxis":      "Greek: hypo- (under) + táxis (arrangement) — subordinated, nested syntax",
+      "Parataxis":      "Greek: para- (beside) + táxis (arrangement) — clauses placed side by side as equals",
+      "Bathos":         "Greek bathys: 'deep' — comic descent from elevated to trivial; anticlimax",
+      "Pathos":         "Greek páthos: 'suffering, feeling' — appeal that evokes pity or emotion",
+      "Ethos":          "Greek ēthos: 'character, custom' — credibility-based persuasion",
+      "Logos":          "Greek lógos: 'word, reason' — persuasion through logical argument",
+      "Allusion":       "Latin alludere: ad- (to) + ludere (to play) — 'playing toward' a reference",
+      "Intertextuality":"Latin inter- (between) + textus (woven) — weaving meaning between texts",
+      "Leitmotif":      "German: Leit- (leading) + Motiv (motif) — a recurring 'leading theme'",
+      "Symbol":         "Greek sýmbolon: syn- (together) + bállein (to throw) — a token thrown together",
+      "Zeugma":         "Greek zeûgma: 'yoke' — one word yoking two grammatically different elements",
+      "Mise en Abyme":  "French: 'placed into the abyss' — infinite mirroring structure within a work",
+      "Ekphrasis":      "Greek: ek- (out) + phrazein (to tell) — vivid description of a visual artwork",
+      "Euphony":        "Greek euphōnía: eu- (good) + phōnḗ (sound) — 'good sound'; pleasing to the ear",
+      "Cacophony":      "Greek kakophōnía: kakos (bad) + phōnḗ (sound) — harsh, discordant sound",
+      "Motif":          "Latin motivus (moving) via French — a recurring element that 'moves' through a work",
+      "Periphrasis":    "Greek períphrasis: peri- (around) + phrazein — 'speaking around'; deliberate circumlocution"
+    };
+
+    // ---- 1. COMPARE ----
+    document.getElementById('cmp-btn').addEventListener('click', async () => {
+      const n1 = document.getElementById('cmp-t1').value.trim();
+      const n2 = document.getElementById('cmp-t2').value.trim();
+      const t1 = findTech(n1), t2 = findTech(n2);
+      if (!t1) return alert(`"${n1}" not found in the taxonomy.`);
+      if (!t2) return alert(`"${n2}" not found in the taxonomy.`);
+      const btn = document.getElementById('cmp-btn');
+      const result = document.getElementById('cmp-result');
+      btn.disabled = true; showLoading(result);
+      const prompt = `You are a literary techniques educator. Compare these two techniques in depth.
+
+Technique 1 — ${t1.name}
+Definition: ${t1.info.definition}
+Effect: ${t1.info.effect}
+Example: ${t1.info.example}
+
+Technique 2 — ${t2.name}
+Definition: ${t2.info.definition}
+Effect: ${t2.info.effect}
+Example: ${t2.info.example}
+
+Provide exactly four sections with these bold headings:
+**1. CORE DISTINCTION** — the fundamental difference in 1–2 sentences
+**2. WHEN TO USE EACH** — specific contexts or tones that favour one over the other
+**3. SIDE-BY-SIDE EXAMPLE** — write the same idea once using each technique to show the contrast in practice
+**4. COMMON CONFUSION** — the most frequent mistake students make when mixing up the two
+
+Be concrete, literary, and keep each section to 2–4 sentences.`;
+      try {
+        const reply = await aiCall([{ role:'user', content:prompt }], 750);
+        result.innerHTML = fmtMd(reply);
+      } catch(e) { result.innerHTML = '<span style="color:#c07878">Error reaching AI.</span>'; }
+      btn.disabled = false; result.style.display = 'block';
+    });
+
+    // ---- 2. PASSAGE SCANNER ----
+    document.getElementById('scan-btn').addEventListener('click', async () => {
+      const text = document.getElementById('scan-input').value.trim();
+      if (!text) return alert('Please paste a passage first.');
+      if (text.length > 3000) return alert('Passage too long — keep it under 3000 characters.');
+      const btn = document.getElementById('scan-btn');
+      const resultEl  = document.getElementById('scan-result');
+      const hlEl      = document.getElementById('scan-highlighted');
+      const findingsEl= document.getElementById('scan-findings');
+      btn.disabled = true;
+      hlEl.innerHTML = '<div class="loading"><div class="spinner"></div>Scanning…</div>';
+      findingsEl.innerHTML = ''; resultEl.style.display = 'block';
+
+      const techList = allTechniques.map(t => t.name).join(', ');
+      const prompt = `You are a literary techniques analyst. Scan the following passage and identify every literary technique present.
+
+Techniques to consider (not exhaustive): ${techList}
+
+Passage:
+"""
+${text}
+"""
+
+Return ONLY a valid JSON array (no markdown fences), like:
+[{"technique":"Name","quote":"exact short excerpt","explanation":"one sentence why"}]
+
+Use the shortest distinctive quote. Only include techniques you are confident about.`;
+      try {
+        const reply = await aiCall([{role:'user',content:prompt}], 1000);
+        let findings = [];
+        try {
+          findings = JSON.parse(reply.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim());
+        } catch(e) {
+          hlEl.innerHTML = '<em>Could not parse response — try a shorter passage.</em>'; btn.disabled=false; return;
+        }
+        if (!findings.length) { hlEl.innerHTML = '<em>No clear techniques identified.</em>'; btn.disabled=false; return; }
+
+        const SCAN_BG = { Descriptive:'#f8cfc0', Repetitive:'#bfe8ce', Comparative:'#d8cff5', Structural:'#f5e0b0', 'Intertextual & Metafictional':'#b8dff0' };
+        const getCol = n => { const t=findTech(n); return t?(SCAN_BG[t.family]||'#e0dcd0'):'#e0dcd0'; };
+
+        let hl = escHtml(text);
+        findings.forEach(f => {
+          const safe = escHtml(f.quote);
+          const col  = getCol(f.technique);
+          hl = hl.replace(safe, `<mark class="scan-highlight" style="background:${col}" title="${escHtml(f.technique)}">${safe}</mark>`);
+        });
+        hlEl.innerHTML = hl.replace(/\n/g,'<br>');
+
+        findingsEl.innerHTML = findings.map(f => {
+          const t = findTech(f.technique);
+          const fam = t ? t.family : '';
+          const fcol = FAMILY_COLORS[fam] || '#888';
+          return `<div class="scan-finding">
+            <div class="scan-tech-name"><span class="fam-tag" style="background:${fcol}">${fam||'—'}</span>${escHtml(f.technique)}</div>
+            <div class="scan-quote">"${escHtml(f.quote)}"</div>
+            <div style="font-size:13px;">${escHtml(f.explanation)}</div>
+          </div>`;
+        }).join('');
+      } catch(e) { hlEl.innerHTML = '<span style="color:#c07878">Error reaching AI.</span>'; }
+      btn.disabled = false;
+    });
+
+    // ---- 3. FAMILY MAP DRILL ----
+    let drillScore=0, drillTotal=0, drillAnswered=false;
+
+    function drillNext() {
+      drillAnswered = false;
+      const t = allTechniques[Math.floor(Math.random() * allTechniques.length)];
+      document.getElementById('drill-name').textContent = t.name;
+      document.getElementById('drill-def').textContent  = t.info.definition;
+      document.getElementById('drill-feedback').textContent = '';
+      document.getElementById('drill-feedback').className = 'drill-feedback';
+      document.getElementById('drill-next').textContent = 'Next →';
+
+      const correct = t.subgroup;
+      const wrongs  = allSubgroups.filter(s => s.name !== correct).sort(()=>Math.random()-.5).slice(0,4).map(s=>s.name);
+      const opts    = [correct,...wrongs].sort(()=>Math.random()-.5);
+      const cont    = document.getElementById('drill-options');
+      cont.innerHTML = opts.map(o=>`<button class="drill-opt" data-sg="${escHtml(o)}">${escHtml(o)}</button>`).join('');
+      cont.querySelectorAll('.drill-opt').forEach(b => {
+        b.addEventListener('click', function() {
+          if (drillAnswered) return;
+          drillAnswered = true; drillTotal++;
+          const ok = this.dataset.sg === correct;
+          if (ok) drillScore++;
+          document.getElementById('drill-score').textContent = drillScore;
+          document.getElementById('drill-total').textContent = drillTotal;
+          cont.querySelectorAll('.drill-opt').forEach(x => {
+            x.disabled = true;
+            if (x.dataset.sg === correct) x.classList.add('correct');
+            else if (x === this && !ok) x.classList.add('wrong');
+          });
+          const fb = document.getElementById('drill-feedback');
+          fb.textContent = ok ? '✓ Correct!' : `✗ It was "${correct}" (${t.family})`;
+          fb.className = 'drill-feedback ' + (ok?'correct':'wrong');
+        });
+      });
+    }
+
+    document.getElementById('drill-next').addEventListener('click', drillNext);
+    document.getElementById('drill-restart').addEventListener('click', () => {
+      drillScore=0; drillTotal=0;
+      document.getElementById('drill-score').textContent='0';
+      document.getElementById('drill-total').textContent='0';
+      drillNext();
+    });
+
+    // ---- 4. WRITING PROMPTS ----
+    let currentPmtTech = null;
+    document.getElementById('pmt-gen-btn').addEventListener('click', async () => {
+      const name = document.getElementById('pmt-tech').value.trim();
+      const t = findTech(name);
+      if (!t) return alert(`"${name}" not found.`);
+      currentPmtTech = t;
+      const btn = document.getElementById('pmt-gen-btn');
+      const box = document.getElementById('pmt-prompt-box');
+      const ptxt = document.getElementById('pmt-prompt-text');
+      const fb   = document.getElementById('pmt-feedback');
+      btn.disabled = true; box.style.display='block';
+      ptxt.innerHTML = '<div class="loading"><div class="spinner"></div>Generating…</div>';
+      fb.style.display='none'; document.getElementById('pmt-student').value='';
+      const prompt = `You are a creative writing teacher. Write a focused writing prompt that requires the student to use the following literary technique.
+
+Technique: ${t.name}
+Definition: ${t.info.definition}
+Effect: ${t.info.effect}
+
+Requirements:
+- One or two sentences maximum
+- Specify a concrete scenario (not generic)
+- Make it very difficult to respond well WITHOUT using the technique
+- Appropriate for secondary / early tertiary students
+
+Then on a new line add: "Tip: [one subtle hint about deploying the technique, without giving it away]"`;
+      try {
+        const reply = await aiCall([{role:'user',content:prompt}], 250);
+        ptxt.innerHTML = `<strong>Your prompt:</strong><br><br>${reply.replace(/\n/g,'<br>')}`;
+      } catch(e) { ptxt.innerHTML = '<span style="color:#c07878">Error.</span>'; }
+      btn.disabled = false;
+    });
+
+    document.getElementById('pmt-check-btn').addEventListener('click', async () => {
+      const student = document.getElementById('pmt-student').value.trim();
+      if (!student || !currentPmtTech) return alert('Write your response first.');
+      const btn = document.getElementById('pmt-check-btn');
+      const fb  = document.getElementById('pmt-feedback');
+      btn.disabled = true; showLoading(fb);
+      const promptContext = document.getElementById('pmt-prompt-text').innerText;
+      const prompt = `You are a literary techniques teacher checking a student's writing exercise.
+
+Technique: ${currentPmtTech.name}
+Definition: ${currentPmtTech.info.definition}
+Prompt given: ${promptContext}
+
+Student's response:
+"""
+${student}
+"""
+
+Respond with exactly four bold headings:
+**VERDICT** — one of: "Excellent", "Good — minor issues", "Partial — try again", or "Not demonstrated"
+**WHAT WORKS** — what the student did correctly (or "N/A")
+**WHAT TO IMPROVE** — one concrete, actionable suggestion
+**IMPROVED VERSION** — a short rewrite that demonstrates the technique more clearly
+
+Be encouraging and specific.`;
+      try {
+        const reply = await aiCall([{role:'user',content:prompt}], 500);
+        fb.innerHTML = fmtMd(reply); fb.style.display='block';
+      } catch(e) { fb.innerHTML='<span style="color:#c07878">Error.</span>'; fb.style.display='block'; }
+      btn.disabled = false;
+    });
+
+    // ---- 5. REVISION ASSISTANT ----
+    document.getElementById('rev-btn').addEventListener('click', async () => {
+      const text = document.getElementById('rev-input').value.trim();
+      const name = document.getElementById('rev-tech').value.trim();
+      if (!text) return alert('Please paste your original text.');
+      const t = findTech(name);
+      if (!t) return alert(`"${name}" not found.`);
+      const btn = document.getElementById('rev-btn');
+      const res = document.getElementById('rev-result');
+      btn.disabled = true; showLoading(res);
+      const prompt = `You are a literary writing tutor. Show a student how their passage changes when a specific technique is applied.
+
+Technique: ${t.name}
+Definition: ${t.info.definition}
+Effect: ${t.info.effect}
+
+Original passage:
+"""
+${text}
+"""
+
+Provide three sections with bold headings:
+**REVISED VERSION** — a rewrite that clearly demonstrates ${t.name}. Keep the original meaning and approximate length.
+**WHAT CHANGED** — 2–3 bullet points explaining exactly what was altered and why each change constitutes ${t.name}
+**EFFECT GAINED** — one sentence on what the revision achieves that the original did not
+
+Be specific and educational.`;
+      try {
+        const reply = await aiCall([{role:'user',content:prompt}], 600);
+        res.innerHTML = fmtMd(reply); res.style.display='block';
+      } catch(e) { res.innerHTML='<span style="color:#c07878">Error.</span>'; res.style.display='block'; }
+      btn.disabled = false;
+    });
+
+    // ---- 6. RELATIONSHIP EXPLORER ----
+    const AXIS_LABELS = { gradient:'Specificity / Scope Gradient', subtype:'Type / Subtype', mirror:'Inversion / Mirror', cross:'Cross-Family Link', effect:'Shared Effect / Mode' };
+
+    document.getElementById('rel-btn').addEventListener('click', () => {
+      const name = document.getElementById('rel-search').value.trim();
+      const t    = findTech(name);
+      const result = document.getElementById('rel-result');
+      if (!t) { alert(`"${name}" not found.`); return; }
+      result.style.display = 'block';
+
+      const rels = RELATIONS.filter(r => r.from === t.name || r.to === t.name);
+      const etym = ETYMOLOGIES[t.name];
+
+      let html = `<div class="result-area" style="margin-bottom:12px;">
+        <h4>${escHtml(t.name)}</h4>
+        <div style="margin-bottom:6px;">
+          <span class="fam-tag" style="background:${FAMILY_COLORS[t.family]||'#888'}">${escHtml(t.family)}</span>
+          <span style="font-size:12px;color:#888"> · ${escHtml(t.subgroup)}</span>
+        </div>
+        <div style="font-size:13px;">${escHtml(t.info.definition)}</div>
+      </div>`;
+
+      if (etym) {
+        html += `<div class="etym-box"><div class="etym-label">Etymology</div>${escHtml(etym)}</div>`;
+      }
+
+      if (!rels.length) {
+        html += '<div class="result-area"><em>No mapped relationships for this technique.</em></div>';
+        result.innerHTML = html; return;
+      }
+
+      const grouped = {};
+      rels.forEach(r => {
+        if (!grouped[r.axis]) grouped[r.axis] = [];
+        const other = r.from === t.name ? r.to : r.from;
+        const dir   = r.from === t.name ? '→' : '←';
+        grouped[r.axis].push({ other, dir });
+      });
+
+      Object.entries(grouped).forEach(([axis, items]) => {
+        const axisData = AXES[axis] || { color:'#888', label: axis };
+        html += `<div class="rel-axis-group">
+          <div class="rel-axis-label" style="color:${axisData.color}">${AXIS_LABELS[axis]||axis}</div>
+          ${items.map(({other,dir}) => {
+            const ot = findTech(other);
+            return `<div class="rel-item" onclick="document.getElementById('rel-search').value='${other.replace(/'/g,"\\'")}';document.getElementById('rel-btn').click()">
+              <span class="rel-arrow" style="color:${axisData.color}">${dir}</span>
+              <div>
+                <div class="rel-name">${escHtml(other)}</div>
+                ${ot?`<div class="rel-def">${escHtml(ot.info.definition)}</div>`:''}
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`;
+      });
+
+      result.innerHTML = html;
+    });
   </script>
 </body>
 </html>
