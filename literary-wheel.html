@@ -87,8 +87,8 @@
     #main-svg {
       display: block;
       width: 100%;
-      height: calc(100vh - 65px);
-      margin-top: 65px;
+      height: calc(100vh - 80px);
+      margin-top: 80px;
     }
 
     /* Legend */
@@ -200,7 +200,7 @@
     #info-panel {
       position: fixed;
       right: 20px;
-      top: 72px;
+      top: 86px;
       background: rgba(255, 252, 248, 0.98);
       border: 1px solid #D0CAC2;
       border-radius: 6px;
@@ -395,9 +395,9 @@
 
     #learning-panel {
       position: fixed;
-      top: 65px; left: 0;
+      top: 80px; left: 0;
       width: 520px;
-      height: calc(100vh - 65px);
+      height: calc(100vh - 80px);
       background: #FDFAF6;
       border-right: 1px solid #D0CAC2;
       box-shadow: 6px 0 32px rgba(0,0,0,0.10);
@@ -794,7 +794,7 @@
     };
 
     const W = window.innerWidth;
-    const H = window.innerHeight - 65;
+    const H = window.innerHeight - 80;
 
     // ==================== CONSTANTS ====================
     // ==================== FAMILY COLOUR PALETTE ====================
@@ -1344,26 +1344,49 @@
           .style("filter", isSelected ? null : "saturate(0) brightness(1.05)");
       });
 
-      linksGroup.selectAll(".link").transition().duration(500).style("opacity", 0.25);
-      spokesGroup.selectAll("line").transition().duration(500).style("opacity", 0.25);
+      // Links: keep the link entering the selected node (or its parent's link) at full opacity
+      linksGroup.selectAll(".link").each(function(d) {
+        const connected = d.target.data.name === selectedName ||
+                          d.source.data.name === selectedName;
+        d3.select(this).transition().duration(500)
+          .style("opacity", connected ? 1 : 0.18);
+      });
+
+      // Spokes: keep the spoke for the selected technique OR all spokes for a selected subgroup
+      spokesGroup.selectAll("line").each(function(d) {
+        const isTechSelected = d && d.name === selectedName;
+        const isParentSelected = d && d.sgNode && d.sgNode.data && d.sgNode.data.name === selectedName;
+        d3.select(this).transition().duration(500)
+          .style("opacity", (isTechSelected || isParentSelected) ? 1 : 0.15);
+      });
     }
 
     // Radial pulse ring that expands outward and fades over 2 seconds
     function triggerPulse(gElement, startR, color) {
       const g = d3.select(gElement);
       g.selectAll(".pulse-ring").remove();
-      g.insert("circle", ":first-child")
-        .attr("class", "pulse-ring")
-        .attr("r", startR)
-        .style("fill", "none")
-        .style("stroke", color)
-        .style("stroke-width", 3)
-        .style("stroke-opacity", 0.85)
-        .style("pointer-events", "none")
-        .transition().duration(2000).ease(d3.easeCubicOut)
-        .attr("r", startR + 70)
-        .style("stroke-opacity", 0)
-        .remove();
+
+      // Fire repeating pulses staggered 650ms apart, 8 total (~5s of animation)
+      let fired = 0;
+      const totalPulses = 8;
+      function doPulse() {
+        if (!gElement.isConnected || fired >= totalPulses) return;
+        fired++;
+        g.insert("circle", ":first-child")
+          .attr("class", "pulse-ring")
+          .attr("r", startR)
+          .style("fill", "none")
+          .style("stroke", color)
+          .style("stroke-width", 2.5)
+          .style("stroke-opacity", 0.8)
+          .style("pointer-events", "none")
+          .transition().duration(1800).ease(d3.easeCubicOut)
+          .attr("r", startR + 60)
+          .style("stroke-opacity", 0)
+          .remove();
+        if (fired < totalPulses) setTimeout(doPulse, 650);
+      }
+      doPulse();
     }
 
     // ==================== MAIN RENDER FUNCTION ====================
@@ -1617,7 +1640,7 @@
 
         techEnter.append("rect")
           .attr("class", "tech-label-bg")
-          .attr("fill", "#f5f0e8")
+          .attr("fill", "#F0EDE8")
           .attr("fill-opacity", 0.92)
           .attr("rx", 2);
 
@@ -1625,7 +1648,7 @@
 
         techEnter.append("text")
           .attr("class", "tech-label")
-          .style("font-family", "Georgia, serif")
+          .style("font-family", "'DM Sans', sans-serif")
           .style("font-size", "13px")
           .style("fill", techTextColor);
 
