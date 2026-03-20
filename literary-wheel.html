@@ -85,21 +85,30 @@
       position: fixed;
       bottom: 90px;
       left: 20px;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.97);
       border: 1px solid #d0cac0;
-      border-radius: 6px;
-      padding: 12px 16px;
-      font-size: 11px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
       z-index: 90;
-      max-width: 200px;
+      min-width: 160px;
+    }
+
+    #legend-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #888;
+      margin-bottom: 10px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 10px;
+      margin-bottom: 8px;
     }
 
     .legend-item:last-child {
@@ -107,8 +116,8 @@
     }
 
     .legend-dot {
-      width: 10px;
-      height: 10px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -336,9 +345,9 @@
 
     .link {
       fill: none;
-      stroke: #5a5a5a;
-      stroke-width: 1px;
-      stroke-opacity: 0.4;
+      stroke: #4a4a4a;
+      stroke-width: 2.5px;
+      stroke-opacity: 0.65;
       marker-end: none;
     }
 
@@ -404,6 +413,7 @@
   </svg>
 
   <div id="legend">
+    <div id="legend-title">Node Types</div>
     <div class="legend-item">
       <div class="legend-dot" style="background: #1c1c1c;"></div>
       <span>Root</span>
@@ -417,7 +427,7 @@
       <span>Subgroup</span>
     </div>
     <div class="legend-item">
-      <div class="legend-dot" style="background: #6a7a6a;"></div>
+      <div class="legend-dot" style="background: #6a9a7a;"></div>
       <span>Technique</span>
     </div>
   </div>
@@ -529,8 +539,9 @@
     }
 
     function computeRadialPositions(cx, cy, n) {
-      const fanDeg = Math.min(160, 80 + n * 6);
-      const R = n <= 6 ? 140 : n <= 12 ? 170 : 200;
+      // Keep fan narrower so adjacent expanded subgroups don't collide
+      const fanDeg = Math.min(110, 45 + n * 5);
+      const R = n <= 4 ? 165 : n <= 8 ? 200 : n <= 12 ? 235 : 265;
       const startAngle = -fanDeg / 2;
       return Array.from({length: n}, (_, i) => {
         const angleDeg = n === 1 ? 0 : startAngle + i * (fanDeg / (n - 1));
@@ -918,8 +929,14 @@
     const techniquesGroup = d3.select("#techniques-group");
 
     const treeLayout = d3.tree()
-      .nodeSize([180, 160])
-      .separation((a, b) => a.parent === b.parent ? 1.2 : 1.6);
+      .nodeSize([220, 190])
+      .separation((a, b) => {
+        // Give expanded subgroups extra lateral room so technique fans don't collide
+        const aExp = a.data.type === "subgroup" && state.expandedSubgroups.has(a.data.name);
+        const bExp = b.data.type === "subgroup" && state.expandedSubgroups.has(b.data.name);
+        if (aExp || bExp) return 2.4;
+        return a.parent === b.parent ? 1.2 : 1.6;
+      });
 
     const root = d3.hierarchy(taxonomyRoot);
     treeLayout(root);
@@ -951,8 +968,10 @@
       const sx = (source && source.x0 != null) ? source.x0 : (source ? (source.x || 0) : 0);
       const sy = (source && source.y0 != null) ? source.y0 : (source ? (source.y || 0) : 0);
 
-      const nodeRadii = { root: 14, family: 11, subgroup: 9 };
+      const nodeRadii = { root: 18, family: 15, subgroup: 12 };
       const textSizes = { root: "18px", family: "17px", subgroup: "16px" };
+      // Text is placed below the circle so the coloured fill is always visible
+      const textOffsets = { root: 26, family: 23, subgroup: 20 };
 
       // ---- NODES ----
       const nodeJoin = nodesGroup.selectAll("g.node")
@@ -972,15 +991,16 @@
         .style("opacity", 0);
 
       nodeEnter.append("circle")
-        .attr("r", d => nodeRadii[d.data.type] || 8);
+        .attr("r", d => nodeRadii[d.data.type] || 10);
 
       nodeEnter.append("rect")
         .attr("class", "node-label-bg")
         .attr("fill", "#f5f0e8")
-        .attr("fill-opacity", 0.92)
+        .attr("fill-opacity", 0.90)
         .attr("rx", 3);
 
       nodeEnter.append("text")
+        .attr("y", d => textOffsets[d.data.type] || 18)
         .attr("dy", "0.32em")
         .style("text-anchor", "middle")
         .style("font-size", d => textSizes[d.data.type] || "14px")
@@ -993,9 +1013,23 @@
         event.stopPropagation();
         if (d.data.type === "root" || d.data.type === "family") {
           if (d._children) {
+            // Expanding
             d.children = d._children;
             d._children = null;
           } else if (d.children) {
+            // Collapsing — remove technique bursts for all descendant subgroups first
+            function clearSubgroupBursts(node) {
+              if (node.data.type === "subgroup") {
+                state.expandedSubgroups.delete(node.data.name);
+                techniquesGroup.selectAll(`g.tn-${node.id}`)
+                  .transition().duration(350).style("opacity", 0).remove();
+                spokesGroup.selectAll(`line.spoke-${node.id}`)
+                  .transition().duration(350).style("opacity", 0).remove();
+              }
+              if (node.children) node.children.forEach(clearSubgroupBursts);
+              if (node._children) node._children.forEach(clearSubgroupBursts);
+            }
+            d.children.forEach(clearSubgroupBursts);
             d._children = d.children;
             d.children = null;
           }
@@ -1059,8 +1093,10 @@
     // ==================== RADIAL BURST RENDERING ====================
     function renderBursts() {
       const subgroupData = [];
+      const visibleSubgroupIds = new Set();
       nodesGroup.selectAll("g.node--subgroup").each(function(d) {
         subgroupData.push(d);
+        visibleSubgroupIds.add(d.id);
       });
 
       state.techniquePositions.clear();
@@ -1088,8 +1124,8 @@
           .attr("x1", cx).attr("y1", cy)
           .attr("x2", cx).attr("y2", cy)
           .attr("stroke", "#4a6fa5")
-          .attr("stroke-width", 0.9)
-          .attr("stroke-opacity", 0.45)
+          .attr("stroke-width", 1.8)
+          .attr("stroke-opacity", 0.55)
           .transition().duration(550).ease(d3.easeBackOut.overshoot(0.5))
           .attr("x2", d => d.pos.x)
           .attr("y2", d => d.pos.y);
@@ -1117,9 +1153,9 @@
           .on("click", (event, d) => { event.stopPropagation(); showInfo(d, event); });
 
         techEnter.append("circle")
-          .attr("r", 6)
-          .attr("fill", "#6a7a6a")
-          .attr("stroke", "#5a6a5a")
+          .attr("r", 8)
+          .attr("fill", "#6a9a7a")
+          .attr("stroke", "#4a7a5a")
           .attr("stroke-width", 1.5);
 
         techEnter.append("rect")
@@ -1144,10 +1180,15 @@
           const dx = d.pos.x - cx, dy = d.pos.y - cy;
           const angleDeg = Math.atan2(dx, dy) * 180 / Math.PI;
           const el = d3.select(this);
+          // Always place label to the side/below the circle, never overlapping it
           let tx, ty, anchor;
-          if (angleDeg < -25) { tx = -10; ty = 4; anchor = "end"; }
-          else if (angleDeg > 25) { tx = 10; ty = 4; anchor = "start"; }
-          else { tx = 0; ty = 18; anchor = "middle"; }
+          if (angleDeg < -35) {        // left side
+            tx = -13; ty = 4; anchor = "end";
+          } else if (angleDeg > 35) {  // right side
+            tx = 13; ty = 4; anchor = "start";
+          } else {                     // below centre
+            tx = 0; ty = 22; anchor = "middle";
+          }
           el.attr("x", tx).attr("y", ty).attr("dy", "0.32em")
             .style("text-anchor", anchor)
             .text(d.name);
@@ -1174,6 +1215,24 @@
           .attr("transform", `translate(${cx},${cy})`)
           .style("opacity", 0)
           .remove();
+      });
+
+      // Remove any orphaned spokes / technique nodes whose subgroup is no longer visible
+      spokesGroup.selectAll("line").filter(function() {
+        const m = (this.getAttribute("class") || "").match(/spoke-(\d+)/);
+        return m && !visibleSubgroupIds.has(parseInt(m[1]));
+      }).transition().duration(350).style("opacity", 0).remove();
+
+      techniquesGroup.selectAll("g").filter(function() {
+        const m = (this.getAttribute("class") || "").match(/tn-(\d+)/);
+        return m && !visibleSubgroupIds.has(parseInt(m[1]));
+      }).transition().duration(350).style("opacity", 0).remove();
+
+      // Also purge expandedSubgroups entries for subgroups no longer in the tree
+      state.expandedSubgroups.forEach(name => {
+        if (!subgroupData.find(d => d.data.name === name)) {
+          state.expandedSubgroups.delete(name);
+        }
       });
 
       // Badge on subgroup nodes
@@ -1271,10 +1330,14 @@
       const badgeContainer = d3.select("#info-badge-container");
       const content = d3.select("#info-content");
 
-      title.text(d.data.name || d.name);
+      // d may be a D3 hierarchy node (has .data) or a plain technique object (has .name / .info)
+      const name = (d.data && d.data.name) || d.name || "Unknown";
+      const type = (d.data && d.data.type) || (d.info ? "technique" : "unknown");
+      const info = (d.data && d.data.info) || d.info;
+
+      title.text(name);
       badgeContainer.selectAll("*").remove();
 
-      const type = d.data.type || (d.info ? "technique" : "unknown");
       if (type !== "root") {
         badgeContainer.append("span")
           .attr("class", "info-badge")
@@ -1283,8 +1346,7 @@
 
       content.selectAll("*").remove();
 
-      if (d.data.info || d.info) {
-        const info = d.data.info || d.info;
+      if (info) {
 
         if (info.definition) {
           const sec = content.append("div").attr("class", "info-section");
@@ -1320,7 +1382,7 @@
       panel.classed("visible", true);
       state.currentInfoNode = d;
 
-      drawRelationArcs(d.data.name || d.name);
+      drawRelationArcs(name);
     }
 
     function navigateTo(name) {
