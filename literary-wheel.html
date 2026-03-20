@@ -910,11 +910,10 @@
       });
     }
 
+    // Smooth cubic bezier from parent to child — no rectangular elbows
+    const linkGen = d3.linkVertical().x(d => d.x).y(d => d.y);
     function stepPath(s, t) {
-      const midY = (s.y + t.y) / 2, dx = t.x - s.x;
-      if (Math.abs(dx) < 1) return `M${s.x},${s.y}L${t.x},${t.y}`;
-      const r = Math.min(10, Math.abs(dx)/2, (t.y-s.y)/3), sign = dx > 0 ? 1 : -1;
-      return `M${s.x},${s.y}L${s.x},${midY-r}Q${s.x},${midY} ${s.x+sign*r},${midY}L${t.x-sign*r},${midY}Q${t.x},${midY} ${t.x},${midY+r}L${t.x},${t.y}`;
+      return linkGen({ source: { x: s.x, y: s.y }, target: { x: t.x, y: t.y } });
     }
 
     function relArcPath(sx, sy, tx, ty) {
@@ -1366,9 +1365,9 @@
       const g = d3.select(gElement);
       g.selectAll(".pulse-ring").remove();
 
-      // Fire repeating pulses staggered 650ms apart, 8 total (~5s of animation)
+      // Fire repeating pulses every 2s, 30 total
       let fired = 0;
-      const totalPulses = 8;
+      const totalPulses = 30;
       function doPulse() {
         if (!gElement.isConnected || fired >= totalPulses) return;
         fired++;
@@ -1384,7 +1383,7 @@
           .attr("r", startR + 60)
           .style("stroke-opacity", 0)
           .remove();
-        if (fired < totalPulses) setTimeout(doPulse, 650);
+        if (fired < totalPulses) setTimeout(doPulse, 2000);
       }
       doPulse();
     }
@@ -2072,9 +2071,29 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: 'gpt-4o', max_tokens: maxTokens, messages })
       });
-      if (!res.ok) throw new Error(`API ${res.status}`);
-      const data = await res.json();
-      return data.choices?.[0]?.message?.content || '';
+      if (!res.ok) throw new Error(`Proxy error ${res.status}`);
+
+      // Handle every common proxy response format
+      const raw = await res.text();
+      if (!raw || !raw.trim()) throw new Error('Empty response from proxy');
+
+      let data;
+      try { data = JSON.parse(raw); } catch(e) { return raw.trim(); } // plain text response
+
+      // Standard OpenAI format
+      if (data.choices?.[0]?.message?.content) return data.choices[0].message.content;
+      // Common proxy shorthand formats
+      if (typeof data.content === 'string' && data.content) return data.content;
+      if (typeof data.text    === 'string' && data.text)    return data.text;
+      if (typeof data.result  === 'string' && data.result)  return data.result;
+      if (typeof data.response=== 'string' && data.response)return data.response;
+      if (typeof data.message === 'string' && data.message) return data.message;
+      if (typeof data.output  === 'string' && data.output)  return data.output;
+      if (typeof data.reply   === 'string' && data.reply)   return data.reply;
+      // If it's just a plain string JSON
+      if (typeof data === 'string' && data) return data;
+
+      throw new Error(`Unrecognised proxy response: ${raw.slice(0, 120)}`);
     }
 
     function showLoading(el) {
@@ -2221,7 +2240,7 @@ Be concrete, literary, and keep each section to 2–4 sentences.`;
       try {
         const reply = await aiCall([{ role:'user', content:prompt }], 750);
         result.innerHTML = fmtMd(reply);
-      } catch(e) { result.innerHTML = '<span style="color:#c07878">Error reaching AI.</span>'; }
+      } catch(e) { result.innerHTML = `<span style="color:#c07878">⚠ ${e.message}</span>`; }
       btn.disabled = false; result.style.display = 'block';
     });
 
@@ -2283,7 +2302,7 @@ Use the shortest distinctive quote. Only include techniques you are confident ab
             <div style="font-size:13px;">${escHtml(f.explanation)}</div>
           </div>`;
         }).join('');
-      } catch(e) { hlEl.innerHTML = '<span style="color:#c07878">Error reaching AI.</span>'; }
+      } catch(e) { hlEl.innerHTML = `<span style="color:#c07878">⚠ ${e.message}</span>`; }
       btn.disabled = false;
     });
 
@@ -2362,7 +2381,7 @@ Then on a new line add: "Tip: [one subtle hint about deploying the technique, wi
       try {
         const reply = await aiCall([{role:'user',content:prompt}], 250);
         ptxt.innerHTML = `<strong>Your prompt:</strong><br><br>${reply.replace(/\n/g,'<br>')}`;
-      } catch(e) { ptxt.innerHTML = '<span style="color:#c07878">Error reaching AI.</span>'; }
+      } catch(e) { ptxt.innerHTML = `<span style="color:#c07878">⚠ ${e.message}</span>`; }
       btn.disabled = false;
     });
 
@@ -2394,7 +2413,7 @@ Be encouraging and specific.`;
       try {
         const reply = await aiCall([{role:'user',content:prompt}], 500);
         fb.innerHTML = fmtMd(reply); fb.style.display='block';
-      } catch(e) { fb.innerHTML='<span style="color:#c07878">Error reaching AI.</span>'; fb.style.display='block'; }
+      } catch(e) { fb.innerHTML=`<span style="color:#c07878">⚠ ${e.message}</span>`; fb.style.display='block'; }
       btn.disabled = false;
     });
 
@@ -2428,7 +2447,7 @@ Be specific and educational.`;
       try {
         const reply = await aiCall([{role:'user',content:prompt}], 600);
         res.innerHTML = fmtMd(reply); res.style.display='block';
-      } catch(e) { res.innerHTML='<span style="color:#c07878">Error reaching AI.</span>'; res.style.display='block'; }
+      } catch(e) { res.innerHTML=`<span style="color:#c07878">⚠ ${e.message}</span>`; res.style.display='block'; }
       btn.disabled = false;
     });
 
