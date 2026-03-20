@@ -87,14 +87,22 @@
     #main-svg {
       display: block;
       width: 100%;
-      height: calc(100vh - 80px);
+      height: calc(100vh - 132px);
       margin-top: 80px;
+    }
+
+    #etym-svg {
+      display: none;
+      width: 100%;
+      height: calc(100vh - 132px);
+      margin-top: 80px;
+      background: #F0EDE8;
     }
 
     /* Legend */
     #legend {
       position: fixed;
-      bottom: 90px;
+      bottom: 142px;
       left: 20px;
       background: rgba(255, 255, 255, 0.97);
       border: 1px solid #d0cac0;
@@ -135,7 +143,7 @@
 
     #axis-legend {
       position: fixed;
-      bottom: 20px;
+      bottom: 72px;
       right: 90px;
       background: rgba(255, 255, 255, 0.95);
       border: 1px solid #d0cac0;
@@ -168,7 +176,7 @@
     /* Zoom controls */
     #zoom-controls {
       position: fixed;
-      bottom: 20px;
+      bottom: 72px;
       right: 20px;
       display: flex;
       flex-direction: column;
@@ -397,7 +405,7 @@
       position: fixed;
       top: 80px; left: 0;
       width: 520px;
-      height: calc(100vh - 80px);
+      height: calc(100vh - 132px);
       background: #FDFAF6;
       border-right: 1px solid #D0CAC2;
       box-shadow: 6px 0 32px rgba(0,0,0,0.10);
@@ -609,6 +617,148 @@
     .lp-content::-webkit-scrollbar { width:5px; }
     .lp-content::-webkit-scrollbar-track { background:transparent; }
     .lp-content::-webkit-scrollbar-thumb { background:#C8C2BB; border-radius:3px; }
+
+    /* ---- BOTTOM NAV ---- */
+    #bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 52px;
+      background: #F0EDE8;
+      border-top: 1px solid #D8D2CB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      z-index: 110;
+      box-shadow: 0 -1px 4px rgba(0,0,0,0.06);
+    }
+    .view-btn {
+      padding: 7px 26px;
+      background: transparent;
+      border: 1px solid #C8C2BB;
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6a6460;
+      cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .view-btn:hover { background: #e4e0da; color: #1A1A1A; border-color: #B0AAA2; }
+    .view-btn.active { background: #1A1A1A; border-color: #1A1A1A; color: #F5F2EE; }
+    .view-btn-icon { font-size: 14px; line-height: 1; }
+
+    /* ---- PROMPTS BREADCRUMB ---- */
+    #pmt-breadcrumb {
+      display: none;
+      font-size: 11px;
+      color: #9a9088;
+      font-family: 'DM Sans', sans-serif;
+      padding: 5px 0 12px;
+      line-height: 1.4;
+    }
+    #pmt-breadcrumb .bc-sep { margin: 0 5px; opacity: 0.5; }
+    #pmt-breadcrumb .bc-family { font-weight: 600; }
+    #pmt-breadcrumb .bc-loc { color: #c0674f; font-weight: 600; font-style: italic; }
+    #pmt-breadcrumb .bc-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    /* ---- ETYMOLOGY VIEW ---- */
+    #etym-svg { cursor: grab; }
+    #etym-svg.panning { cursor: grabbing; }
+    .etym-lane-bg { opacity: 0.55; }
+    .etym-lane-label {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 13px;
+      fill: #8a8078;
+      font-style: italic;
+    }
+    .etym-node circle { cursor: pointer; transition: r 0.15s; }
+    .etym-node:hover circle { filter: brightness(1.15); }
+    .etym-node text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      fill: #2a2520;
+      pointer-events: none;
+      text-anchor: middle;
+    }
+    .etym-arc {
+      fill: none;
+      stroke-width: 1.5;
+      opacity: 0.35;
+      stroke-dasharray: 4 3;
+    }
+    .etym-arc:hover { opacity: 0.85; stroke-width: 2.5; }
+    .etym-axis text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      fill: #8a8078;
+    }
+    .etym-axis line, .etym-axis path { stroke: #C8C2BB; }
+    .etym-period-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      fill: #aaa49e;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    #etym-tooltip {
+      position: fixed;
+      background: rgba(253,250,246,0.97);
+      border: 1px solid #D0CAC2;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: #1A1A1A;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      pointer-events: none;
+      max-width: 220px;
+      line-height: 1.5;
+      z-index: 300;
+      display: none;
+    }
+    #etym-tooltip strong {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 15px;
+      font-weight: 400;
+      display: block;
+      margin-bottom: 4px;
+    }
+    #etym-tooltip .tt-root {
+      color: #b8893a;
+      font-style: italic;
+      margin-top: 3px;
+      font-size: 11px;
+    }
+    #etym-tooltip .tt-era {
+      color: #8a8078;
+      font-size: 11px;
+    }
+    #etym-tooltip .tt-click {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #9a9088;
+      border-top: 1px solid #EAE5DD;
+      padding-top: 5px;
+    }
+    .etym-root-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      fill: #9a9088;
+      text-anchor: middle;
+      pointer-events: none;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -697,6 +847,7 @@
         <div class="tool-label">Technique</div>
         <input class="tool-input" id="pmt-tech" placeholder="Search technique…" list="pmt-list" autocomplete="off">
         <datalist id="pmt-list"></datalist>
+        <div id="pmt-breadcrumb"></div>
         <button class="tool-btn" id="pmt-gen-btn">Generate Prompt →</button>
         <div id="pmt-prompt-box" style="display:none">
           <div class="result-area" id="pmt-prompt-text" style="margin-bottom:12px;background:#fffdf8;border-color:#b8893a;"></div>
@@ -782,6 +933,20 @@
     <div id="info-content"></div>
   </div>
 
+  <!-- ETYMOLOGY VIEW SVG -->
+  <svg id="etym-svg"></svg>
+  <div id="etym-tooltip"></div>
+
+  <!-- BOTTOM NAV -->
+  <div id="bottom-nav">
+    <button class="view-btn active" data-view="taxonomy" id="btn-view-taxonomy">
+      <span class="view-btn-icon">⎇</span> Taxonomy
+    </button>
+    <button class="view-btn" data-view="etymology" id="btn-view-etymology">
+      <span class="view-btn-icon">⏳</span> Etymology
+    </button>
+  </div>
+
   <script>
     // ==================== GLOBAL STATE ====================
     const state = {
@@ -794,7 +959,7 @@
     };
 
     const W = window.innerWidth;
-    const H = window.innerHeight - 80;
+    const H = window.innerHeight - 132;
 
     // ==================== CONSTANTS ====================
     // ==================== FAMILY COLOUR PALETTE ====================
@@ -910,10 +1075,9 @@
       });
     }
 
-    // Smooth cubic bezier from parent to child — no rectangular elbows
-    const linkGen = d3.linkVertical().x(d => d.x).y(d => d.y);
+    // Straight line directly from parent to child — no sweeping curves
     function stepPath(s, t) {
-      return linkGen({ source: { x: s.x, y: s.y }, target: { x: t.x, y: t.y } });
+      return `M${s.x},${s.y}L${t.x},${t.y}`;
     }
 
     function relArcPath(sx, sy, tx, ty) {
@@ -1317,8 +1481,22 @@
     // ==================== SELECTION HELPERS ====================
 
     // Restore all elements to full opacity
+    // Track active pulse so it can be cancelled on deselect
+    let _pulseTimer = null;
+    let _pulseEl = null;
+
+    function stopPulse() {
+      if (_pulseTimer) { clearTimeout(_pulseTimer); _pulseTimer = null; }
+      if (_pulseEl) {
+        d3.select(_pulseEl).selectAll(".pulse-ring")
+          .transition().duration(300).style("stroke-opacity", 0).remove();
+        _pulseEl = null;
+      }
+    }
+
     function clearSelection() {
       state.selectedName = null;
+      stopPulse();
       nodesGroup.selectAll(".node").transition().duration(450).style("opacity", 1);
       techniquesGroup.selectAll("g").transition().duration(450).style("opacity", 1).style("filter", null);
       linksGroup.selectAll(".link").transition().duration(450).style("opacity", null);
@@ -1360,16 +1538,17 @@
       });
     }
 
-    // Radial pulse ring that expands outward and fades over 2 seconds
+    // Radial pulse ring — loops every 2s up to 30 times, cancellable via stopPulse()
     function triggerPulse(gElement, startR, color) {
+      stopPulse(); // cancel any existing pulse first
       const g = d3.select(gElement);
       g.selectAll(".pulse-ring").remove();
+      _pulseEl = gElement;
 
-      // Fire repeating pulses every 2s, 30 total
       let fired = 0;
       const totalPulses = 30;
       function doPulse() {
-        if (!gElement.isConnected || fired >= totalPulses) return;
+        if (!gElement.isConnected || fired >= totalPulses) { _pulseTimer = null; return; }
         fired++;
         g.insert("circle", ":first-child")
           .attr("class", "pulse-ring")
@@ -1383,7 +1562,7 @@
           .attr("r", startR + 60)
           .style("stroke-opacity", 0)
           .remove();
-        if (fired < totalPulses) setTimeout(doPulse, 2000);
+        if (fired < totalPulses) _pulseTimer = setTimeout(doPulse, 2000);
       }
       doPulse();
     }
@@ -1392,6 +1571,7 @@
     function render(source) {
       // Re-layout clears any lingering selection state
       state.selectedName = null;
+      stopPulse();
       nodesGroup.selectAll(".pulse-ring").remove();
       treeLayout(root);
 
@@ -2258,9 +2438,16 @@ Be concrete, literary, and keep each section to 2–4 sentences.`;
       findingsEl.innerHTML = ''; resultEl.style.display = 'block';
 
       const techList = allTechniques.map(t => t.name).join(', ');
-      const prompt = `You are a literary techniques analyst. Scan the following passage and identify every literary technique present.
+      const prompt = `You are a rigorous literary techniques analyst. Scan the following passage and identify literary techniques that are DELIBERATELY used by the author for effect.
 
 Techniques to consider (not exhaustive): ${techList}
+
+CRITICAL RULES — strictly apply all of these before including any finding:
+1. Only flag techniques where there is CLEAR DELIBERATE literary intent, not accidental or colloquial resemblance.
+2. The word "like" is NOT a simile unless it introduces a genuine structured comparison between two distinct things (e.g. "her voice was like honey"). Colloquial "like" (as a filler, hedge, or quote marker) must be ignored entirely.
+3. Do not flag generic word choices as diction unless there is a distinctive pattern of register, connotation, or vocabulary selection.
+4. Do not flag repetition unless a word or structure is repeated at least twice within the same short passage.
+5. Only include techniques you are highly confident about — fewer accurate findings beats many uncertain ones.
 
 Passage:
 """
@@ -2270,7 +2457,7 @@ ${text}
 Return ONLY a valid JSON array (no markdown fences), like:
 [{"technique":"Name","quote":"exact short excerpt","explanation":"one sentence why"}]
 
-Use the shortest distinctive quote. Only include techniques you are confident about.`;
+Use the shortest distinctive quote that captures the technique.`;
       try {
         const reply = await aiCall([{role:'user',content:prompt}], 1000);
         let findings = [];
@@ -2509,6 +2696,335 @@ Be specific and educational.`;
 
       result.innerHTML = html;
     });
+
+    // ================================================================
+    // PROMPTS BREADCRUMB
+    // ================================================================
+    (function() {
+      const inp = document.getElementById('pmt-tech');
+      const bc  = document.getElementById('pmt-breadcrumb');
+      function updateBreadcrumb() {
+        const t = findTech(inp.value.trim());
+        if (!t) { bc.style.display = 'none'; return; }
+        const famColor = FAMILY_COLORS[t.family] || '#888';
+        bc.innerHTML = `<span class="bc-dot" style="background:${famColor}"></span>` +
+          `<span class="bc-family" style="color:${famColor}">${escHtml(t.family)}</span>` +
+          `<span class="bc-sep">›</span><span>${escHtml(t.subgroup)}</span>` +
+          `<span class="bc-sep">›</span><span class="bc-loc">${escHtml(t.name)}</span>`;
+        bc.style.display = 'block';
+      }
+      inp.addEventListener('input', updateBreadcrumb);
+      inp.addEventListener('change', updateBreadcrumb);
+    })();
+
+    // ================================================================
+    // ETYMOLOGY DB — structured data for the Etymology view
+    // ================================================================
+    const ETYM_DB = {
+      // Greek-rooted terms
+      "Metaphor":        { lang:"Greek",   era:-335, rootWord:"metaphorá",      meaning:"carrying across",        family:"Comparative" },
+      "Simile":          { lang:"Greek",   era:-350, rootWord:"homoíōsis",       meaning:"likening, resemblance",  family:"Comparative" },
+      "Anaphora":        { lang:"Greek",   era:-350, rootWord:"ana + phérein",   meaning:"carrying back",          family:"Repetitive" },
+      "Epistrophe":      { lang:"Greek",   era:-350, rootWord:"epi + strephein", meaning:"turning upon",           family:"Repetitive" },
+      "Symploce":        { lang:"Greek",   era:-100, rootWord:"syn + plékein",   meaning:"weaving together",       family:"Repetitive" },
+      "Epizeuxis":       { lang:"Greek",   era:-100, rootWord:"epi + zeûgma",    meaning:"yoked directly upon",    family:"Repetitive" },
+      "Diacope":         { lang:"Greek",   era:-100, rootWord:"dia + koptein",   meaning:"cutting through",        family:"Repetitive" },
+      "Polysyndeton":    { lang:"Greek",   era:-350, rootWord:"polys + syndeton","meaning":"many bindings",        family:"Structural" },
+      "Asyndeton":       { lang:"Greek",   era:-350, rootWord:"a + syndeton",    meaning:"without binding",        family:"Structural" },
+      "Parallelism":     { lang:"Greek",   era:-350, rootWord:"parállēlos",      meaning:"beside one another",     family:"Structural" },
+      "Chiasmus":        { lang:"Greek",   era:-100, rootWord:"khiasmos",        meaning:"X-shaped crossing",      family:"Structural" },
+      "Antithesis":      { lang:"Greek",   era:-350, rootWord:"anti + títhēmi",  meaning:"placing against",        family:"Structural" },
+      "Oxymoron":        { lang:"Greek",   era:-100, rootWord:"oxys + mōros",    meaning:"sharp-foolish",          family:"Comparative" },
+      "Hyperbole":       { lang:"Greek",   era:-350, rootWord:"hyper + bállein", meaning:"throwing over",          family:"Comparative" },
+      "Litotes":         { lang:"Greek",   era:-100, rootWord:"litótēs",         meaning:"plainness",              family:"Comparative" },
+      "Synecdoche":      { lang:"Greek",   era:-100, rootWord:"synekdokhḗ",      meaning:"taking together",        family:"Descriptive" },
+      "Metonymy":        { lang:"Greek",   era:-350, rootWord:"meta + ónyma",    meaning:"change of name",         family:"Descriptive" },
+      "Irony":           { lang:"Greek",   era:-400, rootWord:"eirōneía",        meaning:"dissembling",            family:"Comparative" },
+      "Sarcasm":         { lang:"Greek",   era:200,  rootWord:"sarkazein",       meaning:"tearing flesh",          family:"Comparative" },
+      "Allegory":        { lang:"Greek",   era:-350, rootWord:"allos + agoreúein","meaning":"speaking otherwise",  family:"Intertextual & Metafictional" },
+      "Apostrophe":      { lang:"Greek",   era:-100, rootWord:"apo + strephein", meaning:"turning away",           family:"Descriptive" },
+      "Onomatopoeia":    { lang:"Greek",   era:-100, rootWord:"ónoma + poieîn",  meaning:"name-making",            family:"Descriptive" },
+      "Euphemism":       { lang:"Greek",   era:-200, rootWord:"eu + phḗmē",      meaning:"good speaking",          family:"Descriptive" },
+      "Ellipsis":        { lang:"Greek",   era:-100, rootWord:"elleípein",       meaning:"falling short",          family:"Structural" },
+      "Anastrophe":      { lang:"Greek",   era:-100, rootWord:"ana + strephein", meaning:"turning back",           family:"Structural" },
+      "Hypotaxis":       { lang:"Greek",   era:-350, rootWord:"hypo + táxis",    meaning:"under-arrangement",      family:"Structural" },
+      "Parataxis":       { lang:"Greek",   era:-350, rootWord:"para + táxis",    meaning:"beside-arrangement",     family:"Structural" },
+      "Pathos":          { lang:"Greek",   era:-350, rootWord:"páthos",          meaning:"suffering / feeling",    family:"Descriptive" },
+      "Ethos":           { lang:"Greek",   era:-350, rootWord:"ēthos",           meaning:"character / custom",     family:"Descriptive" },
+      "Logos":           { lang:"Greek",   era:-500, rootWord:"lógos",           meaning:"word / reason",          family:"Descriptive" },
+      "Symbol":          { lang:"Greek",   era:-100, rootWord:"syn + bállein",   meaning:"thrown together",        family:"Descriptive" },
+      "Zeugma":          { lang:"Greek",   era:-100, rootWord:"zeûgma",          meaning:"yoke",                   family:"Structural" },
+      "Ekphrasis":       { lang:"Greek",   era:-200, rootWord:"ek + phrazein",   meaning:"telling out",            family:"Descriptive" },
+      "Euphony":         { lang:"Greek",   era:-350, rootWord:"eu + phōnḗ",      meaning:"good sound",             family:"Descriptive" },
+      "Cacophony":       { lang:"Greek",   era:-350, rootWord:"kakos + phōnḗ",   meaning:"bad sound",              family:"Descriptive" },
+      "Periphrasis":     { lang:"Greek",   era:-100, rootWord:"peri + phrazein", meaning:"speaking around",        family:"Descriptive" },
+      "Bathos":          { lang:"Greek",   era:1727, rootWord:"bathys",          meaning:"deep",                   family:"Structural" },
+      // Latin-rooted terms
+      "Personification": { lang:"Latin",   era:-100, rootWord:"persona + facere","meaning":"making a character",   family:"Descriptive" },
+      "Alliteration":    { lang:"Latin",   era:1300, rootWord:"ad + littera",    meaning:"to the letter",          family:"Repetitive" },
+      "Allusion":        { lang:"Latin",   era:1500, rootWord:"ad + ludere",     meaning:"playing toward",         family:"Intertextual & Metafictional" },
+      // French-rooted terms
+      "Intertextuality": { lang:"French",  era:1966, rootWord:"inter + textus",  meaning:"woven between texts",    family:"Intertextual & Metafictional" },
+      "Mise en Abyme":   { lang:"French",  era:1893, rootWord:"mise en abyme",   meaning:"placed into the abyss",  family:"Intertextual & Metafictional" },
+      "Motif":           { lang:"French",  era:1840, rootWord:"motivus",         meaning:"moving / recurring element",family:"Intertextual & Metafictional" },
+      // German-rooted terms
+      "Leitmotif":       { lang:"German",  era:1871, rootWord:"Leit + Motiv",    meaning:"leading theme",          family:"Intertextual & Metafictional" }
+    };
+
+    // ================================================================
+    // ETYM_ROOTS — shared root word connections
+    // ================================================================
+    const ETYM_ROOTS = [
+      { root:"phérein (to carry)",   color:"#7a9ec0", techniques:["Metaphor","Anaphora"] },
+      { root:"strephein (to turn)",  color:"#9a7ac0", techniques:["Epistrophe","Apostrophe","Anastrophe"] },
+      { root:"syndeton (binding)",   color:"#7ab88a", techniques:["Polysyndeton","Asyndeton"] },
+      { root:"táxis (arrangement)",  color:"#c09a3a", techniques:["Hypotaxis","Parataxis"] },
+      { root:"phōnḗ (sound)",        color:"#c07878", techniques:["Euphony","Cacophony"] },
+      { root:"phrazein (to speak)",  color:"#b87a50", techniques:["Ekphrasis","Periphrasis"] },
+      { root:"zeûgma (yoke)",        color:"#70a870", techniques:["Zeugma","Epizeuxis"] },
+      { root:"bállein (to throw)",   color:"#8878c8", techniques:["Hyperbole","Symbol"] },
+      { root:"eu- (good prefix)",    color:"#5aa8a0", techniques:["Euphony","Euphemism"] },
+      { root:"para- (beside)",       color:"#b8a060", techniques:["Parallelism","Parataxis"] },
+      { root:"hyper/hypo prefix",    color:"#c07890", techniques:["Hyperbole","Hypotaxis"] },
+      { root:"ana- (back/again)",    color:"#6880b0", techniques:["Anaphora","Anastrophe"] },
+      { root:"Leit + Motiv → Motif", color:"#909070", techniques:["Leitmotif","Motif"] }
+    ];
+
+    // ================================================================
+    // BUILD ETYMOLOGY VIEW
+    // ================================================================
+    function buildEtymView() {
+      const svg = d3.select("#etym-svg");
+      svg.selectAll("*").remove();
+
+      const fullW = window.innerWidth;
+      const fullH = window.innerHeight - 132;
+      svg.attr("width", fullW).attr("height", fullH);
+
+      const margin = { top: 30, right: 60, bottom: 55, left: 60 };
+      const innerW = fullW - margin.left - margin.right;
+      const innerH = fullH - margin.top - margin.bottom;
+
+      const root = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+
+      // ---- TIME SCALE ----
+      const ERA_MIN = -600, ERA_MAX = 2050;
+      const xScale = d3.scaleLinear().domain([ERA_MIN, ERA_MAX]).range([0, innerW]);
+
+      // ---- SWIM LANES ----
+      const LANES = [
+        { id:"Greek",   label:"Ancient Greek",  bg:"#EEE8F8" },
+        { id:"Latin",   label:"Latin",          bg:"#F8F0E8" },
+        { id:"French",  label:"French",         bg:"#EAF4EC" },
+        { id:"German",  label:"German",         bg:"#F8ECE8" },
+        { id:"English", label:"English",        bg:"#F4F4E8" }
+      ];
+      const laneCount = LANES.length;
+      const laneH = innerH / laneCount;
+
+      // Draw lane backgrounds + labels
+      LANES.forEach((lane, i) => {
+        root.append("rect")
+          .attr("class","etym-lane-bg")
+          .attr("x", 0).attr("y", i * laneH)
+          .attr("width", innerW).attr("height", laneH)
+          .attr("fill", lane.bg)
+          .attr("rx", 0);
+
+        root.append("text")
+          .attr("class","etym-lane-label")
+          .attr("x", -8).attr("y", i * laneH + laneH / 2)
+          .attr("dy","0.35em")
+          .attr("text-anchor","end")
+          .text(lane.label);
+      });
+
+      // Horizontal grid lines between lanes
+      LANES.forEach((_,i) => {
+        if (i === 0) return;
+        root.append("line")
+          .attr("x1",0).attr("x2",innerW)
+          .attr("y1",i*laneH).attr("y2",i*laneH)
+          .attr("stroke","#D0CAC2").attr("stroke-width",0.8).attr("stroke-dasharray","3,4");
+      });
+
+      // ---- HISTORICAL PERIOD MARKERS ----
+      const PERIODS = [
+        { era:-500, label:"Classical Antiquity" },
+        { era:500,  label:"Early Medieval" },
+        { era:1100, label:"High Medieval" },
+        { era:1500, label:"Renaissance" },
+        { era:1700, label:"Enlightenment" },
+        { era:1850, label:"Romantic / Victorian" },
+        { era:1950, label:"Modern / Postmodern" }
+      ];
+      PERIODS.forEach(p => {
+        const x = xScale(p.era);
+        root.append("line")
+          .attr("x1",x).attr("x2",x)
+          .attr("y1",0).attr("y2",innerH)
+          .attr("stroke","#C8C2B8").attr("stroke-width",0.6).attr("stroke-dasharray","6,6");
+        root.append("text")
+          .attr("class","etym-period-label")
+          .attr("x",x).attr("y",innerH+14)
+          .text(p.label);
+      });
+
+      // ---- TIME AXIS ----
+      const xAxis = d3.axisBottom(xScale)
+        .tickValues([-500,-300,-100,100,300,500,700,900,1100,1300,1500,1700,1800,1900,1950,2000])
+        .tickFormat(d => d < 0 ? `${-d} BC` : `${d} AD`);
+      root.append("g")
+        .attr("class","etym-axis")
+        .attr("transform",`translate(0,${innerH})`)
+        .call(xAxis)
+        .select(".domain").remove();
+
+      // ---- POSITION NODES — with jitter inside lanes ----
+      // Group by lane, assign y positions within lane to avoid overlap
+      const laneIndex = {};
+      LANES.forEach((l,i) => laneIndex[l.id] = i);
+
+      // Build node list
+      const nodes = Object.entries(ETYM_DB).map(([name, d]) => ({
+        name, ...d,
+        x: xScale(d.era),
+        laneIdx: laneIndex[d.lang] ?? 0
+      }));
+
+      // Within each (laneIdx, eraGroup), spread nodes vertically
+      // Group nodes that are within ~60px of each other on x
+      const CLUSTER_RADIUS = 55;
+      const laneNodes = {};
+      LANES.forEach((_,i) => laneNodes[i] = []);
+      nodes.forEach(n => laneNodes[n.laneIdx].push(n));
+
+      nodes.forEach(n => {
+        const siblings = laneNodes[n.laneIdx].filter(s => Math.abs(s.x - n.x) < CLUSTER_RADIUS);
+        const idx = siblings.indexOf(n);
+        const total = siblings.length;
+        const spread = Math.min(laneH * 0.58, total * 22);
+        const yBase = n.laneIdx * laneH + laneH / 2;
+        n.y = yBase + (total > 1 ? (idx - (total-1)/2) * (spread/(total-1 || 1)) : 0);
+      });
+
+      // ---- ROOT-WORD CONNECTION ARCS ----
+      const arcsGroup = root.append("g").attr("class","etym-arcs");
+      ETYM_ROOTS.forEach(rootEntry => {
+        const techs = rootEntry.techniques
+          .map(name => nodes.find(n => n.name === name))
+          .filter(Boolean);
+        if (techs.length < 2) return;
+
+        for (let a = 0; a < techs.length; a++) {
+          for (let b = a+1; b < techs.length; b++) {
+            const t1 = techs[a], t2 = techs[b];
+            const mx = (t1.x + t2.x) / 2;
+            const my = Math.min(t1.y, t2.y) - 28 - Math.abs(t1.x - t2.x) * 0.06;
+            arcsGroup.append("path")
+              .attr("class","etym-arc")
+              .attr("d",`M${t1.x},${t1.y} Q${mx},${my} ${t2.x},${t2.y}`)
+              .attr("stroke", rootEntry.color)
+              .append("title").text(`Shared root: ${rootEntry.root}`);
+
+            // Mid-point label for the root word
+            arcsGroup.append("text")
+              .attr("class","etym-root-label")
+              .attr("x",mx).attr("y",my-3)
+              .attr("fill",rootEntry.color)
+              .text(rootEntry.root);
+          }
+        }
+      });
+
+      // ---- TECHNIQUE NODES ----
+      const nodesGroup = root.append("g").attr("class","etym-nodes");
+      const tooltip = document.getElementById("etym-tooltip");
+
+      const nodeGs = nodesGroup.selectAll(".etym-node")
+        .data(nodes).enter()
+        .append("g")
+        .attr("class","etym-node")
+        .attr("transform", n => `translate(${n.x},${n.y})`)
+        .style("cursor","pointer");
+
+      nodeGs.append("circle")
+        .attr("r", 9)
+        .attr("fill", n => FAMILY_COLORS[n.family] || "#888")
+        .attr("stroke","rgba(255,255,255,0.8)")
+        .attr("stroke-width",1.5);
+
+      // Hover: show tooltip
+      nodeGs
+        .on("mouseover", function(event, n) {
+          const eraStr = n.era < 0 ? `${-n.era} BC` : `${n.era} AD`;
+          tooltip.innerHTML = `<strong>${escHtml(n.name)}</strong>
+            <span class="tt-era">${escHtml(n.lang)}, c. ${eraStr}</span>
+            <span class="tt-root"><em>${escHtml(n.rootWord)}</em> — "${escHtml(n.meaning)}"</span>
+            <span class="tt-click">Click to navigate to this technique in the taxonomy</span>`;
+          tooltip.style.display = "block";
+        })
+        .on("mousemove", function(event) {
+          tooltip.style.left = (event.clientX + 14) + "px";
+          tooltip.style.top  = (event.clientY - 10) + "px";
+        })
+        .on("mouseout", function() {
+          tooltip.style.display = "none";
+        })
+        .on("click", function(event, n) {
+          tooltip.style.display = "none";
+          // Switch to taxonomy view and navigate
+          switchView("taxonomy");
+          setTimeout(() => navigateTo(n.name), 400);
+        });
+
+      // Zoom + pan
+      const zoom = d3.zoom()
+        .scaleExtent([0.3, 4])
+        .on("zoom", e => root.attr("transform",
+          `translate(${e.transform.x + margin.left},${e.transform.y + margin.top}) scale(${e.transform.k})`));
+      svg.call(zoom);
+      svg.on("mousedown.cursor", () => svg.classed("panning",true))
+         .on("mouseup.cursor",   () => svg.classed("panning",false));
+    }
+
+    // ================================================================
+    // VIEW SWITCHING
+    // ================================================================
+    let etymViewBuilt = false;
+
+    function switchView(view) {
+      const mainSvg  = document.getElementById("main-svg");
+      const etymSvg  = document.getElementById("etym-svg");
+      const legend   = document.getElementById("legend");
+      const axisLeg  = document.getElementById("axis-legend");
+      const zoomCtrl = document.getElementById("zoom-controls");
+
+      document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+      document.querySelector(`[data-view="${view}"]`).classList.add("active");
+
+      if (view === "taxonomy") {
+        mainSvg.style.display = "block";
+        etymSvg.style.display = "none";
+        legend.style.display  = "";
+        zoomCtrl.style.display = "";
+      } else if (view === "etymology") {
+        mainSvg.style.display = "none";
+        etymSvg.style.display = "block";
+        legend.style.display  = "none";
+        axisLeg.style.display = "none";
+        zoomCtrl.style.display = "none";
+        if (!etymViewBuilt) {
+          buildEtymView();
+          etymViewBuilt = true;
+        }
+      }
+    }
+
+    document.querySelectorAll(".view-btn").forEach(btn => {
+      btn.addEventListener("click", () => switchView(btn.dataset.view));
+    });
+
   </script>
 </body>
 </html>
