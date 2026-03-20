@@ -922,7 +922,11 @@
       .separation((a, b) => a.parent === b.parent ? 1.2 : 1.6);
 
     const root = d3.hierarchy(taxonomyRoot);
-    const hierarchicalData = treeLayout(root);
+    treeLayout(root);
+
+    // Assign stable persistent IDs and initial positions
+    let nodeIdCounter = 0;
+    root.descendants().forEach(d => { d.id = ++nodeIdCounter; d.x0 = 0; d.y0 = 0; });
 
     const zoom = d3.zoom()
       .scaleExtent([0.5, 4])
@@ -933,35 +937,39 @@
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity.translate(W / 2, 90).scale(0.55));
 
-    // ==================== MAIN UPDATE FUNCTION ====================
-    function update(d) {
-      if (d._children) {
-        d.children = d._children;
-        d._children = null;
-      } else {
-        d._children = d.children;
-        d.children = null;
-      }
-
+    // ==================== MAIN RENDER FUNCTION ====================
+    function render(source) {
       treeLayout(root);
 
       const nodes = root.descendants();
-      nodes.forEach((node, i) => {
-        node.id = i;
-        state.nodeMap.set(node.data.name, node);
-      });
+      const links = root.links();
 
-      const nodeSelection = nodesGroup.selectAll("g.node")
-        .data(nodes, d => d.id);
+      state.nodeMap.clear();
+      nodes.forEach(d => state.nodeMap.set(d.data.name, d));
 
-      nodeSelection.exit().remove();
-
-      const nodeEnter = nodeSelection.enter().append("g")
-        .attr("class", d => `node node--${d.data.type}`)
-        .attr("transform", d => `translate(${d.x},${d.y})`);
+      // Source position for enter/exit animations
+      const sx = (source && source.x0 != null) ? source.x0 : (source ? (source.x || 0) : 0);
+      const sy = (source && source.y0 != null) ? source.y0 : (source ? (source.y || 0) : 0);
 
       const nodeRadii = { root: 14, family: 11, subgroup: 9 };
       const textSizes = { root: "18px", family: "17px", subgroup: "16px" };
+
+      // ---- NODES ----
+      const nodeJoin = nodesGroup.selectAll("g.node")
+        .data(nodes, d => d.id);
+
+      // Exiting nodes shrink toward their parent
+      nodeJoin.exit()
+        .transition().duration(450)
+        .attr("transform", `translate(${sx},${sy})`)
+        .style("opacity", 0)
+        .remove();
+
+      // Entering nodes start at source position
+      const nodeEnter = nodeJoin.enter().append("g")
+        .attr("class", d => `node node--${d.data.type}`)
+        .attr("transform", `translate(${sx},${sy})`)
+        .style("opacity", 0);
 
       nodeEnter.append("circle")
         .attr("r", d => nodeRadii[d.data.type] || 8);
@@ -978,33 +986,44 @@
         .style("font-size", d => textSizes[d.data.type] || "14px")
         .text(d => d.data.name);
 
-      const nodeUpdate = nodeSelection.merge(nodeEnter)
-        .on("click", function(event, d) {
-          event.stopPropagation();
-          if (d.data.type === "family") {
-            update(d);
-            renderBursts();
-          } else if (d.data.type === "subgroup") {
-            state.expandedSubgroups.has(d.data.name)
-              ? state.expandedSubgroups.delete(d.data.name)
-              : state.expandedSubgroups.add(d.data.name);
-            renderBursts();
-            showInfo(d, event);
-          }
-        })
-        .transition().duration(550)
-        .attr("transform", d => `translate(${d.x},${d.y})`);
+      // Merged selection — set click handlers every render so they're always current
+      const nodeUpdate = nodeJoin.merge(nodeEnter);
 
+      nodeUpdate.on("click", function(event, d) {
+        event.stopPropagation();
+        if (d.data.type === "root" || d.data.type === "family") {
+          if (d._children) {
+            d.children = d._children;
+            d._children = null;
+          } else if (d.children) {
+            d._children = d.children;
+            d.children = null;
+          }
+          render(d);
+          renderBursts();
+        } else if (d.data.type === "subgroup") {
+          state.expandedSubgroups.has(d.data.name)
+            ? state.expandedSubgroups.delete(d.data.name)
+            : state.expandedSubgroups.add(d.data.name);
+          renderBursts();
+          showInfo(d, event);
+        }
+      });
+
+      // Animate all nodes to their correct positions
+      nodeUpdate
+        .transition().duration(550).ease(d3.easeBackOut.overshoot(0.4))
+        .attr("transform", d => `translate(${d.x},${d.y})`)
+        .style("opacity", 1);
+
+      // Update label background rects after text is rendered
       nodeUpdate.select("text")
         .each(function(d) {
-          const textEl = d3.select(this);
-          const text = textEl.text();
-          textEl.text(text);
+          if (!this.textContent) d3.select(this).text(d.data.name);
           setTimeout(() => {
             try {
               const bb = this.getBBox();
-              textEl.select(function() { return this.parentNode; })
-                .select("rect.node-label-bg")
+              d3.select(this.parentNode).select("rect.node-label-bg")
                 .attr("x", bb.x - 3)
                 .attr("y", bb.y - 2)
                 .attr("width", bb.width + 6)
@@ -1013,19 +1032,28 @@
           }, 50);
         });
 
-      const links = hierarchicalData.links();
-      const linkSelection = linksGroup.selectAll(".link")
-        .data(links, (d, i) => i);
+      // ---- LINKS ----
+      const linkJoin = linksGroup.selectAll(".link")
+        .data(links, d => `${d.source.id}-${d.target.id}`);
 
-      linkSelection.exit().remove();
+      linkJoin.exit()
+        .transition().duration(450)
+        .attr("d", stepPath({x: sx, y: sy}, {x: sx, y: sy}))
+        .style("opacity", 0)
+        .remove();
 
-      const linkEnter = linkSelection.enter().insert("path", ":first-child")
+      const linkEnter = linkJoin.enter().insert("path", ":first-child")
         .attr("class", "link")
-        .attr("d", d => stepPath(d.source, d.target));
+        .attr("d", stepPath({x: sx, y: sy}, {x: sx, y: sy}))
+        .style("opacity", 0);
 
-      linkSelection.merge(linkEnter)
+      linkJoin.merge(linkEnter)
         .transition().duration(550)
-        .attr("d", d => stepPath(d.source, d.target));
+        .attr("d", d => stepPath(d.source, d.target))
+        .style("opacity", 1);
+
+      // Store positions for the next transition
+      nodes.forEach(d => { d.x0 = d.x; d.y0 = d.y; });
     }
 
     // ==================== RADIAL BURST RENDERING ====================
@@ -1348,7 +1376,7 @@
         }
       }
 
-      update(root);
+      render(root);
       setTimeout(() => {
         renderBursts();
         if (found.x !== undefined && found.y !== undefined) {
@@ -1419,7 +1447,7 @@
           state.expandedSubgroups.add(node.data.name);
         }
       });
-      update(root);
+      render(root);
       setTimeout(() => renderBursts(), 50);
     });
 
@@ -1435,7 +1463,7 @@
       }
       collapseAll(root);
       state.expandedSubgroups.clear();
-      update(root);
+      render(root);
       setTimeout(() => renderBursts(), 50);
     });
 
@@ -1453,7 +1481,7 @@
     });
 
     // ==================== INITIAL RENDER ====================
-    update(root);
+    render(root);
     setTimeout(() => renderBursts(), 100);
   </script>
 </body>
