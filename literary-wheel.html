@@ -298,22 +298,9 @@
       filter: brightness(1.15);
     }
 
-    .node--root circle {
-      fill: #1c1c1c;
-      stroke: #0a0a0a;
-      stroke-width: 2;
-    }
-
-    .node--family circle {
-      fill: #c0674f;
-      stroke: #a8564a;
-      stroke-width: 1.5;
-    }
-
-    .node--subgroup circle {
-      fill: #4a6fa5;
-      stroke: #3a5a8a;
-      stroke-width: 1.5;
+    /* Circle colours and sizes are set inline by D3 via getFamilyColor() */
+    .node circle {
+      transition: filter 0.2s;
     }
 
     .node text {
@@ -345,9 +332,9 @@
 
     .link {
       fill: none;
-      stroke: #4a4a4a;
+      /* stroke colour is set inline per-link by family colour */
       stroke-width: 2.5px;
-      stroke-opacity: 0.65;
+      stroke-opacity: 0.7;
       marker-end: none;
     }
 
@@ -460,6 +447,25 @@
     const H = window.innerHeight - 65;
 
     // ==================== CONSTANTS ====================
+    // ==================== FAMILY COLOUR PALETTE ====================
+    const FAMILY_COLORS = {
+      "Descriptive":                    "#c0674f",   // terracotta
+      "Repetitive":                     "#5a8a70",   // forest green
+      "Comparative":                    "#8068b8",   // violet
+      "Structural":                     "#b8893a",   // amber
+      "Intertextual & Metafictional":   "#3a7a96"    // teal
+    };
+
+    // Walk up to the family ancestor and return its colour
+    function getFamilyColor(d) {
+      if (!d) return "#888";
+      if (d.data && d.data.type === "root") return "#1c1c1c";
+      let node = d;
+      while (node && node.parent && node.data.type !== "family") node = node.parent;
+      if (node && node.data.type === "family") return FAMILY_COLORS[node.data.name] || "#888";
+      return FAMILY_COLORS[node && node.data.name] || "#888";
+    }
+
     const AXES = {
       gradient: { color: "#c9962a", label: "Specificity / scope gradient" },
       subtype: { color: "#8878c0", label: "Type / subtype" },
@@ -539,9 +545,10 @@
     }
 
     function computeRadialPositions(cx, cy, n) {
-      // Keep fan narrower so adjacent expanded subgroups don't collide
-      const fanDeg = Math.min(110, 45 + n * 5);
-      const R = n <= 4 ? 165 : n <= 8 ? 200 : n <= 12 ? 235 : 265;
+      // Narrow fan (max 100°) keeps techniques below the subgroup node
+      // Large R ensures they drop far enough to avoid label collisions
+      const fanDeg = Math.min(100, 40 + n * 5);
+      const R = n <= 4 ? 180 : n <= 8 ? 215 : n <= 12 ? 250 : 280;
       const startAngle = -fanDeg / 2;
       return Array.from({length: n}, (_, i) => {
         const angleDeg = n === 1 ? 0 : startAngle + i * (fanDeg / (n - 1));
@@ -929,13 +936,14 @@
     const techniquesGroup = d3.select("#techniques-group");
 
     const treeLayout = d3.tree()
-      .nodeSize([220, 190])
+      .nodeSize([240, 210])
       .separation((a, b) => {
-        // Give expanded subgroups extra lateral room so technique fans don't collide
+        // Expanded subgroups need a lot of lateral room for their technique fans
         const aExp = a.data.type === "subgroup" && state.expandedSubgroups.has(a.data.name);
         const bExp = b.data.type === "subgroup" && state.expandedSubgroups.has(b.data.name);
-        if (aExp || bExp) return 2.4;
-        return a.parent === b.parent ? 1.2 : 1.6;
+        if (aExp && bExp) return 3.2;   // both expanded — maximum room
+        if (aExp || bExp) return 2.6;   // one expanded — extra room
+        return a.parent === b.parent ? 1.3 : 1.8;
       });
 
     const root = d3.hierarchy(taxonomyRoot);
@@ -968,10 +976,12 @@
       const sx = (source && source.x0 != null) ? source.x0 : (source ? (source.x || 0) : 0);
       const sy = (source && source.y0 != null) ? source.y0 : (source ? (source.y || 0) : 0);
 
-      const nodeRadii = { root: 18, family: 15, subgroup: 12 };
-      const textSizes = { root: "18px", family: "17px", subgroup: "16px" };
-      // Text is placed below the circle so the coloured fill is always visible
-      const textOffsets = { root: 26, family: 23, subgroup: 20 };
+      // Clearly tiered sizes: root >> family >> subgroup
+      const nodeRadii = { root: 26, family: 20, subgroup: 14 };
+      const textSizes = { root: "19px", family: "17px", subgroup: "15px" };
+      const nodeStroke = { root: 3.5, family: 2.5, subgroup: 2 };
+      // Labels sit below the circle — offset = radius + comfortable gap
+      const textOffsets = { root: 36, family: 30, subgroup: 24 };
 
       // ---- NODES ----
       const nodeJoin = nodesGroup.selectAll("g.node")
@@ -991,19 +1001,26 @@
         .style("opacity", 0);
 
       nodeEnter.append("circle")
-        .attr("r", d => nodeRadii[d.data.type] || 10);
+        .attr("r", d => nodeRadii[d.data.type] || 10)
+        .style("fill", d => getFamilyColor(d))
+        .style("stroke", d => {
+          const c = d3.color(getFamilyColor(d));
+          return c ? c.darker(0.6).formatHex() : "#333";
+        })
+        .style("stroke-width", d => nodeStroke[d.data.type] || 1.5);
 
       nodeEnter.append("rect")
         .attr("class", "node-label-bg")
         .attr("fill", "#f5f0e8")
-        .attr("fill-opacity", 0.90)
+        .attr("fill-opacity", 0.92)
         .attr("rx", 3);
 
       nodeEnter.append("text")
-        .attr("y", d => textOffsets[d.data.type] || 18)
+        .attr("y", d => textOffsets[d.data.type] || 22)
         .attr("dy", "0.32em")
         .style("text-anchor", "middle")
         .style("font-size", d => textSizes[d.data.type] || "14px")
+        .style("font-weight", d => d.data.type === "family" ? "700" : d.data.type === "subgroup" ? "600" : "700")
         .text(d => d.data.name);
 
       // Merged selection — set click handlers every render so they're always current
@@ -1039,7 +1056,9 @@
           state.expandedSubgroups.has(d.data.name)
             ? state.expandedSubgroups.delete(d.data.name)
             : state.expandedSubgroups.add(d.data.name);
-          renderBursts();
+          // Re-run treeLayout so dynamic separation pushes siblings apart
+          render(d.parent || root);
+          setTimeout(() => renderBursts(), 30);
           showInfo(d, event);
         }
       });
@@ -1079,9 +1098,13 @@
       const linkEnter = linkJoin.enter().insert("path", ":first-child")
         .attr("class", "link")
         .attr("d", stepPath({x: sx, y: sy}, {x: sx, y: sy}))
+        .style("stroke", d => getFamilyColor(d.target))
         .style("opacity", 0);
 
-      linkJoin.merge(linkEnter)
+      const mergedLinks = linkJoin.merge(linkEnter);
+      // Colour stays current even on update (e.g. after expand)
+      mergedLinks.style("stroke", d => getFamilyColor(d.target));
+      mergedLinks
         .transition().duration(550)
         .attr("d", d => stepPath(d.source, d.target))
         .style("opacity", 1);
@@ -1119,11 +1142,14 @@
         const spokeJoin = spokesGroup.selectAll(`line.spoke-${subgroupNode.id}`)
           .data(spokeData, spokeKey);
 
+        const familyColor = getFamilyColor(subgroupNode);
+        const spokeDark = (() => { const c = d3.color(familyColor); return c ? c.darker(0.3).formatHex() : familyColor; })();
+
         spokeJoin.enter().append("line")
           .attr("class", `spoke-${subgroupNode.id}`)
           .attr("x1", cx).attr("y1", cy)
           .attr("x2", cx).attr("y2", cy)
-          .attr("stroke", "#4a6fa5")
+          .attr("stroke", spokeDark)
           .attr("stroke-width", 1.8)
           .attr("stroke-opacity", 0.55)
           .transition().duration(550).ease(d3.easeBackOut.overshoot(0.5))
@@ -1152,11 +1178,14 @@
           .style("cursor", "pointer")
           .on("click", (event, d) => { event.stopPropagation(); showInfo(d, event); });
 
+        const techFill = (() => { const c = d3.color(familyColor); return c ? c.brighter(0.7).formatHex() : "#9abcab"; })();
+        const techStroke = (() => { const c = d3.color(familyColor); return c ? c.darker(0.2).formatHex() : familyColor; })();
+
         techEnter.append("circle")
-          .attr("r", 8)
-          .attr("fill", "#6a9a7a")
-          .attr("stroke", "#4a7a5a")
-          .attr("stroke-width", 1.5);
+          .attr("r", 10)
+          .style("fill", techFill)
+          .style("stroke", techStroke)
+          .style("stroke-width", 1.8);
 
         techEnter.append("rect")
           .attr("class", "tech-label-bg")
@@ -1164,11 +1193,13 @@
           .attr("fill-opacity", 0.92)
           .attr("rx", 2);
 
+        const techTextColor = (() => { const c = d3.color(familyColor); return c ? c.darker(0.5).formatHex() : "#333"; })();
+
         techEnter.append("text")
           .attr("class", "tech-label")
           .style("font-family", "Georgia, serif")
-          .style("font-size", "14px")
-          .style("fill", "#4a5a4a");
+          .style("font-size", "13px")
+          .style("fill", techTextColor);
 
         const techUpdate = techJoin.merge(techEnter);
 
