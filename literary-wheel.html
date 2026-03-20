@@ -290,17 +290,13 @@
     }
 
     /* SVG styles */
+    /* Circle colours and sizes are set inline by D3 via getFamilyColor() */
     .node circle {
-      transition: r 0.2s, fill 0.2s;
+      transition: filter 0.2s;
     }
 
     .node:hover circle {
       filter: brightness(1.15);
-    }
-
-    /* Circle colours and sizes are set inline by D3 via getFamilyColor() */
-    .node circle {
-      transition: filter 0.2s;
     }
 
     .node text {
@@ -440,7 +436,8 @@
       techniquePositions: new Map(),
       currentInfoNode: null,
       nodeMap: new Map(),
-      relatedArcsVisible: false
+      relatedArcsVisible: false,
+      selectedName: null
     };
 
     const W = window.innerWidth;
@@ -965,8 +962,58 @@
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity.translate(W / 2, 90).scale(0.55));
 
+    // ==================== SELECTION HELPERS ====================
+
+    // Restore all elements to full opacity
+    function clearSelection() {
+      state.selectedName = null;
+      nodesGroup.selectAll(".node").transition().duration(450).style("opacity", 1);
+      techniquesGroup.selectAll("g").transition().duration(450).style("opacity", 1);
+      linksGroup.selectAll(".link").transition().duration(450).style("opacity", null);
+      spokesGroup.selectAll("line").transition().duration(450).style("opacity", null);
+    }
+
+    // Dim everything except the named element
+    function applySelection(selectedName) {
+      state.selectedName = selectedName;
+
+      nodesGroup.selectAll(".node").each(function(d) {
+        d3.select(this).transition().duration(500)
+          .style("opacity", d.data.name === selectedName ? 1 : 0.12);
+      });
+
+      techniquesGroup.selectAll("g").each(function(d) {
+        d3.select(this).transition().duration(500)
+          .style("opacity", (d && d.name === selectedName) ? 1 : 0.12);
+      });
+
+      linksGroup.selectAll(".link").transition().duration(500).style("opacity", 0.07);
+      spokesGroup.selectAll("line").transition().duration(500).style("opacity", 0.07);
+    }
+
+    // Radial pulse ring that expands outward and fades over 2 seconds
+    function triggerPulse(gElement, startR, color) {
+      const g = d3.select(gElement);
+      g.selectAll(".pulse-ring").remove();
+      g.insert("circle", ":first-child")
+        .attr("class", "pulse-ring")
+        .attr("r", startR)
+        .style("fill", "none")
+        .style("stroke", color)
+        .style("stroke-width", 3)
+        .style("stroke-opacity", 0.85)
+        .style("pointer-events", "none")
+        .transition().duration(2000).ease(d3.easeCubicOut)
+        .attr("r", startR + 70)
+        .style("stroke-opacity", 0)
+        .remove();
+    }
+
     // ==================== MAIN RENDER FUNCTION ====================
     function render(source) {
+      // Re-layout clears any lingering selection state
+      state.selectedName = null;
+      nodesGroup.selectAll(".pulse-ring").remove();
       treeLayout(root);
 
       const nodes = root.descendants();
@@ -1032,6 +1079,10 @@
       nodeUpdate.on("click", function(event, d) {
         event.stopPropagation();
         if (d.data.type === "root" || d.data.type === "family") {
+          // Pulse on family/root toggle — no selection dim, just tactile feedback
+          triggerPulse(this, nodeRadii[d.data.type] || 14, getFamilyColor(d));
+          clearSelection();
+
           if (d._children) {
             // Expanding
             d.children = d._children;
@@ -1055,13 +1106,23 @@
           }
           render(d);
           renderBursts();
+
         } else if (d.data.type === "subgroup") {
           state.expandedSubgroups.has(d.data.name)
             ? state.expandedSubgroups.delete(d.data.name)
             : state.expandedSubgroups.add(d.data.name);
+
+          // Pulse immediately, then dim everything else once animation settles
+          triggerPulse(this, nodeRadii.subgroup, getFamilyColor(d));
+          clearSelection();
+
           // Re-run treeLayout so dynamic separation pushes siblings apart
           render(d.parent || root);
-          setTimeout(() => renderBursts(), 30);
+          setTimeout(() => {
+            renderBursts();
+            // Apply dim after render + burst animations have started
+            setTimeout(() => applySelection(d.data.name), 300);
+          }, 30);
           showInfo(d, event);
         }
       });
@@ -1179,7 +1240,14 @@
           .attr("transform", `translate(${cx},${cy})`)
           .style("opacity", 0)
           .style("cursor", "pointer")
-          .on("click", (event, d) => { event.stopPropagation(); showInfo(d, event); });
+          .on("click", function(event, d) {
+            event.stopPropagation();
+            // Pulse + dim — technique circle radius is 10
+            triggerPulse(this, 10, getFamilyColor(d.sgNode));
+            clearSelection();
+            setTimeout(() => applySelection(d.name), 50);
+            showInfo(d, event);
+          });
 
         const techFill = (() => { const c = d3.color(familyColor); return c ? c.brighter(0.7).formatHex() : "#9abcab"; })();
         const techStroke = (() => { const c = d3.color(familyColor); return c ? c.darker(0.2).formatHex() : familyColor; })();
@@ -1420,72 +1488,105 @@
     }
 
     function navigateTo(name) {
-      let found = null;
-      let path = [];
+      let foundNode = null;       // D3 hierarchy node (subgroup / family level)
+      let foundTechObj = null;    // plain technique object {name, info, …}
+      let foundSubgroupNode = null; // the subgroup that owns the technique
 
+      // Search visible (children) AND hidden (_children) subtrees
       function search(node) {
-        if (node.data.name === name) {
-          found = node;
-          return true;
-        }
+        if (node.data.name === name) { foundNode = node; return true; }
+
+        // Check techniques attached to this subgroup node
         if (node.data.techniques) {
-          for (let t of node.data.techniques) {
-            if (t.name === name) {
-              found = { data: t, info: t.info, x: 0, y: 0 };
-              return true;
-            }
-          }
+          const tech = node.data.techniques.find(t => t.name === name);
+          if (tech) { foundTechObj = tech; foundSubgroupNode = node; return true; }
         }
-        if (node.children) {
-          for (let child of node.children) {
-            if (search(child)) {
-              path.unshift(node);
-              return true;
-            }
-          }
+
+        // Recurse into visible and hidden children
+        for (let child of [...(node.children || []), ...(node._children || [])]) {
+          if (search(child)) return true;
         }
         return false;
       }
 
       search(root);
+      if (!foundNode && !foundTechObj) return;
 
-      if (!found) return;
-
-      for (let ancestor of path) {
-        if (ancestor.data.type === "family") {
-          if (!ancestor.children) {
-            ancestor.children = ancestor._children;
-            ancestor._children = null;
-          }
-        }
-      }
-
-      if (found.info && found.info.definition) {
-        for (let node of root.descendants()) {
-          if (node.data.techniques) {
-            const tech = node.data.techniques.find(t => t.name === name);
-            if (tech) {
-              state.expandedSubgroups.add(node.data.name);
-              break;
+      // Expand every ancestor in the path from root to the target node
+      function expandPathTo(target) {
+        function walk(node) {
+          if (node === target) return true;
+          // Check all children (visible + hidden) to find the path
+          const all = [...(node.children || []), ...(node._children || [])];
+          for (let child of all) {
+            if (walk(child)) {
+              // This node is an ancestor — make sure it's expanded
+              if (!node.children && node._children) {
+                node.children = node._children;
+                node._children = null;
+              }
+              return true;
             }
           }
+          return false;
         }
+        walk(root);
       }
 
+      const targetNode = foundSubgroupNode || foundNode;
+      expandPathTo(targetNode);
+
+      // Expand the subgroup burst if navigating to a technique
+      if (foundTechObj && foundSubgroupNode) {
+        state.expandedSubgroups.add(foundSubgroupNode.data.name);
+      }
+
+      clearSelection();
       render(root);
+
       setTimeout(() => {
         renderBursts();
-        if (found.x !== undefined && found.y !== undefined) {
-          const scale = 1.5;
-          const x = -found.x * scale + W / 2;
-          const y = -found.y * scale + H / 2;
-          svg.transition().duration(600)
-            .call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale));
-        }
-        if (found.data && (found.data.info || found.info)) {
-          showInfo(found, null);
-        }
-      }, 600);
+
+        // Wait a tick for techniquePositions to populate, then pan + highlight
+        setTimeout(() => {
+          let px, py;
+
+          if (foundTechObj) {
+            const pos = state.techniquePositions.get(name);
+            if (pos) { px = pos.x; py = pos.y; }
+          } else if (foundNode) {
+            px = foundNode.x;
+            py = foundNode.y;
+          }
+
+          if (px != null) {
+            const scale = 1.6;
+            svg.transition().duration(700)
+              .call(zoom.transform,
+                d3.zoomIdentity.translate(W / 2 - px * scale, H / 2 - py * scale).scale(scale));
+          }
+
+          // Show info panel for the target
+          const infoTarget = foundTechObj || foundNode;
+          if (infoTarget) showInfo(infoTarget, null);
+
+          // Pulse + dim on the target
+          if (foundTechObj) {
+            // Find the technique DOM node and pulse it
+            techniquesGroup.selectAll("g").each(function(d) {
+              if (d && d.name === name) {
+                triggerPulse(this, 10, getFamilyColor(foundSubgroupNode));
+              }
+            });
+            setTimeout(() => applySelection(name), 80);
+          } else if (foundNode) {
+            nodesGroup.selectAll(".node").each(function(d) {
+              if (d.data.name === name) triggerPulse(this, 14, getFamilyColor(d));
+            });
+            setTimeout(() => applySelection(name), 80);
+          }
+        }, 120);
+      }, 620);
     }
 
     d3.select("#info-close").on("click", () => {
@@ -1493,6 +1594,7 @@
       relationsGroup.selectAll("*").remove();
       d3.select("#axis-legend").style("display", "none");
       state.relatedArcsVisible = false;
+      clearSelection();
     });
 
     let dragOffsetX = 0, dragOffsetY = 0;
@@ -1524,6 +1626,7 @@
       relationsGroup.selectAll("*").remove();
       d3.select("#axis-legend").style("display", "none");
       state.relatedArcsVisible = false;
+      clearSelection();
     });
 
     // ==================== BUTTON HANDLERS ====================
