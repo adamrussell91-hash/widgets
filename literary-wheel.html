@@ -673,47 +673,59 @@
     }
 
     /* ---- ETYMOLOGY VIEW ---- */
-    #etym-svg { cursor: grab; }
+    #etym-svg { cursor: grab; background: #F0EDE8; }
     #etym-svg.panning { cursor: grabbing; }
-    .etym-lane-bg { opacity: 0.55; }
     .etym-lane-label {
       font-family: 'DM Serif Display', Georgia, serif;
-      font-size: 13px;
-      fill: #8a8078;
-      font-style: italic;
+      font-size: 15px;
+      font-weight: 400;
+      fill: #3a3530;
     }
-    .etym-node circle { cursor: pointer; transition: r 0.15s; }
-    .etym-node:hover circle { filter: brightness(1.15); }
+    .etym-node { cursor: pointer; }
+    .etym-node circle { transition: r 0.12s; }
+    .etym-node:hover circle { filter: brightness(1.12); }
     .etym-node text {
       font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
+      font-size: 10.5px;
       fill: #2a2520;
       pointer-events: none;
       text-anchor: middle;
     }
-    .etym-arc {
+    /* Root-word connection lines */
+    .etym-conn {
       fill: none;
-      stroke-width: 1.5;
-      opacity: 0.35;
-      stroke-dasharray: 4 3;
+      stroke-width: 1.8;
+      opacity: 0.45;
     }
-    .etym-arc:hover { opacity: 0.85; stroke-width: 2.5; }
-    .etym-axis text {
+    .etym-conn:hover { opacity: 0.9; stroke-width: 2.8; cursor: default; }
+    .etym-root-label {
       font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      fill: #8a8078;
+      font-size: 9.5px;
+      pointer-events: none;
+      font-style: italic;
+      opacity: 0.75;
     }
-    .etym-axis line, .etym-axis path { stroke: #C8C2BB; }
-    .etym-period-label {
+    /* Time axis (right side, vertical) */
+    .etym-axis-y text {
       font-family: 'DM Sans', sans-serif;
       font-size: 10px;
-      fill: #aaa49e;
-      text-anchor: middle;
+      fill: #9a9490;
+    }
+    .etym-axis-y line, .etym-axis-y path { stroke: #D0CAC2; }
+    /* Era band labels */
+    .etym-era-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9.5px;
+      fill: #b0aaa4;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       pointer-events: none;
     }
+    /* Hover tooltip */
     #etym-tooltip {
       position: fixed;
-      background: rgba(253,250,246,0.97);
+      background: rgba(253,250,246,0.98);
       border: 1px solid #D0CAC2;
       border-radius: 6px;
       padding: 10px 14px;
@@ -722,7 +734,7 @@
       color: #1A1A1A;
       box-shadow: 0 4px 16px rgba(0,0,0,0.12);
       pointer-events: none;
-      max-width: 220px;
+      max-width: 230px;
       line-height: 1.5;
       z-index: 300;
       display: none;
@@ -734,31 +746,9 @@
       display: block;
       margin-bottom: 4px;
     }
-    #etym-tooltip .tt-root {
-      color: #b8893a;
-      font-style: italic;
-      margin-top: 3px;
-      font-size: 11px;
-    }
-    #etym-tooltip .tt-era {
-      color: #8a8078;
-      font-size: 11px;
-    }
-    #etym-tooltip .tt-click {
-      margin-top: 6px;
-      font-size: 10px;
-      color: #9a9088;
-      border-top: 1px solid #EAE5DD;
-      padding-top: 5px;
-    }
-    .etym-root-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 9px;
-      fill: #9a9088;
-      text-anchor: middle;
-      pointer-events: none;
-      font-style: italic;
-    }
+    #etym-tooltip .tt-root { color: #b8893a; font-style: italic; margin-top: 3px; font-size: 11px; display:block; }
+    #etym-tooltip .tt-era  { color: #8a8078; font-size: 11px; display:block; }
+    #etym-tooltip .tt-hint { margin-top:6px; font-size:10px; color:#9a9088; border-top:1px solid #EAE5DD; padding-top:5px; display:block; }
   </style>
 </head>
 <body>
@@ -2793,123 +2783,157 @@ Be specific and educational.`;
     // ================================================================
     // BUILD ETYMOLOGY VIEW
     // ================================================================
+    // ================================================================
+    // BUILD ETYMOLOGY VIEW — vertical timeline, column swim lanes
+    // ================================================================
+    let _etymSelectedEl = null;
+
     function buildEtymView() {
-      const svg = d3.select("#etym-svg");
+      const svgEl = document.getElementById("etym-svg");
+      const svg   = d3.select(svgEl);
       svg.selectAll("*").remove();
 
       const fullW = window.innerWidth;
       const fullH = window.innerHeight - 132;
       svg.attr("width", fullW).attr("height", fullH);
 
-      const margin = { top: 30, right: 60, bottom: 55, left: 60 };
-      const innerW = fullW - margin.left - margin.right;
-      const innerH = fullH - margin.top - margin.bottom;
-
-      const root = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
-
-      // ---- TIME SCALE ----
-      const ERA_MIN = -600, ERA_MAX = 2050;
-      const xScale = d3.scaleLinear().domain([ERA_MIN, ERA_MAX]).range([0, innerW]);
-
-      // ---- SWIM LANES ----
+      // ---- LAYOUT ----
+      // Columns = language lanes.  Y = time (oldest at top).
       const LANES = [
-        { id:"Greek",   label:"Ancient Greek",  bg:"#EEE8F8" },
-        { id:"Latin",   label:"Latin",          bg:"#F8F0E8" },
-        { id:"French",  label:"French",         bg:"#EAF4EC" },
-        { id:"German",  label:"German",         bg:"#F8ECE8" },
-        { id:"English", label:"English",        bg:"#F4F4E8" }
+        { id:"Greek",   label:"Ancient Greek",  bg:"rgba(180,165,215,0.14)" },
+        { id:"Latin",   label:"Latin",          bg:"rgba(210,175,130,0.14)" },
+        { id:"French",  label:"French",         bg:"rgba(140,195,155,0.14)" },
+        { id:"German",  label:"German",         bg:"rgba(210,145,130,0.14)" },
+        { id:"English", label:"English",        bg:"rgba(190,185,130,0.14)" }
       ];
-      const laneCount = LANES.length;
-      const laneH = innerH / laneCount;
-
-      // Draw lane backgrounds + labels
-      LANES.forEach((lane, i) => {
-        root.append("rect")
-          .attr("class","etym-lane-bg")
-          .attr("x", 0).attr("y", i * laneH)
-          .attr("width", innerW).attr("height", laneH)
-          .attr("fill", lane.bg)
-          .attr("rx", 0);
-
-        root.append("text")
-          .attr("class","etym-lane-label")
-          .attr("x", -8).attr("y", i * laneH + laneH / 2)
-          .attr("dy","0.35em")
-          .attr("text-anchor","end")
-          .text(lane.label);
-      });
-
-      // Horizontal grid lines between lanes
-      LANES.forEach((_,i) => {
-        if (i === 0) return;
-        root.append("line")
-          .attr("x1",0).attr("x2",innerW)
-          .attr("y1",i*laneH).attr("y2",i*laneH)
-          .attr("stroke","#D0CAC2").attr("stroke-width",0.8).attr("stroke-dasharray","3,4");
-      });
-
-      // ---- HISTORICAL PERIOD MARKERS ----
-      const PERIODS = [
-        { era:-500, label:"Classical Antiquity" },
-        { era:500,  label:"Early Medieval" },
-        { era:1100, label:"High Medieval" },
-        { era:1500, label:"Renaissance" },
-        { era:1700, label:"Enlightenment" },
-        { era:1850, label:"Romantic / Victorian" },
-        { era:1950, label:"Modern / Postmodern" }
-      ];
-      PERIODS.forEach(p => {
-        const x = xScale(p.era);
-        root.append("line")
-          .attr("x1",x).attr("x2",x)
-          .attr("y1",0).attr("y2",innerH)
-          .attr("stroke","#C8C2B8").attr("stroke-width",0.6).attr("stroke-dasharray","6,6");
-        root.append("text")
-          .attr("class","etym-period-label")
-          .attr("x",x).attr("y",innerH+14)
-          .text(p.label);
-      });
-
-      // ---- TIME AXIS ----
-      const xAxis = d3.axisBottom(xScale)
-        .tickValues([-500,-300,-100,100,300,500,700,900,1100,1300,1500,1700,1800,1900,1950,2000])
-        .tickFormat(d => d < 0 ? `${-d} BC` : `${d} AD`);
-      root.append("g")
-        .attr("class","etym-axis")
-        .attr("transform",`translate(0,${innerH})`)
-        .call(xAxis)
-        .select(".domain").remove();
-
-      // ---- POSITION NODES — with jitter inside lanes ----
-      // Group by lane, assign y positions within lane to avoid overlap
       const laneIndex = {};
       LANES.forEach((l,i) => laneIndex[l.id] = i);
 
-      // Build node list
-      const nodes = Object.entries(ETYM_DB).map(([name, d]) => ({
-        name, ...d,
-        x: xScale(d.era),
-        laneIdx: laneIndex[d.lang] ?? 0
-      }));
+      const margin = { top: 52, right: 72, bottom: 24, left: 16 };
+      const innerW  = fullW - margin.left - margin.right;
+      const innerH  = fullH - margin.top  - margin.bottom;
+      const laneW   = innerW / LANES.length;
 
-      // Within each (laneIdx, eraGroup), spread nodes vertically
-      // Group nodes that are within ~60px of each other on x
-      const CLUSTER_RADIUS = 55;
-      const laneNodes = {};
-      LANES.forEach((_,i) => laneNodes[i] = []);
-      nodes.forEach(n => laneNodes[n.laneIdx].push(n));
+      // ---- TIME SCALE (vertical — oldest top, newest bottom) ----
+      const ERA_MIN = -680, ERA_MAX = 2020;
+      const yScale = d3.scaleLinear().domain([ERA_MIN, ERA_MAX]).range([0, innerH]);
 
-      nodes.forEach(n => {
-        const siblings = laneNodes[n.laneIdx].filter(s => Math.abs(s.x - n.x) < CLUSTER_RADIUS);
-        const idx = siblings.indexOf(n);
-        const total = siblings.length;
-        const spread = Math.min(laneH * 0.58, total * 22);
-        const yBase = n.laneIdx * laneH + laneH / 2;
-        n.y = yBase + (total > 1 ? (idx - (total-1)/2) * (spread/(total-1 || 1)) : 0);
+      // Root group (shifted by margin)
+      const rootG = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+
+      // ---- HISTORICAL ERA BANDS (horizontal stripes across all columns) ----
+      const ERA_BANDS = [
+        { start:-680, end:-27,  label:"Classical Antiquity",  color:"rgba(160,150,130,0.07)" },
+        { start:-27,  end:476,  label:"Roman Period",         color:"rgba(160,140,110,0.07)" },
+        { start:476,  end:1453, label:"Medieval",             color:"rgba(130,150,130,0.07)" },
+        { start:1453, end:1700, label:"Renaissance",          color:"rgba(130,130,160,0.07)" },
+        { start:1700, end:1900, label:"Enlightenment & Romantic", color:"rgba(150,130,140,0.07)" },
+        { start:1900, end:2020, label:"Modern / Postmodern",  color:"rgba(130,150,155,0.07)" }
+      ];
+      ERA_BANDS.forEach(band => {
+        const y1 = yScale(band.start), y2 = yScale(band.end);
+        rootG.append("rect")
+          .attr("x",0).attr("y",y1)
+          .attr("width",innerW).attr("height",y2-y1)
+          .attr("fill",band.color);
+        rootG.append("text")
+          .attr("class","etym-era-label")
+          .attr("x", innerW + 4).attr("y", y1 + 11)
+          .text(band.label);
       });
 
-      // ---- ROOT-WORD CONNECTION ARCS ----
-      const arcsGroup = root.append("g").attr("class","etym-arcs");
+      // ---- LANE COLUMNS ----
+      LANES.forEach((lane, i) => {
+        const lx = i * laneW;
+        // Background
+        rootG.append("rect")
+          .attr("x",lx).attr("y",0)
+          .attr("width",laneW).attr("height",innerH)
+          .attr("fill",lane.bg);
+        // Vertical divider
+        if (i > 0) {
+          rootG.append("line")
+            .attr("x1",lx).attr("x2",lx)
+            .attr("y1",0).attr("y2",innerH)
+            .attr("stroke","#D0CAC2").attr("stroke-width",1);
+        }
+        // Column header
+        rootG.append("text")
+          .attr("class","etym-lane-label")
+          .attr("x", lx + laneW/2).attr("y", -18)
+          .attr("text-anchor","middle")
+          .text(lane.label);
+      });
+
+      // Outer border
+      rootG.append("rect")
+        .attr("x",0).attr("y",0).attr("width",innerW).attr("height",innerH)
+        .attr("fill","none").attr("stroke","#C8C2BB").attr("stroke-width",1);
+
+      // ---- VERTICAL TIME AXIS (right side) ----
+      const tickEras = [-600,-500,-400,-300,-200,-100,0,100,200,300,400,500,
+                        700,900,1100,1300,1500,1600,1700,1800,1870,1900,1950,2000];
+      const yAxis = d3.axisRight(yScale)
+        .tickValues(tickEras)
+        .tickFormat(d => d < 0 ? `${-d} BC` : d === 0 ? "1 AD" : `${d} AD`)
+        .tickSize(4);
+      rootG.append("g")
+        .attr("class","etym-axis-y")
+        .attr("transform",`translate(${innerW},0)`)
+        .call(yAxis)
+        .select(".domain").remove();
+
+      // Horizontal tick lines (faint grid)
+      tickEras.forEach(era => {
+        rootG.append("line")
+          .attr("x1",0).attr("x2",innerW)
+          .attr("y1",yScale(era)).attr("y2",yScale(era))
+          .attr("stroke","rgba(180,172,160,0.25)").attr("stroke-width",0.5);
+      });
+
+      // ---- POSITION NODES ----
+      // Nodes are spread HORIZONTALLY within their column to avoid vertical crowding.
+      // Nodes within ±CLUSTER_Y px of each other in the same lane form a cluster
+      // and get spread evenly across the column width.
+      const CLUSTER_Y   = 26;  // px threshold (≈ ±100 years at typical zoom)
+      const NODE_R      = 8;
+      const H_PAD       = 18; // horizontal padding within column
+
+      const nodes = Object.entries(ETYM_DB).map(([name, d]) => ({
+        name, ...d,
+        laneIdx : laneIndex[d.lang] ?? 0,
+        rawY    : yScale(d.era),
+        x: 0, y: 0
+      }));
+
+      // Group by lane, cluster by rawY, spread horizontally
+      const byLane = {};
+      LANES.forEach((_,i) => byLane[i] = []);
+      nodes.forEach(n => byLane[n.laneIdx].push(n));
+
+      LANES.forEach((_,li) => {
+        const ln = byLane[li].slice().sort((a,b) => a.rawY - b.rawY);
+        const assigned = new Set();
+        ln.forEach(n => {
+          if (assigned.has(n.name)) return;
+          const cluster = ln.filter(m => Math.abs(m.rawY - n.rawY) <= CLUSTER_Y);
+          cluster.forEach(m => assigned.add(m.name));
+          const cnt    = cluster.length;
+          const laneX  = li * laneW;
+          const usableW = laneW - H_PAD * 2;
+          const step   = cnt > 1 ? usableW / (cnt - 1) : 0;
+          // Sort cluster left-to-right by era then name for stability
+          cluster.sort((a,b) => a.rawY - b.rawY || a.name.localeCompare(b.name));
+          cluster.forEach((m, ci) => {
+            m.x = laneX + H_PAD + (cnt > 1 ? ci * step : usableW / 2);
+            m.y = m.rawY;
+          });
+        });
+      });
+
+      // ---- ROOT-WORD CONNECTION LINES ----
+      const connGroup = rootG.append("g").attr("class","etym-conns");
+
       ETYM_ROOTS.forEach(rootEntry => {
         const techs = rootEntry.techniques
           .map(name => nodes.find(n => n.name === name))
@@ -2919,73 +2943,152 @@ Be specific and educational.`;
         for (let a = 0; a < techs.length; a++) {
           for (let b = a+1; b < techs.length; b++) {
             const t1 = techs[a], t2 = techs[b];
-            const mx = (t1.x + t2.x) / 2;
-            const my = Math.min(t1.y, t2.y) - 28 - Math.abs(t1.x - t2.x) * 0.06;
-            arcsGroup.append("path")
-              .attr("class","etym-arc")
-              .attr("d",`M${t1.x},${t1.y} Q${mx},${my} ${t2.x},${t2.y}`)
+            let pathD;
+
+            if (t1.laneIdx === t2.laneIdx) {
+              // Same column — loop out to the left edge of the lane
+              const loopX = t1.laneIdx * laneW - 22;
+              pathD = `M${t1.x},${t1.y} C${loopX},${t1.y} ${loopX},${t2.y} ${t2.x},${t2.y}`;
+            } else {
+              // Different columns — S-curve through the space between them
+              const cpx = (t1.x + t2.x) / 2;
+              pathD = `M${t1.x},${t1.y} C${cpx},${t1.y} ${cpx},${t2.y} ${t2.x},${t2.y}`;
+            }
+
+            connGroup.append("path")
+              .attr("class","etym-conn")
+              .attr("d", pathD)
               .attr("stroke", rootEntry.color)
               .append("title").text(`Shared root: ${rootEntry.root}`);
 
-            // Mid-point label for the root word
-            arcsGroup.append("text")
+            // Label at the midpoint of the curve (parametric t=0.5 approx)
+            let lx, ly;
+            if (t1.laneIdx === t2.laneIdx) {
+              lx = t1.laneIdx * laneW - 26;
+              ly = (t1.y + t2.y) / 2;
+            } else {
+              lx = (t1.x + t2.x) / 2;
+              ly = (t1.y + t2.y) / 2 - 5;
+            }
+            connGroup.append("text")
               .attr("class","etym-root-label")
-              .attr("x",mx).attr("y",my-3)
-              .attr("fill",rootEntry.color)
+              .attr("x", lx).attr("y", ly)
+              .attr("text-anchor", t1.laneIdx === t2.laneIdx ? "end" : "middle")
+              .attr("fill", rootEntry.color)
               .text(rootEntry.root);
           }
         }
       });
 
       // ---- TECHNIQUE NODES ----
-      const nodesGroup = root.append("g").attr("class","etym-nodes");
-      const tooltip = document.getElementById("etym-tooltip");
+      const nodesGroup = rootG.append("g").attr("class","etym-nodes");
+      const tooltip    = document.getElementById("etym-tooltip");
 
       const nodeGs = nodesGroup.selectAll(".etym-node")
         .data(nodes).enter()
         .append("g")
         .attr("class","etym-node")
-        .attr("transform", n => `translate(${n.x},${n.y})`)
-        .style("cursor","pointer");
+        .attr("transform", n => `translate(${n.x},${n.y})`);
 
+      // Circle
       nodeGs.append("circle")
-        .attr("r", 9)
+        .attr("r", NODE_R)
         .attr("fill", n => FAMILY_COLORS[n.family] || "#888")
-        .attr("stroke","rgba(255,255,255,0.8)")
-        .attr("stroke-width",1.5);
+        .attr("stroke","rgba(255,255,255,0.88)")
+        .attr("stroke-width", 1.8);
 
-      // Hover: show tooltip
+      // Name label below circle
+      nodeGs.append("text")
+        .attr("y", NODE_R + 11)
+        .attr("dy","0em")
+        .text(n => n.name);
+
+      // ---- HOVER TOOLTIP ----
       nodeGs
         .on("mouseover", function(event, n) {
           const eraStr = n.era < 0 ? `${-n.era} BC` : `${n.era} AD`;
-          tooltip.innerHTML = `<strong>${escHtml(n.name)}</strong>
-            <span class="tt-era">${escHtml(n.lang)}, c. ${eraStr}</span>
-            <span class="tt-root"><em>${escHtml(n.rootWord)}</em> — "${escHtml(n.meaning)}"</span>
-            <span class="tt-click">Click to navigate to this technique in the taxonomy</span>`;
+          tooltip.innerHTML =
+            `<strong>${escHtml(n.name)}</strong>` +
+            `<span class="tt-era">${escHtml(n.lang)} · c. ${eraStr}</span>` +
+            `<span class="tt-root"><em>${escHtml(n.rootWord)}</em> — "${escHtml(n.meaning)}"</span>` +
+            `<span class="tt-hint">Click for definition & etymology</span>`;
           tooltip.style.display = "block";
         })
         .on("mousemove", function(event) {
           tooltip.style.left = (event.clientX + 14) + "px";
           tooltip.style.top  = (event.clientY - 10) + "px";
         })
-        .on("mouseout", function() {
-          tooltip.style.display = "none";
-        })
+        .on("mouseout", function() { tooltip.style.display = "none"; })
         .on("click", function(event, n) {
+          event.stopPropagation();
           tooltip.style.display = "none";
-          // Switch to taxonomy view and navigate
-          switchView("taxonomy");
-          setTimeout(() => navigateTo(n.name), 400);
+
+          // Deselect previous
+          if (_etymSelectedEl && _etymSelectedEl !== this) {
+            stopPulse();
+            d3.select(_etymSelectedEl).select("circle")
+              .transition().duration(250)
+              .attr("stroke","rgba(255,255,255,0.88)").attr("stroke-width",1.8);
+          }
+          _etymSelectedEl = this;
+
+          // Pulse — same function as taxonomy view
+          const fc = FAMILY_COLORS[n.family] || "#888";
+          triggerPulse(this, NODE_R, fc);
+
+          // Populate and show info panel
+          const t = findTech(n.name);
+          const eraStr = n.era < 0 ? `${-n.era} BC` : `${n.era} AD`;
+          const fullEtym = ETYMOLOGIES[n.name] || '';
+
+          document.getElementById("info-title").textContent = n.name;
+          document.getElementById("info-badge-container").innerHTML =
+            `<span class="info-badge" style="background:${fc}">${escHtml(n.family)}</span>` +
+            `<span class="info-badge" style="background:#7a7060">${escHtml(n.lang)}</span>`;
+
+          let html = `<div class="etym-box" style="margin-bottom:14px;">
+            <div class="etym-label">Etymology</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:3px;">${escHtml(n.rootWord)}</div>
+            <div style="font-size:12px;font-style:italic;color:#6a6460;margin-bottom:4px;">"${escHtml(n.meaning)}"</div>
+            <div style="font-size:11px;color:#8a8078;">${escHtml(n.lang)} · c. ${eraStr}</div>
+            ${fullEtym ? `<div style="margin-top:7px;font-size:12px;color:#5a5550;line-height:1.55;">${escHtml(fullEtym)}</div>` : ''}
+          </div>`;
+
+          if (t) {
+            if (t.info.definition) html +=
+              `<div class="info-section"><div class="info-section-label">Definition</div>
+               <p style="font-size:13px;line-height:1.55;">${escHtml(t.info.definition)}</p></div>`;
+            if (t.info.effect) html +=
+              `<div class="info-section"><div class="info-section-label">Effect</div>
+               <p style="font-size:13px;line-height:1.55;">${escHtml(t.info.effect)}</p></div>`;
+            if (t.info.example) html +=
+              `<div class="info-section"><div class="info-section-label">Example</div>
+               <p style="font-size:13px;line-height:1.55;font-style:italic;">${escHtml(t.info.example)}</p></div>`;
+          }
+
+          document.getElementById("info-content").innerHTML = html;
+          document.getElementById("info-panel").classList.add("visible");
         });
 
-      // Zoom + pan
+      // Click on SVG background → deselect
+      svg.on("click.etymDeselect", function(event) {
+        if (event.target === svgEl) {
+          stopPulse();
+          _etymSelectedEl = null;
+          document.getElementById("info-panel").classList.remove("visible");
+        }
+      });
+
+      // ---- ZOOM + PAN ----
       const zoom = d3.zoom()
-        .scaleExtent([0.3, 4])
-        .on("zoom", e => root.attr("transform",
-          `translate(${e.transform.x + margin.left},${e.transform.y + margin.top}) scale(${e.transform.k})`));
+        .scaleExtent([0.25, 5])
+        .on("zoom", e => {
+          rootG.attr("transform",
+            `translate(${e.transform.x + margin.left},${e.transform.y + margin.top}) scale(${e.transform.k})`);
+        });
       svg.call(zoom);
-      svg.on("mousedown.cursor", () => svg.classed("panning",true))
-         .on("mouseup.cursor",   () => svg.classed("panning",false));
+      svg.on("mousedown.panning", () => svg.classed("panning", true))
+         .on("mouseup.panning",   () => svg.classed("panning", false));
     }
 
     // ================================================================
@@ -3004,15 +3107,19 @@ Be specific and educational.`;
       document.querySelector(`[data-view="${view}"]`).classList.add("active");
 
       if (view === "taxonomy") {
-        mainSvg.style.display = "block";
-        etymSvg.style.display = "none";
-        legend.style.display  = "";
+        mainSvg.style.display  = "block";
+        etymSvg.style.display  = "none";
+        legend.style.display   = "";
         zoomCtrl.style.display = "";
+        // Close info panel (it may have been opened by etym view)
+        document.getElementById("info-panel").classList.remove("visible");
+        stopPulse();
+        _etymSelectedEl = null;
       } else if (view === "etymology") {
-        mainSvg.style.display = "none";
-        etymSvg.style.display = "block";
-        legend.style.display  = "none";
-        axisLeg.style.display = "none";
+        mainSvg.style.display  = "none";
+        etymSvg.style.display  = "block";
+        legend.style.display   = "none";
+        axisLeg.style.display  = "none";
         zoomCtrl.style.display = "none";
         if (!etymViewBuilt) {
           buildEtymView();
