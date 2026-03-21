@@ -91,12 +91,24 @@
       margin-top: 80px;
     }
 
-    #etym-svg {
+    #etym-container {
       display: none;
-      width: 100%;
-      height: calc(100vh - 132px);
-      margin-top: 80px;
+      position: fixed;
+      top: 80px; left: 0; right: 0; bottom: 52px;
+      overflow-y: auto;
+      overflow-x: hidden;
       background: #F0EDE8;
+      z-index: 10;
+    }
+    /* Custom scrollbar */
+    #etym-container::-webkit-scrollbar { width: 6px; }
+    #etym-container::-webkit-scrollbar-track { background: #E8E3DC; }
+    #etym-container::-webkit-scrollbar-thumb { background: #B8B2AA; border-radius: 3px; }
+
+    #etym-svg {
+      display: block;
+      width: 100%;
+      /* height set dynamically by buildEtymView */
     }
 
     /* Legend */
@@ -673,8 +685,6 @@
     }
 
     /* ---- ETYMOLOGY VIEW ---- */
-    #etym-svg { cursor: grab; background: #F0EDE8; }
-    #etym-svg.panning { cursor: grabbing; }
     .etym-lane-label {
       font-family: 'DM Serif Display', Georgia, serif;
       font-size: 15px;
@@ -923,8 +933,10 @@
     <div id="info-content"></div>
   </div>
 
-  <!-- ETYMOLOGY VIEW SVG -->
-  <svg id="etym-svg"></svg>
+  <!-- ETYMOLOGY VIEW -->
+  <div id="etym-container">
+    <svg id="etym-svg"></svg>
+  </div>
   <div id="etym-tooltip"></div>
 
   <!-- BOTTOM NAV -->
@@ -2784,7 +2796,9 @@ Be specific and educational.`;
     // BUILD ETYMOLOGY VIEW
     // ================================================================
     // ================================================================
-    // BUILD ETYMOLOGY VIEW — vertical timeline, column swim lanes
+    // BUILD ETYMOLOGY VIEW
+    // Vertical scrollable timeline · language column swim lanes
+    // Force-simulation node positioning · click for info + pulse
     // ================================================================
     let _etymSelectedEl = null;
 
