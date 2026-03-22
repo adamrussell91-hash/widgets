@@ -96,19 +96,18 @@
       position: fixed;
       top: 80px; left: 0; right: 0; bottom: 52px;
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: auto;
       background: #F0EDE8;
       z-index: 10;
     }
     /* Custom scrollbar */
-    #etym-container::-webkit-scrollbar { width: 6px; }
+    #etym-container::-webkit-scrollbar { width: 6px; height: 6px; }
     #etym-container::-webkit-scrollbar-track { background: #E8E3DC; }
     #etym-container::-webkit-scrollbar-thumb { background: #B8B2AA; border-radius: 3px; }
 
     #etym-svg {
       display: block;
-      width: 100%;
-      /* height set dynamically by buildEtymView */
+      /* width and height set dynamically by buildEtymView */
     }
 
     /* Legend */
@@ -2722,397 +2721,1035 @@ Be specific and educational.`;
     // ================================================================
     // ETYMOLOGY DB — structured data for the Etymology view
     // ================================================================
-    const ETYM_DB = {
-      // Greek-rooted terms
-      "Metaphor":        { lang:"Greek",   era:-335, rootWord:"metaphorá",      meaning:"carrying across",        family:"Comparative" },
-      "Simile":          { lang:"Greek",   era:-350, rootWord:"homoíōsis",       meaning:"likening, resemblance",  family:"Comparative" },
-      "Anaphora":        { lang:"Greek",   era:-350, rootWord:"ana + phérein",   meaning:"carrying back",          family:"Repetitive" },
-      "Epistrophe":      { lang:"Greek",   era:-350, rootWord:"epi + strephein", meaning:"turning upon",           family:"Repetitive" },
-      "Symploce":        { lang:"Greek",   era:-100, rootWord:"syn + plékein",   meaning:"weaving together",       family:"Repetitive" },
-      "Epizeuxis":       { lang:"Greek",   era:-100, rootWord:"epi + zeûgma",    meaning:"yoked directly upon",    family:"Repetitive" },
-      "Diacope":         { lang:"Greek",   era:-100, rootWord:"dia + koptein",   meaning:"cutting through",        family:"Repetitive" },
-      "Polysyndeton":    { lang:"Greek",   era:-350, rootWord:"polys + syndeton","meaning":"many bindings",        family:"Structural" },
-      "Asyndeton":       { lang:"Greek",   era:-350, rootWord:"a + syndeton",    meaning:"without binding",        family:"Structural" },
-      "Parallelism":     { lang:"Greek",   era:-350, rootWord:"parállēlos",      meaning:"beside one another",     family:"Structural" },
-      "Chiasmus":        { lang:"Greek",   era:-100, rootWord:"khiasmos",        meaning:"X-shaped crossing",      family:"Structural" },
-      "Antithesis":      { lang:"Greek",   era:-350, rootWord:"anti + títhēmi",  meaning:"placing against",        family:"Structural" },
-      "Oxymoron":        { lang:"Greek",   era:-100, rootWord:"oxys + mōros",    meaning:"sharp-foolish",          family:"Comparative" },
-      "Hyperbole":       { lang:"Greek",   era:-350, rootWord:"hyper + bállein", meaning:"throwing over",          family:"Comparative" },
-      "Litotes":         { lang:"Greek",   era:-100, rootWord:"litótēs",         meaning:"plainness",              family:"Comparative" },
-      "Synecdoche":      { lang:"Greek",   era:-100, rootWord:"synekdokhḗ",      meaning:"taking together",        family:"Descriptive" },
-      "Metonymy":        { lang:"Greek",   era:-350, rootWord:"meta + ónyma",    meaning:"change of name",         family:"Descriptive" },
-      "Irony":           { lang:"Greek",   era:-400, rootWord:"eirōneía",        meaning:"dissembling",            family:"Comparative" },
-      "Sarcasm":         { lang:"Greek",   era:200,  rootWord:"sarkazein",       meaning:"tearing flesh",          family:"Comparative" },
-      "Allegory":        { lang:"Greek",   era:-350, rootWord:"allos + agoreúein","meaning":"speaking otherwise",  family:"Intertextual & Metafictional" },
-      "Apostrophe":      { lang:"Greek",   era:-100, rootWord:"apo + strephein", meaning:"turning away",           family:"Descriptive" },
-      "Onomatopoeia":    { lang:"Greek",   era:-100, rootWord:"ónoma + poieîn",  meaning:"name-making",            family:"Descriptive" },
-      "Euphemism":       { lang:"Greek",   era:-200, rootWord:"eu + phḗmē",      meaning:"good speaking",          family:"Descriptive" },
-      "Ellipsis":        { lang:"Greek",   era:-100, rootWord:"elleípein",       meaning:"falling short",          family:"Structural" },
-      "Anastrophe":      { lang:"Greek",   era:-100, rootWord:"ana + strephein", meaning:"turning back",           family:"Structural" },
-      "Hypotaxis":       { lang:"Greek",   era:-350, rootWord:"hypo + táxis",    meaning:"under-arrangement",      family:"Structural" },
-      "Parataxis":       { lang:"Greek",   era:-350, rootWord:"para + táxis",    meaning:"beside-arrangement",     family:"Structural" },
-      "Pathos":          { lang:"Greek",   era:-350, rootWord:"páthos",          meaning:"suffering / feeling",    family:"Descriptive" },
-      "Ethos":           { lang:"Greek",   era:-350, rootWord:"ēthos",           meaning:"character / custom",     family:"Descriptive" },
-      "Logos":           { lang:"Greek",   era:-500, rootWord:"lógos",           meaning:"word / reason",          family:"Descriptive" },
-      "Symbol":          { lang:"Greek",   era:-100, rootWord:"syn + bállein",   meaning:"thrown together",        family:"Descriptive" },
-      "Zeugma":          { lang:"Greek",   era:-100, rootWord:"zeûgma",          meaning:"yoke",                   family:"Structural" },
-      "Ekphrasis":       { lang:"Greek",   era:-200, rootWord:"ek + phrazein",   meaning:"telling out",            family:"Descriptive" },
-      "Euphony":         { lang:"Greek",   era:-350, rootWord:"eu + phōnḗ",      meaning:"good sound",             family:"Descriptive" },
-      "Cacophony":       { lang:"Greek",   era:-350, rootWord:"kakos + phōnḗ",   meaning:"bad sound",              family:"Descriptive" },
-      "Periphrasis":     { lang:"Greek",   era:-100, rootWord:"peri + phrazein", meaning:"speaking around",        family:"Descriptive" },
-      "Bathos":          { lang:"Greek",   era:1727, rootWord:"bathys",          meaning:"deep",                   family:"Structural" },
-      // Latin-rooted terms
-      "Personification": { lang:"Latin",   era:-100, rootWord:"persona + facere","meaning":"making a character",   family:"Descriptive" },
-      "Alliteration":    { lang:"Latin",   era:1300, rootWord:"ad + littera",    meaning:"to the letter",          family:"Repetitive" },
-      "Allusion":        { lang:"Latin",   era:1500, rootWord:"ad + ludere",     meaning:"playing toward",         family:"Intertextual & Metafictional" },
-      // French-rooted terms
-      "Intertextuality": { lang:"French",  era:1966, rootWord:"inter + textus",  meaning:"woven between texts",    family:"Intertextual & Metafictional" },
-      "Mise en Abyme":   { lang:"French",  era:1893, rootWord:"mise en abyme",   meaning:"placed into the abyss",  family:"Intertextual & Metafictional" },
-      "Motif":           { lang:"French",  era:1840, rootWord:"motivus",         meaning:"moving / recurring element",family:"Intertextual & Metafictional" },
-      // German-rooted terms
-      "Leitmotif":       { lang:"German",  era:1871, rootWord:"Leit + Motiv",    meaning:"leading theme",          family:"Intertextual & Metafictional" }
+    // ================================================================
+    // DERIVATION GRAPH — etymology as directed chains
+    // Each node is a historical stop; arrows show word development
+    // ================================================================
+
+    // Language colours
+    const LANG_COLORS = {
+      "Proto-IE":  "#7a8898",
+      "Greek":     "#9a7ac0",
+      "Latin":     "#c09a3a",
+      "French":    "#70a870",
+      "German":    "#b87a50",
+      "English":   "#c07878",
     };
 
-    // ================================================================
-    // ETYM_ROOTS — shared root word connections
-    // ================================================================
-    const ETYM_ROOTS = [
-      { root:"phérein (to carry)",   color:"#7a9ec0", techniques:["Metaphor","Anaphora"] },
-      { root:"strephein (to turn)",  color:"#9a7ac0", techniques:["Epistrophe","Apostrophe","Anastrophe"] },
-      { root:"syndeton (binding)",   color:"#7ab88a", techniques:["Polysyndeton","Asyndeton"] },
-      { root:"táxis (arrangement)",  color:"#c09a3a", techniques:["Hypotaxis","Parataxis"] },
-      { root:"phōnḗ (sound)",        color:"#c07878", techniques:["Euphony","Cacophony"] },
-      { root:"phrazein (to speak)",  color:"#b87a50", techniques:["Ekphrasis","Periphrasis"] },
-      { root:"zeûgma (yoke)",        color:"#70a870", techniques:["Zeugma","Epizeuxis"] },
-      { root:"bállein (to throw)",   color:"#8878c8", techniques:["Hyperbole","Symbol"] },
-      { root:"eu- (good prefix)",    color:"#5aa8a0", techniques:["Euphony","Euphemism"] },
-      { root:"para- (beside)",       color:"#b8a060", techniques:["Parallelism","Parataxis"] },
-      { root:"hyper/hypo prefix",    color:"#c07890", techniques:["Hyperbole","Hypotaxis"] },
-      { root:"ana- (back/again)",    color:"#6880b0", techniques:["Anaphora","Anastrophe"] },
-      { root:"Leit + Motiv → Motif", color:"#909070", techniques:["Leitmotif","Motif"] }
+    // Piecewise-linear era → screen-Y (compressed scale ~730px total)
+    function eraToY(era) {
+      const bp = [
+        [-850, 76],[-700,108],[-500,148],[-300,210],[-100,276],
+        [ 200,316],[ 700,356],[1300,396],[1500,450],[1700,510],
+        [1900,572],[2020,668],
+      ];
+      for (let i = 1; i < bp.length; i++) {
+        if (era <= bp[i][0]) {
+          const t = (era - bp[i-1][0]) / (bp[i][0] - bp[i-1][0]);
+          return bp[i-1][1] + t * (bp[i][1] - bp[i-1][1]);
+        }
+      }
+      return bp[bp.length-1][1];
+    }
+
+    const DERIV_GRAPH = {
+      // type: "root"|"derived"|"compound"|"term"
+      // lang: used for pill colour via LANG_COLORS
+      // xFrac 0–1: term nodes have fixed values; root/intermediate computed bottom-up
+      nodes: [
+        // ══════════════════════════════════════
+        // CLUSTER: táxis (to arrange)
+        // Chain: tassō → táxis → [hypo/para]táxis (Gk) → hypotaxis/parataxis (Lat) → English
+        // ══════════════════════════════════════
+        { id:"tassō",         word:"tassō",          era:-800, type:"root",     lang:"Greek",   meaning:"to arrange, order",           xFrac:null },
+        { id:"táxis_w",       word:"táxis",          era:-500, type:"derived",  lang:"Greek",   meaning:"arrangement, order",          xFrac:null },
+        { id:"hypotaxis_gr",  word:"hypotáxis (Gk)", era:-100, type:"compound", lang:"Greek",   meaning:"under-arrangement",           xFrac:null },
+        { id:"parataxis_gr",  word:"paratáxis (Gk)", era:-100, type:"compound", lang:"Greek",   meaning:"beside-arrangement",          xFrac:null },
+        { id:"hypotaxis_lat", word:"hypotaxis (Lat)",era: 200, type:"derived",  lang:"Latin",   meaning:"Priscian's grammar", note:"Priscian of Caesarea (c.500 AD) preserved this Greek grammatical concept in his Institutiones Grammaticae — the most studied Latin grammar of the medieval period. Renaissance humanists reading Priscian encountered hypotaxis as a live technical term and carried it into vernacular scholarship.",      xFrac:null },
+        { id:"parataxis_lat", word:"parataxis (Lat)",era: 200, type:"derived",  lang:"Latin",   meaning:"via Latin grammar", note:"Like hypotaxis, parataxis survived through Latin grammatical treatises copied in medieval monasteries. Without this Latin intermediary the Greek term would not have reached 16th-century English scholars who coined the modern English form.",      xFrac:null },
+        { id:"Hypotaxis",     word:"hypotaxis",      era:1870, type:"term",     lang:"English", meaning:"subordinate clause structure", xFrac:0.030, family:"Structural" },
+        { id:"Parataxis",     word:"parataxis",      era:1870, type:"term",     lang:"English", meaning:"co-ordinate clause structure", xFrac:0.060, family:"Structural" },
+
+        // ══════════════════════════════════════
+        // CLUSTER: phérein (to carry) → phorá
+        // Chain: phérein → phorá → metaphorá/anaphora (Gk) → metaphora/anaphora (Lat) → English
+        // ══════════════════════════════════════
+        { id:"phérein",       word:"phérein",        era:-800, type:"root",     lang:"Greek",   meaning:"to carry, bear",              xFrac:null },
+        { id:"phorá",         word:"phorá",          era:-500, type:"derived",  lang:"Greek",   meaning:"a carrying, motion",          xFrac:null },
+        { id:"metaphorá_gr",  word:"metaphorá (Gk)", era:-335, type:"compound", lang:"Greek",   meaning:"carrying across (meta+)",     xFrac:null },
+        { id:"anaphora_gr",   word:"anaphora (Gk)",  era:-350, type:"compound", lang:"Greek",   meaning:"carrying back (ana+)",        xFrac:null },
+        { id:"metaphora_lat", word:"metaphora (Lat)",era: -50, type:"derived",  lang:"Latin",   meaning:"Cicero's Latin term",         xFrac:null },
+        { id:"anaphora_lat",  word:"anaphora (Lat)", era: 100, type:"derived",  lang:"Latin",   meaning:"Quintilian's figure", note:"Quintilian codified anaphora as a key figure of repetition in his Institutio Oratoria (c. 95 AD), the definitive Roman rhetorical handbook. Renaissance schoolmasters taught rhetoric from Quintilian, so English borrowings of rhetorical figures almost all passed through his Latin text.",       xFrac:null },
+        { id:"Metaphor",      word:"metaphor",       era:1533, type:"term",     lang:"English", meaning:"implicit comparison",         xFrac:0.094, family:"Comparative" },
+        { id:"Anaphora",      word:"anaphora",       era:1580, type:"term",     lang:"English", meaning:"repeated opening phrase",     xFrac:0.124, family:"Repetitive" },
+
+        // ══════════════════════════════════════
+        // CLUSTER: strephein (to turn)
+        // ══════════════════════════════════════
+        { id:"strephein",     word:"strephein",      era:-800, type:"root",     lang:"Greek",   meaning:"to turn, twist",              xFrac:null },
+        { id:"epistrophē_gr", word:"epistrophē (Gk)",era:-350, type:"compound", lang:"Greek",   meaning:"turning upon (epi+)",         xFrac:null },
+        { id:"apostrophē_gr", word:"apostrophē (Gk)",era:-100, type:"compound", lang:"Greek",   meaning:"turning away (apo+)",         xFrac:null },
+        { id:"anastrephō_gr", word:"anastrephō (Gk)",era:-100, type:"compound", lang:"Greek",   meaning:"turning back (ana+)",         xFrac:null },
+        { id:"epistrophe_lat",word:"epistrophe (Lat)",era: 100, type:"derived", lang:"Latin",   meaning:"Ad Herennium figure", note:"The Rhetorica ad Herennium (c.86 BC) — the most widely read rhetoric manual in medieval Europe — catalogued epistrophe. It was long attributed to Cicero, giving it enormous authority in Renaissance schools and ensuring the term reached English writers in the 1580s.",       xFrac:null },
+        { id:"apostrophe_lat",word:"apostrophe (Lat)",era: 100, type:"derived", lang:"Latin",   meaning:"Cicero's oratory", note:"Cicero used and named apostrophe — the dramatic address to an absent person — in his speeches and De Oratore. Because Cicero's works were the cornerstone of Latin education from Rome through the Renaissance, the term reached English writers already polished and authoritative.",       xFrac:null },
+        { id:"Epistrophe",    word:"epistrophe",     era:1580, type:"term",     lang:"English", meaning:"repeated closing phrase",     xFrac:0.162, family:"Repetitive" },
+        { id:"Apostrophe",    word:"apostrophe",     era:1533, type:"term",     lang:"English", meaning:"address to absent entity",    xFrac:0.191, family:"Descriptive" },
+        { id:"Anastrophe",    word:"anastrophe",     era:1550, type:"term",     lang:"English", meaning:"inverted word order",         xFrac:0.220, family:"Structural" },
+
+        // ══════════════════════════════════════
+        // CLUSTER: phōnē (sound) + eu- prefix
+        // ══════════════════════════════════════
+        { id:"eu_pref",       word:"eu-",             era:-800, type:"root",    lang:"Greek",   meaning:"good, well (prefix)",         xFrac:null },
+        { id:"phōnē",         word:"phōnē",           era:-800, type:"root",    lang:"Greek",   meaning:"sound, voice",                xFrac:null },
+        { id:"phēmē",         word:"phēmē",           era:-800, type:"root",    lang:"Greek",   meaning:"speech, utterance",           xFrac:null },
+        { id:"euphōnia_gr",   word:"euphōnía (Gk)",   era:-400, type:"compound",lang:"Greek",   meaning:"good sound (eu+phōnē)",       xFrac:null },
+        { id:"kakophōnia_gr", word:"kakophōnía (Gk)", era:-400, type:"compound",lang:"Greek",   meaning:"bad sound (kakos+phōnē)",     xFrac:null },
+        { id:"euphēmism_gr",  word:"euphēmismós (Gk)",era:-200, type:"compound",lang:"Greek",   meaning:"good speech (eu+phēmē)",      xFrac:null },
+        { id:"euphonia_lat",  word:"euphonia (Lat)",  era: 100, type:"derived", lang:"Latin",   meaning:"Cicero: pleasing sound", note:"Cicero discussed euphonia as a desirable quality in oratorical prose rhythm. Latin music theorists and rhetoricians alike borrowed the Greek concept, and the Latinised form euphonia was the direct source for the English euphony when it entered literary criticism in the 1620s.", xFrac:null },
+        { id:"cacophonia_lat",word:"cacophonia (Lat)",era: 100, type:"derived", lang:"Latin",   meaning:"Latin term for harsh sound",  xFrac:null },
+        { id:"euphemismus",   word:"euphemismus (Lat)",era:200, type:"derived", lang:"Latin",   meaning:"Roman speech-softening", note:"Latin orators employed euphemismus as a recognised device for avoiding blunt or offensive language — a practical concern in political oratory. This Latin term passed into humanist rhetoric textbooks and from there into English as euphemism around 1656.",       xFrac:null },
+        { id:"Euphony",       word:"euphony",         era:1623, type:"term",    lang:"English", meaning:"pleasant-sounding language",  xFrac:0.260, family:"Descriptive" },
+        { id:"Cacophony",     word:"cacophony",       era:1656, type:"term",    lang:"English", meaning:"harsh-sounding language",     xFrac:0.291, family:"Descriptive" },
+        { id:"Euphemism",     word:"euphemism",       era:1656, type:"term",    lang:"English", meaning:"mild substitute expression",  xFrac:0.322, family:"Descriptive" },
+
+        // ══════════════════════════════════════
+        // CLUSTER: zeugma (yoke)
+        // ══════════════════════════════════════
+        { id:"zeugma_root",   word:"zeugma",          era:-350, type:"root",    lang:"Greek",   meaning:"yoke, that which joins",      xFrac:null },
+        { id:"epizeuxis_gr",  word:"epízeuxis (Gk)",  era:-100, type:"compound",lang:"Greek",   meaning:"yoked directly upon (epi+)",  xFrac:null },
+        { id:"zeugma_lat",    word:"zeugma (Lat)",    era: 100, type:"derived", lang:"Latin",   meaning:"Latin rhetorical yoke",       xFrac:null },
+        { id:"Zeugma",        word:"zeugma",          era:1586, type:"term",    lang:"English", meaning:"one word governs two clauses", xFrac:0.360, family:"Structural" },
+        { id:"Epizeuxis",     word:"epizeuxis",       era:1589, type:"term",    lang:"English", meaning:"emphatic word repetition",    xFrac:0.390, family:"Repetitive" },
+
+        // ══════════════════════════════════════
+        // CLUSTER: déō / syndeton (to bind)
+        // ══════════════════════════════════════
+        { id:"deîn",          word:"deîn",            era:-800, type:"root",    lang:"Greek",   meaning:"to bind, tie",                xFrac:null },
+        { id:"syndeton_w",    word:"syndeton",        era:-350, type:"derived", lang:"Greek",   meaning:"bound together (syn+detos)",  xFrac:null },
+        { id:"asyndeton_gr",  word:"asýndeton (Gk)",  era:-350, type:"compound",lang:"Greek",   meaning:"without binding (a-)",        xFrac:null },
+        { id:"polysyn_gr",    word:"polysýndeton (Gk)",era:-350,type:"compound",lang:"Greek",   meaning:"many bindings (polys+)",      xFrac:null },
+        { id:"asyndeton_lat", word:"asyndeton (Lat)", era: 100, type:"derived", lang:"Latin",   meaning:"Cicero's term", note:"Cicero demonstrates asyndeton memorably in his Catiline orations. His usage — and Quintilian's subsequent analysis — fixed the term in the Latin rhetorical canon from which Tudor English writers borrowed it directly in the mid-1500s.",       xFrac:null },
+        { id:"polysyn_lat",   word:"polysyndeton (Lat)",era:100,type:"derived", lang:"Latin",   meaning:"Quintilian's figure", note:"Quintilian analysed polysyndeton alongside asyndeton as its counterpart in Institutio Oratoria (c. 95 AD). The pairing became a standard textbook contrast, ensuring both terms entered English together in the late 16th century.",       xFrac:null },
+        { id:"Asyndeton",     word:"asyndeton",       era:1580, type:"term",    lang:"English", meaning:"omitted conjunctions",        xFrac:0.430, family:"Structural" },
+        { id:"Polysyndeton",  word:"polysyndeton",    era:1580, type:"term",    lang:"English", meaning:"repeated conjunctions",       xFrac:0.461, family:"Structural" },
+
+        // ══════════════════════════════════════
+        // CLUSTER: bállein (to throw)
+        // ══════════════════════════════════════
+        { id:"bállein",       word:"bállein",         era:-800, type:"root",    lang:"Greek",   meaning:"to throw, cast",              xFrac:null },
+        { id:"bolē",          word:"bolē",            era:-600, type:"derived", lang:"Greek",   meaning:"a throw, a casting",          xFrac:null },
+        { id:"hyperbolē_gr",  word:"hyperbolḗ (Gk)",  era:-350, type:"compound",lang:"Greek",   meaning:"thrown over (hyper+)",        xFrac:null },
+        { id:"symbolon_gr",   word:"sýmbolon (Gk)",   era:-400, type:"compound",lang:"Greek",   meaning:"thrown together (syn+)",      xFrac:null },
+        { id:"hyperbola_lat", word:"hyperbola (Lat)", era: -50, type:"derived", lang:"Latin",   meaning:"Cicero's Latin term",         xFrac:null },
+        { id:"symbolum_lat",  word:"symbolum (Lat)",  era:  50, type:"derived", lang:"Latin",   meaning:"token, sign (Latin)",         xFrac:null },
+        { id:"Hyperbole",     word:"hyperbole",       era:1529, type:"term",    lang:"English", meaning:"deliberate exaggeration",     xFrac:0.498, family:"Comparative" },
+        { id:"Symbol",        word:"symbol",          era:1380, type:"term",    lang:"English", meaning:"object representing an idea", xFrac:0.528, family:"Descriptive" },
+
+        // ══════════════════════════════════════
+        // CLUSTER: phrazein (to tell/speak)
+        // ══════════════════════════════════════
+        { id:"phrazein",      word:"phrazein",        era:-800, type:"root",    lang:"Greek",   meaning:"to tell, declare",            xFrac:null },
+        { id:"ekphrasis_gr",  word:"ékphrasis (Gk)",  era:-200, type:"compound",lang:"Greek",   meaning:"telling out (ek+phrazein)",   xFrac:null },
+        { id:"periphrasis_gr",word:"períphrasis (Gk)", era:-100, type:"compound",lang:"Greek",  meaning:"speaking around (peri+)",    xFrac:null },
+        { id:"ekphrasis_lat", word:"ecphrasis (Lat)", era: 100, type:"derived", lang:"Latin",   meaning:"Theon's exercise", note:"Aelius Theon (c. 1st cent. AD) included ekphrasis as one of the progymnasmata — preparatory rhetorical exercises — in his influential handbook. Latin rhetorical schools adopted the exercise, ensuring the term was alive in Western academic Latin when 19th-century literary critics formalised it in English.",      xFrac:null },
+        { id:"periphrasis_lat",word:"periphrasis (Lat)",era:100, type:"derived",lang:"Latin",   meaning:"Quintilian, c.95 AD", note:"Quintilian devoted a chapter to periphrasis as a figure that adds elegance through circumlocution in Institutio Oratoria. His analysis defined the term's scope for Renaissance scholars, making the Latin form the direct model for the English borrowing in 1533.",       xFrac:null },
+        { id:"Ekphrasis",     word:"ekphrasis",       era:1895, type:"term",    lang:"English", meaning:"verbal description of art",   xFrac:0.561, family:"Descriptive" },
+        { id:"Periphrasis",   word:"periphrasis",     era:1533, type:"term",    lang:"English", meaning:"roundabout expression",       xFrac:0.591, family:"Descriptive" },
+
+        // ══════════════════════════════════════
+        // INDIVIDUAL GREEK CHAINS
+        // ══════════════════════════════════════
+        { id:"parállēlos",    word:"parállēlos",      era:-350, type:"compound",lang:"Greek",   meaning:"beside one another (para+)", xFrac:null },
+        { id:"Parallelism",   word:"parallelism",     era:1610, type:"term",    lang:"English", meaning:"repeated grammatical form",  xFrac:0.625, family:"Structural" },
+
+        { id:"chi_letter",    word:"chi (χ)",         era:-800, type:"root",    lang:"Greek",   meaning:"Greek letter — cross shape", xFrac:null },
+        { id:"khiasmos_gr",   word:"khiasmós (Gk)",   era:-100, type:"compound",lang:"Greek",   meaning:"X-shaped arrangement",       xFrac:null },
+        { id:"chiasmus_lat",  word:"chiasmus (Lat)",  era: 100, type:"derived", lang:"Latin",   meaning:"Demetrius' X-figure", note:"The Greek critic Demetrius On Style analysed the cross-arrangement pattern, and Latin rhetoricians formalised it as chiasmus. The term remained a scholarly Latinism — rarely used in English before the 19th century — which is why its English coinage date of 1871 is so late despite the device being ancient.",       xFrac:null },
+        { id:"Chiasmus",      word:"chiasmus",        era:1871, type:"term",    lang:"English", meaning:"A-B-B-A grammatical reversal",xFrac:0.644, family:"Structural" },
+
+        { id:"títhēmi",       word:"títhēmi",         era:-800, type:"root",    lang:"Greek",   meaning:"to place, set down",          xFrac:null },
+        { id:"antithesis_gr", word:"antíthesis (Gk)", era:-350, type:"compound",lang:"Greek",   meaning:"placing against (anti+)",     xFrac:null },
+        { id:"antithesis_lat",word:"antithesis (Lat)",era:  50, type:"derived", lang:"Latin",   meaning:"Quintilian's term",           xFrac:null },
+        { id:"Antithesis",    word:"antithesis",      era:1529, type:"term",    lang:"English", meaning:"direct contrast of ideas",    xFrac:0.663, family:"Structural" },
+
+        { id:"homoios",       word:"homoios",         era:-800, type:"root",    lang:"Greek",   meaning:"like, similar",               xFrac:null },
+        { id:"homoiosis_gr",  word:"homoíōsis (Gk)",  era:-350, type:"derived", lang:"Greek",   meaning:"likening, resemblance",       xFrac:null },
+        { id:"similis_lat",   word:"similis (Lat)",   era: -50, type:"derived", lang:"Latin",   meaning:"like, resembling (Latin)",    xFrac:null },
+        { id:"Simile",        word:"simile",          era:1393, type:"term",    lang:"English", meaning:"comparison using like or as", xFrac:0.680, family:"Comparative" },
+
+        { id:"oxys",          word:"oxys",            era:-800, type:"root",    lang:"Greek",   meaning:"sharp, keen, clever",         xFrac:null },
+        { id:"mōros",         word:"mōros",           era:-800, type:"root",    lang:"Greek",   meaning:"dull, foolish, blunt",        xFrac:null },
+        { id:"oxymoron_gr",   word:"oxýmōron (Gk)",   era:-100, type:"compound",lang:"Greek",   meaning:"pointedly foolish (oxys+)",   xFrac:null },
+        { id:"Oxymoron",      word:"oxymoron",        era:1657, type:"term",    lang:"English", meaning:"self-contradicting phrase",   xFrac:0.696, family:"Comparative" },
+
+        { id:"eirō",          word:"eirō",            era:-800, type:"root",    lang:"Greek",   meaning:"to speak, say",               xFrac:null },
+        { id:"eirōneia",      word:"eirōneía",        era:-400, type:"derived", lang:"Greek",   meaning:"dissembling, feigned igno.",  xFrac:null },
+        { id:"ironia_lat",    word:"ironia (Lat)",    era: -50, type:"derived", lang:"Latin",   meaning:"Cicero's Latin term",         xFrac:null },
+        { id:"Irony",         word:"irony",           era:1502, type:"term",    lang:"English", meaning:"saying opposite of meaning",  xFrac:0.712, family:"Comparative" },
+
+        { id:"sarkazō",       word:"sarkazō",         era:-200, type:"root",    lang:"Greek",   meaning:"tear flesh, bite lips",       xFrac:null },
+        { id:"sarcasmos_gr",  word:"sarkasmos (Gk)",  era:-100, type:"derived", lang:"Greek",   meaning:"biting remark",               xFrac:null },
+        { id:"sarcasmus_lat", word:"sarcasmus (Lat)", era: 100, type:"derived", lang:"Latin",   meaning:"Roman bitter mockery", note:"Latin rhetoricians classed sarcasmus as a subspecies of ironia — biting mockery — in their catalogues of figures. The term entered English directly from this Latin rhetorical tradition in the 1570s, already carrying its sharp connotation.",       xFrac:null },
+        { id:"Sarcasm",       word:"sarcasm",         era:1579, type:"term",    lang:"English", meaning:"sharp biting irony",          xFrac:0.728, family:"Comparative" },
+
+        { id:"litós",         word:"litós",           era:-800, type:"root",    lang:"Greek",   meaning:"simple, plain, meagre",       xFrac:null },
+        { id:"litotēs_gr",    word:"litótēs (Gk)",    era:-100, type:"derived", lang:"Greek",   meaning:"simplicity, plainness",       xFrac:null },
+        { id:"Litotes",       word:"litotes",         era:1656, type:"term",    lang:"English", meaning:"understatement via negation", xFrac:0.743, family:"Comparative" },
+
+        { id:"synekdochē_gr", word:"synekdokhḗ (Gk)", era:-100, type:"compound",lang:"Greek",  meaning:"joint interpretation",        xFrac:null },
+        { id:"synecdoche_lat",word:"synecdoche (Lat)",era: 100, type:"derived", lang:"Latin",   meaning:"Quintilian's figure", note:"Quintilian gave synecdoche its authoritative Latin definition — part standing for whole, or whole for part — in Institutio Oratoria. His analysis was the direct source for the English term coined in 1558, which reproduces his definition almost verbatim.",       xFrac:null },
+        { id:"Synecdoche",    word:"synecdoche",      era:1558, type:"term",    lang:"English", meaning:"part stands for whole",       xFrac:0.757, family:"Descriptive" },
+
+        { id:"onoma",         word:"ónoma",           era:-800, type:"root",    lang:"Greek",   meaning:"name, word",                  xFrac:null },
+        { id:"metōnymia_gr",  word:"metōnymía (Gk)",  era:-350, type:"compound",lang:"Greek",   meaning:"change of name (meta+)",      xFrac:null },
+        { id:"metonymia_lat", word:"metonymia (Lat)", era:  50, type:"derived", lang:"Latin",   meaning:"Quintilian's Latin term",     xFrac:null },
+        { id:"Metonymy",      word:"metonymy",        era:1584, type:"term",    lang:"English", meaning:"associated concept substituted",xFrac:0.771,family:"Descriptive" },
+
+        { id:"onoma2",        word:"ónoma",           era:-800, type:"root",    lang:"Greek",   meaning:"name",                        xFrac:null },
+        { id:"poiein",        word:"poiein",          era:-800, type:"root",    lang:"Greek",   meaning:"to make, create",             xFrac:null },
+        { id:"onomatopoiia",  word:"onomatopoiía (Gk)",era:-100,type:"compound",lang:"Greek",   meaning:"name-making (onoma+poiein)", xFrac:null },
+        { id:"Onomatopoeia",  word:"onomatopoeia",    era:1577, type:"term",    lang:"English", meaning:"word imitating its sound",    xFrac:0.785, family:"Descriptive" },
+
+        { id:"allos",         word:"állos",           era:-800, type:"root",    lang:"Greek",   meaning:"other, another",              xFrac:null },
+        { id:"agoreuein",     word:"agoreuein",       era:-500, type:"root",    lang:"Greek",   meaning:"speak in public assembly",    xFrac:null },
+        { id:"allegoria_gr",  word:"allēgoría (Gk)",  era:-350, type:"compound",lang:"Greek",   meaning:"speaking otherwise (allos+)", xFrac:null },
+        { id:"allegoria_lat", word:"allegoria (Lat)", era: 100, type:"derived", lang:"Latin",   meaning:"Quintilian's extended trope", xFrac:null },
+        { id:"Allegory",      word:"allegory",        era:1382, type:"term",    lang:"English", meaning:"symbolic extended narrative", xFrac:0.799, family:"Intertextual & Metafictional" },
+
+        { id:"paskhō",        word:"páschō",          era:-800, type:"root",    lang:"Greek",   meaning:"to suffer, experience",       xFrac:null },
+        { id:"páthos_gr",     word:"páthos",          era:-350, type:"derived", lang:"Greek",   meaning:"suffering, emotion",          xFrac:null },
+        { id:"Pathos",        word:"pathos",          era:1579, type:"term",    lang:"English", meaning:"emotional appeal",            xFrac:0.812, family:"Descriptive" },
+
+        { id:"ethō",          word:"éthō",            era:-800, type:"root",    lang:"Greek",   meaning:"to be accustomed",            xFrac:null },
+        { id:"ēthos_gr",      word:"êthos",           era:-350, type:"derived", lang:"Greek",   meaning:"character, custom",           xFrac:null },
+        { id:"Ethos",         word:"ethos",           era:1851, type:"term",    lang:"English", meaning:"ethical/character appeal",    xFrac:0.824, family:"Descriptive" },
+
+        { id:"legō",          word:"légō",            era:-800, type:"root",    lang:"Greek",   meaning:"to speak, gather",            xFrac:null },
+        { id:"logos_gr",      word:"lógos",           era:-500, type:"derived", lang:"Greek",   meaning:"word, reason, discourse",     xFrac:null },
+        { id:"Logos",         word:"logos",           era:1587, type:"term",    lang:"English", meaning:"logical/rational appeal",     xFrac:0.836, family:"Descriptive" },
+
+        { id:"leípein",       word:"leípein",         era:-800, type:"root",    lang:"Greek",   meaning:"to leave out, omit",          xFrac:null },
+        { id:"élleipsis_gr",  word:"élleipsis (Gk)",  era:-100, type:"derived", lang:"Greek",   meaning:"a falling short",             xFrac:null },
+        { id:"ellipsis_lat",  word:"ellipsis (Lat)",  era: 100, type:"derived", lang:"Latin",   meaning:"Latin grammatical omission",  xFrac:null },
+        { id:"Ellipsis",      word:"ellipsis",        era:1568, type:"term",    lang:"English", meaning:"deliberate word omission",    xFrac:0.848, family:"Structural" },
+
+        { id:"plekein",       word:"plékein",         era:-800, type:"root",    lang:"Greek",   meaning:"to weave, intertwine",        xFrac:null },
+        { id:"symploce_gr",   word:"symploké (Gk)",   era:-100, type:"compound",lang:"Greek",   meaning:"weaving together (syn+)",     xFrac:null },
+        { id:"Symploce",      word:"symploce",        era:1589, type:"term",    lang:"English", meaning:"anaphora + epistrophe",       xFrac:0.859, family:"Repetitive" },
+
+        { id:"koptein",       word:"kóptein",         era:-800, type:"root",    lang:"Greek",   meaning:"to cut, strike",              xFrac:null },
+        { id:"diacope_gr",    word:"diakopḗ (Gk)",    era:-100, type:"compound",lang:"Greek",   meaning:"cutting through (dia+)",      xFrac:null },
+        { id:"Diacope",       word:"diacope",         era:1550, type:"term",    lang:"English", meaning:"repetition broken by words",  xFrac:0.869, family:"Repetitive" },
+
+        { id:"bathys",        word:"bathýs",          era:-800, type:"root",    lang:"Greek",   meaning:"deep, profound",              xFrac:null },
+        { id:"bathos_gr",     word:"báthos",          era:-350, type:"derived", lang:"Greek",   meaning:"depth",                       xFrac:null },
+        { id:"Bathos",        word:"bathos",          era:1727, type:"term",    lang:"English", meaning:"anti-climactic descent",      xFrac:0.879, family:"Structural" },
+
+        // ══════════════════════════════════════
+        // LATIN CHAINS
+        // ══════════════════════════════════════
+        { id:"persona_lat",   word:"persōna",         era:-100, type:"root",    lang:"Latin",   meaning:"actor's mask, character",     xFrac:null },
+        { id:"facere_lat",    word:"facere",          era:-100, type:"root",    lang:"Latin",   meaning:"to make, do",                 xFrac:null },
+        { id:"personificatio",word:"persōnificātiō",  era: 500, type:"compound",lang:"Latin",   meaning:"making into a person",        xFrac:null },
+        { id:"Personification",word:"personification",era:1755, type:"term",   lang:"English", meaning:"human traits on non-human",   xFrac:0.890, family:"Descriptive" },
+
+        { id:"ad_lat",        word:"ad-",             era:-200, type:"root",    lang:"Latin",   meaning:"to, toward (prefix)",         xFrac:null },
+        { id:"littera_lat",   word:"littera",         era:-200, type:"root",    lang:"Latin",   meaning:"letter of alphabet",          xFrac:null },
+        { id:"alliteratio",   word:"alliterātiō",     era:1300, type:"compound",lang:"Latin",   meaning:"to the letter (ad+littera)",  xFrac:null },
+        { id:"Alliteration",  word:"alliteration",    era:1624, type:"term",    lang:"English", meaning:"repeated initial consonants", xFrac:0.901, family:"Repetitive" },
+
+        { id:"ludere_lat",    word:"lūdere",          era:-200, type:"root",    lang:"Latin",   meaning:"to play, mock, allude",       xFrac:null },
+        { id:"allusio_lat",   word:"allūsiō",         era:1540, type:"derived", lang:"Latin",   meaning:"playing toward, referring",   xFrac:null },
+        { id:"Allusion",      word:"allusion",        era:1612, type:"term",    lang:"English", meaning:"indirect reference",          xFrac:0.912, family:"Intertextual & Metafictional" },
+
+        // ══════════════════════════════════════
+        // FRENCH / GERMAN CHAINS
+        // ══════════════════════════════════════
+        { id:"textus_lat",    word:"textus",          era:-100, type:"root",    lang:"Latin",   meaning:"woven fabric, text",          xFrac:null },
+        { id:"intertextualite",word:"intertextualité",era:1966, type:"compound",lang:"French",  meaning:"between-text (Kristeva 1966)",xFrac:null },
+        { id:"Intertextuality",word:"intertextuality",era:1969, type:"term",   lang:"English", meaning:"text-to-text relationships",  xFrac:0.922, family:"Intertextual & Metafictional" },
+
+        { id:"abyme_fr",      word:"abîme",           era:1300, type:"root",    lang:"French",  meaning:"abyss; heraldic shield centre",xFrac:null },
+        { id:"mise_fr",       word:"mise en abyme",   era:1893, type:"compound",lang:"French",  meaning:"placed in the abyss (Gide)",  xFrac:null },
+        { id:"Mise en Abyme", word:"mise en abyme",   era:1893, type:"term",    lang:"French",  meaning:"story / image within itself", xFrac:0.932, family:"Intertextual & Metafictional" },
+
+        { id:"motivus_lat",   word:"mōtīvus",         era:-100, type:"root",    lang:"Latin",   meaning:"moving, causing motion",      xFrac:null },
+        { id:"motif_fr",      word:"motif",           era:1840, type:"derived", lang:"French",  meaning:"recurring element (art)",     xFrac:null },
+        { id:"Motif",         word:"motif",           era:1848, type:"term",    lang:"English", meaning:"recurring symbol or theme",   xFrac:0.944, family:"Intertextual & Metafictional" },
+
+        { id:"leiten_de",     word:"leiten",          era:1000, type:"root",    lang:"German",  meaning:"to lead, guide",              xFrac:null },
+        { id:"Motiv_de",      word:"Motiv",           era:1800, type:"root",    lang:"German",  meaning:"theme, leading motive",       xFrac:null },
+        { id:"Leitmotiv_de",  word:"Leitmotiv",       era:1871, type:"compound",lang:"German",  meaning:"leading theme (Wagner 1871)", xFrac:null },
+        { id:"Leitmotif",     word:"leitmotif",       era:1876, type:"term",    lang:"English", meaning:"recurring narrative theme",   xFrac:0.956, family:"Intertextual & Metafictional" },
+      ],
+
+      edges: [
+        // TAXIS
+        { from:"tassō",          to:"táxis_w" },
+        { from:"táxis_w",        to:"hypotaxis_gr",   label:"+ hypo-" },
+        { from:"táxis_w",        to:"parataxis_gr",   label:"+ para-" },
+        { from:"hypotaxis_gr",   to:"hypotaxis_lat" },
+        { from:"parataxis_gr",   to:"parataxis_lat" },
+        { from:"hypotaxis_lat",  to:"Hypotaxis" },
+        { from:"parataxis_lat",  to:"Parataxis" },
+        // PHEREIN
+        { from:"phérein",        to:"phorá" },
+        { from:"phorá",          to:"metaphorá_gr",   label:"+ meta-" },
+        { from:"phorá",          to:"anaphora_gr",    label:"+ ana-" },
+        { from:"metaphorá_gr",   to:"metaphora_lat" },
+        { from:"anaphora_gr",    to:"anaphora_lat" },
+        { from:"metaphora_lat",  to:"Metaphor" },
+        { from:"anaphora_lat",   to:"Anaphora" },
+        // STREPHEIN
+        { from:"strephein",      to:"epistrophē_gr",  label:"epi+" },
+        { from:"strephein",      to:"apostrophē_gr",  label:"apo+" },
+        { from:"strephein",      to:"anastrephō_gr",  label:"ana+" },
+        { from:"epistrophē_gr",  to:"epistrophe_lat" },
+        { from:"apostrophē_gr",  to:"apostrophe_lat" },
+        { from:"anastrephō_gr",  to:"Anastrophe" },
+        { from:"epistrophe_lat", to:"Epistrophe" },
+        { from:"apostrophe_lat", to:"Apostrophe" },
+        // PHONE_EU
+        { from:"eu_pref",        to:"euphōnia_gr" },
+        { from:"phōnē",          to:"euphōnia_gr" },
+        { from:"phōnē",          to:"kakophōnia_gr" },
+        { from:"eu_pref",        to:"euphēmism_gr" },
+        { from:"phēmē",          to:"euphēmism_gr" },
+        { from:"euphōnia_gr",    to:"euphonia_lat" },
+        { from:"kakophōnia_gr",  to:"cacophonia_lat" },
+        { from:"euphēmism_gr",   to:"euphemismus" },
+        { from:"euphonia_lat",   to:"Euphony" },
+        { from:"cacophonia_lat", to:"Cacophony" },
+        { from:"euphemismus",    to:"Euphemism" },
+        // ZEUGMA
+        { from:"zeugma_root",    to:"zeugma_lat" },
+        { from:"zeugma_root",    to:"epizeuxis_gr",   label:"epi+" },
+        { from:"zeugma_lat",     to:"Zeugma" },
+        { from:"epizeuxis_gr",   to:"Epizeuxis" },
+        // SYNDETON
+        { from:"deîn",           to:"syndeton_w" },
+        { from:"syndeton_w",     to:"asyndeton_gr",   label:"a-" },
+        { from:"syndeton_w",     to:"polysyn_gr",     label:"polys+" },
+        { from:"asyndeton_gr",   to:"asyndeton_lat" },
+        { from:"polysyn_gr",     to:"polysyn_lat" },
+        { from:"asyndeton_lat",  to:"Asyndeton" },
+        { from:"polysyn_lat",    to:"Polysyndeton" },
+        // BALLEIN
+        { from:"bállein",        to:"bolē" },
+        { from:"bolē",           to:"hyperbolē_gr",   label:"hyper+" },
+        { from:"bállein",        to:"symbolon_gr",    label:"syn+" },
+        { from:"hyperbolē_gr",   to:"hyperbola_lat" },
+        { from:"symbolon_gr",    to:"symbolum_lat" },
+        { from:"hyperbola_lat",  to:"Hyperbole" },
+        { from:"symbolum_lat",   to:"Symbol" },
+        // PHRAZEIN
+        { from:"phrazein",       to:"ekphrasis_gr",   label:"ek+" },
+        { from:"phrazein",       to:"periphrasis_gr", label:"peri+" },
+        { from:"ekphrasis_gr",   to:"ekphrasis_lat" },
+        { from:"periphrasis_gr", to:"periphrasis_lat" },
+        { from:"ekphrasis_lat",  to:"Ekphrasis" },
+        { from:"periphrasis_lat",to:"Periphrasis" },
+        // INDIVIDUAL GREEKS
+        { from:"parállēlos",     to:"Parallelism" },
+        { from:"chi_letter",     to:"khiasmos_gr" },
+        { from:"khiasmos_gr",    to:"chiasmus_lat" },
+        { from:"chiasmus_lat",   to:"Chiasmus" },
+        { from:"títhēmi",        to:"antithesis_gr",  label:"anti+" },
+        { from:"antithesis_gr",  to:"antithesis_lat" },
+        { from:"antithesis_lat", to:"Antithesis" },
+        { from:"homoios",        to:"homoiosis_gr" },
+        { from:"homoiosis_gr",   to:"similis_lat" },
+        { from:"similis_lat",    to:"Simile" },
+        { from:"oxys",           to:"oxymoron_gr" },
+        { from:"mōros",          to:"oxymoron_gr" },
+        { from:"oxymoron_gr",    to:"Oxymoron" },
+        { from:"eirō",           to:"eirōneia" },
+        { from:"eirōneia",       to:"ironia_lat" },
+        { from:"ironia_lat",     to:"Irony" },
+        { from:"sarkazō",        to:"sarcasmos_gr" },
+        { from:"sarcasmos_gr",   to:"sarcasmus_lat" },
+        { from:"sarcasmus_lat",  to:"Sarcasm" },
+        { from:"litós",          to:"litotēs_gr" },
+        { from:"litotēs_gr",     to:"Litotes" },
+        { from:"synekdochē_gr",  to:"synecdoche_lat" },
+        { from:"synecdoche_lat", to:"Synecdoche" },
+        { from:"onoma",          to:"metōnymia_gr",   label:"meta+" },
+        { from:"metōnymia_gr",   to:"metonymia_lat" },
+        { from:"metonymia_lat",  to:"Metonymy" },
+        { from:"onoma2",         to:"onomatopoiia" },
+        { from:"poiein",         to:"onomatopoiia" },
+        { from:"onomatopoiia",   to:"Onomatopoeia" },
+        { from:"allos",          to:"allegoria_gr" },
+        { from:"agoreuein",      to:"allegoria_gr" },
+        { from:"allegoria_gr",   to:"allegoria_lat" },
+        { from:"allegoria_lat",  to:"Allegory" },
+        { from:"paskhō",         to:"páthos_gr" },
+        { from:"páthos_gr",      to:"Pathos" },
+        { from:"ethō",           to:"ēthos_gr" },
+        { from:"ēthos_gr",       to:"Ethos" },
+        { from:"legō",           to:"logos_gr" },
+        { from:"logos_gr",       to:"Logos" },
+        { from:"leípein",        to:"élleipsis_gr" },
+        { from:"élleipsis_gr",   to:"ellipsis_lat" },
+        { from:"ellipsis_lat",   to:"Ellipsis" },
+        { from:"plekein",        to:"symploce_gr",    label:"syn+" },
+        { from:"symploce_gr",    to:"Symploce" },
+        { from:"koptein",        to:"diacope_gr",     label:"dia+" },
+        { from:"diacope_gr",     to:"Diacope" },
+        { from:"bathys",         to:"bathos_gr" },
+        { from:"bathos_gr",      to:"Bathos" },
+        // LATIN
+        { from:"persona_lat",    to:"personificatio" },
+        { from:"facere_lat",     to:"personificatio" },
+        { from:"personificatio", to:"Personification" },
+        { from:"ad_lat",         to:"alliteratio" },
+        { from:"littera_lat",    to:"alliteratio" },
+        { from:"alliteratio",    to:"Alliteration" },
+        { from:"ad_lat",         to:"allusio_lat" },
+        { from:"ludere_lat",     to:"allusio_lat" },
+        { from:"allusio_lat",    to:"Allusion" },
+        // FRENCH / GERMAN
+        { from:"textus_lat",     to:"intertextualite" },
+        { from:"intertextualite",to:"Intertextuality" },
+        { from:"abyme_fr",       to:"mise_fr" },
+        { from:"mise_fr",        to:"Mise en Abyme" },
+        { from:"motivus_lat",    to:"motif_fr" },
+        { from:"motif_fr",       to:"Motif" },
+        { from:"leiten_de",      to:"Leitmotiv_de" },
+        { from:"Motiv_de",       to:"Leitmotiv_de" },
+        { from:"Leitmotiv_de",   to:"Leitmotif" },
+      ]
+    };    // ── CLUSTER DEFINITIONS ─────────────────────────────────────────────
+    // One collapsible strip per etymological family.
+    // rootId = pill always visible (the "header"); termIds = English terms.
+    const ETYM_CLUSTERS = [
+      { id:"taxis",     label:"tassō",      sublabel:"to arrange",    rootId:"tassō",
+        nodeIds:["tassō","táxis_w","hypotaxis_gr","parataxis_gr","hypotaxis_lat","parataxis_lat","Hypotaxis","Parataxis"],
+        termIds:["Hypotaxis","Parataxis"] },
+      { id:"pherein",   label:"phérein",    sublabel:"to carry",      rootId:"phérein",
+        nodeIds:["phérein","phorá","metaphorá_gr","anaphora_gr","metaphora_lat","anaphora_lat","Metaphor","Anaphora"],
+        termIds:["Metaphor","Anaphora"] },
+      { id:"strephein", label:"strephein",  sublabel:"to turn",       rootId:"strephein",
+        nodeIds:["strephein","epistrophē_gr","apostrophē_gr","anastrephō_gr","epistrophe_lat","apostrophe_lat","Epistrophe","Apostrophe","Anastrophe"],
+        termIds:["Epistrophe","Apostrophe","Anastrophe"] },
+      { id:"phone",     label:"phōnē",      sublabel:"sound / speech",rootId:"phōnē",
+        nodeIds:["eu_pref","phōnē","phēmē","euphōnia_gr","kakophōnia_gr","euphēmism_gr","euphonia_lat","cacophonia_lat","euphemismus","Euphony","Cacophony","Euphemism"],
+        termIds:["Euphony","Cacophony","Euphemism"] },
+      { id:"zeugma",    label:"zeugma",     sublabel:"yoke",          rootId:"zeugma_root",
+        nodeIds:["zeugma_root","epizeuxis_gr","zeugma_lat","Zeugma","Epizeuxis"],
+        termIds:["Zeugma","Epizeuxis"] },
+      { id:"deon",      label:"deîn",       sublabel:"to bind",       rootId:"deîn",
+        nodeIds:["deîn","syndeton_w","asyndeton_gr","polysyn_gr","asyndeton_lat","polysyn_lat","Asyndeton","Polysyndeton"],
+        termIds:["Asyndeton","Polysyndeton"] },
+      { id:"ballein",   label:"bállein",    sublabel:"to throw",      rootId:"bállein",
+        nodeIds:["bállein","bolē","hyperbolē_gr","symbolon_gr","hyperbola_lat","symbolum_lat","Hyperbole","Symbol"],
+        termIds:["Hyperbole","Symbol"] },
+      { id:"phrazein",  label:"phrazein",   sublabel:"to declare",    rootId:"phrazein",
+        nodeIds:["phrazein","ekphrasis_gr","periphrasis_gr","ekphrasis_lat","periphrasis_lat","Ekphrasis","Periphrasis"],
+        termIds:["Ekphrasis","Periphrasis"] },
+      { id:"parallelos",label:"parállēlos", sublabel:"beside each",   rootId:"parállēlos",
+        nodeIds:["parállēlos","Parallelism"],
+        termIds:["Parallelism"] },
+      { id:"chi",       label:"chi (χ)",    sublabel:"X-shape",       rootId:"chi_letter",
+        nodeIds:["chi_letter","khiasmos_gr","chiasmus_lat","Chiasmus"],
+        termIds:["Chiasmus"] },
+      { id:"tithemi",   label:"títhēmi",    sublabel:"to place",      rootId:"títhēmi",
+        nodeIds:["títhēmi","antithesis_gr","antithesis_lat","Antithesis"],
+        termIds:["Antithesis"] },
+      { id:"homoios",   label:"homoios",    sublabel:"similar",       rootId:"homoios",
+        nodeIds:["homoios","homoiosis_gr","similis_lat","Simile"],
+        termIds:["Simile"] },
+      { id:"oxymoros",  label:"oxys+mōros", sublabel:"sharp+dull",    rootId:"oxys",
+        nodeIds:["oxys","mōros","oxymoron_gr","Oxymoron"],
+        termIds:["Oxymoron"] },
+      { id:"eiro",      label:"eirō",       sublabel:"to speak",      rootId:"eirō",
+        nodeIds:["eirō","eirōneia","ironia_lat","Irony"],
+        termIds:["Irony"] },
+      { id:"sarkazo",   label:"sarkazō",    sublabel:"to bite",       rootId:"sarkazō",
+        nodeIds:["sarkazō","sarcasmos_gr","sarcasmus_lat","Sarcasm"],
+        termIds:["Sarcasm"] },
+      { id:"litos",     label:"litós",      sublabel:"plain",         rootId:"litós",
+        nodeIds:["litós","litotēs_gr","Litotes"],
+        termIds:["Litotes"] },
+      { id:"synekdoche",label:"synekdochē", sublabel:"joint interp.", rootId:"synekdochē_gr",
+        nodeIds:["synekdochē_gr","synecdoche_lat","Synecdoche"],
+        termIds:["Synecdoche"] },
+      { id:"onomameta", label:"ónoma",      sublabel:"name (meta+)",  rootId:"onoma",
+        nodeIds:["onoma","metōnymia_gr","metonymia_lat","Metonymy"],
+        termIds:["Metonymy"] },
+      { id:"onomatopo", label:"ónoma+poiein",sublabel:"name-making",  rootId:"onoma2",
+        nodeIds:["onoma2","poiein","onomatopoiia","Onomatopoeia"],
+        termIds:["Onomatopoeia"] },
+      { id:"allegory",  label:"állos",      sublabel:"other+speak",   rootId:"allos",
+        nodeIds:["allos","agoreuein","allegoria_gr","allegoria_lat","Allegory"],
+        termIds:["Allegory"] },
+      { id:"pasko",     label:"páschō",     sublabel:"to suffer",     rootId:"paskhō",
+        nodeIds:["paskhō","páthos_gr","Pathos"],
+        termIds:["Pathos"] },
+      { id:"ethos",     label:"éthō",       sublabel:"custom",        rootId:"ethō",
+        nodeIds:["ethō","ēthos_gr","Ethos"],
+        termIds:["Ethos"] },
+      { id:"logos",     label:"légō",       sublabel:"to speak/gather",rootId:"legō",
+        nodeIds:["legō","logos_gr","Logos"],
+        termIds:["Logos"] },
+      { id:"ellipsis",  label:"leípein",    sublabel:"to omit",       rootId:"leípein",
+        nodeIds:["leípein","élleipsis_gr","ellipsis_lat","Ellipsis"],
+        termIds:["Ellipsis"] },
+      { id:"symploce",  label:"plékein",    sublabel:"to weave",      rootId:"plekein",
+        nodeIds:["plekein","symploce_gr","Symploce"],
+        termIds:["Symploce"] },
+      { id:"diacope",   label:"kóptein",    sublabel:"to cut",        rootId:"koptein",
+        nodeIds:["koptein","diacope_gr","Diacope"],
+        termIds:["Diacope"] },
+      { id:"bathos",    label:"bathýs",     sublabel:"deep",          rootId:"bathys",
+        nodeIds:["bathys","bathos_gr","Bathos"],
+        termIds:["Bathos"] },
+      { id:"persona",   label:"persōna",    sublabel:"mask+make",     rootId:"persona_lat",
+        nodeIds:["persona_lat","facere_lat","personificatio","Personification"],
+        termIds:["Personification"] },
+      { id:"littera",   label:"ad+littera", sublabel:"to the letter", rootId:"ad_lat",
+        nodeIds:["ad_lat","littera_lat","ludere_lat","alliteratio","allusio_lat","Alliteration","Allusion"],
+        termIds:["Alliteration","Allusion"] },
+      { id:"textus",    label:"textus",     sublabel:"woven fabric",  rootId:"textus_lat",
+        nodeIds:["textus_lat","intertextualite","Intertextuality"],
+        termIds:["Intertextuality"] },
+      { id:"abyme",     label:"abîme",      sublabel:"abyss",         rootId:"abyme_fr",
+        nodeIds:["abyme_fr","mise_fr","Mise en Abyme"],
+        termIds:["Mise en Abyme"] },
+      { id:"motivus",   label:"mōtīvus",    sublabel:"moving",        rootId:"motivus_lat",
+        nodeIds:["motivus_lat","motif_fr","Motif"],
+        termIds:["Motif"] },
+      { id:"leitmotif", label:"leiten",     sublabel:"to lead",       rootId:"leiten_de",
+        nodeIds:["leiten_de","Motiv_de","Leitmotiv_de","Leitmotif"],
+        termIds:["Leitmotif"] },
     ];
 
-    // ================================================================
-    // BUILD ETYMOLOGY VIEW
-    // ================================================================
-    // ================================================================
-    // BUILD ETYMOLOGY VIEW
-    // Vertical scrollable timeline · language column swim lanes
-    // Force-simulation node positioning · click for info + pulse
-    // ================================================================
-    let _etymSelectedEl = null;
+    // ── MODULE-LEVEL LOOKUPS (computed once after data is defined) ──────
+    const _etymNB = {};   // nodesById
+    const _etymEF = {};   // edgesFrom
+    const _etymET = {};   // edgesTo
+    DERIV_GRAPH.nodes.forEach(n => { _etymNB[n.id] = n; });
+    DERIV_GRAPH.edges.forEach(e => {
+      (_etymEF[e.from] = _etymEF[e.from] || []).push(e);
+      (_etymET[e.to]   = _etymET[e.to]   || []).push(e);
+    });
+    const _nodeToCluster = {};
+    const _clusterById   = {};
+    ETYM_CLUSTERS.forEach(c => {
+      _clusterById[c.id] = c;
+      c.nodeIds.forEach(id => { _nodeToCluster[id] = c.id; });
+    });
 
-    function buildEtymView() {
-      const svgEl = document.getElementById("etym-svg");
-      const svg   = d3.select(svgEl);
-      svg.selectAll("*").remove();
+    // ── EXPAND/COLLAPSE STATE ────────────────────────────────────────────
+    // Start with first 3 clusters expanded so the view is interesting immediately
+    let _etymExpanded = new Set(["taxis","pherein","strephein"]);
 
-      const fullW = window.innerWidth;
-      const fullH = window.innerHeight - 132;
-      svg.attr("width", fullW).attr("height", fullH);
+    // ── LAYOUT CONSTANTS ─────────────────────────────────────────────────
+    const _EL = {
+      CW: 122,   // px per term in a collapsed cluster
+      EW: 165,   // px per term in an expanded cluster
+      CMIN: 150, // minimum cluster width (for single-term clusters)
+      GAP: 18,   // px between clusters
+      MT: 88, MR: 82, MB: 56, ML: 40,
+      SVG_H: 790,
+      PW: 110, PH: 40, PR: 10,
+    };
 
-      // ---- LAYOUT ----
-      // Columns = language lanes.  Y = time (oldest at top).
-      const LANES = [
-        { id:"Greek",   label:"Ancient Greek",  bg:"rgba(180,165,215,0.14)" },
-        { id:"Latin",   label:"Latin",          bg:"rgba(210,175,130,0.14)" },
-        { id:"French",  label:"French",         bg:"rgba(140,195,155,0.14)" },
-        { id:"German",  label:"German",         bg:"rgba(210,145,130,0.14)" },
-        { id:"English", label:"English",        bg:"rgba(190,185,130,0.14)" }
-      ];
-      const laneIndex = {};
-      LANES.forEach((l,i) => laneIndex[l.id] = i);
-
-      const margin = { top: 52, right: 72, bottom: 24, left: 16 };
-      const innerW  = fullW - margin.left - margin.right;
-      const innerH  = fullH - margin.top  - margin.bottom;
-      const laneW   = innerW / LANES.length;
-
-      // ---- TIME SCALE (vertical — oldest top, newest bottom) ----
-      const ERA_MIN = -680, ERA_MAX = 2020;
-      const yScale = d3.scaleLinear().domain([ERA_MIN, ERA_MAX]).range([0, innerH]);
-
-      // Root group (shifted by margin)
-      const rootG = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
-
-      // ---- HISTORICAL ERA BANDS (horizontal stripes across all columns) ----
-      const ERA_BANDS = [
-        { start:-680, end:-27,  label:"Classical Antiquity",  color:"rgba(160,150,130,0.07)" },
-        { start:-27,  end:476,  label:"Roman Period",         color:"rgba(160,140,110,0.07)" },
-        { start:476,  end:1453, label:"Medieval",             color:"rgba(130,150,130,0.07)" },
-        { start:1453, end:1700, label:"Renaissance",          color:"rgba(130,130,160,0.07)" },
-        { start:1700, end:1900, label:"Enlightenment & Romantic", color:"rgba(150,130,140,0.07)" },
-        { start:1900, end:2020, label:"Modern / Postmodern",  color:"rgba(130,150,155,0.07)" }
-      ];
-      ERA_BANDS.forEach(band => {
-        const y1 = yScale(band.start), y2 = yScale(band.end);
-        rootG.append("rect")
-          .attr("x",0).attr("y",y1)
-          .attr("width",innerW).attr("height",y2-y1)
-          .attr("fill",band.color);
-        rootG.append("text")
-          .attr("class","etym-era-label")
-          .attr("x", innerW + 4).attr("y", y1 + 11)
-          .text(band.label);
+    // Recompute cluster _x0 and _w; returns total SVG width
+    function _computeEtymLayout() {
+      const EL = _EL;
+      let x = EL.ML + 10;
+      ETYM_CLUSTERS.forEach(c => {
+        const isExp = _etymExpanded.has(c.id);
+        c._w  = Math.max(EL.CMIN, c.termIds.length * (isExp ? EL.EW : EL.CW));
+        c._x0 = x;
+        x += c._w + EL.GAP;
       });
+      return x + EL.MR;
+    }
 
-      // ---- LANE COLUMNS ----
-      LANES.forEach((lane, i) => {
-        const lx = i * laneW;
-        // Background
-        rootG.append("rect")
-          .attr("x",lx).attr("y",0)
-          .attr("width",laneW).attr("height",innerH)
-          .attr("fill",lane.bg);
-        // Vertical divider
-        if (i > 0) {
-          rootG.append("line")
-            .attr("x1",lx).attr("x2",lx)
-            .attr("y1",0).attr("y2",innerH)
-            .attr("stroke","#D0CAC2").attr("stroke-width",1);
-        }
-        // Column header
-        rootG.append("text")
-          .attr("class","etym-lane-label")
-          .attr("x", lx + laneW/2).attr("y", -18)
-          .attr("text-anchor","middle")
-          .text(lane.label);
-      });
+    // X position of a node in current layout (recursive, uses cluster _x0/_w)
+    function _getNodePx(nodeId) {
+      const cid = _nodeToCluster[nodeId];
+      const c   = _clusterById[cid];
+      if (!c) return 100;
+      const ti = c.termIds.indexOf(nodeId);
+      if (ti >= 0) {
+        // Term node: evenly spaced within cluster band
+        return c._x0 + (ti + 0.5) * c._w / c.termIds.length;
+      }
+      // Non-term: average X of children within same cluster
+      const kids = (_etymEF[nodeId] || [])
+        .map(e => e.to)
+        .filter(id => _nodeToCluster[id] === cid);
+      if (!kids.length) return c._x0 + c._w / 2;
+      return kids.reduce((s, id) => s + _getNodePx(id), 0) / kids.length;
+    }
 
-      // Outer border
-      rootG.append("rect")
-        .attr("x",0).attr("y",0).attr("width",innerW).attr("height",innerH)
-        .attr("fill","none").attr("stroke","#C8C2BB").attr("stroke-width",1);
-
-      // ---- VERTICAL TIME AXIS (right side) ----
-      const tickEras = [-600,-500,-400,-300,-200,-100,0,100,200,300,400,500,
-                        700,900,1100,1300,1500,1600,1700,1800,1870,1900,1950,2000];
-      const yAxis = d3.axisRight(yScale)
-        .tickValues(tickEras)
-        .tickFormat(d => d < 0 ? `${-d} BC` : d === 0 ? "1 AD" : `${d} AD`)
-        .tickSize(4);
-      rootG.append("g")
-        .attr("class","etym-axis-y")
-        .attr("transform",`translate(${innerW},0)`)
-        .call(yAxis)
-        .select(".domain").remove();
-
-      // Horizontal tick lines (faint grid)
-      tickEras.forEach(era => {
-        rootG.append("line")
-          .attr("x1",0).attr("x2",innerW)
-          .attr("y1",yScale(era)).attr("y2",yScale(era))
-          .attr("stroke","rgba(180,172,160,0.25)").attr("stroke-width",0.5);
-      });
-
-      // ---- POSITION NODES ----
-      // Nodes are spread HORIZONTALLY within their column to avoid vertical crowding.
-      // Nodes within ±CLUSTER_Y px of each other in the same lane form a cluster
-      // and get spread evenly across the column width.
-      const CLUSTER_Y   = 26;  // px threshold (≈ ±100 years at typical zoom)
-      const NODE_R      = 8;
-      const H_PAD       = 18; // horizontal padding within column
-
-      const nodes = Object.entries(ETYM_DB).map(([name, d]) => ({
-        name, ...d,
-        laneIdx : laneIndex[d.lang] ?? 0,
-        rawY    : yScale(d.era),
-        x: 0, y: 0
-      }));
-
-      // Group by lane, cluster by rawY, spread horizontally
-      const byLane = {};
-      LANES.forEach((_,i) => byLane[i] = []);
-      nodes.forEach(n => byLane[n.laneIdx].push(n));
-
-      LANES.forEach((_,li) => {
-        const ln = byLane[li].slice().sort((a,b) => a.rawY - b.rawY);
-        const assigned = new Set();
-        ln.forEach(n => {
-          if (assigned.has(n.name)) return;
-          const cluster = ln.filter(m => Math.abs(m.rawY - n.rawY) <= CLUSTER_Y);
-          cluster.forEach(m => assigned.add(m.name));
-          const cnt    = cluster.length;
-          const laneX  = li * laneW;
-          const usableW = laneW - H_PAD * 2;
-          const step   = cnt > 1 ? usableW / (cnt - 1) : 0;
-          // Sort cluster left-to-right by era then name for stability
-          cluster.sort((a,b) => a.rawY - b.rawY || a.name.localeCompare(b.name));
-          cluster.forEach((m, ci) => {
-            m.x = laneX + H_PAD + (cnt > 1 ? ci * step : usableW / 2);
-            m.y = m.rawY;
+    // Y-stagger: prevent same-era nodes in same cluster from overlapping
+    function _computeEtymJitter() {
+      const jitter = {};
+      ETYM_CLUSTERS.forEach(c => {
+        const byY = {};
+        c.nodeIds.forEach(id => {
+          const n = _etymNB[id];
+          if (!n) return;
+          const y = Math.round(eraToY(n.era));
+          (byY[y] = byY[y] || []).push(id);
+        });
+        Object.values(byY).forEach(grp => {
+          if (grp.length < 2) return;
+          grp.sort((a, b) => _getNodePx(a) - _getNodePx(b));
+          grp.forEach((id, i) => {
+            jitter[id] = (i - (grp.length - 1) / 2) * 26;
           });
         });
       });
+      return jitter;
+    }
 
-      // ---- ROOT-WORD CONNECTION LINES ----
-      const connGroup = rootG.append("g").attr("class","etym-conns");
+    function _isEtymVisible(nodeId) {
+      const n = _etymNB[nodeId];
+      if (!n) return false;
+      const cid = _nodeToCluster[nodeId];
+      const c   = _clusterById[cid];
+      if (!c) return true;
+      if (nodeId === c.rootId) return true;   // cluster header — always shown
+      return _etymExpanded.has(cid);          // everything else only when expanded
+    }
 
-      ETYM_ROOTS.forEach(rootEntry => {
-        const techs = rootEntry.techniques
-          .map(name => nodes.find(n => n.name === name))
-          .filter(Boolean);
-        if (techs.length < 2) return;
+    // Compute bezier path for one edge given current layout + jitter
+    function _etymEdgePath(fromId, toId, jitter) {
+      const PH = _EL.PH;
+      const fnSafe = id => { const n = _etymNB[id]; return n ? n.era : 0; };
+      const x1 = _getNodePx(fromId);
+      const y1 = eraToY(fnSafe(fromId)) + (jitter[fromId] || 0) + PH / 2 + 1;
+      const x2 = _getNodePx(toId);
+      const y2 = eraToY(fnSafe(toId))   + (jitter[toId]   || 0) - PH / 2 - 5;
+      const cpy = (y2 - y1) * 0.45;
+      return "M" + x1.toFixed(1) + "," + y1.toFixed(1) +
+             " C" + x1.toFixed(1) + "," + (y1 + cpy).toFixed(1) +
+             " "  + x2.toFixed(1) + "," + (y2 - cpy).toFixed(1) +
+             " "  + x2.toFixed(1) + "," + y2.toFixed(1);
+    }
 
-        for (let a = 0; a < techs.length; a++) {
-          for (let b = a+1; b < techs.length; b++) {
-            const t1 = techs[a], t2 = techs[b];
-            let pathD;
+    // ── SVG + SELECTED NODE STATE ────────────────────────────────────────
+    let _etymSvg    = null;
+    let _etymSvgEl  = null;
+    let _etymSelEl  = null;
 
-            if (t1.laneIdx === t2.laneIdx) {
-              // Same column — loop out to the left edge of the lane
-              const loopX = t1.laneIdx * laneW - 22;
-              pathD = `M${t1.x},${t1.y} C${loopX},${t1.y} ${loopX},${t2.y} ${t2.x},${t2.y}`;
-            } else {
-              // Different columns — S-curve through the space between them
-              const cpx = (t1.x + t2.x) / 2;
-              pathD = `M${t1.x},${t1.y} C${cpx},${t1.y} ${cpx},${t2.y} ${t2.x},${t2.y}`;
-            }
+    // ── BUILD / REBUILD ──────────────────────────────────────────────────
+    function buildEtymView() {
+      _etymSvgEl = document.getElementById("etym-svg");
+      _etymSvg   = d3.select(_etymSvgEl);
+      _etymSvg.selectAll("*").remove();
+      try {
+        _buildEtymContent(_etymSvg, _etymSvgEl);
+      } catch(err) {
+        _etymSvg.append("text").attr("x",20).attr("y",120)
+          .attr("font-family","'DM Sans',sans-serif")
+          .attr("font-size","14px").attr("fill","#c04040")
+          .text("Etymology view error: " + err.message);
+        console.error("buildEtymView error:", err);
+      }
+    }
 
-            connGroup.append("path")
-              .attr("class","etym-conn")
-              .attr("d", pathD)
-              .attr("stroke", rootEntry.color)
-              .append("title").text(`Shared root: ${rootEntry.root}`);
+    function _buildEtymContent(svg, svgEl) {
+      const EL   = _EL;
+      const PW   = EL.PW, PH = EL.PH, PR = EL.PR;
+      const SVG_H = EL.SVG_H;
 
-            // Label at the midpoint of the curve (parametric t=0.5 approx)
-            let lx, ly;
-            if (t1.laneIdx === t2.laneIdx) {
-              lx = t1.laneIdx * laneW - 26;
-              ly = (t1.y + t2.y) / 2;
-            } else {
-              lx = (t1.x + t2.x) / 2;
-              ly = (t1.y + t2.y) / 2 - 5;
-            }
-            connGroup.append("text")
-              .attr("class","etym-root-label")
-              .attr("x", lx).attr("y", ly)
-              .attr("text-anchor", t1.laneIdx === t2.laneIdx ? "end" : "middle")
-              .attr("fill", rootEntry.color)
-              .text(rootEntry.root);
-          }
-        }
+      const svgW = _computeEtymLayout();
+      svg.attr("width", svgW).attr("height", SVG_H);
+      svgEl.style.width = svgW + "px";
+
+      const rootG = svg.append("g");
+
+      // ── ERA BANDS ──
+      const ERA_BANDS = [
+        { label:"Classical Antiquity",      s:-850, e:-27,  bg:"rgba(148,138,118,0.06)" },
+        { label:"Roman Period",             s:-27,  e:476,  bg:"rgba(148,128,100,0.06)" },
+        { label:"Medieval",                 s:476,  e:1453, bg:"rgba(110,138,110,0.06)" },
+        { label:"Renaissance",              s:1453, e:1700, bg:"rgba(108,108,150,0.06)" },
+        { label:"Enlightenment & Romantic", s:1700, e:1900, bg:"rgba(138,108,128,0.06)" },
+        { label:"Modern / Postmodern",      s:1900, e:2020, bg:"rgba(108,142,148,0.06)" },
+      ];
+      const bandG = rootG.append("g").attr("class","etym-band-g");
+      ERA_BANDS.forEach(b => {
+        const y1 = eraToY(b.s), y2 = eraToY(b.e);
+        bandG.append("rect").attr("class","etym-era-band")
+          .attr("x", EL.ML).attr("y", y1)
+          .attr("width", svgW - EL.ML - EL.MR).attr("height", y2 - y1)
+          .attr("fill", b.bg);
+        bandG.append("text").attr("class","etym-era-lbl")
+          .attr("x", EL.ML + (svgW - EL.ML - EL.MR) / 2)
+          .attr("y", (y1 + y2) / 2)
+          .attr("text-anchor","middle").attr("dominant-baseline","middle")
+          .attr("font-family","'DM Serif Display',Georgia,serif")
+          .attr("font-size","20px").attr("letter-spacing","3")
+          .attr("fill","rgba(80,74,68,0.055)").attr("pointer-events","none")
+          .text(b.label.toUpperCase());
       });
 
-      // ---- TECHNIQUE NODES ----
-      const nodesGroup = rootG.append("g").attr("class","etym-nodes");
-      const tooltip    = document.getElementById("etym-tooltip");
+      // ── YEAR TICKS ──
+      const tickG = rootG.append("g").attr("class","etym-tick-g");
+      [-800,-600,-400,-200,0,200,500,800,1100,1400,1500,1600,1700,1800,1900,1950,2000].forEach(era => {
+        const y = eraToY(era);
+        tickG.append("line").attr("class","etym-tick-ln").attr("data-era",era)
+          .attr("x1",EL.ML).attr("x2",svgW - EL.MR)
+          .attr("y1",y).attr("y2",y)
+          .attr("stroke","rgba(168,160,148,0.18)").attr("stroke-width",0.5);
+        tickG.append("text").attr("class","etym-tick-tx").attr("data-era",era)
+          .attr("x",svgW - EL.MR + 5).attr("y",y).attr("dy","0.32em")
+          .attr("font-family","'DM Sans',sans-serif").attr("font-size","9px")
+          .attr("fill","#9a9490")
+          .text(era < 0 ? ((-era)+" BC") : (era === 0 ? "1 AD" : era+" AD"));
+      });
 
-      const nodeGs = nodesGroup.selectAll(".etym-node")
-        .data(nodes).enter()
-        .append("g")
-        .attr("class","etym-node")
-        .attr("transform", n => `translate(${n.x},${n.y})`);
+      // ── TITLE ──
+      const midX = EL.ML + (svgW - EL.ML - EL.MR) / 2;
+      rootG.append("text").attr("class","etym-title")
+        .attr("x",midX).attr("y",30).attr("text-anchor","middle")
+        .attr("font-family","'DM Serif Display',Georgia,serif")
+        .attr("font-size","17px").attr("fill","#3a3530")
+        .text("Word Derivation Chains");
+      rootG.append("text").attr("class","etym-subtitle")
+        .attr("x",midX).attr("y",50).attr("text-anchor","middle")
+        .attr("font-family","'DM Sans',sans-serif").attr("font-size","10.5px").attr("fill","#9a9490")
+        .text("Click any root pill ( \u25B6 ) to expand its chain \u2022 Click a term pill to see its full definition");
 
-      // Circle
-      nodeGs.append("circle")
-        .attr("r", NODE_R)
-        .attr("fill", n => FAMILY_COLORS[n.family] || "#888")
-        .attr("stroke","rgba(255,255,255,0.88)")
-        .attr("stroke-width", 1.8);
+      // ── LANGUAGE LEGEND ──
+      const lgItems = [
+        {lang:"Proto-IE",label:"Proto-IE"},{lang:"Greek",label:"Ancient Greek"},
+        {lang:"Latin",label:"Latin"},{lang:"French",label:"French"},
+        {lang:"German",label:"German"},{lang:"English",label:"English term"},
+      ];
+      const lgG = rootG.append("g");
+      lgItems.forEach((item,i) => {
+        const lx = EL.ML + 10 + i * 168, ly = SVG_H - 28;
+        lgG.append("circle").attr("cx",lx+5).attr("cy",ly).attr("r",5)
+          .attr("fill", LANG_COLORS[item.lang] || "#888");
+        lgG.append("text").attr("x",lx+14).attr("y",ly).attr("dy","0.35em")
+          .attr("font-family","'DM Sans',sans-serif").attr("font-size","10px").attr("fill","#6a6460")
+          .text(item.label);
+      });
 
-      // Name label below circle
-      nodeGs.append("text")
-        .attr("y", NODE_R + 11)
-        .attr("dy","0em")
-        .text(n => n.name);
+      // ── ARROWHEAD MARKER ──
+      svg.append("defs").append("marker")
+        .attr("id","etym-arr").attr("markerWidth","7").attr("markerHeight","7")
+        .attr("refX","6").attr("refY","3.5").attr("orient","auto")
+        .append("path").attr("d","M0,0.5 L6.5,3.5 L0,6.5 Z")
+        .attr("fill","context-stroke").attr("fill-opacity","0.85");
 
-      // ---- HOVER TOOLTIP ----
-      nodeGs
-        .on("mouseover", function(event, n) {
-          const eraStr = n.era < 0 ? `${-n.era} BC` : `${n.era} AD`;
+      // ── INITIAL JITTER ──
+      const jitter = _computeEtymJitter();
+
+      // ── EDGES ──
+      const edgeG = rootG.append("g").attr("class","etym-edges");
+      DERIV_GRAPH.edges.forEach(e => {
+        const src = _etymNB[e.from], tgt = _etymNB[e.to];
+        if (!src || !tgt) return;
+        const vis = _isEtymVisible(e.from) && _isEtymVisible(e.to);
+        edgeG.append("path").datum(e)
+          .attr("class","etym-edge")
+          .attr("d", _etymEdgePath(e.from, e.to, jitter))
+          .attr("fill","none")
+          .attr("stroke", LANG_COLORS[tgt.lang] || "#888")
+          .attr("stroke-width", 1.5)
+          .attr("opacity", vis ? 0.50 : 0)
+          .attr("pointer-events","none")
+          .attr("marker-end","url(#etym-arr)")
+          .style("transition","opacity 0.35s");
+      });
+
+      // ── NODES ──
+      const tooltip = document.getElementById("etym-tooltip");
+      const nodeG   = rootG.append("g").attr("class","etym-nodes");
+
+      function hexLight(hex, alpha) {
+        if (!hex || hex[0] !== '#') return "rgba(200,190,180," + alpha + ")";
+        const r = parseInt(hex.slice(1,3),16);
+        const g = parseInt(hex.slice(3,5),16);
+        const b = parseInt(hex.slice(5,7),16);
+        return "rgba("+r+","+g+","+b+","+alpha+")";
+      }
+      function trunc(s, mx) { return s && s.length > mx ? s.slice(0, mx-1) + "\u2026" : (s||""); }
+
+      DERIV_GRAPH.nodes.forEach(node => {
+        const isTerm = node.type === "term";
+        const cid    = _nodeToCluster[node.id];
+        const c      = _clusterById[cid];
+        const isRoot = c && node.id === c.rootId;
+        const langCol  = LANG_COLORS[node.lang] || "#888";
+        const termCol  = isTerm ? (FAMILY_COLORS[node.family] || "#888") : null;
+        const borderCol = isTerm ? termCol : langCol;
+        // Term nodes: lightly shaded with family colour; roots: slightly tinted; others: plain
+        const fillCol = isTerm
+          ? hexLight(termCol, 0.13)
+          : (isRoot ? hexLight(langCol, 0.08) : "rgba(252,249,245,0.96)");
+        const visible = _isEtymVisible(node.id);
+        const cx = _getNodePx(node.id);
+        const cy = eraToY(node.era) + (jitter[node.id] || 0);
+
+        const g = nodeG.append("g")
+          .attr("class","etym-node")
+          .attr("transform","translate("+cx.toFixed(1)+","+cy.toFixed(1)+")")
+          .attr("opacity", visible ? 1 : 0)
+          .attr("pointer-events", visible ? "all" : "none")
+          .attr("cursor","pointer")
+          .datum(node);
+
+        // Pill background
+        g.append("rect")
+          .attr("x",-PW/2).attr("y",-PH/2)
+          .attr("width",PW).attr("height",PH)
+          .attr("rx",PR).attr("ry",PR)
+          .attr("fill", fillCol)
+          .attr("stroke", borderCol)
+          .attr("stroke-width", isTerm ? 2.2 : (isRoot ? 1.9 : 1.2))
+          .attr("filter","drop-shadow(0 1px 2px rgba(0,0,0,0.09))");
+
+        // Expand indicator on cluster root pills
+        if (isRoot) {
+          const isExp = _etymExpanded.has(cid);
+          g.append("text").attr("class","etym-expand-icon")
+            .attr("x",PW/2 - 8).attr("y",-PH/2 + 9)
+            .attr("text-anchor","middle")
+            .attr("font-size","7.5px").attr("fill","rgba(120,112,100,0.70)")
+            .text(isExp ? "\u25BC" : "\u25B6");
+        }
+
+        // Word label
+        g.append("text").attr("y",-5).attr("text-anchor","middle")
+          .attr("font-family","'DM Sans',sans-serif")
+          .attr("font-size","10.5px")
+          .attr("font-weight", isTerm ? "700" : "600")
+          .attr("fill", isTerm ? termCol : langCol)
+          .attr("stroke","rgba(252,249,245,0.55)").attr("stroke-width","2")
+          .attr("paint-order","stroke")
+          .text(trunc(node.word, 14));
+
+        // Meaning label
+        g.append("text").attr("y",10).attr("text-anchor","middle")
+          .attr("font-family","'DM Sans',sans-serif")
+          .attr("font-size","8px").attr("font-style","italic")
+          .attr("fill","#7a7268")
+          .text(trunc(node.meaning, 20));
+
+        // ── HOVER ──
+        g.on("mouseover", function(event) {
+          const eraStr = node.era < 0 ? ((-node.era)+" BC") : (node.era+" AD");
+          const tl = {root:"Root word",derived:"Derived form",compound:"Compound",term:"Literary term"}[node.type] || node.type;
+          const hint = isRoot
+            ? ("<span class='tt-hint'>Click to " + (_etymExpanded.has(cid) ? "collapse" : "expand") + " chain</span>")
+            : (isTerm ? "<span class='tt-hint'>Click for full definition</span>"
+                      : "<span class='tt-hint'>Click for detail</span>");
           tooltip.innerHTML =
-            `<strong>${escHtml(n.name)}</strong>` +
-            `<span class="tt-era">${escHtml(n.lang)} · c. ${eraStr}</span>` +
-            `<span class="tt-root"><em>${escHtml(n.rootWord)}</em> — "${escHtml(n.meaning)}"</span>` +
-            `<span class="tt-hint">Click for definition & etymology</span>`;
+            "<strong>" + escHtml(node.word) + "</strong>" +
+            "<span class='tt-era'>" + escHtml(node.lang) + " \u00b7 " + tl + " \u00b7 c.\u00a0" + eraStr + "</span>" +
+            "<span class='tt-root'>\u201c" + escHtml(node.meaning) + "\u201d</span>" + hint;
           tooltip.style.display = "block";
         })
         .on("mousemove", function(event) {
-          tooltip.style.left = (event.clientX + 14) + "px";
-          tooltip.style.top  = (event.clientY - 10) + "px";
+          tooltip.style.left = (event.clientX + 14)+"px";
+          tooltip.style.top  = (event.clientY - 10)+"px";
         })
         .on("mouseout", function() { tooltip.style.display = "none"; })
-        .on("click", function(event, n) {
+        .on("click", function(event) {
           event.stopPropagation();
           tooltip.style.display = "none";
 
-          // Deselect previous
-          if (_etymSelectedEl && _etymSelectedEl !== this) {
-            stopPulse();
-            d3.select(_etymSelectedEl).select("circle")
-              .transition().duration(250)
-              .attr("stroke","rgba(255,255,255,0.88)").attr("stroke-width",1.8);
-          }
-          _etymSelectedEl = this;
-
-          // Pulse — same function as taxonomy view
-          const fc = FAMILY_COLORS[n.family] || "#888";
-          triggerPulse(this, NODE_R, fc);
-
-          // Populate and show info panel
-          const t = findTech(n.name);
-          const eraStr = n.era < 0 ? `${-n.era} BC` : `${n.era} AD`;
-          const fullEtym = ETYMOLOGIES[n.name] || '';
-
-          document.getElementById("info-title").textContent = n.name;
-          document.getElementById("info-badge-container").innerHTML =
-            `<span class="info-badge" style="background:${fc}">${escHtml(n.family)}</span>` +
-            `<span class="info-badge" style="background:#7a7060">${escHtml(n.lang)}</span>`;
-
-          let html = `<div class="etym-box" style="margin-bottom:14px;">
-            <div class="etym-label">Etymology</div>
-            <div style="font-size:13px;font-weight:600;margin-bottom:3px;">${escHtml(n.rootWord)}</div>
-            <div style="font-size:12px;font-style:italic;color:#6a6460;margin-bottom:4px;">"${escHtml(n.meaning)}"</div>
-            <div style="font-size:11px;color:#8a8078;">${escHtml(n.lang)} · c. ${eraStr}</div>
-            ${fullEtym ? `<div style="margin-top:7px;font-size:12px;color:#5a5550;line-height:1.55;">${escHtml(fullEtym)}</div>` : ''}
-          </div>`;
-
-          if (t) {
-            if (t.info.definition) html +=
-              `<div class="info-section"><div class="info-section-label">Definition</div>
-               <p style="font-size:13px;line-height:1.55;">${escHtml(t.info.definition)}</p></div>`;
-            if (t.info.effect) html +=
-              `<div class="info-section"><div class="info-section-label">Effect</div>
-               <p style="font-size:13px;line-height:1.55;">${escHtml(t.info.effect)}</p></div>`;
-            if (t.info.example) html +=
-              `<div class="info-section"><div class="info-section-label">Example</div>
-               <p style="font-size:13px;line-height:1.55;font-style:italic;">${escHtml(t.info.example)}</p></div>`;
+          // ROOT PILL: toggle cluster expansion
+          if (isRoot && c) {
+            if (_etymExpanded.has(cid)) _etymExpanded.delete(cid);
+            else                        _etymExpanded.add(cid);
+            _redrawEtym(true);
+            return;
           }
 
-          document.getElementById("info-content").innerHTML = html;
-          document.getElementById("info-panel").classList.add("visible");
-        });
+          // TERM / INTERMEDIATE: if cluster is collapsed, expand it first
+          if (cid && !_etymExpanded.has(cid)) {
+            _etymExpanded.add(cid);
+            _redrawEtym(true);
+          }
 
-      // Click on SVG background → deselect
-      svg.on("click.etymDeselect", function(event) {
+          // Show info panel
+          if (_etymSelEl && _etymSelEl !== this) { stopPulse(); }
+          _etymSelEl = this;
+          const eraStr = node.era < 0 ? ((-node.era)+" BC") : (node.era+" AD");
+
+          if (isTerm) {
+            const fc = FAMILY_COLORS[node.family] || "#888";
+            triggerPulse(this, PH/2, fc);
+
+            function getAnc(id, seen) {
+              seen = seen || new Set();
+              (_etymET[id] || []).forEach(function(e) {
+                if (!seen.has(e.from)) { seen.add(e.from); getAnc(e.from, seen); }
+              });
+              return seen;
+            }
+            const chain = [...getAnc(node.id)]
+              .map(id => _etymNB[id]).filter(Boolean)
+              .sort((a,b) => a.era - b.era);
+
+            document.getElementById("info-title").textContent = node.id;
+            document.getElementById("info-badge-container").innerHTML =
+              "<span class='info-badge' style='background:"+fc+"'>"+escHtml(node.family)+"</span>" +
+              "<span class='info-badge' style='background:#7a7060'>"+escHtml(node.lang)+"</span>";
+
+            let html = "<div class='etym-box' style='margin-bottom:14px;'><div class='etym-label'>Derivation Chain</div>";
+            if (chain.length) {
+              html += "<div style='font-size:11.5px;line-height:2;'>";
+              chain.forEach(function(cn) {
+                const cc = LANG_COLORS[cn.lang] || "#888";
+                html += "<span style='display:inline-block;margin-right:2px;font-weight:600;color:"+escHtml(cc)+"'>"+
+                  escHtml(cn.word)+"</span><span style='color:#ccc;font-size:10px;'> \u2192 </span>";
+              });
+              html += "<strong>"+escHtml(node.id)+"</strong></div>";
+            }
+            html += "<div style='font-size:11px;color:#8a8078;margin-top:6px;'>"+escHtml(node.lang)+" \u00b7 c.\u00a0"+eraStr+"</div>";
+            const fullEtym = ETYMOLOGIES[node.id] || "";
+            if (fullEtym) html += "<div style='margin-top:8px;font-size:12px;color:#5a5550;line-height:1.55;'>"+escHtml(fullEtym)+"</div>";
+            html += "</div>";
+
+            const t = findTech(node.id);
+            if (t) {
+              if (t.info.definition) html +=
+                "<div class='info-section'><div class='info-section-label'>Definition</div>" +
+                "<p style='font-size:13px;line-height:1.55;'>"+escHtml(t.info.definition)+"</p></div>";
+              if (t.info.effect) html +=
+                "<div class='info-section'><div class='info-section-label'>Effect</div>" +
+                "<p style='font-size:13px;line-height:1.55;'>"+escHtml(t.info.effect)+"</p></div>";
+              if (t.info.example) html +=
+                "<div class='info-section'><div class='info-section-label'>Example</div>" +
+                "<p style='font-size:13px;line-height:1.55;font-style:italic;'>"+escHtml(t.info.example)+"</p></div>";
+            }
+            document.getElementById("info-content").innerHTML = html;
+            document.getElementById("info-panel").classList.add("visible");
+
+          } else {
+            // Intermediate / root detail
+            const cc = LANG_COLORS[node.lang] || "#888";
+            const tl = {root:"Root word",derived:"Derived form",compound:"Compound"}[node.type] || node.type;
+            const kids  = (_etymEF[node.id]||[]).map(e=>_etymNB[e.to]).filter(Boolean);
+            const prnts = (_etymET[node.id]||[]).map(e=>_etymNB[e.from]).filter(Boolean);
+            document.getElementById("info-title").textContent = node.word;
+            document.getElementById("info-badge-container").innerHTML =
+              "<span class='info-badge' style='background:"+escHtml(cc)+"'>"+escHtml(tl)+"</span>"+
+              "<span class='info-badge' style='background:#7a7060'>"+escHtml(node.lang)+"</span>";
+            let h2 = "<div class='etym-box'><div class='etym-label'>Etymology Stop</div>"+
+              "<div style='font-size:15px;font-weight:600;margin-bottom:4px;color:"+escHtml(cc)+"'>"+escHtml(node.word)+"</div>"+
+              "<div style='font-size:12.5px;font-style:italic;color:#5a5550;margin-bottom:5px;'>\u201c"+escHtml(node.meaning)+"\u201d</div>"+
+              "<div style='font-size:11px;color:#9a9490;'>"+escHtml(node.lang)+" \u00b7 "+tl+" \u00b7 c.\u00a0"+eraStr+"</div></div>";
+            if (prnts.length)
+              h2 += "<div class='info-section'><div class='info-section-label'>Derived from</div><p style='font-size:12px;'>"+
+                prnts.map(p=>"<span style='color:"+escHtml(LANG_COLORS[p.lang]||"#888")+"'>"+escHtml(p.word)+"</span>").join(" + ")+"</p></div>";
+            if (kids.length)
+              h2 += "<div class='info-section'><div class='info-section-label'>Leads to</div><p style='font-size:12px;'>"+
+                kids.map(k=>"<span style='color:"+escHtml(LANG_COLORS[k.lang]||"#888")+"'>"+escHtml(k.word)+"</span>").join(", ")+"</p></div>";
+            if (node.note)
+              h2 += "<div class='info-section'><div class='info-section-label'>Historical significance</div>"+
+                "<p style='font-size:12.5px;line-height:1.6;color:#5a5550;'>"+escHtml(node.note)+"</p></div>";
+            document.getElementById("info-content").innerHTML = h2;
+            document.getElementById("info-panel").classList.add("visible");
+          }
+        }); // end click
+      }); // end forEach node
+
+      // Deselect on background click
+      svg.on("click.etymDesel", function(event) {
         if (event.target === svgEl) {
-          stopPulse();
-          _etymSelectedEl = null;
+          stopPulse(); _etymSelEl = null;
           document.getElementById("info-panel").classList.remove("visible");
         }
       });
+    } // end _buildEtymContent
 
-      // ---- ZOOM + PAN ----
-      const zoom = d3.zoom()
-        .scaleExtent([0.25, 5])
-        .on("zoom", e => {
-          rootG.attr("transform",
-            `translate(${e.transform.x + margin.left},${e.transform.y + margin.top}) scale(${e.transform.k})`);
-        });
-      svg.call(zoom);
-      svg.on("mousedown.panning", () => svg.classed("panning", true))
-         .on("mouseup.panning",   () => svg.classed("panning", false));
-    }
+    // ── SMOOTH REDRAW (called on every expand/collapse toggle) ───────────
+    function _redrawEtym(useTransition) {
+      if (!_etymSvg || !_etymSvgEl) return;
+      const EL    = _EL;
+      const svgW  = _computeEtymLayout();
+      const jitter = _computeEtymJitter();
+      const dur   = useTransition ? 420 : 0;
+      const ease  = d3.easeCubicInOut;
 
-    // ================================================================
+      // Helper: apply or transition
+      function applyAttr(sel, attr, val) {
+        return dur ? sel.transition().duration(dur).ease(ease).attr(attr, val)
+                   : sel.attr(attr, val);
+      }
+
+      // SVG width
+      applyAttr(_etymSvg, "width", svgW);
+      _etymSvgEl.style.width = svgW + "px";
+
+      // Era band widths
+      _etymSvg.selectAll(".etym-era-band").each(function() {
+        applyAttr(d3.select(this), "width", svgW - EL.ML - EL.MR);
+      });
+
+      // Tick lines / labels
+      _etymSvg.selectAll(".etym-tick-ln").each(function() {
+        applyAttr(d3.select(this), "x2", svgW - EL.MR);
+      });
+      _etymSvg.selectAll(".etym-tick-tx").each(function() {
+        applyAttr(d3.select(this), "x", svgW - EL.MR + 5);
+      });
+
+      // Title / subtitle + era watermark labels
+      const midX = EL.ML + (svgW - EL.ML - EL.MR) / 2;
+      _etymSvg.selectAll(".etym-title, .etym-subtitle, .etym-era-lbl").each(function() {
+        applyAttr(d3.select(this), "x", midX);
+      });
+
+      // Nodes: position + visibility
+      _etymSvg.selectAll(".etym-node").each(function(d) {
+        const vis = _isEtymVisible(d.id);
+        const nx  = _getNodePx(d.id);
+        const ny  = eraToY(d.era) + (jitter[d.id] || 0);
+        const g   = d3.select(this);
+        const cid = _nodeToCluster[d.id];
+        const c   = _clusterById[cid];
+        const isRoot = c && d.id === c.rootId;
+        if (dur) {
+          g.transition().duration(dur).ease(ease)
+            .attr("transform","translate("+nx.toFixed(1)+","+ny.toFixed(1)+")")
+            .attr("opacity", vis ? 1 : 0);
+        } else {
+          g.attr("transform","translate("+nx.toFixed(1)+","+ny.toFixed(1)+")")
+            .attr("opacity", vis ? 1 : 0);
+        }
+        g.attr("pointer-events", vis ? "all" : "none");
+        // Update expand arrow text
+        if (isRoot && cid) {
+          g.select(".etym-expand-icon").text(_etymExpanded.has(cid) ? "\u25BC" : "\u25B6");
+        }
+      });
+
+      // Edges: path + visibility
+      _etymSvg.selectAll(".etym-edge").each(function(e) {
+        const vis     = _isEtymVisible(e.from) && _isEtymVisible(e.to);
+        const newPath = _etymEdgePath(e.from, e.to, jitter);
+        const sel     = d3.select(this);
+        if (dur) {
+          sel.transition().duration(dur).ease(ease)
+            .attr("d", newPath).attr("opacity", vis ? 0.50 : 0);
+        } else {
+          sel.attr("d", newPath).attr("opacity", vis ? 0.50 : 0);
+        }
+      });
+    } // end _redrawEtym
+
+
     // VIEW SWITCHING
     // ================================================================
     let etymViewBuilt = false;
 
     function switchView(view) {
       const mainSvg  = document.getElementById("main-svg");
-      const etymSvg  = document.getElementById("etym-svg");
+      const etymCont = document.getElementById("etym-container");
       const legend   = document.getElementById("legend");
       const axisLeg  = document.getElementById("axis-legend");
       const zoomCtrl = document.getElementById("zoom-controls");
@@ -3122,16 +3759,15 @@ Be specific and educational.`;
 
       if (view === "taxonomy") {
         mainSvg.style.display  = "block";
-        etymSvg.style.display  = "none";
+        etymCont.style.display = "none";
         legend.style.display   = "";
         zoomCtrl.style.display = "";
-        // Close info panel (it may have been opened by etym view)
         document.getElementById("info-panel").classList.remove("visible");
         stopPulse();
-        _etymSelectedEl = null;
+        _etymSelEl = null;
       } else if (view === "etymology") {
         mainSvg.style.display  = "none";
-        etymSvg.style.display  = "block";
+        etymCont.style.display = "block";
         legend.style.display   = "none";
         axisLeg.style.display  = "none";
         zoomCtrl.style.display = "none";
