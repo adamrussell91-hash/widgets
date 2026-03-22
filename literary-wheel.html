@@ -901,19 +901,23 @@
   <div id="legend">
     <div id="legend-title">Node Types</div>
     <div class="legend-item">
-      <div class="legend-dot" style="background: #1c1c1c;"></div>
+      <div class="legend-dot" style="background:#7a7470;width:18px;height:18px;"></div>
       <span>Root</span>
     </div>
     <div class="legend-item">
-      <div class="legend-dot" style="background: #c0674f;"></div>
-      <span>Family</span>
+      <div style="display:flex;gap:3px;margin-right:8px;align-items:center;flex-shrink:0;">
+        <div style="width:11px;height:11px;border-radius:50%;background:#7a9eba;"></div>
+        <div style="width:11px;height:11px;border-radius:50%;background:#9a7ac0;"></div>
+        <div style="width:11px;height:11px;border-radius:50%;background:#c09a3a;"></div>
+      </div>
+      <span>Family <span style="font-size:10px;color:#999;font-style:italic">(colour varies)</span></span>
     </div>
     <div class="legend-item">
-      <div class="legend-dot" style="background: #4a6fa5;"></div>
+      <div class="legend-dot" style="background:#8a8580;"></div>
       <span>Subgroup</span>
     </div>
     <div class="legend-item">
-      <div class="legend-dot" style="background: #6a9a7a;"></div>
+      <div class="legend-dot" style="background:#b5b0aa;width:10px;height:10px;"></div>
       <span>Technique</span>
     </div>
   </div>
@@ -1453,14 +1457,16 @@
     const techniquesGroup = d3.select("#techniques-group");
 
     const treeLayout = d3.tree()
-      .nodeSize([240, 210])
+      .nodeSize([310, 260])   // wider to accommodate bigger root/family nodes
       .separation((a, b) => {
-        // Expanded subgroups need a lot of lateral room for their technique fans
         const aExp = a.data.type === "subgroup" && state.expandedSubgroups.has(a.data.name);
         const bExp = b.data.type === "subgroup" && state.expandedSubgroups.has(b.data.name);
-        if (aExp && bExp) return 3.2;   // both expanded — maximum room
-        if (aExp || bExp) return 2.6;   // one expanded — extra room
-        return a.parent === b.parent ? 1.3 : 1.8;
+        if (aExp && bExp) return 3.8;
+        if (aExp || bExp) return 3.0;
+        // More separation for family-level nodes to keep big labels clear
+        const isFam = a.data.type === "family" || b.data.type === "family";
+        if (isFam) return a.parent === b.parent ? 2.0 : 2.4;
+        return a.parent === b.parent ? 1.6 : 2.0;
       });
 
     const root = d3.hierarchy(taxonomyRoot);
@@ -1586,12 +1592,12 @@
       const sx = (source && source.x0 != null) ? source.x0 : (source ? (source.x || 0) : 0);
       const sy = (source && source.y0 != null) ? source.y0 : (source ? (source.y || 0) : 0);
 
-      // Clearly tiered sizes: root >> family >> subgroup
-      const nodeRadii = { root: 26, family: 20, subgroup: 14 };
-      const textSizes = { root: "19px", family: "17px", subgroup: "15px" };
-      const nodeStroke = { root: 3.5, family: 2.5, subgroup: 2 };
+      // Tiered sizes — root ~4× area of original, family ~3× area
+      const nodeRadii  = { root: 52, family: 35, subgroup: 14 };
+      const textSizes  = { root: "26px", family: "22px", subgroup: "15px" };
+      const nodeStroke = { root: 5,   family: 4,   subgroup: 2 };
       // Labels sit below the circle — offset = radius + comfortable gap
-      const textOffsets = { root: 36, family: 30, subgroup: 24 };
+      const textOffsets = { root: 68, family: 50, subgroup: 24 };
 
       // ---- NODES ----
       const nodeJoin = nodesGroup.selectAll("g.node")
@@ -2039,6 +2045,43 @@
               .on("click", () => navigateTo(rel));
           });
         }
+
+        // Connections: explain the coloured dashed arc lines drawn on the graph
+        const rels = RELATIONS.filter(r => r.from === name || r.to === name);
+        if (rels.length > 0) {
+          const cSec = content.append("div").attr("class","info-section");
+          cSec.append("div").attr("class","info-section-label").text("Connections on graph");
+          const byAxis = {};
+          rels.forEach(r => {
+            const other = r.from === name ? r.to : r.from;
+            const dir   = r.from === name ? "→" : "←";
+            (byAxis[r.axis] = byAxis[r.axis] || []).push({other, dir});
+          });
+          Object.entries(byAxis).forEach(([axisKey, items]) => {
+            const ax = AXES[axisKey];
+            if (!ax) return;
+            const row = cSec.append("div")
+              .style("display","flex").style("align-items","flex-start")
+              .style("gap","8px").style("margin-bottom","7px");
+            // colour swatch line
+            row.append("div")
+              .style("flex-shrink","0").style("margin-top","6px")
+              .style("width","20px").style("height","3px")
+              .style("background",ax.color).style("border-radius","2px");
+            const txt = row.append("div").style("font-size","12px").style("line-height","1.5");
+            txt.append("span")
+              .style("font-weight","700").style("color",ax.color)
+              .text(ax.label + ": ");
+            items.forEach((item, i) => {
+              if (i > 0) txt.append("span").style("color","#bbb").text(", ");
+              txt.append("span")
+                .attr("class","info-tag").style("cursor","pointer")
+                .style("font-size","12px")
+                .text(item.other)
+                .on("click", () => navigateTo(item.other));
+            });
+          });
+        }
       }
 
       panel.classed("visible", true);
@@ -2187,49 +2230,47 @@
       d3.select("#axis-legend").style("display", "none");
       state.relatedArcsVisible = false;
       clearSelection();
+      d3.select("#info-panel").classed("visible", false);
     });
 
     // ==================== BUTTON HANDLERS ====================
-    d3.select("#btn-expand-all").on("click", () => {
+    // Named taxonomy handlers so switchView can restore them
+    const _taxExpandAll = () => {
       function expandAll(node) {
-        if (node._children) {
-          node.children = node._children;
-          node._children = null;
-        }
-        if (node.children) {
-          node.children.forEach(expandAll);
-        }
+        if (node._children) { node.children = node._children; node._children = null; }
+        if (node.children)   { node.children.forEach(expandAll); }
       }
       expandAll(root);
       root.descendants().forEach(node => {
-        if (node.data.type === "subgroup" && node.data.techniques) {
+        if (node.data.type === "subgroup" && node.data.techniques)
           state.expandedSubgroups.add(node.data.name);
-        }
       });
       render(root);
       setTimeout(() => renderBursts(), 50);
-    });
-
-    d3.select("#btn-collapse-all").on("click", () => {
+    };
+    const _taxCollapseAll = () => {
       function collapseAll(node) {
-        if (node.children) {
-          node._children = node.children;
-          node.children = null;
-        }
-        if (node._children) {
-          node._children.forEach(collapseAll);
-        }
+        if (node.children)   { node._children = node.children; node.children = null; }
+        if (node._children)  { node._children.forEach(collapseAll); }
       }
       collapseAll(root);
       state.expandedSubgroups.clear();
       render(root);
       setTimeout(() => renderBursts(), 50);
-    });
-
-    d3.select("#btn-reset").on("click", () => {
+      relationsGroup.selectAll("*").remove();
+      d3.select("#axis-legend").style("display","none");
+      d3.select("#info-panel").classed("visible", false);
+      state.relatedArcsVisible = false;
+      clearSelection();
+    };
+    const _taxReset = () => {
       svg.transition().duration(600)
         .call(zoom.transform, d3.zoomIdentity.translate(W / 2, 90).scale(0.55));
-    });
+    };
+
+    d3.select("#btn-expand-all").on("click",   _taxExpandAll);
+    d3.select("#btn-collapse-all").on("click", _taxCollapseAll);
+    d3.select("#btn-reset").on("click",        _taxReset);
 
     d3.select("#btn-zoom-in").on("click", () => {
       svg.transition().duration(300).call(zoom.scaleBy, 1.3);
@@ -2738,10 +2779,12 @@ Be specific and educational.`;
 
     // Piecewise-linear era → screen-Y (compressed scale ~730px total)
     function eraToY(era) {
+      // Breakpoints spread so consecutive chain nodes are always ≥55px apart
+      // (PH=36 pills need ≥42px gap for positive arrow dy; 55px gives 13px arrow)
       const bp = [
-        [-850, 76],[-700,108],[-500,148],[-300,210],[-100,276],
-        [ 200,316],[ 700,356],[1300,396],[1500,450],[1700,510],
-        [1900,572],[2020,668],
+        [-850,  92],[-700, 138],[-500, 192],[-300, 262],[-100, 332],
+        [ 200, 402],[ 700, 460],[1300, 518],[1500, 588],[1700, 665],
+        [1900, 748],[2020, 868],
       ];
       for (let i = 1; i < bp.length; i++) {
         if (era <= bp[i][0]) {
@@ -3250,9 +3293,9 @@ Be specific and educational.`;
       EW: 165,   // px per term in an expanded cluster
       CMIN: 150, // minimum cluster width (for single-term clusters)
       GAP: 18,   // px between clusters
-      MT: 88, MR: 82, MB: 56, ML: 40,
-      SVG_H: 790,
-      PW: 110, PH: 40, PR: 10,
+      MT: 88, MR: 88, MB: 56, ML: 148,  // ML=148 reserves space for era labels
+      SVG_H: 920,
+      PW: 108, PH: 36, PR: 10,
     };
 
     // Recompute cluster _x0 and _w; returns total SVG width
@@ -3286,26 +3329,54 @@ Be specific and educational.`;
       return kids.reduce((s, id) => s + _getNodePx(id), 0) / kids.length;
     }
 
-    // Y-stagger: prevent same-era nodes in same cluster from overlapping
-    function _computeEtymJitter() {
-      const jitter = {};
-      ETYM_CLUSTERS.forEach(c => {
-        const byY = {};
-        c.nodeIds.forEach(id => {
-          const n = _etymNB[id];
-          if (!n) return;
-          const y = Math.round(eraToY(n.era));
-          (byY[y] = byY[y] || []).push(id);
-        });
-        Object.values(byY).forEach(grp => {
-          if (grp.length < 2) return;
-          grp.sort((a, b) => _getNodePx(a) - _getNodePx(b));
-          grp.forEach((id, i) => {
-            jitter[id] = (i - (grp.length - 1) / 2) * 26;
+    // Topological Y-position resolver.
+    // Guarantees: (a) each chain child is ≥ MIN_V px below its parent,
+    // (b) any two visible nodes that share the same X column are ≥ MIN_V apart.
+    // Returns absolute Y map { nodeId → centreY }.
+    function _computeYPos() {
+      const EL    = _EL;
+      const MIN_V = EL.PH + 14;   // minimum centre-to-centre vertical gap
+
+      // ── Init: every visible node starts at its era Y ──
+      const yPos = {};
+      Object.keys(_etymNB).forEach(id => {
+        if (_isEtymVisible(id)) yPos[id] = eraToY(_etymNB[id].era);
+      });
+      const visIds = Object.keys(yPos);
+
+      // ── Pass 1: relax chain constraints (parent → child) ──
+      for (let pass = 0; pass < 25; pass++) {
+        visIds.sort((a, b) => yPos[a] - yPos[b]);
+        let changed = false;
+        visIds.forEach(fromId => {
+          (_etymEF[fromId] || []).forEach(e => {
+            const toId = e.to;
+            if (!(toId in yPos)) return;
+            const need = yPos[fromId] + MIN_V;
+            if (yPos[toId] < need) { yPos[toId] = need; changed = true; }
           });
         });
+        if (!changed) break;
+      }
+
+      // ── Pass 2: spread nodes that share the same X column ──
+      // Bucket by approximate X (bucket width = pill width + small gap)
+      const BW = EL.PW + 8;
+      const byBucket = {};
+      visIds.forEach(id => {
+        const bk = Math.round(_getNodePx(id) / BW);
+        (byBucket[bk] = byBucket[bk] || []).push(id);
       });
-      return jitter;
+      Object.values(byBucket).forEach(group => {
+        if (group.length < 2) return;
+        group.sort((a, b) => yPos[a] - yPos[b]);
+        for (let i = 1; i < group.length; i++) {
+          const need = yPos[group[i-1]] + MIN_V;
+          if (yPos[group[i]] < need) yPos[group[i]] = need;
+        }
+      });
+
+      return yPos;
     }
 
     function _isEtymVisible(nodeId) {
@@ -3318,15 +3389,15 @@ Be specific and educational.`;
       return _etymExpanded.has(cid);          // everything else only when expanded
     }
 
-    // Compute bezier path for one edge given current layout + jitter
-    function _etymEdgePath(fromId, toId, jitter) {
-      const PH = _EL.PH;
-      const fnSafe = id => { const n = _etymNB[id]; return n ? n.era : 0; };
+    // Compute bezier path for one edge given current layout + yPos map
+    function _etymEdgePath(fromId, toId, yPos) {
+      const PH    = _EL.PH;
+      const safeY = id => yPos[id] ?? eraToY(_etymNB[id]?.era ?? 0);
       const x1 = _getNodePx(fromId);
-      const y1 = eraToY(fnSafe(fromId)) + (jitter[fromId] || 0) + PH / 2 + 1;
+      const y1 = safeY(fromId) + PH / 2 + 1;
       const x2 = _getNodePx(toId);
-      const y2 = eraToY(fnSafe(toId))   + (jitter[toId]   || 0) - PH / 2 - 5;
-      const cpy = (y2 - y1) * 0.45;
+      const y2 = safeY(toId)   - PH / 2 - 5;
+      const cpy = Math.max(20, (y2 - y1) * 0.45);
       return "M" + x1.toFixed(1) + "," + y1.toFixed(1) +
              " C" + x1.toFixed(1) + "," + (y1 + cpy).toFixed(1) +
              " "  + x2.toFixed(1) + "," + (y2 - cpy).toFixed(1) +
@@ -3381,14 +3452,16 @@ Be specific and educational.`;
           .attr("x", EL.ML).attr("y", y1)
           .attr("width", svgW - EL.ML - EL.MR).attr("height", y2 - y1)
           .attr("fill", b.bg);
+        // Era label: right-aligned text inside the left margin column
         bandG.append("text").attr("class","etym-era-lbl")
-          .attr("x", EL.ML + (svgW - EL.ML - EL.MR) / 2)
+          .attr("x", EL.ML - 10)
           .attr("y", (y1 + y2) / 2)
-          .attr("text-anchor","middle").attr("dominant-baseline","middle")
-          .attr("font-family","'DM Serif Display',Georgia,serif")
-          .attr("font-size","20px").attr("letter-spacing","3")
-          .attr("fill","rgba(80,74,68,0.055)").attr("pointer-events","none")
-          .text(b.label.toUpperCase());
+          .attr("text-anchor","end").attr("dominant-baseline","middle")
+          .attr("font-family","'DM Sans',sans-serif")
+          .attr("font-size","9px")
+          .attr("fill","rgba(80,74,68,0.55)").attr("font-style","italic")
+          .attr("pointer-events","none")
+          .text(b.label);
       });
 
       // ── YEAR TICKS ──
@@ -3441,8 +3514,12 @@ Be specific and educational.`;
         .append("path").attr("d","M0,0.5 L6.5,3.5 L0,6.5 Z")
         .attr("fill","context-stroke").attr("fill-opacity","0.85");
 
-      // ── INITIAL JITTER ──
-      const jitter = _computeEtymJitter();
+      // ── INITIAL Y POSITIONS ──
+      const yPos0 = _computeYPos();
+      // Update SVG height to fit deepest visible node
+      const initH = Math.max(EL.SVG_H, Math.max(...Object.values(yPos0)) + EL.PH + EL.MB);
+      svg.attr("height", initH);
+      svgEl.style.height = initH + "px";
 
       // ── EDGES ──
       const edgeG = rootG.append("g").attr("class","etym-edges");
@@ -3452,7 +3529,7 @@ Be specific and educational.`;
         const vis = _isEtymVisible(e.from) && _isEtymVisible(e.to);
         edgeG.append("path").datum(e)
           .attr("class","etym-edge")
-          .attr("d", _etymEdgePath(e.from, e.to, jitter))
+          .attr("d", _etymEdgePath(e.from, e.to, yPos0))
           .attr("fill","none")
           .attr("stroke", LANG_COLORS[tgt.lang] || "#888")
           .attr("stroke-width", 1.5)
@@ -3489,7 +3566,7 @@ Be specific and educational.`;
           : (isRoot ? hexLight(langCol, 0.08) : "rgba(252,249,245,0.96)");
         const visible = _isEtymVisible(node.id);
         const cx = _getNodePx(node.id);
-        const cy = eraToY(node.era) + (jitter[node.id] || 0);
+        const cy = yPos0[node.id] ?? eraToY(node.era);
 
         const g = nodeG.append("g")
           .attr("class","etym-node")
@@ -3671,8 +3748,11 @@ Be specific and educational.`;
       if (!_etymSvg || !_etymSvgEl) return;
       const EL    = _EL;
       const svgW  = _computeEtymLayout();
-      const jitter = _computeEtymJitter();
+      const yPos  = _computeYPos();
       const dur   = useTransition ? 420 : 0;
+      // Dynamic height: enough to show the deepest visible node + margin
+      const visVals = Object.values(yPos);
+      const needH   = visVals.length ? Math.max(EL.SVG_H, Math.max(...visVals) + EL.PH + EL.MB) : EL.SVG_H;
       const ease  = d3.easeCubicInOut;
 
       // Helper: apply or transition
@@ -3681,9 +3761,11 @@ Be specific and educational.`;
                    : sel.attr(attr, val);
       }
 
-      // SVG width
+      // SVG width + dynamic height
       applyAttr(_etymSvg, "width", svgW);
-      _etymSvgEl.style.width = svgW + "px";
+      applyAttr(_etymSvg, "height", needH);
+      _etymSvgEl.style.width  = svgW + "px";
+      _etymSvgEl.style.height = needH + "px";
 
       // Era band widths
       _etymSvg.selectAll(".etym-era-band").each(function() {
@@ -3698,9 +3780,9 @@ Be specific and educational.`;
         applyAttr(d3.select(this), "x", svgW - EL.MR + 5);
       });
 
-      // Title / subtitle + era watermark labels
+      // Title / subtitle centre (era labels stay pinned to left margin, no update needed)
       const midX = EL.ML + (svgW - EL.ML - EL.MR) / 2;
-      _etymSvg.selectAll(".etym-title, .etym-subtitle, .etym-era-lbl").each(function() {
+      _etymSvg.selectAll(".etym-title, .etym-subtitle").each(function() {
         applyAttr(d3.select(this), "x", midX);
       });
 
@@ -3708,7 +3790,7 @@ Be specific and educational.`;
       _etymSvg.selectAll(".etym-node").each(function(d) {
         const vis = _isEtymVisible(d.id);
         const nx  = _getNodePx(d.id);
-        const ny  = eraToY(d.era) + (jitter[d.id] || 0);
+        const ny  = yPos[d.id] ?? eraToY(d.era);
         const g   = d3.select(this);
         const cid = _nodeToCluster[d.id];
         const c   = _clusterById[cid];
@@ -3731,7 +3813,7 @@ Be specific and educational.`;
       // Edges: path + visibility
       _etymSvg.selectAll(".etym-edge").each(function(e) {
         const vis     = _isEtymVisible(e.from) && _isEtymVisible(e.to);
-        const newPath = _etymEdgePath(e.from, e.to, jitter);
+        const newPath = _etymEdgePath(e.from, e.to, yPos);
         const sel     = d3.select(this);
         if (dur) {
           sel.transition().duration(dur).ease(ease)
@@ -3765,6 +3847,13 @@ Be specific and educational.`;
         document.getElementById("info-panel").classList.remove("visible");
         stopPulse();
         _etymSelEl = null;
+        // Restore taxonomy button handlers
+        d3.select("#btn-expand-all").on("click", _taxExpandAll);
+        d3.select("#btn-collapse-all").on("click", _taxCollapseAll);
+        d3.select("#btn-reset").on("click", _taxReset);
+        document.getElementById("btn-expand-all").style.display   = "";
+        document.getElementById("btn-collapse-all").style.display = "";
+        document.getElementById("btn-reset").style.display        = "";
       } else if (view === "etymology") {
         mainSvg.style.display  = "none";
         etymCont.style.display = "block";
@@ -3775,6 +3864,23 @@ Be specific and educational.`;
           buildEtymView();
           etymViewBuilt = true;
         }
+        // Rebind buttons for etymology
+        d3.select("#btn-expand-all").on("click", () => {
+          ETYM_CLUSTERS.forEach(c => _etymExpanded.add(c.id));
+          _redrawEtym(true);
+        });
+        d3.select("#btn-collapse-all").on("click", () => {
+          _etymExpanded.clear();
+          _redrawEtym(true);
+          document.getElementById("info-panel").classList.remove("visible");
+        });
+        d3.select("#btn-reset").on("click", () => {
+          const cont = document.getElementById("etym-container");
+          if (cont) { cont.scrollLeft = 0; cont.scrollTop = 0; }
+        });
+        document.getElementById("btn-expand-all").style.display   = "";
+        document.getElementById("btn-collapse-all").style.display = "";
+        document.getElementById("btn-reset").style.display        = ""; // "Reset View" = scroll reset
       }
     }
 
