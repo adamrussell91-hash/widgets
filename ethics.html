@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Ethics Snap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0f0e0c;--surface:#1a1916;--surface2:#222120;
@@ -15,6 +15,8 @@
   --cons:#6eb5c8;--cons-bg:rgba(110,181,200,0.12);--cons-border:rgba(110,181,200,0.3);
   --correct:#7ecba0;--correct-bg:rgba(126,203,160,0.1);
   --wrong:#e07070;--wrong-bg:rgba(224,112,112,0.1);
+  --warn:#e0a840;
+  --d-easy:#7ecba0;--d-medium:#6eb5c8;--d-hard:#e0a840;--d-trap:#e07070;
   --radius:20px;
   --font-display:'Playfair Display',Georgia,serif;
   --font-body:'DM Sans',system-ui,sans-serif;
@@ -24,14 +26,21 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .screen{display:none;width:100%;height:100%;position:absolute;top:0;left:0;}
 .screen.active{display:flex;flex-direction:column;}
 
-/* INTRO */
+/* ── INTRO ── */
 #screen-intro{align-items:center;justify-content:center;padding:2rem;}
 .intro-inner{max-width:360px;width:100%;text-align:center;}
 .intro-eyebrow{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.25rem;animation:fadeUp 0.6s ease both;}
 .intro-title{font-family:var(--font-display);font-size:clamp(2.8rem,10vw,4rem);font-weight:900;line-height:1;color:var(--text);margin-bottom:0.5rem;animation:fadeUp 0.6s 0.1s ease both;}
-.intro-title em{color:var(--deon);font-style:normal;}
-.intro-sub{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:2.5rem;animation:fadeUp 0.6s 0.2s ease both;}
-.swipe-guide{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;animation:fadeUp 0.6s 0.3s ease both;}
+.intro-title em{color:var(--deon);font-style:italic;}
+.intro-sub{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:1.75rem;animation:fadeUp 0.6s 0.2s ease both;}
+
+.diff-legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:2rem;animation:fadeUp 0.6s 0.3s ease both;}
+.diff-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
+.diff-pip{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.diff-name{font-size:12px;font-weight:500;color:var(--text);}
+.diff-desc{font-size:11px;color:var(--text-muted);}
+
+.swipe-guide{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;animation:fadeUp 0.6s 0.35s ease both;}
 .guide-item{display:flex;flex-direction:column;align-items:center;gap:6px;}
 .guide-arrow{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
 .guide-arrow.left{background:var(--deon-bg);border:1px solid var(--deon-border);color:var(--deon);}
@@ -42,7 +51,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .btn-start:hover{opacity:0.9;}
 .btn-start:active{transform:scale(0.98);}
 
-/* GAME */
+/* ── GAME ── */
 #screen-game{flex-direction:column;background:var(--bg);}
 .game-header{padding:1.25rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
 .score-chip{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
@@ -51,13 +60,14 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .card-counter strong{color:var(--text);font-weight:500;}
 .timer-wrap{display:flex;flex-direction:column;align-items:center;}
 .timer-track{fill:none;stroke:var(--surface2);stroke-width:3;}
-.timer-arc{fill:none;stroke-width:3;stroke-linecap:round;transform-origin:center;transform:rotate(-90deg);transition:stroke-dashoffset 0.9s linear,stroke 0.3s;stroke-dasharray:138.2;stroke-dashoffset:0;}
+.timer-arc{fill:none;stroke-width:3;stroke-linecap:round;transform-origin:center;transform:rotate(-90deg);transition:stroke-dashoffset 0.9s linear,stroke 0.4s;stroke-linecap:round;}
 .timer-num-svg{font-family:var(--font-body);font-size:14px;font-weight:500;fill:var(--text);text-anchor:middle;dominant-baseline:central;}
-.progress-bar{padding:0.75rem 1.5rem 0;display:flex;gap:5px;flex-shrink:0;}
-.prog-dot{flex:1;height:3px;border-radius:2px;background:var(--surface2);transition:background 0.3s;}
+.progress-bar{padding:0.75rem 1.5rem 0;display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;}
+.prog-dot{flex:1;min-width:4px;height:3px;border-radius:2px;background:var(--surface2);transition:background 0.3s;}
 .prog-dot.current{background:var(--text-faint);}
 .prog-dot.correct{background:var(--correct);}
 .prog-dot.wrong{background:var(--wrong);}
+
 .arena{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:1rem 1.25rem;overflow:hidden;}
 .swipe-hint{position:absolute;top:0;bottom:0;width:50%;display:flex;align-items:center;pointer-events:none;opacity:0;transition:opacity 0.1s;z-index:1;}
 .swipe-hint.left{left:0;justify-content:flex-start;padding-left:1rem;background:linear-gradient(to right,rgba(200,169,110,0.08),transparent);}
@@ -65,70 +75,93 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .hint-badge{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:6px 12px;border-radius:100px;}
 .swipe-hint.left .hint-badge{background:var(--deon-bg);color:var(--deon);border:1px solid var(--deon-border);}
 .swipe-hint.right .hint-badge{background:var(--cons-bg);color:var(--cons);border:1px solid var(--cons-border);}
+
 .card-stack{position:relative;width:100%;max-width:420px;height:100%;}
 .card-behind{position:absolute;inset:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transform:scale(0.94) translateY(12px);opacity:0.5;}
 .card-behind2{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);transform:scale(0.88) translateY(24px);opacity:0.25;}
-.card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius);padding:1.75rem;cursor:grab;user-select:none;display:flex;flex-direction:column;justify-content:space-between;transform-origin:center 120%;will-change:transform;z-index:2;}
+.card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius);padding:1.5rem 1.5rem 1.25rem;cursor:grab;user-select:none;display:flex;flex-direction:column;transform-origin:center 120%;will-change:transform;z-index:2;}
 .card:active{cursor:grabbing;}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;}
-.card-chip{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:var(--surface2);color:var(--text-muted);transition:background 0.2s,color 0.2s,border 0.2s;}
+
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.card-chip{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:var(--surface2);color:var(--text-muted);transition:background 0.2s,color 0.2s;}
 .card-chip.deon{background:var(--deon-bg);color:var(--deon);border:1px solid var(--deon-border);}
 .card-chip.cons{background:var(--cons-bg);color:var(--cons);border:1px solid var(--cons-border);}
-.card-num-inner{font-size:12px;color:var(--text-faint);}
-.card-body{flex:1;display:flex;align-items:center;padding:1.5rem 0;}
-.card-statement{font-family:var(--font-display);font-size:clamp(1.05rem,4vw,1.3rem);font-weight:700;line-height:1.45;color:var(--text);}
-.card-hint-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-faint);margin-bottom:4px;}
-.card-hint-text{font-size:13px;color:var(--text-muted);line-height:1.5;}
-.timeout-overlay{position:absolute;inset:0;border-radius:var(--radius);z-index:10;background:rgba(15,14,12,0.9);display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;padding:2rem;}
+
+.diff-badge{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;}
+.diff-badge .pip{width:6px;height:6px;border-radius:50%;}
+.diff-badge.easy{color:var(--d-easy);}
+.diff-badge.easy .pip{background:var(--d-easy);}
+.diff-badge.medium{color:var(--d-medium);}
+.diff-badge.medium .pip{background:var(--d-medium);}
+.diff-badge.hard{color:var(--d-hard);}
+.diff-badge.hard .pip{background:var(--d-hard);}
+.diff-badge.trap{color:var(--d-trap);}
+.diff-badge.trap .pip{background:var(--d-trap);}
+
+.card-body{flex:1;display:flex;align-items:center;padding:0.5rem 0;}
+.card-statement{font-family:var(--font-display);font-size:clamp(1rem,3.8vw,1.25rem);font-weight:700;line-height:1.45;color:var(--text);}
+.card-footer{padding-top:0.75rem;border-top:1px solid var(--border);}
+.card-hint-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-faint);margin-bottom:3px;}
+.card-hint-text{font-size:12px;color:var(--text-muted);line-height:1.5;}
+
+.timeout-overlay{position:absolute;inset:0;border-radius:var(--radius);z-index:10;background:rgba(15,14,12,0.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;padding:2rem;}
 .timeout-big{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--text);}
 .timeout-reveal{font-size:14px;color:var(--text-muted);}
 .timeout-answer{font-size:15px;font-weight:500;}
+
 .swipe-buttons{padding:0 1.25rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0;}
-.swipe-btn{padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--surface);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:8px;justify-content:center;}
+.swipe-btn{padding:13px;border:1px solid var(--border);border-radius:14px;background:var(--surface);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:7px;justify-content:center;}
 .swipe-btn.deon{color:var(--deon);border-color:var(--deon-border);}
 .swipe-btn.deon:hover{background:var(--deon-bg);}
 .swipe-btn.cons{color:var(--cons);border-color:var(--cons-border);}
 .swipe-btn.cons:hover{background:var(--cons-bg);}
 .swipe-btn:active{transform:scale(0.97);}
 
-/* VERDICT */
+/* ── VERDICT ── */
 #screen-verdict{align-items:center;justify-content:center;padding:2rem 1.5rem;background:var(--bg);}
 .verdict-inner{max-width:400px;width:100%;}
-.verdict-icon-wrap{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;}
+.verdict-icon-wrap{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;}
 .verdict-icon-wrap.correct{background:var(--correct-bg);border:1px solid rgba(126,203,160,0.25);}
 .verdict-icon-wrap.wrong{background:var(--wrong-bg);border:1px solid rgba(224,112,112,0.25);}
-.verdict-icon-wrap svg{width:28px;height:28px;}
-.verdict-result{font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:0.25rem;}
+.verdict-icon-wrap.timeout{background:rgba(224,168,64,0.1);border:1px solid rgba(224,168,64,0.25);}
+.verdict-icon-wrap svg{width:26px;height:26px;}
+.verdict-result{font-family:var(--font-display);font-size:1.9rem;font-weight:900;margin-bottom:0.25rem;}
 .verdict-result.correct{color:var(--correct);}
 .verdict-result.wrong{color:var(--wrong);}
-.verdict-answer-tag{display:inline-block;font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:1.5rem;}
+.verdict-result.timeout{color:var(--warn);}
+.verdict-answer-tag{display:inline-block;font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:1.25rem;}
 .verdict-answer-tag.deon{background:var(--deon-bg);color:var(--deon);border:1px solid var(--deon-border);}
 .verdict-answer-tag.cons{background:var(--cons-bg);color:var(--cons);border:1px solid var(--cons-border);}
-.verdict-explanation{font-size:15px;color:var(--text-muted);line-height:1.7;padding:1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:1.5rem;}
-.btn-next{width:100%;padding:16px;background:var(--text);color:var(--bg);border:none;border-radius:14px;font-family:var(--font-body);font-size:16px;font-weight:500;cursor:pointer;transition:opacity 0.2s,transform 0.15s;}
+.verdict-trap-note{font-size:12px;color:var(--d-trap);background:rgba(224,112,112,0.08);border:1px solid rgba(224,112,112,0.2);border-radius:8px;padding:8px 12px;margin-bottom:1rem;line-height:1.5;}
+.verdict-explanation{font-size:14px;color:var(--text-muted);line-height:1.7;padding:1.1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:1.5rem;}
+.btn-next{width:100%;padding:15px;background:var(--text);color:var(--bg);border:none;border-radius:14px;font-family:var(--font-body);font-size:15px;font-weight:500;cursor:pointer;transition:opacity 0.2s,transform 0.15s;}
 .btn-next:hover{opacity:0.9;}
 .btn-next:active{transform:scale(0.98);}
 
-/* END */
+/* ── END ── */
 #screen-end{align-items:center;justify-content:center;padding:2rem 1.5rem;background:var(--bg);}
 .end-inner{max-width:400px;width:100%;}
 .end-score-wrap{display:flex;align-items:baseline;gap:6px;margin-bottom:0.25rem;}
 .end-score-big{font-family:var(--font-display);font-size:5rem;font-weight:900;line-height:1;color:var(--text);}
 .end-score-denom{font-family:var(--font-display);font-size:2rem;color:var(--text-faint);}
-.end-label{font-size:15px;color:var(--text-muted);margin-bottom:2rem;}
-.end-scroll{max-height:240px;overflow-y:auto;margin-bottom:1.5rem;}
+.end-label{font-size:15px;color:var(--text-muted);margin-bottom:1.5rem;}
+.end-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.5rem;}
+.end-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
+.end-stat-num{font-family:var(--font-display);font-size:1.4rem;font-weight:700;}
+.end-stat-label{font-size:10px;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px;}
+.end-scroll{max-height:200px;overflow-y:auto;margin-bottom:1.5rem;}
 .end-scroll::-webkit-scrollbar{width:3px;}
 .end-scroll::-webkit-scrollbar-track{background:var(--surface2);}
 .end-scroll::-webkit-scrollbar-thumb{background:var(--text-faint);border-radius:2px;}
-.result-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
-.result-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.result-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.result-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
 .result-dot.correct{background:var(--correct);}
 .result-dot.wrong{background:var(--wrong);}
 .result-text{color:var(--text-muted);line-height:1.5;flex:1;}
-.result-framework{font-size:11px;font-weight:500;}
+.result-framework{font-weight:500;}
 .result-framework.deon{color:var(--deon);}
 .result-framework.cons{color:var(--cons);}
-.btn-restart{width:100%;padding:16px;background:transparent;color:var(--text);border:1px solid var(--border-strong);border-radius:14px;font-family:var(--font-body);font-size:16px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.btn-restart{width:100%;padding:15px;background:transparent;color:var(--text);border:1px solid var(--border-strong);border-radius:14px;font-family:var(--font-body);font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;}
 .btn-restart:hover{background:var(--surface);}
 .btn-restart:active{transform:scale(0.98);}
 
@@ -146,17 +179,19 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="intro-inner">
     <p class="intro-eyebrow">Ethics · Community of Inquiry</p>
     <h1 class="intro-title">Ethics<br><em>Snap</em></h1>
-    <p class="intro-sub">Read the statement. Is it deontological or consequentialist? Swipe before the clock runs out.</p>
+    <p class="intro-sub">Read the statement. Swipe left for Deontology, right for Consequentialism. Cards get harder — and some are designed to trick you.</p>
+
+    <div class="diff-legend">
+      <div class="diff-item"><div class="diff-pip" style="background:var(--d-easy)"></div><div><div class="diff-name">Easy</div><div class="diff-desc">20s · clear cases</div></div></div>
+      <div class="diff-item"><div class="diff-pip" style="background:var(--d-medium)"></div><div><div class="diff-name">Medium</div><div class="diff-desc">15s · less obvious</div></div></div>
+      <div class="diff-item"><div class="diff-pip" style="background:var(--d-hard)"></div><div><div class="diff-name">Hard</div><div class="diff-desc">12s · nuanced</div></div></div>
+      <div class="diff-item"><div class="diff-pip" style="background:var(--d-trap)"></div><div><div class="diff-name">Trap</div><div class="diff-desc">10s · designed to fool</div></div></div>
+    </div>
+
     <div class="swipe-guide">
-      <div class="guide-item">
-        <div class="guide-arrow left">←</div>
-        <span class="guide-label">Deontology</span>
-      </div>
+      <div class="guide-item"><div class="guide-arrow left">←</div><span class="guide-label">Deontology</span></div>
       <div class="guide-vs">vs</div>
-      <div class="guide-item">
-        <div class="guide-arrow right">→</div>
-        <span class="guide-label">Consequentialism</span>
-      </div>
+      <div class="guide-item"><div class="guide-arrow right">→</div><span class="guide-label">Consequentialism</span></div>
     </div>
     <button class="btn-start" onclick="startGame()">Start swiping</button>
   </div>
@@ -173,11 +208,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
         <text class="timer-num-svg" id="timer-num" x="24" y="24">20</text>
       </svg>
     </div>
-    <div class="card-counter">Card <strong id="card-num">1</strong>/12</div>
+    <div class="card-counter">Card <strong id="card-num">1</strong>/20</div>
   </div>
-
   <div class="progress-bar" id="progress-bar"></div>
-
   <div class="arena">
     <div class="swipe-hint left" id="hint-left"><div class="hint-badge">Deontology</div></div>
     <div class="swipe-hint right" id="hint-right"><div class="hint-badge">Consequentialism</div></div>
@@ -187,12 +220,10 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
       <div class="card card-enter" id="card">
         <div class="card-top">
           <div class="card-chip" id="card-chip">–</div>
-          <div class="card-num-inner" id="card-num-inner">01</div>
+          <div class="diff-badge" id="diff-badge"><div class="pip"></div><span id="diff-label">Easy</span></div>
         </div>
-        <div class="card-body">
-          <div class="card-statement" id="card-statement"></div>
-        </div>
-        <div>
+        <div class="card-body"><div class="card-statement" id="card-statement"></div></div>
+        <div class="card-footer">
           <div class="card-hint-label">Clue</div>
           <div class="card-hint-text" id="card-hint"></div>
         </div>
@@ -204,7 +235,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
       </div>
     </div>
   </div>
-
   <div class="swipe-buttons">
     <button class="swipe-btn deon" onclick="handleSwipe('left')">← Deontology</button>
     <button class="swipe-btn cons" onclick="handleSwipe('right')">Consequentialism →</button>
@@ -221,6 +251,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
     </div>
     <div class="verdict-result" id="verdict-result"></div>
     <div class="verdict-answer-tag" id="verdict-answer-tag"></div>
+    <div class="verdict-trap-note" id="verdict-trap-note" style="display:none;"></div>
     <div class="verdict-explanation" id="verdict-explanation"></div>
     <button class="btn-next" id="btn-next" onclick="nextCard()">Next card →</button>
   </div>
@@ -234,45 +265,300 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
       <div class="end-score-denom" id="end-denom"></div>
     </div>
     <div class="end-label" id="end-label"></div>
+    <div class="end-stats" id="end-stats"></div>
     <div class="end-scroll" id="end-scroll"></div>
     <button class="btn-restart" onclick="restartGame()">Play again</button>
   </div>
 </div>
 
 <script>
-const CARDS=[
-  {statement:"You must never lie, even to protect someone from harm.",answer:"deon",label:"Absolute duty",hint:"Is there an unconditional rule being stated?",explanation:"This is Kantian deontology — Kant held that lying is always wrong regardless of consequences, because honesty is a universal moral duty that cannot be broken."},
-  {statement:"It's okay to break a promise if keeping it causes more harm than breaking it.",answer:"cons",label:"Weighing outcomes",hint:"What justifies the decision — a rule, or the result?",explanation:"Consequentialism judges actions purely by their outcomes. If breaking a promise produces better results overall, it becomes the morally right thing to do."},
-  {statement:"Torturing one person to save ten is the right thing to do.",answer:"cons",label:"The numbers",hint:"Lives are being counted — what theory does this?",explanation:"Classic utilitarian logic: maximise wellbeing across the group. The harm to one is outweighed by saving ten. The maths matters, not the act itself."},
-  {statement:"Some actions are simply wrong, no matter how many people benefit.",answer:"deon",label:"Moral absolutes",hint:"Can consequences ever change whether this is right?",explanation:"Deontologists hold that certain acts violate moral rules that cannot be overridden — not even for a beneficial outcome. The act itself is what matters morally."},
-  {statement:"The best society maximises happiness for the greatest number of people.",answer:"cons",label:"Social good",hint:"Whose happiness counts — and how many?",explanation:"Bentham's utilitarian formula in a sentence. Consequentialism evaluates societies by the total good they produce, not by the rules they follow."},
-  {statement:"People have rights that cannot be violated, even for the public good.",answer:"deon",label:"Inviolable rights",hint:"Rights that hold regardless of benefit — duty or outcome?",explanation:"Rights-based ethics is fundamentally deontological. Individuals have inherent rights as rational beings — they are ends in themselves, not tools for social gain."},
-  {statement:"Stealing food for a starving child is morally justified because it prevents suffering.",answer:"cons",label:"The ends",hint:"What makes the act right — the action itself, or what it prevents?",explanation:"The justification here is entirely about preventing harm. Consequentialism permits rule-breaking when the outcome is sufficiently good."},
-  {statement:"A doctor must tell a dying patient the truth, even if it causes them pain.",answer:"deon",label:"Duty of honesty",hint:"Is a duty being upheld regardless of the harm it causes?",explanation:"Deontological ethics insists on honesty as a duty. The patient's right to know and the doctor's obligation override the pain that truth might cause."},
-  {statement:"Laws should be evaluated by whether they make society better off overall.",answer:"cons",label:"Legal purpose",hint:"What's the measure of a good law here?",explanation:"Evaluating laws by social benefit is consequentialist. Bentham himself designed laws this way — the purpose of law is to maximise utility across society."},
-  {statement:"Even a murderer deserves a fair trial because every person has inherent dignity.",answer:"deon",label:"Human dignity",hint:"Dignity owed regardless of what someone did — rule or result?",explanation:"Inherent dignity regardless of actions is deontological. Kant argued every rational person deserves respect as an end in themselves — even the guilty."},
-  {statement:"If lying produces the best outcome for everyone involved, it is morally correct.",answer:"cons",label:"Truth vs results",hint:"What makes the lie 'correct' here — the rule, or what happens?",explanation:"The truth or falsity of the act is irrelevant — only outcomes matter. Consequentialism at its starkest: the right act is whatever produces the best result."},
-  {statement:"We should help others not because it feels good, but because we have a duty to do so.",answer:"deon",label:"Acting from duty",hint:"Is the reason about feelings, results, or obligation?",explanation:"Motivation is crucial in Kantian ethics. Acting from duty — not emotional payoff or good consequences — is the only source of genuine moral worth."}
+/* ── DIFFICULTY CONFIG ──
+   diff: 'easy' | 'medium' | 'hard' | 'trap'
+   timer seconds: easy=20, medium=15, hard=12, trap=10
+   trapNote: shown on verdict if diff==='trap', explains the trick
+*/
+const TIMER_FOR = {easy:20,medium:15,hard:12,trap:10};
+const CIRC = 2*Math.PI*22;
+
+const CARDS = [
+
+/* ═══════════════════ EASY (10 cards) ═══════════════════ */
+{diff:'easy',
+ statement:"You must never lie, even to protect someone from harm.",
+ answer:"deon",label:"Absolute duty",
+ hint:"Is there an unconditional rule being stated?",
+ explanation:"Classic Kantian deontology: lying is always wrong because honesty is a universal duty. The consequence — protecting someone — is irrelevant to whether the act is moral."},
+
+{diff:'easy',
+ statement:"We should always try to produce the best outcome for the most people.",
+ answer:"cons",label:"Greatest good",
+ hint:"Who benefits — and how many?",
+ explanation:"This is the core utilitarian formula. Consequentialism evaluates actions by how much total wellbeing they produce across the group."},
+
+{diff:'easy',
+ statement:"Torturing one innocent person to save a hundred is the right thing to do.",
+ answer:"cons",label:"The numbers",
+ hint:"The maths matters — one versus a hundred.",
+ explanation:"Stark utilitarian logic: the suffering of one is outweighed by saving a hundred. The act of torture is secondary to the outcome."},
+
+{diff:'easy',
+ statement:"People have rights that cannot be taken away, even for the public good.",
+ answer:"deon",label:"Inviolable rights",
+ hint:"Rights that hold regardless of benefit — duty or outcome?",
+ explanation:"Rights-based thinking is deontological. Individuals are ends in themselves, not tools for social benefit, regardless of consequences."},
+
+{diff:'easy',
+ statement:"A soldier must follow orders because obedience to authority is a duty.",
+ answer:"deon",label:"Duty and command",
+ hint:"Is it about the duty to obey, not the result?",
+ explanation:"Deontological frameworks often ground moral action in duty, role, or authority. The soldier acts from obligation, not calculation of outcomes."},
+
+{diff:'easy',
+ statement:"Stealing is acceptable if it is the only way to feed a starving family.",
+ answer:"cons",label:"Justified theft",
+ hint:"What makes the act right — the action, or what it prevents?",
+ explanation:"Consequentialism permits rule-breaking when the outcome is good enough. Preventing starvation outweighs the harm of theft."},
+
+{diff:'easy',
+ statement:"Laws should be judged by whether they make society better off overall.",
+ answer:"cons",label:"Purpose of law",
+ hint:"What's the measure of a good law?",
+ explanation:"Evaluating laws by social benefit is Bentham's utilitarian project. Good laws maximise welfare — they aren't good in themselves."},
+
+{diff:'easy',
+ statement:"Even a convicted criminal deserves to be treated with dignity and respect.",
+ answer:"deon",label:"Human dignity",
+ hint:"Dignity owed regardless of what someone did.",
+ explanation:"Kant argued every rational person has inherent worth as a human being, regardless of what they've done. Dignity is not earned — it's owed."},
+
+{diff:'easy',
+ statement:"If lying produces the best result for everyone involved, it is the right thing to do.",
+ answer:"cons",label:"Useful lies",
+ hint:"What makes the lie right — the act, or the outcome?",
+ explanation:"Pure consequentialism: the moral value of any act is determined entirely by its results. If lying produces the best outcome, lying is right."},
+
+{diff:'easy',
+ statement:"We should donate to charity because we have a duty to help those less fortunate.",
+ answer:"deon",label:"Duty to give",
+ hint:"Is the reason about obligation, not the benefit produced?",
+ explanation:"Motivation matters in Kantian ethics. Giving because it is your duty — not because of the good produced — is the deontological position."},
+
+/* ═══════════════════ MEDIUM (10 cards) ═══════════════════ */
+{diff:'medium',
+ statement:"A whistleblower who leaks classified documents to prevent war crimes is acting morally.",
+ answer:"cons",label:"Leaking secrets",
+ hint:"Is breaking the rule justified by what it prevents?",
+ explanation:"The whistleblower breaks their legal duty of secrecy. The justification is entirely about outcomes — preventing atrocities outweighs the breach of obligation."},
+
+{diff:'medium',
+ statement:"It is wrong to use a person as a means to achieve your own ends, even with their consent.",
+ answer:"deon",label:"Using people",
+ hint:"Kant's famous formula — people as ends, not means.",
+ explanation:"Kant's categorical imperative holds that people must never be treated merely as instruments for others' purposes. Consent doesn't change this."},
+
+{diff:'medium',
+ statement:"A government that suppresses free speech to prevent civil unrest is acting ethically.",
+ answer:"cons",label:"Censorship for order",
+ hint:"Is the restriction justified by its social effect?",
+ explanation:"The justification is purely about consequences: social stability. A deontologist would reject this as a violation of the fundamental right to free expression."},
+
+{diff:'medium',
+ statement:"A judge must apply the law as written, even when a strict sentence seems unjust.",
+ answer:"deon",label:"Letter of the law",
+ hint:"Is the judge's duty to the rule, regardless of outcome?",
+ explanation:"Applying rules as written, independent of consequences, is deontological. The judge's role imposes a duty — the injustice of the outcome is beside the point."},
+
+{diff:'medium',
+ statement:"Voting in an election you find meaningless is still morally required.",
+ answer:"deon",label:"Civic duty",
+ hint:"Does the outcome change whether voting is obligatory?",
+ explanation:"If voting is framed as a civic duty owed to the community — independent of whether your vote changes anything — the reasoning is deontological."},
+
+{diff:'medium',
+ statement:"It is acceptable to break a small rule if doing so prevents significant suffering.",
+ answer:"cons",label:"Minor rule-breaking",
+ hint:"Is the rule's weight determined by the harm it prevents?",
+ explanation:"Consequentialists calculate: small rule breach vs. significant suffering prevented. The suffering matters more than the rule."},
+
+{diff:'medium',
+ statement:"A parent who lies to protect their child from a painful truth is acting ethically.",
+ answer:"cons",label:"Protective lies",
+ hint:"What makes the lie right here — the act or the benefit?",
+ explanation:"The justification is the child's wellbeing — a consequentialist move. The lie is evaluated by what it produces, not the duty to be honest."},
+
+{diff:'medium',
+ statement:"Medical researchers must obtain informed consent even if the research would save thousands.",
+ answer:"deon",label:"Consent in research",
+ hint:"Does the benefit justify bypassing the person's right to choose?",
+ explanation:"Informed consent is a rights-based, deontological principle. The potential benefit — even saving thousands — does not override the individual's right to decide."},
+
+{diff:'medium',
+ statement:"A nation is justified in going to war if it will ultimately reduce total global suffering.",
+ answer:"cons",label:"Just war calculus",
+ hint:"Is war justified by the suffering it eliminates?",
+ explanation:"Justifying war by its outcomes is a consequentialist position. The deaths in war are weighed against the total suffering prevented — outcomes determine rightness."},
+
+{diff:'medium',
+ statement:"It is always wrong to break a promise, regardless of what happens as a result.",
+ answer:"deon",label:"Promise-keeping",
+ hint:"Is promise-keeping absolute, regardless of consequences?",
+ explanation:"Treating promise-keeping as an absolute duty, independent of outcomes, is Kantian. Promises bind us regardless of whether breaking them would produce better results."},
+
+/* ═══════════════════ HARD (10 cards) ═══════════════════ */
+{diff:'hard',
+ statement:"The morality of an action depends entirely on the intention behind it, not its effects.",
+ answer:"deon",label:"Intentions vs effects",
+ hint:"What is the basis for moral judgement — intent or result?",
+ explanation:"Kant argued that moral worth comes from acting from duty with good intentions, not from producing good results. Consequentialism is the opposite — results are everything."},
+
+{diff:'hard',
+ statement:"A surgeon who harvests organs from one patient to save five has done the right thing.",
+ answer:"cons",label:"The organ problem",
+ hint:"Five lives saved — does the maths justify the act?",
+ explanation:"Five saved vs. one killed is a consequentialist calculation. Most people find this repugnant precisely because deontological intuitions are strong here — this is one of philosophy's hardest cases."},
+
+{diff:'hard',
+ statement:"Justice is not about punishing wrongdoers — it's about deterring future crime.",
+ answer:"cons",label:"Why we punish",
+ hint:"Is punishment backward-looking or forward-looking?",
+ explanation:"Justifying punishment by its deterrent effect — future crime reduction — is consequentialist. Deontologists argue punishment is deserved regardless of deterrence."},
+
+{diff:'hard',
+ statement:"The rights of individuals must sometimes be sacrificed for the collective welfare.",
+ answer:"cons",label:"Rights vs welfare",
+ hint:"Collective welfare overriding individual rights — which framework?",
+ explanation:"Subordinating individual rights to collective welfare is consequentialist. Deontologists hold rights as inviolable — they cannot be overridden even by significant collective gain."},
+
+{diff:'hard',
+ statement:"Rational beings are the only things that have inherent moral worth.",
+ answer:"deon",label:"Who counts morally",
+ hint:"Inherent worth tied to rationality — a Kantian idea?",
+ explanation:"Kant grounded moral worth in rationality — beings capable of reason deserve respect as ends in themselves. This is a deontological basis for moral status."},
+
+{diff:'hard',
+ statement:"The ends never justify the means — the means must be right in themselves.",
+ answer:"deon",label:"Means and ends",
+ hint:"This directly rejects the consequentialist logic.",
+ explanation:"Deontology insists that acts must be right in themselves, regardless of what they produce. This is the direct opposite of 'the ends justify the means,' which is the consequentialist view."},
+
+{diff:'hard',
+ statement:"Environmental policy should be designed to maximise human wellbeing over the longest possible timeframe.",
+ answer:"cons",label:"Long-run welfare",
+ hint:"Maximising wellbeing across time — outcome-focused?",
+ explanation:"Framing policy around maximising wellbeing — even over a long time horizon — is consequentialist. It evaluates policy by what it produces, not by any rights or duties."},
+
+{diff:'hard',
+ statement:"A moral agent who acts rightly but produces terrible outcomes has still acted morally.",
+ answer:"deon",label:"Right acts, bad results",
+ hint:"Can an act be moral even when consequences are terrible?",
+ explanation:"Deontologists say yes: moral worth comes from the nature of the act and the intention behind it, not its results. A consequentialist would say terrible outcomes make any act wrong."},
+
+{diff:'hard',
+ statement:"You are morally responsible for what you do, but not for what you merely allow to happen.",
+ answer:"deon",label:"Doing vs allowing",
+ hint:"Is there a moral difference between causing harm and failing to prevent it?",
+ explanation:"The doing/allowing distinction is a deontological intuition. Deontologists often hold that actively causing harm is worse than failing to prevent it, because the act itself matters."},
+
+{diff:'hard',
+ statement:"Capital punishment is justified if statistical evidence shows it reduces murder rates.",
+ answer:"cons",label:"Death as deterrent",
+ hint:"Is execution justified by the harm it prevents?",
+ explanation:"Justifying capital punishment by its deterrent effect is consequentialist: the death of the offender is outweighed by the murders it prevents. Deontologists argue execution violates the right to life regardless of deterrence."},
+
+/* ═══════════════════ TRAP (10 cards) ═══════════════════ */
+{diff:'trap',
+ statement:"We should care about animal welfare because animals can feel pain, just like humans.",
+ answer:"cons",label:"Animal pain",
+ hint:"Why does pain matter here — because it's pain, full stop.",
+ trapNote:"TRAP: This sounds like it could be about rights, but the reason given — pain as a basis for consideration — is Bentham's consequentialist move. 'Can they suffer?' is the utilitarian question.",
+ explanation:"Bentham's famous line: 'Can they suffer?' grounds animal consideration in the capacity for suffering — a consequentialist criterion. A deontologist would argue animals lack rationality and therefore lack inherent rights."},
+
+{diff:'trap',
+ statement:"You should keep your promise to a friend, even if breaking it would help more people.",
+ answer:"deon",label:"Promise over utility",
+ hint:"Sounds like it might be weighing outcomes — but what wins?",
+ trapNote:"TRAP: The frame mentions 'more people' (consequentialist language), but the conclusion — keep the promise regardless — is deontological duty.",
+ explanation:"The logic here is deontological: the duty to keep promises overrides the utilitarian calculation of benefit. The statement explicitly rejects the consequentialist outcome as the deciding factor."},
+
+{diff:'trap',
+ statement:"Punishing an innocent person is wrong, even if it would prevent a riot that kills many.",
+ answer:"deon",label:"Scapegoating",
+ hint:"Does saving many lives justify punishing the innocent?",
+ trapNote:"TRAP: The numbers (saving many) tempt a consequentialist reading. But the statement says it's WRONG — that's the deontological verdict: the innocent have a right not to be punished.",
+ explanation:"This is the famous scapegoat case. Consequentialism might permit punishing one to save many. The claim that it is wrong regardless is deontological — the innocent person's rights trump the utilitarian calculation."},
+
+{diff:'trap',
+ statement:"A good person is one who consistently acts from a sense of duty, even at personal cost.",
+ answer:"deon",label:"Virtue of duty",
+ hint:"Could this be virtue ethics — or is it specifically about duty?",
+ trapNote:"TRAP: 'Virtue' language might mislead you toward virtue ethics, but the key word is 'duty'. Acting from duty at personal cost is the Kantian mark of moral worth.",
+ explanation:"Kant argued that the only unconditional good is a good will — acting from duty, not inclination or self-interest. This is deontological, not virtue ethics, because the emphasis is on the motive of duty."},
+
+{diff:'trap',
+ statement:"It is acceptable to lie to someone if you genuinely believe the lie will make them happier.",
+ answer:"cons",label:"Happy lies",
+ hint:"What justifies the lie — your duty to honesty, or their happiness?",
+ trapNote:"TRAP: 'Genuinely believe' sounds like intention, which might seem deontological. But the justification is happiness — an outcome. Intent alone doesn't make it deontological.",
+ explanation:"The justification here is the outcome (their happiness), not a duty. Even though the word 'believe' is used, the moral reasoning is consequentialist — the lie is right because of what it produces."},
+
+{diff:'trap',
+ statement:"A firefighter has a special duty to save people in burning buildings that ordinary citizens do not.",
+ answer:"deon",label:"Role obligations",
+ hint:"Special duties from roles — are these outcome-based or rule-based?",
+ trapNote:"TRAP: Role-based duties might look like rules or consequences — but the argument that your role creates special obligations is deontological, not about outcomes.",
+ explanation:"Special role-based duties — obligations that arise from your profession or position — are deontological. The firefighter's duty to rescue exists because of their role, not because rescue always maximises welfare."},
+
+{diff:'trap',
+ statement:"Forgiving someone who wronged you is the morally correct response, because it makes both people feel better.",
+ answer:"cons",label:"Forgiving for outcomes",
+ hint:"Is the reason for forgiving about your duty — or the result?",
+ trapNote:"TRAP: Forgiveness sounds virtuous and duty-like — but the stated reason is the effect it has on both people. That reason makes it consequentialist.",
+ explanation:"Forgiveness can be argued deontologically (it's the right thing to do) or consequentially (it produces better outcomes). This statement specifies the reason: it makes people feel better. That's a consequentialist justification."},
+
+{diff:'trap',
+ statement:"Governments should respect individual freedom because free societies tend to produce more innovation and prosperity.",
+ answer:"cons",label:"Freedom for growth",
+ hint:"Is freedom valued here in itself, or because of what it produces?",
+ trapNote:"TRAP: Freedom sounds like a rights claim (deontological), but the reason given is economic — what freedom produces. That makes the argument consequentialist.",
+ explanation:"A deontologist values freedom as an inherent right. But this statement values freedom instrumentally — because of what it produces (innovation, prosperity). Instrumental valuation is consequentialist reasoning."},
+
+{diff:'trap',
+ statement:"It is never right to take a human life, even in self-defence.",
+ answer:"deon",label:"No killing ever",
+ hint:"Is this an absolute rule — or a calculation about harm?",
+ trapNote:"TRAP: 'Never' sounds like a consequence ('the harm is never worth it'), but the claim is an absolute moral rule applying in all circumstances — a deontological absolute.",
+ explanation:"An unconditional prohibition — 'never, in any circumstances' — is deontological. It doesn't calculate harm; it states a rule. A consequentialist would always allow for exceptions if outcomes justified it."},
+
+{diff:'trap',
+ statement:"Society should punish criminals not to reform them, but because they deserve to suffer for what they did.",
+ answer:"deon",label:"Desert-based punishment",
+ hint:"Is punishment backward-looking (deserved) or forward-looking (useful)?",
+ trapNote:"TRAP: 'Deserve to suffer' might sound harsh and unphilosophical, but desert-based (retributive) punishment — punishing because it is owed — is a deontological concept.",
+ explanation:"Retributive punishment — giving people what they deserve because they deserve it — is deontological. It looks backward at the crime, not forward at deterrence or reform. Consequentialists would only punish if it produces good outcomes."}
 ];
 
-const CIRC=2*Math.PI*22;
 let state={};
 
 function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
 function startGame(){
-  state={idx:0,score:0,results:[],order:shuffle([...Array(CARDS.length).keys()]),timer:null,secs:20,dragging:false,startX:0,startY:0,answered:false};
+  /* pick 5 from each difficulty tier, ordered easy→trap */
+  const byDiff = d => shuffle(CARDS.filter(c=>c.diff===d)).slice(0,5);
+  const order = [...byDiff('easy'),...byDiff('medium'),...byDiff('hard'),...byDiff('trap')];
+  state={idx:0,score:0,results:[],cards:order,timer:null,secs:20,dragging:false,startX:0,startY:0,answered:false,
+    diffStats:{easy:{c:0,t:0},medium:{c:0,t:0},hard:{c:0,t:0},trap:{c:0,t:0}}};
   buildDots();show('screen-game');loadCard();setupDrag();
 }
 
 function buildDots(){
   const bar=document.getElementById('progress-bar');bar.innerHTML='';
-  state.order.forEach((_,i)=>{const d=document.createElement('div');d.className='prog-dot'+(i===0?' current':'');d.id='pd-'+i;bar.appendChild(d);});
+  state.cards.forEach((_,i)=>{const d=document.createElement('div');d.className='prog-dot'+(i===0?' current':'');d.id='pd-'+i;bar.appendChild(d);});
+  document.getElementById('card-num').parentElement.innerHTML='Card <strong id="card-num">1</strong>/'+state.cards.length;
 }
 
 function updateDots(){
-  state.order.forEach((_,i)=>{
+  state.cards.forEach((_,i)=>{
     const d=document.getElementById('pd-'+i);if(!d)return;
     d.className='prog-dot';
     if(i<state.idx)d.classList.add(state.results[i]?'correct':'wrong');
@@ -281,43 +567,47 @@ function updateDots(){
 }
 
 function loadCard(){
-  const c=CARDS[state.order[state.idx]];
-  const card=document.getElementById('card');
+  const c=state.cards[state.idx];
+  const secs=TIMER_FOR[c.diff];
   document.getElementById('card-statement').textContent=c.statement;
   document.getElementById('card-hint').textContent=c.hint;
   const chip=document.getElementById('card-chip');chip.textContent=c.label;chip.className='card-chip';
   document.getElementById('card-num').textContent=state.idx+1;
-  document.getElementById('card-num-inner').textContent=String(state.idx+1).padStart(2,'0');
-  document.getElementById('score-val').textContent=state.score;
+  const badge=document.getElementById('diff-badge');
+  badge.className='diff-badge '+c.diff;
+  document.getElementById('diff-label').textContent=c.diff.charAt(0).toUpperCase()+c.diff.slice(1);
+  const card=document.getElementById('card');
   card.style.transform='';card.style.opacity='1';card.style.transition='none';
   card.className='card card-enter';
   document.getElementById('timeout-overlay').style.display='none';
   document.getElementById('hint-left').style.opacity='0';
   document.getElementById('hint-right').style.opacity='0';
-  state.answered=false;updateDots();startTimer();
+  state.answered=false;updateDots();startTimer(secs);
 }
 
-function startTimer(){
-  clearInterval(state.timer);state.secs=20;renderTimer();
+function startTimer(secs){
+  clearInterval(state.timer);state.secs=secs;state.maxSecs=secs;renderTimer();
   state.timer=setInterval(()=>{state.secs--;renderTimer();if(state.secs<=0){clearInterval(state.timer);onTimeout();}},1000);
 }
 
 function renderTimer(){
   const arc=document.getElementById('timer-arc');
   const num=document.getElementById('timer-num');
-  const offset=CIRC*(1-state.secs/20);
+  const pct=state.secs/state.maxSecs;
+  const offset=CIRC*(1-pct);
   arc.style.strokeDasharray=CIRC;
   arc.style.strokeDashoffset=offset;
-  arc.style.stroke=state.secs>7?'#6eb5c8':state.secs>4?'#c8a96e':'#e07070';
+  arc.style.stroke=pct>0.5?'#6eb5c8':pct>0.25?'#e0a840':'#e07070';
   num.textContent=state.secs;
-  num.style.fill=state.secs<=4?'#e07070':'var(--text)';
+  num.style.fill=pct<=0.25?'#e07070':'var(--text)';
 }
 
 function onTimeout(){
   if(state.answered)return;
   state.answered=true;
-  const c=CARDS[state.order[state.idx]];
+  const c=state.cards[state.idx];
   state.results.push(false);
+  state.diffStats[c.diff].t++;
   const overlay=document.getElementById('timeout-overlay');
   overlay.style.display='flex';
   const ans=document.getElementById('timeout-answer');
@@ -335,53 +625,85 @@ function doSwipe(dir){
   card.style.transition='transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.38s';
   card.style.transform=`translateX(${tx}px) rotate(${rot}deg)`;
   card.style.opacity='0';
-  const c=CARDS[state.order[state.idx]];
+  const c=state.cards[state.idx];
   const correct=(dir==='left'&&c.answer==='deon')||(dir==='right'&&c.answer==='cons');
   state.results.push(correct);
-  if(correct)state.score++;
+  state.diffStats[c.diff].t++;
+  if(correct){state.score++;state.diffStats[c.diff].c++;}
   setTimeout(()=>showVerdict(dir),400);
 }
 
 function showVerdict(dir){
-  const c=CARDS[state.order[state.idx]];
+  const c=state.cards[state.idx];
   const correct=state.results[state.results.length-1];
   const wrap=document.getElementById('verdict-icon-wrap');
   const path=document.getElementById('verdict-icon-path');
-  wrap.className='verdict-icon-wrap '+(correct?'correct':'wrong');
-  if(correct){path.setAttribute('d','M4 14l6 6L24 8');path.setAttribute('stroke','var(--correct)');}
-  else{path.setAttribute('d','M6 6l16 16M22 6L6 22');path.setAttribute('stroke','var(--wrong)');}
-  const result=document.getElementById('verdict-result');
-  result.textContent=correct?'Correct!':(dir===null?'Time ran out.':'Not quite.');
-  result.className='verdict-result '+(correct?'correct':'wrong');
+  const res=document.getElementById('verdict-result');
   const tag=document.getElementById('verdict-answer-tag');
+  const trap=document.getElementById('verdict-trap-note');
+  const expl=document.getElementById('verdict-explanation');
+  const nextBtn=document.getElementById('btn-next');
+
+  if(correct){
+    wrap.className='verdict-icon-wrap correct';
+    path.setAttribute('d','M4 14l6 6L24 8');path.setAttribute('stroke','var(--correct)');
+    res.textContent='Correct!';res.className='verdict-result correct';
+  } else if(dir===null){
+    wrap.className='verdict-icon-wrap timeout';
+    path.setAttribute('d','M14 5v9M14 20v1');path.setAttribute('stroke','var(--warn)');
+    res.textContent="Time's up.";res.className='verdict-result timeout';
+  } else {
+    wrap.className='verdict-icon-wrap wrong';
+    path.setAttribute('d','M6 6l16 16M22 6L6 22');path.setAttribute('stroke','var(--wrong)');
+    res.textContent='Not quite.';res.className='verdict-result wrong';
+  }
+
   tag.textContent=c.answer==='deon'?'Deontological':'Consequentialist';
   tag.className='verdict-answer-tag '+c.answer;
-  document.getElementById('verdict-explanation').textContent=c.explanation;
-  const isLast=state.idx+1>=state.order.length;
-  document.getElementById('btn-next').textContent=isLast?'See results':'Next card →';
+
+  if(c.diff==='trap'&&c.trapNote){
+    trap.style.display='block';trap.textContent=c.trapNote;
+  } else {trap.style.display='none';}
+
+  expl.textContent=c.explanation;
+  const isLast=state.idx+1>=state.cards.length;
+  nextBtn.textContent=isLast?'See results':'Next card →';
   document.getElementById('verdict-inner').className='verdict-inner verdict-enter';
   show('screen-verdict');
 }
 
 function nextCard(){
   state.idx++;updateDots();
-  if(state.idx>=state.order.length){showEnd();return;}
+  if(state.idx>=state.cards.length){showEnd();return;}
   show('screen-game');loadCard();
 }
 
 function showEnd(){
-  const total=state.order.length;
+  const total=state.cards.length;
   const pct=Math.round((state.score/total)*100);
   document.getElementById('end-score').textContent=state.score;
   document.getElementById('end-denom').textContent='/'+total;
-  const labels=['Keep at it — these frameworks take time.','A start! Keep revisiting the explanations.','Getting there — solid instincts forming.','Good work — you know your ethics.','Outstanding — you really get these frameworks!'];
+  const labels=['Keep at it — these frameworks take time.','A start. Keep revisiting the ideas.','Getting there — solid instincts forming.','Good work — you know your ethics.','Outstanding — you really get these frameworks!'];
   document.getElementById('end-label').textContent=labels[Math.min(4,Math.floor(pct/21))];
+
+  /* per-difficulty stats */
+  const stats=document.getElementById('end-stats');
+  stats.innerHTML='';
+  [['easy','Easy'],['medium','Medium'],['hard','Hard'],['trap','Trap']].forEach(([d,label])=>{
+    const s=state.diffStats[d];
+    if(s.t===0)return;
+    const div=document.createElement('div');div.className='end-stat';
+    div.innerHTML=`<div class="end-stat-num" style="color:var(--d-${d})">${s.c}/${s.t}</div><div class="end-stat-label">${label}</div>`;
+    stats.appendChild(div);
+  });
+
   const scroll=document.getElementById('end-scroll');scroll.innerHTML='';
-  state.order.forEach((ci,i)=>{
-    const c=CARDS[ci];const row=document.createElement('div');row.className='result-row';
+  state.cards.forEach((c,i)=>{
+    const row=document.createElement('div');row.className='result-row';
     const dot=document.createElement('div');dot.className='result-dot '+(state.results[i]?'correct':'wrong');
     const txt=document.createElement('div');txt.className='result-text';
-    txt.innerHTML=c.statement.slice(0,60)+(c.statement.length>60?'…':'')+' <span class="result-framework '+c.answer+'">'+(c.answer==='deon'?'Deontology':'Consequentialism')+'</span>';
+    txt.innerHTML=c.statement.slice(0,55)+(c.statement.length>55?'…':'')+
+      ' — <span class="result-framework '+c.answer+'">'+(c.answer==='deon'?'Deontology':'Consequentialism')+'</span>';
     row.appendChild(dot);row.appendChild(txt);scroll.appendChild(row);
   });
   show('screen-end');
@@ -402,14 +724,11 @@ function setupDrag(){
   function onMove(e){
     if(!state.dragging||state.answered)return;
     const pt=e.touches?e.touches[0]:e;
-    const dx=pt.clientX-state.startX;
-    const dy=(pt.clientY-state.startY)*0.25;
-    const rot=dx*0.07;
+    const dx=pt.clientX-state.startX;const dy=(pt.clientY-state.startY)*0.25;
     cancelAnimationFrame(af);
-    af=requestAnimationFrame(()=>{card.style.transform=`translateX(${dx}px) translateY(${dy}px) rotate(${rot}deg)`;});
+    af=requestAnimationFrame(()=>{card.style.transform=`translateX(${dx}px) translateY(${dy}px) rotate(${dx*0.07}deg)`;});
     const abs=Math.abs(dx);
-    const hl=document.getElementById('hint-left');
-    const hr=document.getElementById('hint-right');
+    const hl=document.getElementById('hint-left');const hr=document.getElementById('hint-right');
     if(dx<-25){hl.style.opacity=Math.min(1,(abs-25)/60)+'';hr.style.opacity='0';}
     else if(dx>25){hr.style.opacity=Math.min(1,(abs-25)/60)+'';hl.style.opacity='0';}
     else{hl.style.opacity='0';hr.style.opacity='0';}
@@ -417,7 +736,7 @@ function setupDrag(){
     if(abs>50){
       if(dx<0){chip.className='card-chip deon';chip.textContent='Deontology';}
       else{chip.className='card-chip cons';chip.textContent='Consequentialism';}
-    } else{const c=CARDS[state.order[state.idx]];chip.className='card-chip';chip.textContent=c.label;}
+    } else {const c=state.cards[state.idx];chip.className='card-chip';chip.textContent=c.label;}
   }
   function onEnd(e){
     if(!state.dragging)return;state.dragging=false;
@@ -427,7 +746,7 @@ function setupDrag(){
     else{
       card.style.transition='transform 0.32s cubic-bezier(0.25,0.46,0.45,0.94)';
       card.style.transform='';
-      const c=CARDS[state.order[state.idx]];
+      const c=state.cards[state.idx];
       document.getElementById('card-chip').className='card-chip';
       document.getElementById('card-chip').textContent=c.label;
       document.getElementById('hint-left').style.opacity='0';
