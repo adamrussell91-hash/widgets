@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ethics Snap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0e0c;--surface:#1a1916;--surface2:#222120;
+  --border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.15);
+  --text:#f0ede8;--text-muted:#8a8782;--text-faint:#4a4845;
+  --deon:#c8a96e;--deon-bg:rgba(200,169,110,0.12);--deon-border:rgba(200,169,110,0.3);
+  --cons:#6eb5c8;--cons-bg:rgba(110,181,200,0.12);--cons-border:rgba(110,181,200,0.3);
+  --correct:#7ecba0;--correct-bg:rgba(126,203,160,0.1);
+  --wrong:#e07070;--wrong-bg:rgba(224,112,112,0.1);
+  --radius:20px;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:400;overflow:hidden;touch-action:none;-webkit-tap-highlight-color:transparent;}
+.screen{display:none;width:100%;height:100%;position:absolute;top:0;left:0;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* INTRO */
+#screen-intro{align-items:center;justify-content:center;padding:2rem;}
+.intro-inner{max-width:360px;width:100%;text-align:center;}
+.intro-eyebrow{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.25rem;animation:fadeUp 0.6s ease both;}
+.intro-title{font-family:var(--font-display);font-size:clamp(2.8rem,10vw,4rem);font-weight:900;line-height:1;color:var(--text);margin-bottom:0.5rem;animation:fadeUp 0.6s 0.1s ease both;}
+.intro-title em{color:var(--deon);font-style:normal;}
+.intro-sub{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:2.5rem;animation:fadeUp 0.6s 0.2s ease both;}
+.swipe-guide{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;animation:fadeUp 0.6s 0.3s ease both;}
+.guide-item{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.guide-arrow{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.guide-arrow.left{background:var(--deon-bg);border:1px solid var(--deon-border);color:var(--deon);}
+.guide-arrow.right{background:var(--cons-bg);border:1px solid var(--cons-border);color:var(--cons);}
+.guide-label{font-size:11px;color:var(--text-muted);letter-spacing:0.05em;}
+.guide-vs{font-family:var(--font-display);font-size:18px;color:var(--text-faint);}
+.btn-start{width:100%;padding:16px;background:var(--text);color:var(--bg);border:none;border-radius:14px;font-family:var(--font-body);font-size:16px;font-weight:500;cursor:pointer;letter-spacing:0.02em;transition:opacity 0.2s,transform 0.15s;animation:fadeUp 0.6s 0.4s ease both;}
+.btn-start:hover{opacity:0.9;}
+.btn-start:active{transform:scale(0.98);}
+
+/* GAME */
+#screen-game{flex-direction:column;background:var(--bg);}
+.game-header{padding:1.25rem 1.5rem 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.score-chip{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+.score-chip strong{color:var(--text);font-weight:500;}
+.card-counter{font-size:13px;color:var(--text-muted);}
+.card-counter strong{color:var(--text);font-weight:500;}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;}
+.timer-track{fill:none;stroke:var(--surface2);stroke-width:3;}
+.timer-arc{fill:none;stroke-width:3;stroke-linecap:round;transform-origin:center;transform:rotate(-90deg);transition:stroke-dashoffset 0.9s linear,stroke 0.3s;stroke-dasharray:138.2;stroke-dashoffset:0;}
+.timer-num-svg{font-family:var(--font-body);font-size:14px;font-weight:500;fill:var(--text);text-anchor:middle;dominant-baseline:central;}
+.progress-bar{padding:0.75rem 1.5rem 0;display:flex;gap:5px;flex-shrink:0;}
+.prog-dot{flex:1;height:3px;border-radius:2px;background:var(--surface2);transition:background 0.3s;}
+.prog-dot.current{background:var(--text-faint);}
+.prog-dot.correct{background:var(--correct);}
+.prog-dot.wrong{background:var(--wrong);}
+.arena{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:1rem 1.25rem;overflow:hidden;}
+.swipe-hint{position:absolute;top:0;bottom:0;width:50%;display:flex;align-items:center;pointer-events:none;opacity:0;transition:opacity 0.1s;z-index:1;}
+.swipe-hint.left{left:0;justify-content:flex-start;padding-left:1rem;background:linear-gradient(to right,rgba(200,169,110,0.08),transparent);}
+.swipe-hint.right{right:0;justify-content:flex-end;padding-right:1rem;background:linear-gradient(to left,rgba(110,181,200,0.08),transparent);}
+.hint-badge{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:6px 12px;border-radius:100px;}
+.swipe-hint.left .hint-badge{background:var(--deon-bg);color:var(--deon);border:1px solid var(--deon-border);}
+.swipe-hint.right .hint-badge{background:var(--cons-bg);color:var(--cons);border:1px solid var(--cons-border);}
+.card-stack{position:relative;width:100%;max-width:420px;height:100%;}
+.card-behind{position:absolute;inset:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transform:scale(0.94) translateY(12px);opacity:0.5;}
+.card-behind2{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);transform:scale(0.88) translateY(24px);opacity:0.25;}
+.card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius);padding:1.75rem;cursor:grab;user-select:none;display:flex;flex-direction:column;justify-content:space-between;transform-origin:center 120%;will-change:transform;z-index:2;}
+.card:active{cursor:grabbing;}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.card-chip{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:var(--surface2);color:var(--text-muted);transition:background 0.2s,color 0.2s,border 0.2s;}
+.card-chip.deon{background:var(--deon-bg);color:var(--deon);border:1px solid var(--deon-border);}
+.card-chip.cons{background:var(--cons-bg);color:var(--cons);border:1px solid var(--cons-border);}
+.card-num-inner{font-size:12px;color:var(--text-faint);}
+.card-body{flex:1;display:flex;align-items:center;padding:1.5rem 0;}
+.card-statement{font-family:var(--font-display);font-size:clamp(1.05rem,4vw,1.3rem);font-weight:700;line-height:1.45;color:var(--text);}
+.card-hint-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-faint);margin-bottom:4px;}
+.card-hint-text{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.timeout-overlay{position:absolute;inset:0;border-radius:var(--radius);z-index:10;background:rgba(15,14,12,0.9);display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;padding:2rem;}
+.timeout-big{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--text);}
+.timeout-reveal{font-size:14px;color:var(--text-muted);}
+.timeout-answer{font-size:15px;font-weight:500;}
+.swipe-buttons{padding:0 1.25rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0;}
+.swipe-btn{padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--surface);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:8px;justify-content:center;}
+.swipe-btn.deon{color:var(--deon);border-color:var(--deon-border);}
+.swipe-btn.deon:hover{background:var(--deon-bg);}
+.swipe-btn.cons{color:var(--cons);border-color:var(--cons-border);}
+.swipe-btn.cons:hover{background:var(--cons-bg);}
+.swipe-btn:active{transform:scale(0.97);}
+
+/* VERDICT */
+#screen-verdict{align-items:center;justify-content:center;padding:2rem 1.5rem;background:var(--bg);}
+.verdict-inner{max-width:400px;width:100%;}
+.verdict-icon-wrap{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;}
+.verdict-icon-wrap.correct{background:var(--correct-bg);border:1px solid rgba(126,203,160,0.25);}
+.verdict-icon-wrap.wrong{background:var(--wrong-bg);border:1px solid rgba(224,112,112,0.25);}
+.verdict-icon-wrap svg{width:28px;height:28px;}
+.verdict-result{font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:0.25rem;}
+.verdict-result.correct{color:var(--correct);}
+.verdict-result.wrong{color:var(--wrong);}
+.verdict-answer-tag{display:inline-block;font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:1.5rem;}
+.verdict-answer-tag.deon{background:var(--deon-bg);color:var(--deon);border:1px solid var(--deon-border);}
+.verdict-answer-tag.cons{background:var(--cons-bg);color:var(--cons);border:1px solid var(--cons-border);}
+.verdict-explanation{font-size:15px;color:var(--text-muted);line-height:1.7;padding:1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:1.5rem;}
+.btn-next{width:100%;padding:16px;background:var(--text);color:var(--bg);border:none;border-radius:14px;font-family:var(--font-body);font-size:16px;font-weight:500;cursor:pointer;transition:opacity 0.2s,transform 0.15s;}
+.btn-next:hover{opacity:0.9;}
+.btn-next:active{transform:scale(0.98);}
+
+/* END */
+#screen-end{align-items:center;justify-content:center;padding:2rem 1.5rem;background:var(--bg);}
+.end-inner{max-width:400px;width:100%;}
+.end-score-wrap{display:flex;align-items:baseline;gap:6px;margin-bottom:0.25rem;}
+.end-score-big{font-family:var(--font-display);font-size:5rem;font-weight:900;line-height:1;color:var(--text);}
+.end-score-denom{font-family:var(--font-display);font-size:2rem;color:var(--text-faint);}
+.end-label{font-size:15px;color:var(--text-muted);margin-bottom:2rem;}
+.end-scroll{max-height:240px;overflow-y:auto;margin-bottom:1.5rem;}
+.end-scroll::-webkit-scrollbar{width:3px;}
+.end-scroll::-webkit-scrollbar-track{background:var(--surface2);}
+.end-scroll::-webkit-scrollbar-thumb{background:var(--text-faint);border-radius:2px;}
+.result-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.result-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.result-dot.correct{background:var(--correct);}
+.result-dot.wrong{background:var(--wrong);}
+.result-text{color:var(--text-muted);line-height:1.5;flex:1;}
+.result-framework{font-size:11px;font-weight:500;}
+.result-framework.deon{color:var(--deon);}
+.result-framework.cons{color:var(--cons);}
+.btn-restart{width:100%;padding:16px;background:transparent;color:var(--text);border:1px solid var(--border-strong);border-radius:14px;font-family:var(--font-body);font-size:16px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.btn-restart:hover{background:var(--surface);}
+.btn-restart:active{transform:scale(0.98);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes verdictIn{from{opacity:0;transform:scale(0.94);}to{opacity:1;transform:scale(1);}}
+.card-enter{animation:cardIn 0.35s cubic-bezier(0.25,0.46,0.45,0.94) both;}
+.verdict-enter{animation:verdictIn 0.3s cubic-bezier(0.25,0.46,0.45,0.94) both;}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="screen-intro">
+  <div class="intro-inner">
+    <p class="intro-eyebrow">Ethics · Community of Inquiry</p>
+    <h1 class="intro-title">Ethics<br><em>Snap</em></h1>
+    <p class="intro-sub">Read the statement. Is it deontological or consequentialist? Swipe before the clock runs out.</p>
+    <div class="swipe-guide">
+      <div class="guide-item">
+        <div class="guide-arrow left">←</div>
+        <span class="guide-label">Deontology</span>
+      </div>
+      <div class="guide-vs">vs</div>
+      <div class="guide-item">
+        <div class="guide-arrow right">→</div>
+        <span class="guide-label">Consequentialism</span>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startGame()">Start swiping</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="screen-game">
+  <div class="game-header">
+    <div class="score-chip">Correct <strong id="score-val">0</strong></div>
+    <div class="timer-wrap">
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <circle class="timer-track" cx="24" cy="24" r="22"/>
+        <circle class="timer-arc" id="timer-arc" cx="24" cy="24" r="22"/>
+        <text class="timer-num-svg" id="timer-num" x="24" y="24">20</text>
+      </svg>
+    </div>
+    <div class="card-counter">Card <strong id="card-num">1</strong>/12</div>
+  </div>
+
+  <div class="progress-bar" id="progress-bar"></div>
+
+  <div class="arena">
+    <div class="swipe-hint left" id="hint-left"><div class="hint-badge">Deontology</div></div>
+    <div class="swipe-hint right" id="hint-right"><div class="hint-badge">Consequentialism</div></div>
+    <div class="card-stack">
+      <div class="card-behind2"></div>
+      <div class="card-behind"></div>
+      <div class="card card-enter" id="card">
+        <div class="card-top">
+          <div class="card-chip" id="card-chip">–</div>
+          <div class="card-num-inner" id="card-num-inner">01</div>
+        </div>
+        <div class="card-body">
+          <div class="card-statement" id="card-statement"></div>
+        </div>
+        <div>
+          <div class="card-hint-label">Clue</div>
+          <div class="card-hint-text" id="card-hint"></div>
+        </div>
+        <div class="timeout-overlay" id="timeout-overlay">
+          <div class="timeout-big">Time's up</div>
+          <div class="timeout-reveal">The answer was</div>
+          <div class="timeout-answer" id="timeout-answer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swipe-buttons">
+    <button class="swipe-btn deon" onclick="handleSwipe('left')">← Deontology</button>
+    <button class="swipe-btn cons" onclick="handleSwipe('right')">Consequentialism →</button>
+  </div>
+</div>
+
+<!-- VERDICT -->
+<div class="screen" id="screen-verdict">
+  <div class="verdict-inner" id="verdict-inner">
+    <div class="verdict-icon-wrap" id="verdict-icon-wrap">
+      <svg viewBox="0 0 28 28" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path id="verdict-icon-path"/>
+      </svg>
+    </div>
+    <div class="verdict-result" id="verdict-result"></div>
+    <div class="verdict-answer-tag" id="verdict-answer-tag"></div>
+    <div class="verdict-explanation" id="verdict-explanation"></div>
+    <button class="btn-next" id="btn-next" onclick="nextCard()">Next card →</button>
+  </div>
+</div>
+
+<!-- END -->
+<div class="screen" id="screen-end">
+  <div class="end-inner">
+    <div class="end-score-wrap">
+      <div class="end-score-big" id="end-score"></div>
+      <div class="end-score-denom" id="end-denom"></div>
+    </div>
+    <div class="end-label" id="end-label"></div>
+    <div class="end-scroll" id="end-scroll"></div>
+    <button class="btn-restart" onclick="restartGame()">Play again</button>
+  </div>
+</div>
+
+<script>
+const CARDS=[
+  {statement:"You must never lie, even to protect someone from harm.",answer:"deon",label:"Absolute duty",hint:"Is there an unconditional rule being stated?",explanation:"This is Kantian deontology — Kant held that lying is always wrong regardless of consequences, because honesty is a universal moral duty that cannot be broken."},
+  {statement:"It's okay to break a promise if keeping it causes more harm than breaking it.",answer:"cons",label:"Weighing outcomes",hint:"What justifies the decision — a rule, or the result?",explanation:"Consequentialism judges actions purely by their outcomes. If breaking a promise produces better results overall, it becomes the morally right thing to do."},
+  {statement:"Torturing one person to save ten is the right thing to do.",answer:"cons",label:"The numbers",hint:"Lives are being counted — what theory does this?",explanation:"Classic utilitarian logic: maximise wellbeing across the group. The harm to one is outweighed by saving ten. The maths matters, not the act itself."},
+  {statement:"Some actions are simply wrong, no matter how many people benefit.",answer:"deon",label:"Moral absolutes",hint:"Can consequences ever change whether this is right?",explanation:"Deontologists hold that certain acts violate moral rules that cannot be overridden — not even for a beneficial outcome. The act itself is what matters morally."},
+  {statement:"The best society maximises happiness for the greatest number of people.",answer:"cons",label:"Social good",hint:"Whose happiness counts — and how many?",explanation:"Bentham's utilitarian formula in a sentence. Consequentialism evaluates societies by the total good they produce, not by the rules they follow."},
+  {statement:"People have rights that cannot be violated, even for the public good.",answer:"deon",label:"Inviolable rights",hint:"Rights that hold regardless of benefit — duty or outcome?",explanation:"Rights-based ethics is fundamentally deontological. Individuals have inherent rights as rational beings — they are ends in themselves, not tools for social gain."},
+  {statement:"Stealing food for a starving child is morally justified because it prevents suffering.",answer:"cons",label:"The ends",hint:"What makes the act right — the action itself, or what it prevents?",explanation:"The justification here is entirely about preventing harm. Consequentialism permits rule-breaking when the outcome is sufficiently good."},
+  {statement:"A doctor must tell a dying patient the truth, even if it causes them pain.",answer:"deon",label:"Duty of honesty",hint:"Is a duty being upheld regardless of the harm it causes?",explanation:"Deontological ethics insists on honesty as a duty. The patient's right to know and the doctor's obligation override the pain that truth might cause."},
+  {statement:"Laws should be evaluated by whether they make society better off overall.",answer:"cons",label:"Legal purpose",hint:"What's the measure of a good law here?",explanation:"Evaluating laws by social benefit is consequentialist. Bentham himself designed laws this way — the purpose of law is to maximise utility across society."},
+  {statement:"Even a murderer deserves a fair trial because every person has inherent dignity.",answer:"deon",label:"Human dignity",hint:"Dignity owed regardless of what someone did — rule or result?",explanation:"Inherent dignity regardless of actions is deontological. Kant argued every rational person deserves respect as an end in themselves — even the guilty."},
+  {statement:"If lying produces the best outcome for everyone involved, it is morally correct.",answer:"cons",label:"Truth vs results",hint:"What makes the lie 'correct' here — the rule, or what happens?",explanation:"The truth or falsity of the act is irrelevant — only outcomes matter. Consequentialism at its starkest: the right act is whatever produces the best result."},
+  {statement:"We should help others not because it feels good, but because we have a duty to do so.",answer:"deon",label:"Acting from duty",hint:"Is the reason about feelings, results, or obligation?",explanation:"Motivation is crucial in Kantian ethics. Acting from duty — not emotional payoff or good consequences — is the only source of genuine moral worth."}
+];
+
+const CIRC=2*Math.PI*22;
+let state={};
+
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function startGame(){
+  state={idx:0,score:0,results:[],order:shuffle([...Array(CARDS.length).keys()]),timer:null,secs:20,dragging:false,startX:0,startY:0,answered:false};
+  buildDots();show('screen-game');loadCard();setupDrag();
+}
+
+function buildDots(){
+  const bar=document.getElementById('progress-bar');bar.innerHTML='';
+  state.order.forEach((_,i)=>{const d=document.createElement('div');d.className='prog-dot'+(i===0?' current':'');d.id='pd-'+i;bar.appendChild(d);});
+}
+
+function updateDots(){
+  state.order.forEach((_,i)=>{
+    const d=document.getElementById('pd-'+i);if(!d)return;
+    d.className='prog-dot';
+    if(i<state.idx)d.classList.add(state.results[i]?'correct':'wrong');
+    else if(i===state.idx)d.classList.add('current');
+  });
+}
+
+function loadCard(){
+  const c=CARDS[state.order[state.idx]];
+  const card=document.getElementById('card');
+  document.getElementById('card-statement').textContent=c.statement;
+  document.getElementById('card-hint').textContent=c.hint;
+  const chip=document.getElementById('card-chip');chip.textContent=c.label;chip.className='card-chip';
+  document.getElementById('card-num').textContent=state.idx+1;
+  document.getElementById('card-num-inner').textContent=String(state.idx+1).padStart(2,'0');
+  document.getElementById('score-val').textContent=state.score;
+  card.style.transform='';card.style.opacity='1';card.style.transition='none';
+  card.className='card card-enter';
+  document.getElementById('timeout-overlay').style.display='none';
+  document.getElementById('hint-left').style.opacity='0';
+  document.getElementById('hint-right').style.opacity='0';
+  state.answered=false;updateDots();startTimer();
+}
+
+function startTimer(){
+  clearInterval(state.timer);state.secs=20;renderTimer();
+  state.timer=setInterval(()=>{state.secs--;renderTimer();if(state.secs<=0){clearInterval(state.timer);onTimeout();}},1000);
+}
+
+function renderTimer(){
+  const arc=document.getElementById('timer-arc');
+  const num=document.getElementById('timer-num');
+  const offset=CIRC*(1-state.secs/20);
+  arc.style.strokeDasharray=CIRC;
+  arc.style.strokeDashoffset=offset;
+  arc.style.stroke=state.secs>7?'#6eb5c8':state.secs>4?'#c8a96e':'#e07070';
+  num.textContent=state.secs;
+  num.style.fill=state.secs<=4?'#e07070':'var(--text)';
+}
+
+function onTimeout(){
+  if(state.answered)return;
+  state.answered=true;
+  const c=CARDS[state.order[state.idx]];
+  state.results.push(false);
+  const overlay=document.getElementById('timeout-overlay');
+  overlay.style.display='flex';
+  const ans=document.getElementById('timeout-answer');
+  ans.textContent=c.answer==='deon'?'Deontology':'Consequentialism';
+  ans.style.color=c.answer==='deon'?'var(--deon)':'var(--cons)';
+  setTimeout(()=>showVerdict(null),1400);
+}
+
+function handleSwipe(dir){if(state.answered)return;doSwipe(dir);}
+
+function doSwipe(dir){
+  state.answered=true;clearInterval(state.timer);
+  const card=document.getElementById('card');
+  const tx=dir==='left'?-480:480;const rot=dir==='left'?-22:22;
+  card.style.transition='transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.38s';
+  card.style.transform=`translateX(${tx}px) rotate(${rot}deg)`;
+  card.style.opacity='0';
+  const c=CARDS[state.order[state.idx]];
+  const correct=(dir==='left'&&c.answer==='deon')||(dir==='right'&&c.answer==='cons');
+  state.results.push(correct);
+  if(correct)state.score++;
+  setTimeout(()=>showVerdict(dir),400);
+}
+
+function showVerdict(dir){
+  const c=CARDS[state.order[state.idx]];
+  const correct=state.results[state.results.length-1];
+  const wrap=document.getElementById('verdict-icon-wrap');
+  const path=document.getElementById('verdict-icon-path');
+  wrap.className='verdict-icon-wrap '+(correct?'correct':'wrong');
+  if(correct){path.setAttribute('d','M4 14l6 6L24 8');path.setAttribute('stroke','var(--correct)');}
+  else{path.setAttribute('d','M6 6l16 16M22 6L6 22');path.setAttribute('stroke','var(--wrong)');}
+  const result=document.getElementById('verdict-result');
+  result.textContent=correct?'Correct!':(dir===null?'Time ran out.':'Not quite.');
+  result.className='verdict-result '+(correct?'correct':'wrong');
+  const tag=document.getElementById('verdict-answer-tag');
+  tag.textContent=c.answer==='deon'?'Deontological':'Consequentialist';
+  tag.className='verdict-answer-tag '+c.answer;
+  document.getElementById('verdict-explanation').textContent=c.explanation;
+  const isLast=state.idx+1>=state.order.length;
+  document.getElementById('btn-next').textContent=isLast?'See results':'Next card →';
+  document.getElementById('verdict-inner').className='verdict-inner verdict-enter';
+  show('screen-verdict');
+}
+
+function nextCard(){
+  state.idx++;updateDots();
+  if(state.idx>=state.order.length){showEnd();return;}
+  show('screen-game');loadCard();
+}
+
+function showEnd(){
+  const total=state.order.length;
+  const pct=Math.round((state.score/total)*100);
+  document.getElementById('end-score').textContent=state.score;
+  document.getElementById('end-denom').textContent='/'+total;
+  const labels=['Keep at it — these frameworks take time.','A start! Keep revisiting the explanations.','Getting there — solid instincts forming.','Good work — you know your ethics.','Outstanding — you really get these frameworks!'];
+  document.getElementById('end-label').textContent=labels[Math.min(4,Math.floor(pct/21))];
+  const scroll=document.getElementById('end-scroll');scroll.innerHTML='';
+  state.order.forEach((ci,i)=>{
+    const c=CARDS[ci];const row=document.createElement('div');row.className='result-row';
+    const dot=document.createElement('div');dot.className='result-dot '+(state.results[i]?'correct':'wrong');
+    const txt=document.createElement('div');txt.className='result-text';
+    txt.innerHTML=c.statement.slice(0,60)+(c.statement.length>60?'…':'')+' <span class="result-framework '+c.answer+'">'+(c.answer==='deon'?'Deontology':'Consequentialism')+'</span>';
+    row.appendChild(dot);row.appendChild(txt);scroll.appendChild(row);
+  });
+  show('screen-end');
+}
+
+function restartGame(){startGame();}
+
+function setupDrag(){
+  const card=document.getElementById('card');
+  let af;
+  function onStart(e){
+    if(state.answered)return;
+    state.dragging=true;
+    const pt=e.touches?e.touches[0]:e;
+    state.startX=pt.clientX;state.startY=pt.clientY;
+    card.style.transition='none';
+  }
+  function onMove(e){
+    if(!state.dragging||state.answered)return;
+    const pt=e.touches?e.touches[0]:e;
+    const dx=pt.clientX-state.startX;
+    const dy=(pt.clientY-state.startY)*0.25;
+    const rot=dx*0.07;
+    cancelAnimationFrame(af);
+    af=requestAnimationFrame(()=>{card.style.transform=`translateX(${dx}px) translateY(${dy}px) rotate(${rot}deg)`;});
+    const abs=Math.abs(dx);
+    const hl=document.getElementById('hint-left');
+    const hr=document.getElementById('hint-right');
+    if(dx<-25){hl.style.opacity=Math.min(1,(abs-25)/60)+'';hr.style.opacity='0';}
+    else if(dx>25){hr.style.opacity=Math.min(1,(abs-25)/60)+'';hl.style.opacity='0';}
+    else{hl.style.opacity='0';hr.style.opacity='0';}
+    const chip=document.getElementById('card-chip');
+    if(abs>50){
+      if(dx<0){chip.className='card-chip deon';chip.textContent='Deontology';}
+      else{chip.className='card-chip cons';chip.textContent='Consequentialism';}
+    } else{const c=CARDS[state.order[state.idx]];chip.className='card-chip';chip.textContent=c.label;}
+  }
+  function onEnd(e){
+    if(!state.dragging)return;state.dragging=false;
+    const pt=e.changedTouches?e.changedTouches[0]:e;
+    const dx=pt.clientX-state.startX;
+    if(Math.abs(dx)>90){doSwipe(dx<0?'left':'right');}
+    else{
+      card.style.transition='transform 0.32s cubic-bezier(0.25,0.46,0.45,0.94)';
+      card.style.transform='';
+      const c=CARDS[state.order[state.idx]];
+      document.getElementById('card-chip').className='card-chip';
+      document.getElementById('card-chip').textContent=c.label;
+      document.getElementById('hint-left').style.opacity='0';
+      document.getElementById('hint-right').style.opacity='0';
+    }
+  }
+  card.addEventListener('mousedown',onStart);
+  card.addEventListener('touchstart',onStart,{passive:true});
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('touchmove',onMove,{passive:true});
+  document.addEventListener('mouseup',onEnd);
+  document.addEventListener('touchend',onEnd);
+}
+</script>
+</body>
+</html>
