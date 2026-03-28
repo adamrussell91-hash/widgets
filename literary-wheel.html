@@ -1064,20 +1064,19 @@
       return { name, info: { definition: def, effect, example, related: related || [] } };
     }
 
-    // baseAngle: direction (radians, standard math) the fan opens toward.
-    // When provided, techniques radiate outward from the root center instead of always downward.
-    function computeRadialPositions(cx, cy, n, baseAngle) {
+    function computeRadialPositions(cx, cy, n) {
+      // Fan always spreads downward — consistent and readable in a top-down tree.
+      // Alternate short/long radius to stagger depth and prevent label collision.
       const fanDeg = Math.min(165, 55 + n * 7);
-      const fanRad = fanDeg * Math.PI / 180;
       const Rshort = n <= 4 ? 190 : n <= 8 ? 225 : n <= 12 ? 265 : 320;
       const Rlong  = n <= 4 ? 280 : n <= 8 ? 320 : n <= 12 ? 380 : 450;
-      // ba: centre of the fan. Default = π/2 = straight down (old behaviour).
-      const ba = (baseAngle !== undefined) ? baseAngle : Math.PI / 2;
+      const startAngle = -fanDeg / 2;
       return Array.from({length: n}, (_, i) => {
-        const t = n === 1 ? 0 : i / (n - 1) - 0.5;  // -0.5 … +0.5
-        const angle = ba + t * fanRad;
+        const angleDeg = n === 1 ? 0 : startAngle + i * (fanDeg / (n - 1));
+        const rad = angleDeg * Math.PI / 180;
         const R = i % 2 === 0 ? Rshort : Rlong;
-        return { x: cx + R * Math.cos(angle), y: cy + R * Math.sin(angle) };
+        // sin/cos maps 0° → straight down, -/+ → left/right of downward
+        return { x: cx + R * Math.sin(rad), y: cy + R * Math.cos(rad) };
       });
     }
 
@@ -1784,9 +1783,7 @@
         const techs = subgroupNode.data.techniques || [];
         const isExp = state.expandedSubgroups.has(subgroupNode.data.name);
         const cx = subgroupNode.x, cy = subgroupNode.y;
-        // Fan outward from root so adjacent subgroup fans don't collide
-        const baseAngle = Math.atan2(cy - root.y, cx - root.x);
-        const positions = computeRadialPositions(cx, cy, techs.length, baseAngle);
+        const positions = computeRadialPositions(cx, cy, techs.length);
 
         if (isExp) {
           techs.forEach((t, i) => {
