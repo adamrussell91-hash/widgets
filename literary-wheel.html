@@ -1064,19 +1064,20 @@
       return { name, info: { definition: def, effect, example, related: related || [] } };
     }
 
-    function computeRadialPositions(cx, cy, n) {
-      // Fan opens wider for larger groups to give labels breathing room
-      const fanDeg = Math.min(170, 55 + n * 7);
-      // Alternate short / long radius — stagger depth so labels don't all sit at same height.
-      // Larger values for big groups (17+) to prevent crowding.
+    // baseAngle: direction (radians, standard math) the fan opens toward.
+    // When provided, techniques radiate outward from the root center instead of always downward.
+    function computeRadialPositions(cx, cy, n, baseAngle) {
+      const fanDeg = Math.min(165, 55 + n * 7);
+      const fanRad = fanDeg * Math.PI / 180;
       const Rshort = n <= 4 ? 190 : n <= 8 ? 225 : n <= 12 ? 265 : 320;
       const Rlong  = n <= 4 ? 280 : n <= 8 ? 320 : n <= 12 ? 380 : 450;
-      const startAngle = -fanDeg / 2;
+      // ba: centre of the fan. Default = π/2 = straight down (old behaviour).
+      const ba = (baseAngle !== undefined) ? baseAngle : Math.PI / 2;
       return Array.from({length: n}, (_, i) => {
-        const angleDeg = n === 1 ? 0 : startAngle + i * (fanDeg / (n - 1));
-        const rad = angleDeg * Math.PI / 180;
+        const t = n === 1 ? 0 : i / (n - 1) - 0.5;  // -0.5 … +0.5
+        const angle = ba + t * fanRad;
         const R = i % 2 === 0 ? Rshort : Rlong;
-        return { x: cx + R * Math.sin(rad), y: cy + R * Math.cos(rad) };
+        return { x: cx + R * Math.cos(angle), y: cy + R * Math.sin(angle) };
       });
     }
 
@@ -1461,16 +1462,16 @@
     const techniquesGroup = d3.select("#techniques-group");
 
     const treeLayout = d3.tree()
-      .nodeSize([310, 260])   // wider to accommodate bigger root/family nodes
+      .nodeSize([380, 300])   // wider to accommodate bigger root/family nodes + burst fans
       .separation((a, b) => {
         const aExp = a.data.type === "subgroup" && state.expandedSubgroups.has(a.data.name);
         const bExp = b.data.type === "subgroup" && state.expandedSubgroups.has(b.data.name);
-        if (aExp && bExp) return 3.8;
-        if (aExp || bExp) return 3.0;
-        // More separation for family-level nodes to keep big labels clear
+        // More room when both/either expanded so burst fans clear each other
+        if (aExp && bExp) return 5.0;
+        if (aExp || bExp) return 4.0;
         const isFam = a.data.type === "family" || b.data.type === "family";
-        if (isFam) return a.parent === b.parent ? 2.0 : 2.4;
-        return a.parent === b.parent ? 1.6 : 2.0;
+        if (isFam) return a.parent === b.parent ? 2.2 : 2.6;
+        return a.parent === b.parent ? 1.8 : 2.2;
       });
 
     const root = d3.hierarchy(taxonomyRoot);
@@ -1675,12 +1676,29 @@
             d.children = null;
           }
           render(d);
-          renderBursts();
+          setTimeout(() => renderBursts(), 30);
 
         } else if (d.data.type === "subgroup") {
-          state.expandedSubgroups.has(d.data.name)
-            ? state.expandedSubgroups.delete(d.data.name)
-            : state.expandedSubgroups.add(d.data.name);
+          const wasExpanded = state.expandedSubgroups.has(d.data.name);
+          if (wasExpanded) {
+            state.expandedSubgroups.delete(d.data.name);
+            // Explicitly remove nodes — don't rely on D3 data-join exit
+            // (join exit is unreliable when enter transitions are still running)
+            techniquesGroup.selectAll(`g.tn-${d.id}`)
+              .interrupt()
+              .transition().duration(280).ease(d3.easeCubicIn)
+              .attr("transform", `translate(${d.x},${d.y})`)
+              .style("opacity", 0)
+              .remove();
+            spokesGroup.selectAll(`line.spoke-${d.id}`)
+              .interrupt()
+              .transition().duration(280).ease(d3.easeCubicIn)
+              .attr("x2", d.x).attr("y2", d.y)
+              .style("opacity", 0)
+              .remove();
+          } else {
+            state.expandedSubgroups.add(d.data.name);
+          }
 
           // Pulse immediately, then dim everything else once animation settles
           triggerPulse(this, nodeRadii.subgroup, getFamilyColor(d));
@@ -1691,7 +1709,7 @@
           setTimeout(() => {
             renderBursts();
             // Apply dim after render + burst animations have started
-            setTimeout(() => applySelection(d.data.name), 300);
+            if (!wasExpanded) setTimeout(() => applySelection(d.data.name), 300);
           }, 30);
           showInfo(d, event);
         }
@@ -1766,7 +1784,9 @@
         const techs = subgroupNode.data.techniques || [];
         const isExp = state.expandedSubgroups.has(subgroupNode.data.name);
         const cx = subgroupNode.x, cy = subgroupNode.y;
-        const positions = computeRadialPositions(cx, cy, techs.length);
+        // Fan outward from root so adjacent subgroup fans don't collide
+        const baseAngle = Math.atan2(cy - root.y, cx - root.x);
+        const positions = computeRadialPositions(cx, cy, techs.length, baseAngle);
 
         if (isExp) {
           techs.forEach((t, i) => {
@@ -3367,22 +3387,30 @@ Be specific and educational.`;
         if (!changed) break;
       }
 
-      // ── Pass 2: spread nodes that share the same X column ──
-      // Bucket by approximate X (bucket width = pill width + small gap)
-      const BW = EL.PW + 10;
-      const byBucket = {};
-      visIds.forEach(id => {
-        const bk = Math.round(_getNodePx(id) / BW);
-        (byBucket[bk] = byBucket[bk] || []).push(id);
-      });
-      Object.values(byBucket).forEach(group => {
-        if (group.length < 2) return;
-        group.sort((a, b) => yPos[a] - yPos[b]);
-        for (let i = 1; i < group.length; i++) {
-          const need = yPos[group[i-1]] + MIN_V;
-          if (yPos[group[i]] < need) yPos[group[i]] = need;
+      // ── Pass 2: resolve any two visible nodes whose pills would overlap ──
+      // Check all pairs within vertical range; if their pills also overlap horizontally, push
+      // lower node down. Multiple passes to propagate cascading pushes.
+      const MIN_H = EL.PW + 6;  // minimum centre-to-centre horizontal distance (pills touching = PW)
+      const pairs = visIds.map(id => ({ id, x: _getNodePx(id), y: yPos[id] }));
+      for (let pass2 = 0; pass2 < 12; pass2++) {
+        pairs.sort((a, b) => a.y - b.y || a.x - b.x);
+        let changed2 = false;
+        for (let i = 0; i < pairs.length; i++) {
+          for (let j = i + 1; j < pairs.length; j++) {
+            if (pairs[j].y - pairs[i].y >= MIN_V) break;  // too far vertically — skip all j
+            if (Math.abs(pairs[j].x - pairs[i].x) < MIN_H) {
+              // Pills overlap both vertically and horizontally → push j down
+              const need = pairs[i].y + MIN_V;
+              if (pairs[j].y < need) {
+                pairs[j].y = need;
+                yPos[pairs[j].id] = need;
+                changed2 = true;
+              }
+            }
+          }
         }
-      });
+        if (!changed2) break;
+      }
 
       return yPos;
     }
