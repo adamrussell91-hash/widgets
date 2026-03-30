@@ -1285,121 +1285,128 @@ Respond ONLY with a valid JSON object in this exact format:
     }
 
     async function callAI(prompt){
-      const response = await fetch(AI_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt,
-          model: MODEL_NAME
-        })
-      });
+  const response = await fetch(AI_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prompt,
+      model: MODEL_NAME
+    })
+  });
 
-      const rawText = await response.text();
-      console.log("AI raw response text:", rawText);
+  const rawText = await response.text();
+  console.log("AI raw response text:", rawText);
 
-      if(!response.ok){
-        throw new Error(`HTTP ${response.status}: ${rawText}`);
-      }
+  if(!response.ok){
+    throw new Error(`HTTP ${response.status}: ${rawText}`);
+  }
 
-      const parsed = extractJSON(rawText);
+  const parsedOuter = safeJsonParse(rawText);
+  const parsed = extractJSON(parsedOuter ?? rawText);
 
-      if(!parsed){
-        throw new Error("Could not parse JSON from AI response.");
-      }
+  if(!parsed){
+    throw new Error(`Could not parse JSON from AI response. Raw response: ${rawText}`);
+  }
 
-      return parsed;
+  return parsed;
+}
+
+function extractJSON(raw){
+  if(raw == null) return null;
+
+  if(typeof raw === "object"){
+    if(Array.isArray(raw.questions)) return raw;
+
+    const candidateFields = [
+      raw.body,
+      raw.data,
+      raw.result,
+      raw.response,
+      raw.content,
+      raw.text,
+      raw.message,
+      raw.output,
+      raw.completion
+    ];
+
+    for(const field of candidateFields){
+      const parsed = extractJSON(field);
+      if(parsed) return parsed;
     }
 
-    function extractJSON(raw){
-      if(raw == null) return null;
-
-      if(typeof raw === "object"){
-        if(Array.isArray(raw.questions)) return raw;
-        if(raw.result) return extractJSON(raw.result);
-        if(raw.response) return extractJSON(raw.response);
-        if(raw.content) return extractJSON(raw.content);
-        if(raw.text) return extractJSON(raw.text);
-        if(raw.message) return extractJSON(raw.message);
-        if(Array.isArray(raw.choices)){
-          for(const choice of raw.choices){
-            const maybe = extractJSON(choice?.message?.content || choice?.text || choice);
-            if(maybe) return maybe;
-          }
-        }
-        if(Array.isArray(raw.output)){
-          for(const item of raw.output){
-            const maybe = extractJSON(item?.content?.[0]?.text || item);
-            if(maybe) return maybe;
-          }
-        }
-        return null;
+    if(Array.isArray(raw.choices)){
+      for(const choice of raw.choices){
+        const parsed = extractJSON(choice);
+        if(parsed) return parsed;
       }
-
-      if(typeof raw === "string"){
-        const trimmed = raw.trim();
-
-        try{
-          const direct = JSON.parse(trimmed);
-          const maybe = extractJSON(direct);
-          if(maybe) return maybe;
-        } catch {}
-
-        const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-        if(fenced){
-          try{
-            const parsedFence = JSON.parse(fenced[1].trim());
-            const maybe = extractJSON(parsedFence);
-            if(maybe) return maybe;
-          } catch {}
-        }
-
-        const match = trimmed.match(/\{[\s\S]*\}/);
-        if(match){
-          try{
-            const parsedBlock = JSON.parse(match[0]);
-            const maybe = extractJSON(parsedBlock);
-            if(maybe) return maybe;
-          } catch {}
-        }
-      }
-
-      return null;
     }
 
-    function normaliseQuestions(arr, categories, pointValues){
-      const map = new Map();
-
-      arr.forEach(item => {
-        if(!item) return;
-        const category = String(item.category || "").trim();
-        const points = Number(item.points);
-        const question = String(item.question || "").trim();
-        const answer = String(item.answer || "").trim();
-
-        if(!categories.includes(category)) return;
-        if(!pointValues.includes(points)) return;
-        if(!question || !answer) return;
-
-        map.set(`${category}__${points}`, { category, points, question, answer });
-      });
-
-      const out = [];
-      categories.forEach(category => {
-        pointValues.forEach(points => {
-          const key = `${category}__${points}`;
-          const found = map.get(key);
-          out.push(found || {
-            category,
-            points,
-            question:`Fallback question for ${category} at ${points} points. Replace this with a better one.`,
-            answer:"Answer needed"
-          });
-        });
-      });
-      return out;
+    if(Array.isArray(raw.output)){
+      for(const item of raw.output){
+        const parsed = extractJSON(item);
+        if(parsed) return parsed;
+      }
     }
 
-    function fallbackWheelPhrases(){
+    if(typeof raw.content === "object"){
+      const parsed = extractJSON(raw.content);
+      if(parsed) return parsed;
+    }
+
+    if(typeof raw.message === "object"){
+      const parsed = extractJSON(raw.message);
+      if(parsed) return parsed;
+    }
+
+    return null;
+  }
+
+  if(typeof raw === "string"){
+    const trimmed = raw.trim();
+
+    const direct = safeJsonParse(trimmed);
+    if(direct){
+      const parsed = extractJSON(direct);
+      if(parsed) return parsed;
+    }
+
+    const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if(fencedMatch){
+      const fencedParsed = safeJsonParse(fencedMatch[1].trim());
+      if(fencedParsed){
+        const parsed = extractJSON(fencedParsed);
+        if(parsed) return parsed;
+      }
+    }
+
+    const objectMatch = trimmed.match(/\{[\s\S]*\}/);
+    if(objectMatch){
+      const objectParsed = safeJsonParse(objectMatch[0]);
+      if(objectParsed){
+        const parsed = extractJSON(objectParsed);
+        if(parsed) return parsed;
+      }
+    }
+  }
+
+  return null;
+}
+
+function safeJsonParse(value){
+  try{
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
+function fallbackWheelPhrases(){
+  return [
+    "INDUSTRIAL REVOLUTION",
+    "MECHANICAL ADVANTAGE",
+    "STEAM POWERED ENGINE"
+  ];
+}
       return [
         "INDUSTRIAL REVOLUTION",
         "MECHANICAL ADVANTAGE",
