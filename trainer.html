@@ -12,9 +12,7 @@
       --bg:#060813;
       --bg2:#0d1330;
       --panel:#101936;
-      --panel2:#16224a;
       --gold:#ffd54a;
-      --gold2:#ffb800;
       --pink:#ff3cac;
       --green:#39ff88;
       --red:#ff4d5a;
@@ -179,7 +177,6 @@
     .btn.red{background:linear-gradient(180deg, #ff6f7a, #ff3f50)}
     .btn.blue{background:linear-gradient(180deg, #75c8ff, #2f9eff); color:#06264b}
     .btn.ghost{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1)}
-    .btn.full{width:100%}
     .btn[disabled]{opacity:.45; cursor:not-allowed; transform:none; filter:none}
 
     .team-list{
@@ -767,7 +764,6 @@
       }
     }
 
-    .muted{color:var(--muted)}
     .hidden{display:none!important}
 
     @keyframes bounceSoft{
@@ -919,24 +915,25 @@
   <div class="overlay" id="overlay">
     <div class="modal" id="overlayModal"></div>
   </div>
-<script>
-  const AI_ENDPOINT = "https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai";
-  const MODEL_NAME = "gpt-4o";
 
-  const CATEGORY_DESCRIPTIONS = {
-    "Simple Machines":"Levers, pulleys, wheels, inclined planes, screws, wedges",
-    "Engineering Legends":"Da Vinci, Brunel, Tesla, Watt, Curie, Archimedes",
-    "Forces & Motion":"Newton's laws, friction, momentum, gravity, mechanical work",
-    "Inventions & Patents":"Famous firsts, dates, inventors, patent trivia",
-    "Maths of Machines":"Gear ratios, mechanical advantage, torque, speed calculations",
-    "Engineering in Nature":"Biomechanics, animal locomotion, natural structures",
-    "Science of Materials":"Metals, composites, stress, strain, load-bearing",
-    "Creative Thinking":"Lateral thinking, design problems, what would you do if",
-    "Wild Card":"Surprise mix, anything from any category, high risk reward",
-    "Da Vinci Specials":"Questions about Leonardo da Vinci's inventions and notebooks",
-    "History of Machines":"Industrial Revolution, key inventions through history",
-    "Everyday Engineering":"Machines in daily life, how things work"
-  };
+  <script>
+    const AI_ENDPOINT = "https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai";
+    const MODEL_NAME = "gpt-4o";
+
+    const CATEGORY_DESCRIPTIONS = {
+      "Simple Machines":"Levers, pulleys, wheels, inclined planes, screws, wedges",
+      "Engineering Legends":"Da Vinci, Brunel, Tesla, Watt, Curie, Archimedes",
+      "Forces & Motion":"Newton's laws, friction, momentum, gravity, mechanical work",
+      "Inventions & Patents":"Famous firsts, dates, inventors, patent trivia",
+      "Maths of Machines":"Gear ratios, mechanical advantage, torque, speed calculations",
+      "Engineering in Nature":"Biomechanics, animal locomotion, natural structures",
+      "Science of Materials":"Metals, composites, stress, strain, load-bearing",
+      "Creative Thinking":"Lateral thinking, design problems, what would you do if",
+      "Wild Card":"Surprise mix, anything from any category, high risk reward",
+      "Da Vinci Specials":"Questions about Leonardo da Vinci's inventions and notebooks",
+      "History of Machines":"Industrial Revolution, key inventions through history",
+      "Everyday Engineering":"Machines in daily life, how things work"
+    };
 
     const ALL_CATEGORIES = Object.keys(CATEGORY_DESCRIPTIONS);
 
@@ -988,11 +985,8 @@
       wheelOfFortunePhrases: [],
       board: [],
       currentTile: null,
-      currentQuestion: null,
-      currentBonusContext: null,
-      bonusAssignments: [],
-      doublePointsForTeamId: null,
-      generated: false
+      generated: false,
+      doublePointsForTeamId: null
     };
 
     const el = {
@@ -1044,11 +1038,13 @@
     function bindEvents(){
       el.teamsMinus.addEventListener("click", () => changeTeamCount(-1));
       el.teamsPlus.addEventListener("click", () => changeTeamCount(1));
+
       el.selectAllCats.addEventListener("click", () => {
         state.selectedCategories = new Set(ALL_CATEGORIES.slice(0, 9));
         renderCategories();
         updateValidation();
       });
+
       el.clearAllCats.addEventListener("click", () => {
         state.selectedCategories = new Set();
         renderCategories();
@@ -1074,11 +1070,12 @@
         }
       });
 
-      el.generateBtn.addEventListener("click", generateQuestions);
-      el.regenerateAllBtn.addEventListener("click", generateQuestions);
+      el.generateBtn.addEventListener("click", () => generateQuestions());
+      el.regenerateAllBtn.addEventListener("click", () => generateQuestions());
       el.startGameBtn.addEventListener("click", startGame);
       el.backToSetupBtn.addEventListener("click", () => showScreen("setup"));
       el.playAgainBtn.addEventListener("click", playAgain);
+
       el.overlay.addEventListener("click", (e) => {
         if(e.target === el.overlay) closeOverlay();
       });
@@ -1096,7 +1093,7 @@
       for(let i = 0; i < state.teamCount; i++){
         next.push({
           id: i + 1,
-          name: existing[i]?.name || TEAM_NAME_POOL[i] || `Team ${i+1}`,
+          name: existing[i]?.name || TEAM_NAME_POOL[i] || `Team ${i + 1}`,
           colour: existing[i]?.colour || TEAM_COLOURS[i % TEAM_COLOURS.length],
           score: existing[i]?.score || 0
         });
@@ -1190,18 +1187,19 @@
         return;
       }
 
+      const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
+
       setLoading(true);
       try{
-        const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
-
         const prompt = buildPrompt(categories, pointValues, singleTarget);
         const result = await callAI(prompt);
 
         if(!result || !Array.isArray(result.questions)){
-          throw new Error("The AI response was not valid JSON with a questions array.");
+          throw new Error("The AI response did not include a questions array.");
         }
 
         const cleaned = normaliseQuestions(result.questions, categories, pointValues);
+
         if(singleTarget){
           const idx = state.questions.findIndex(q => q.category === singleTarget.category && q.points === singleTarget.points);
           if(idx >= 0 && cleaned[0]){
@@ -1287,103 +1285,82 @@ Respond ONLY with a valid JSON object in this exact format:
     }
 
     async function callAI(prompt){
-      const payloads = [
-        {
-          model: MODEL_NAME,
-          messages: [
-            { role: "system", content: "Return only valid JSON." },
-            { role: "user", content: prompt }
-          ]
-        },
-        {
-          model: MODEL_NAME,
-          input: prompt
-        },
-        {
-          prompt
-        }
-      ];
+      const response = await fetch(AI_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt,
+          model: MODEL_NAME
+        })
+      });
 
-      let lastError = null;
+      const rawText = await response.text();
+      console.log("AI raw response text:", rawText);
 
-      for(const payload of payloads){
-        try{
-          const response = await fetch(AI_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          if(!response.ok){
-            const txt = await response.text().catch(() => "");
-            throw new Error(`HTTP ${response.status}. ${txt.slice(0,200)}`);
-          }
-
-          const raw = await response.json().catch(async () => {
-            const txt = await response.text();
-            return { raw: txt };
-          });
-
-          const json = extractJSON(raw);
-          if(json) return json;
-          throw new Error("Could not parse JSON from AI response.");
-        } catch(err){
-          lastError = err;
-        }
+      if(!response.ok){
+        throw new Error(`HTTP ${response.status}: ${rawText}`);
       }
 
-      throw lastError || new Error("Unknown AI request failure.");
+      const parsed = extractJSON(rawText);
+
+      if(!parsed){
+        throw new Error("Could not parse JSON from AI response.");
+      }
+
+      return parsed;
     }
 
     function extractJSON(raw){
-      if(!raw) return null;
+      if(raw == null) return null;
 
-      if(typeof raw === "object" && raw.questions) return raw;
-
-      const possibleStrings = [];
-
-      if(typeof raw === "string") possibleStrings.push(raw);
-      if(typeof raw.raw === "string") possibleStrings.push(raw.raw);
-      if(typeof raw.response === "string") possibleStrings.push(raw.response);
-      if(typeof raw.output_text === "string") possibleStrings.push(raw.output_text);
-      if(typeof raw.text === "string") possibleStrings.push(raw.text);
-
-      if(Array.isArray(raw.choices)){
-        raw.choices.forEach(choice => {
-          const content = choice?.message?.content;
-          if(typeof content === "string") possibleStrings.push(content);
-        });
-      }
-
-      if(Array.isArray(raw.output)){
-        raw.output.forEach(item => {
-          if(typeof item?.content?.[0]?.text === "string"){
-            possibleStrings.push(item.content[0].text);
+      if(typeof raw === "object"){
+        if(Array.isArray(raw.questions)) return raw;
+        if(raw.result) return extractJSON(raw.result);
+        if(raw.response) return extractJSON(raw.response);
+        if(raw.content) return extractJSON(raw.content);
+        if(raw.text) return extractJSON(raw.text);
+        if(raw.message) return extractJSON(raw.message);
+        if(Array.isArray(raw.choices)){
+          for(const choice of raw.choices){
+            const maybe = extractJSON(choice?.message?.content || choice?.text || choice);
+            if(maybe) return maybe;
           }
-        });
+        }
+        if(Array.isArray(raw.output)){
+          for(const item of raw.output){
+            const maybe = extractJSON(item?.content?.[0]?.text || item);
+            if(maybe) return maybe;
+          }
+        }
+        return null;
       }
 
-      for(const str of possibleStrings){
-        const parsed = tryParseJSONFromText(str);
-        if(parsed) return parsed;
-      }
+      if(typeof raw === "string"){
+        const trimmed = raw.trim();
 
-      return null;
-    }
-
-    function tryParseJSONFromText(str){
-      if(!str || typeof str !== "string") return null;
-      const cleaned = str.trim();
-
-      try{
-        return JSON.parse(cleaned);
-      } catch {}
-
-      const match = cleaned.match(/\{[\s\S]*\}/);
-      if(match){
         try{
-          return JSON.parse(match[0]);
+          const direct = JSON.parse(trimmed);
+          const maybe = extractJSON(direct);
+          if(maybe) return maybe;
         } catch {}
+
+        const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+        if(fenced){
+          try{
+            const parsedFence = JSON.parse(fenced[1].trim());
+            const maybe = extractJSON(parsedFence);
+            if(maybe) return maybe;
+          } catch {}
+        }
+
+        const match = trimmed.match(/\{[\s\S]*\}/);
+        if(match){
+          try{
+            const parsedBlock = JSON.parse(match[0]);
+            const maybe = extractJSON(parsedBlock);
+            if(maybe) return maybe;
+          } catch {}
+        }
       }
 
       return null;
@@ -1506,9 +1483,8 @@ Respond ONLY with a valid JSON object in this exact format:
         shuffle(availableIndices);
         const picked = availableIndices.slice(0, bonusCount);
 
-        picked.forEach((index, i) => {
+        picked.forEach(index => {
           board[index].type = "bonus";
-          board[index].bonusType = BONUS_TYPES[i % BONUS_TYPES.length];
           board[index].bonusPayload = createBonusPayload(board[index].points);
         });
       }
@@ -1518,10 +1494,12 @@ Respond ONLY with a valid JSON object in this exact format:
 
     function createBonusPayload(basePoints){
       const type = BONUS_TYPES[Math.floor(Math.random() * BONUS_TYPES.length)];
+
       if(type === "wheel"){
         const phrase = state.wheelOfFortunePhrases[Math.floor(Math.random() * state.wheelOfFortunePhrases.length)] || "MECHANICAL ADVANTAGE";
         return { type, phrase, awardPoints: basePoints * 2 };
       }
+
       if(type === "rapid"){
         return {
           type,
@@ -1529,9 +1507,11 @@ Respond ONLY with a valid JSON object in this exact format:
           questions: makeRapidQuestions(5)
         };
       }
+
       if(type === "double"){
         return { type, awardPoints: basePoints * 2 };
       }
+
       return {
         type:"steal",
         awardPoints: 400,
@@ -1714,7 +1694,7 @@ Respond ONLY with a valid JSON object in this exact format:
 
     function openBonusTile(tile){
       const payload = tile.bonusPayload;
-      const type = payload?.type || tile?.bonusType || "double";
+      const type = payload?.type || "double";
 
       if(type === "wheel"){
         openWheelBonus(tile, payload);
@@ -1756,21 +1736,22 @@ Respond ONLY with a valid JSON object in this exact format:
       `;
 
       let autoTimer = null;
-      const updatePhrase = () => {
-        document.getElementById("phraseDisplay").textContent = revealed;
-      };
 
-      const revealOne = () => {
+      function updatePhrase(){
+        document.getElementById("phraseDisplay").textContent = revealed;
+      }
+
+      function revealOne(){
         const next = revealRandomLetter(phrase, revealed);
         revealed = next;
         updatePhrase();
         playSound("bonus");
-      };
+      }
 
-      const revealFull = () => {
+      function revealFull(){
         document.getElementById("answerBox").classList.add("visible");
         document.getElementById("phraseDisplay").textContent = phrase;
-      };
+      }
 
       document.getElementById("closeOverlayBtn").addEventListener("click", () => {
         if(autoTimer) clearInterval(autoTimer);
@@ -2077,7 +2058,7 @@ Respond ONLY with a valid JSON object in this exact format:
         card.style.background = `linear-gradient(180deg, ${team.colour}, ${shadeHex(team.colour, -18)})`;
         card.innerHTML = `
           <div class="team-score-name">${escapeHtml(team.name)}</div>
-          <div class="team-score-value" data-score="${team.score}">${team.score}</div>
+          <div class="team-score-value">${team.score}</div>
         `;
         target.appendChild(card);
       });
@@ -2092,18 +2073,12 @@ Respond ONLY with a valid JSON object in this exact format:
 
       const liveCard = document.getElementById(`teamCard_${team.id}_live`);
       if(liveCard) liveCard.classList.add("flash");
-      animateNumber(`[data-score="${team.score}"]`, team.score);
 
       if(delta > 0){
         toast(`${team.name} +${delta}`, "good");
       } else {
         toast(`${team.name} ${delta}`, "bad");
       }
-    }
-
-    function animateNumber(selector, endValue){
-      const els = [...document.querySelectorAll(selector)];
-      els.forEach(node => node.textContent = endValue);
     }
 
     function getTeam(id){
@@ -2152,6 +2127,7 @@ Respond ONLY with a valid JSON object in this exact format:
     function setLoading(on){
       el.loadingWrap.classList.toggle("active", on);
       el.generateBtn.disabled = on;
+
       if(on){
         let idx = 0;
         el.loadingText.textContent = LOADING_LINES[idx];
@@ -2235,8 +2211,7 @@ Respond ONLY with a valid JSON object in this exact format:
           o1.start(now);
           o1.stop(now + 0.46);
         }
-      } catch(err){
-      }
+      } catch(err){}
     }
 
     function makeHiddenPhrase(phrase){
@@ -2268,13 +2243,12 @@ Respond ONLY with a valid JSON object in this exact format:
       const R = f >> 16;
       const G = f >> 8 & 0x00FF;
       const B = f & 0x0000FF;
-      const newHex = "#" + (
+      return "#" + (
         0x1000000 +
         (Math.round((t - R) * p) + R) * 0x10000 +
         (Math.round((t - G) * p) + G) * 0x100 +
         (Math.round((t - B) * p) + B)
       ).toString(16).slice(1);
-      return newHex;
     }
 
     function cryptoRandomId(){
