@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Da Vinci Decathlon Jeopardy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Boogaloo&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#060813;
+      --bg2:#0d1330;
+      --panel:#101936;
+      --panel2:#16224a;
+      --gold:#ffd54a;
+      --gold2:#ffb800;
+      --pink:#ff3cac;
+      --green:#39ff88;
+      --red:#ff4d5a;
+      --blue:#53b3ff;
+      --white:#f8fbff;
+      --muted:#a8b3d7;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,60,172,.12), transparent 18%),
+        radial-gradient(circle at 80% 10%, rgba(57,255,136,.09), transparent 18%),
+        radial-gradient(circle at 50% 80%, rgba(83,179,255,.08), transparent 22%),
+        linear-gradient(180deg, var(--bg2), var(--bg));
+      color:var(--white);
+      font-family:"Fredoka", system-ui, sans-serif;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.12) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,212,74,.08) 1px, transparent 1px);
+      background-size:36px 36px, 72px 72px;
+      background-position:0 0, 18px 18px;
+      opacity:.2;
+      animation:drift 16s linear infinite;
+    }
+
+    @keyframes drift{
+      from{transform:translateY(0)}
+      to{transform:translateY(36px)}
+    }
+
+    .app{
+      max-width:1600px;
+      margin:0 auto;
+      padding:20px;
+      position:relative;
+      z-index:1;
+    }
+
+    .screen{display:none}
+    .screen.active{display:block}
+
+    .hero{
+      text-align:center;
+      margin-bottom:18px;
+      animation:bounceSoft 2.8s ease-in-out infinite;
+    }
+
+    .hero h1{
+      font-family:"Boogaloo","Fredoka",sans-serif;
+      font-size:clamp(2.4rem,5vw,4.7rem);
+      margin:0 0 6px;
+      letter-spacing:1px;
+      color:var(--gold);
+      text-shadow:
+        0 0 12px rgba(255,212,74,.4),
+        0 4px 0 rgba(0,0,0,.35);
+    }
+
+    .hero h2{
+      margin:0;
+      font-size:clamp(1rem,2vw,1.5rem);
+      color:#fff2b1;
+      text-shadow:0 0 10px rgba(255,60,172,.25);
+    }
+
+    .panels{
+      display:grid;
+      grid-template-columns:1.15fr 1fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    @media (max-width:1100px){
+      .panels{grid-template-columns:1fr}
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(22,34,74,.92), rgba(10,18,42,.92));
+      border:2px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .panel::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.05) 50%, transparent 100%);
+      transform:translateX(-100%);
+      animation:shine 7s linear infinite;
+    }
+
+    @keyframes shine{
+      to{transform:translateX(100%)}
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:0 0 14px;
+      font-size:1.3rem;
+      color:var(--gold);
+    }
+
+    .small{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .stepper{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .stepper-value{
+      min-width:64px;
+      text-align:center;
+      font-size:2rem;
+      color:var(--gold);
+      text-shadow:0 0 12px rgba(255,212,74,.25);
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      border-radius:16px;
+      cursor:pointer;
+      font-family:inherit;
+      font-weight:700;
+      color:var(--white);
+      background:linear-gradient(180deg, #2d427f, #1d2c58);
+      padding:12px 18px;
+      box-shadow:var(--shadow);
+      transition:transform .12s ease, filter .12s ease, box-shadow .12s ease;
+    }
+
+    .btn:hover{transform:translateY(-2px) scale(1.01); filter:brightness(1.08)}
+    .btn:active{transform:translateY(1px) scale(.99)}
+    .btn.gold{background:linear-gradient(180deg, #ffdd62, #ffb800); color:#2f1800}
+    .btn.pink{background:linear-gradient(180deg, #ff6dc5, #ff3cac)}
+    .btn.green{background:linear-gradient(180deg, #65ff9f, #1fd96a); color:#08361a}
+    .btn.red{background:linear-gradient(180deg, #ff6f7a, #ff3f50)}
+    .btn.blue{background:linear-gradient(180deg, #75c8ff, #2f9eff); color:#06264b}
+    .btn.ghost{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1)}
+    .btn.full{width:100%}
+    .btn[disabled]{opacity:.45; cursor:not-allowed; transform:none; filter:none}
+
+    .team-list{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .team-row{
+      display:grid;
+      grid-template-columns:42px 1fr auto;
+      gap:10px;
+      align-items:center;
+      background:rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:10px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .team-chip{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      border:3px solid rgba(255,255,255,.25);
+      box-shadow:0 0 0 3px rgba(255,255,255,.05) inset;
+    }
+
+    .team-row input{
+      width:100%;
+      background:#081126;
+      border:2px solid rgba(255,255,255,.1);
+      color:var(--white);
+      border-radius:12px;
+      padding:12px 14px;
+      font-family:inherit;
+      font-size:1rem;
+    }
+
+    .team-score-mini{
+      color:var(--muted);
+      font-weight:600;
+      padding:0 8px;
+    }
+
+    .category-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .category-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+      gap:10px;
+    }
+
+    .category-pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:rgba(255,255,255,.06);
+      border:2px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:12px;
+      cursor:pointer;
+      user-select:none;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+    }
+
+    .category-pill:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,212,74,.4);
+    }
+
+    .category-pill input{display:none}
+    .category-pill.selected{
+      background:linear-gradient(180deg, rgba(255,212,74,.2), rgba(255,60,172,.18));
+      border-color:rgba(255,212,74,.65);
+      box-shadow:0 0 20px rgba(255,212,74,.12);
+    }
+
+    .radio-group,
+    .toggle-group{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .choice{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:2px solid rgba(255,255,255,.08);
+      cursor:pointer;
+    }
+
+    .choice.selected{
+      border-color:rgba(255,60,172,.65);
+      background:rgba(255,60,172,.14);
+    }
+
+    .choice input{transform:scale(1.2)}
+
+    .status-bar{
+      margin-top:18px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .loading-wrap{
+      display:none;
+      margin-top:18px;
+      text-align:center;
+      padding:20px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+    }
+
+    .loading-wrap.active{display:block}
+    .loading-text{
+      font-size:1.3rem;
+      color:var(--gold);
+      margin-bottom:12px;
+      min-height:2.2em;
+    }
+
+    .spinner{
+      width:72px;
+      height:72px;
+      margin:0 auto;
+      border:6px solid rgba(255,255,255,.12);
+      border-top-color:var(--pink);
+      border-right-color:var(--gold);
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+      box-shadow:0 0 30px rgba(255,60,172,.2);
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    .preview-header{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:18px;
+      margin-bottom:12px;
+    }
+
+    .preview-list{
+      display:grid;
+      gap:12px;
+      max-height:62vh;
+      overflow:auto;
+      padding-right:6px;
+    }
+
+    .preview-card{
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .preview-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      font-size:.9rem;
+    }
+
+    .preview-q{
+      font-size:1rem;
+      line-height:1.4;
+      margin-bottom:10px;
+    }
+
+    .preview-a{
+      color:#c2ffd6;
+      font-size:.95rem;
+    }
+
+    .preview-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .wheel-box{
+      margin-top:16px;
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .scorebar{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .team-score{
+      position:relative;
+      overflow:hidden;
+      border-radius:20px;
+      padding:14px;
+      color:#07121f;
+      box-shadow:var(--shadow);
+      border:2px solid rgba(255,255,255,.22);
+      transform-origin:center;
+    }
+
+    .team-score.flash{
+      animation:scoreFlash .7s ease;
+    }
+
+    @keyframes scoreFlash{
+      0%{transform:scale(1)}
+      30%{transform:scale(1.06)}
+      60%{transform:scale(.98)}
+      100%{transform:scale(1)}
+    }
+
+    .team-score-name{
+      font-size:1rem;
+      color:#062544;
+      font-weight:700;
+    }
+
+    .team-score-value{
+      font-size:2rem;
+      font-weight:700;
+    }
+
+    .game-topbar{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+
+    .board-wrap{
+      perspective:1200px;
+    }
+
+    .board{
+      display:grid;
+      gap:12px;
+      align-items:stretch;
+    }
+
+    .board-header{
+      background:linear-gradient(180deg, rgba(255,212,74,.28), rgba(255,184,0,.18));
+      border:2px solid rgba(255,212,74,.5);
+      border-radius:18px;
+      padding:12px;
+      text-align:center;
+      font-size:1rem;
+      min-height:82px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:var(--shadow);
+    }
+
+    .tile{
+      border:none;
+      cursor:pointer;
+      min-height:110px;
+      border-radius:20px;
+      padding:10px;
+      font-family:inherit;
+      font-size:clamp(1.6rem, 3vw, 2.4rem);
+      font-weight:700;
+      color:#2d1600;
+      background:linear-gradient(180deg, #ffe37d, #ffb800);
+      box-shadow:var(--shadow);
+      border:3px solid rgba(255,255,255,.15);
+      position:relative;
+      overflow:hidden;
+      transform-style:preserve-3d;
+      transition:transform .16s ease, filter .16s ease, opacity .16s ease;
+      animation:tilePulse 2.1s ease-in-out infinite;
+    }
+
+    .tile:hover{
+      transform:translateY(-4px) scale(1.02) rotateX(4deg);
+      filter:brightness(1.06);
+    }
+
+    .tile.used{
+      background:linear-gradient(180deg, #495376, #2d3554);
+      color:#95a2ce;
+      cursor:not-allowed;
+      opacity:.7;
+      animation:none;
+    }
+
+    .tile.bonusHint{
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.28), transparent 20%),
+        linear-gradient(180deg, #ff73cb, #ff3cac);
+      color:#ffffff;
+    }
+
+    .tile.doubleActiveTarget{
+      outline:4px solid var(--green);
+      box-shadow:0 0 28px rgba(57,255,136,.25), var(--shadow);
+    }
+
+    .tile-label{
+      position:relative;
+      z-index:2;
+    }
+
+    .tile::before{
+      content:"";
+      position:absolute;
+      inset:-20%;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.18) 50%, transparent 100%);
+      transform:translateX(-120%) rotate(12deg);
+      animation:tileSweep 2.6s linear infinite;
+    }
+
+    .tile.used::before{display:none}
+
+    @keyframes tileSweep{
+      to{transform:translateX(120%) rotate(12deg)}
+    }
+
+    @keyframes tilePulse{
+      0%,100%{box-shadow:var(--shadow)}
+      50%{box-shadow:0 0 26px rgba(255,184,0,.18), var(--shadow)}
+    }
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(4,7,20,.72);
+      backdrop-filter:blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:100;
+      padding:18px;
+    }
+
+    .overlay.active{display:flex}
+
+    .modal{
+      width:min(1200px, 100%);
+      max-height:92vh;
+      overflow:auto;
+      border-radius:28px;
+      padding:22px;
+      background:
+        radial-gradient(circle at top right, rgba(255,60,172,.16), transparent 22%),
+        radial-gradient(circle at top left, rgba(255,212,74,.13), transparent 22%),
+        linear-gradient(180deg, rgba(20,28,62,.98), rgba(9,13,31,.98));
+      border:2px solid rgba(255,255,255,.12);
+      box-shadow:0 20px 60px rgba(0,0,0,.55);
+      position:relative;
+      animation:popIn .24s ease;
+    }
+
+    @keyframes popIn{
+      from{transform:translateY(10px) scale(.98); opacity:0}
+      to{transform:translateY(0) scale(1); opacity:1}
+    }
+
+    .modal-top{
+      display:flex;
+      gap:12px;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:16px;
+    }
+
+    .modal-title{
+      font-size:clamp(1.5rem, 3vw, 2.4rem);
+      color:var(--gold);
+    }
+
+    .question-text{
+      font-size:clamp(1.6rem, 3.5vw, 3rem);
+      line-height:1.25;
+      margin:18px 0;
+      text-align:center;
+      text-shadow:0 0 14px rgba(255,255,255,.05);
+    }
+
+    .answer-box{
+      display:none;
+      margin:14px auto 0;
+      max-width:900px;
+      text-align:center;
+      font-size:clamp(1.2rem,2.5vw,1.8rem);
+      color:#cbffd9;
+      background:rgba(57,255,136,.1);
+      border:2px solid rgba(57,255,136,.25);
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .answer-box.visible{display:block}
+
+    .award-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .control-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+
+    .pill-note{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:#fff0a9;
+    }
+
+    .bonus-reveal{
+      text-align:center;
+      padding:12px 0 18px;
+    }
+
+    .bonus-reveal .big{
+      font-family:"Boogaloo","Fredoka",sans-serif;
+      font-size:clamp(2rem, 6vw, 5rem);
+      color:var(--pink);
+      text-shadow:0 0 16px rgba(255,60,172,.28);
+      animation:bounceSoft 1.5s ease-in-out infinite;
+    }
+
+    .bonus-reveal .sub{
+      color:#fff0a9;
+      font-size:1.2rem;
+    }
+
+    .phrase-display{
+      font-family:"Boogaloo","Fredoka",sans-serif;
+      letter-spacing:.18em;
+      font-size:clamp(1.8rem, 4vw, 3.4rem);
+      line-height:1.45;
+      text-align:center;
+      margin:16px 0 10px;
+      color:#fff2b0;
+      word-break:break-word;
+    }
+
+    .rapid-list{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .rapid-item{
+      background:rgba(255,255,255,.05);
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.1);
+      padding:14px;
+    }
+
+    .rapid-q{
+      font-size:1.2rem;
+      margin-bottom:10px;
+    }
+
+    .timer{
+      font-size:2rem;
+      color:var(--gold);
+      text-align:center;
+      margin-top:12px;
+    }
+
+    .final-wrap{
+      text-align:center;
+      padding:34px 12px;
+    }
+
+    .winner-banner{
+      font-family:"Boogaloo","Fredoka",sans-serif;
+      font-size:clamp(2rem, 6vw, 5rem);
+      color:var(--gold);
+      text-shadow:0 0 18px rgba(255,212,74,.25);
+      animation:bounceSoft 1.8s ease-in-out infinite;
+    }
+
+    .winner-name{
+      font-size:clamp(1.4rem,4vw,2.6rem);
+      margin-top:10px;
+    }
+
+    .toast-wrap{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      display:grid;
+      gap:10px;
+      z-index:120;
+    }
+
+    .toast{
+      min-width:260px;
+      max-width:420px;
+      padding:14px 16px;
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(9,16,37,.96);
+      color:var(--white);
+      animation:slideIn .22s ease;
+    }
+
+    .toast.good{border-color:rgba(57,255,136,.35)}
+    .toast.bad{border-color:rgba(255,77,90,.35)}
+    .toast.info{border-color:rgba(83,179,255,.35)}
+
+    @keyframes slideIn{
+      from{transform:translateY(8px); opacity:0}
+      to{transform:translateY(0); opacity:1}
+    }
+
+    .particles{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:130;
+    }
+
+    .particle{
+      position:absolute;
+      width:10px;
+      height:14px;
+      border-radius:3px;
+      opacity:.96;
+      animation:confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall{
+      to{
+        transform:translateY(110vh) rotate(720deg);
+        opacity:1;
+      }
+    }
+
+    .muted{color:var(--muted)}
+    .hidden{display:none!important}
+
+    @keyframes bounceSoft{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-6px)}
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="app">
+    <section id="setupScreen" class="screen active">
+      <div class="hero">
+        <h1>⚡ Da Vinci Decathlon</h1>
+        <h2>🎮 Jeopardy Style Training Game 🎮</h2>
+      </div>
+
+      <div class="panels">
+        <div class="panel">
+          <h3 class="section-title">👥 Teams</h3>
+          <div class="stepper">
+            <button class="btn pink" id="teamsMinus" type="button">−</button>
+            <div class="stepper-value" id="teamCountValue">4</div>
+            <button class="btn pink" id="teamsPlus" type="button">+</button>
+            <div class="small">Choose 2 to 10 teams</div>
+          </div>
+
+          <div class="team-list" id="teamList"></div>
+
+          <div style="margin-top:16px">
+            <h3 class="section-title">💰 Point Tiers</h3>
+            <div class="radio-group" id="pointTierChoices">
+              <label class="choice selected">
+                <input type="radio" name="pointTiers" value="3" checked />
+                <div>
+                  <div>3 Tier</div>
+                  <div class="small">100 / 200 / 300</div>
+                </div>
+              </label>
+              <label class="choice">
+                <input type="radio" name="pointTiers" value="5" />
+                <div>
+                  <div>5 Tier</div>
+                  <div class="small">100 / 200 / 300 / 400 / 500</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <h3 class="section-title">🎰 Bonus Tiles</h3>
+            <div class="toggle-group">
+              <label class="choice selected" id="bonusToggleChoice">
+                <input type="checkbox" id="bonusToggle" checked />
+                <div>
+                  <div>Include bonus tiles?</div>
+                  <div class="small">3 to 4 tiles are scattered through the board</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <h3 class="section-title">⚙️ Bonus Mode</h3>
+            <div class="radio-group" id="doubleModeChoices">
+              <label class="choice selected">
+                <input type="radio" name="doubleMode" value="nextQuestion" checked />
+                <div>
+                  <div>Double Points carries to the next board question</div>
+                  <div class="small">Big drama, visible on the board</div>
+                </div>
+              </label>
+              <label class="choice">
+                <input type="radio" name="doubleMode" value="thisTile" />
+                <div>
+                  <div>Double Points applies to the bonus tile question itself</div>
+                  <div class="small">Fast and simple</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="status-bar">
+            <div id="validationText" class="small">Pick 3 to 9 categories, then generate questions.</div>
+            <button class="btn gold" id="generateBtn" type="button">⚡ Generate Questions ⚡</button>
+          </div>
+
+          <div class="loading-wrap" id="loadingWrap">
+            <div class="loading-text" id="loadingText">Charging the flux capacitor...</div>
+            <div class="spinner"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 class="section-title">📚 Categories</h3>
+          <div class="category-actions">
+            <button class="btn ghost" id="selectAllCats" type="button">Select All</button>
+            <button class="btn ghost" id="clearAllCats" type="button">Clear All</button>
+            <div class="small" id="categoryCountText">0 selected</div>
+          </div>
+          <div class="category-grid" id="categoryGrid"></div>
+
+          <div id="previewArea" class="hidden">
+            <div class="preview-header">
+              <h3 class="section-title" style="margin:0">🧠 Question Preview</h3>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn blue" id="regenerateAllBtn" type="button">Regenerate All</button>
+                <button class="btn green" id="startGameBtn" type="button">🚀 Start Game</button>
+              </div>
+            </div>
+
+            <div class="wheel-box" id="wheelPreviewBox"></div>
+            <div class="preview-list" id="previewList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen">
+      <div class="game-topbar">
+        <div class="hero" style="margin-bottom:0; text-align:left; animation:none">
+          <h1 style="font-size:clamp(1.7rem,3vw,3rem); margin-bottom:0">⚡ Da Vinci Jeopardy</h1>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <button class="btn ghost" id="backToSetupBtn" type="button">Back to Setup</button>
+        </div>
+      </div>
+
+      <div class="scorebar" id="scorebar"></div>
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+      </div>
+    </section>
+
+    <section id="endScreen" class="screen">
+      <div class="panel final-wrap">
+        <div class="winner-banner">🏆 WINNER 🏆</div>
+        <div class="winner-name" id="winnerName"></div>
+        <div class="scorebar" id="finalScorebar" style="margin-top:24px"></div>
+        <div style="margin-top:18px">
+          <button class="btn gold" id="playAgainBtn" type="button">Play Again</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal" id="overlayModal"></div>
+  </div>
+
+  <script>
+    const AI_ENDPOINT = "https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/openai-proxy";
+    const MODEL_NAME = "gpt-4o";
+
+    const CATEGORY_DESCRIPTIONS = {
+      "Simple Machines":"Levers, pulleys, wheels, inclined planes, screws, wedges",
+      "Engineering Legends":"Da Vinci, Brunel, Tesla, Watt, Curie, Archimedes",
+      "Forces & Motion":"Newton's laws, friction, momentum, gravity, mechanical work",
+      "Inventions & Patents":"Famous firsts, dates, inventors, patent trivia",
+      "Maths of Machines":"Gear ratios, mechanical advantage, torque, speed calculations",
+      "Engineering in Nature":"Biomechanics, animal locomotion, natural structures",
+      "Science of Materials":"Metals, composites, stress, strain, load-bearing",
+      "Creative Thinking":"Lateral thinking, design problems, what would you do if",
+      "Wild Card":"Surprise mix, anything from any category, high risk reward",
+      "Da Vinci Specials":"Questions about Leonardo da Vinci's inventions and notebooks",
+      "History of Machines":"Industrial Revolution, key inventions through history",
+      "Everyday Engineering":"Machines in daily life, how things work"
+    };
+
+    const ALL_CATEGORIES = Object.keys(CATEGORY_DESCRIPTIONS);
+
+    const TEAM_NAME_POOL = [
+      "Team Archimedes",
+      "Team Tesla",
+      "Team Da Vinci",
+      "Team Curie",
+      "Team Brunel",
+      "Team Watt",
+      "Team Faraday",
+      "Team Turing",
+      "Team Newton",
+      "Team Hopper"
+    ];
+
+    const TEAM_COLOURS = [
+      "#ffcc33",
+      "#ff5faf",
+      "#57d1ff",
+      "#45ff9b",
+      "#ff7b54",
+      "#c28cff",
+      "#6df0d1",
+      "#ff646e",
+      "#9de64f",
+      "#ffd0f0"
+    ];
+
+    const LOADING_LINES = [
+      "Charging the flux capacitor...",
+      "Polishing the cogs of genius...",
+      "Spinning up the question engine...",
+      "Summoning Leonardo's notebook...",
+      "Greasing the gears of glory...",
+      "Calibrating maximum classroom chaos..."
+    ];
+
+    const BONUS_TYPES = ["wheel", "rapid", "double", "steal"];
+
+    const state = {
+      teamCount: 4,
+      teams: [],
+      selectedCategories: new Set(["Simple Machines","Engineering Legends","Forces & Motion"]),
+      pointTierMode: 3,
+      bonusEnabled: true,
+      doubleMode: "nextQuestion",
+      questions: [],
+      wheelOfFortunePhrases: [],
+      board: [],
+      currentTile: null,
+      currentQuestion: null,
+      currentBonusContext: null,
+      bonusAssignments: [],
+      doublePointsForTeamId: null,
+      generated: false
+    };
+
+    const el = {
+      setupScreen: document.getElementById("setupScreen"),
+      gameScreen: document.getElementById("gameScreen"),
+      endScreen: document.getElementById("endScreen"),
+      overlay: document.getElementById("overlay"),
+      overlayModal: document.getElementById("overlayModal"),
+      teamCountValue: document.getElementById("teamCountValue"),
+      teamList: document.getElementById("teamList"),
+      teamsMinus: document.getElementById("teamsMinus"),
+      teamsPlus: document.getElementById("teamsPlus"),
+      categoryGrid: document.getElementById("categoryGrid"),
+      categoryCountText: document.getElementById("categoryCountText"),
+      selectAllCats: document.getElementById("selectAllCats"),
+      clearAllCats: document.getElementById("clearAllCats"),
+      generateBtn: document.getElementById("generateBtn"),
+      loadingWrap: document.getElementById("loadingWrap"),
+      loadingText: document.getElementById("loadingText"),
+      previewArea: document.getElementById("previewArea"),
+      previewList: document.getElementById("previewList"),
+      wheelPreviewBox: document.getElementById("wheelPreviewBox"),
+      regenerateAllBtn: document.getElementById("regenerateAllBtn"),
+      startGameBtn: document.getElementById("startGameBtn"),
+      validationText: document.getElementById("validationText"),
+      pointTierChoices: document.getElementById("pointTierChoices"),
+      bonusToggle: document.getElementById("bonusToggle"),
+      bonusToggleChoice: document.getElementById("bonusToggleChoice"),
+      doubleModeChoices: document.getElementById("doubleModeChoices"),
+      scorebar: document.getElementById("scorebar"),
+      board: document.getElementById("board"),
+      backToSetupBtn: document.getElementById("backToSetupBtn"),
+      winnerName: document.getElementById("winnerName"),
+      finalScorebar: document.getElementById("finalScorebar"),
+      playAgainBtn: document.getElementById("playAgainBtn"),
+      toastWrap: document.getElementById("toastWrap"),
+      particles: document.getElementById("particles")
+    };
+
+    function init(){
+      syncTeams();
+      renderTeamControls();
+      renderCategories();
+      renderChoiceUI();
+      bindEvents();
+      updateValidation();
+    }
+
+    function bindEvents(){
+      el.teamsMinus.addEventListener("click", () => changeTeamCount(-1));
+      el.teamsPlus.addEventListener("click", () => changeTeamCount(1));
+      el.selectAllCats.addEventListener("click", () => {
+        state.selectedCategories = new Set(ALL_CATEGORIES.slice(0, 9));
+        renderCategories();
+        updateValidation();
+      });
+      el.clearAllCats.addEventListener("click", () => {
+        state.selectedCategories = new Set();
+        renderCategories();
+        updateValidation();
+      });
+
+      el.pointTierChoices.addEventListener("change", (e) => {
+        if(e.target.name === "pointTiers"){
+          state.pointTierMode = Number(e.target.value);
+          renderChoiceUI();
+        }
+      });
+
+      el.bonusToggle.addEventListener("change", () => {
+        state.bonusEnabled = el.bonusToggle.checked;
+        renderChoiceUI();
+      });
+
+      el.doubleModeChoices.addEventListener("change", (e) => {
+        if(e.target.name === "doubleMode"){
+          state.doubleMode = e.target.value;
+          renderChoiceUI();
+        }
+      });
+
+      el.generateBtn.addEventListener("click", generateQuestions);
+      el.regenerateAllBtn.addEventListener("click", generateQuestions);
+      el.startGameBtn.addEventListener("click", startGame);
+      el.backToSetupBtn.addEventListener("click", () => showScreen("setup"));
+      el.playAgainBtn.addEventListener("click", playAgain);
+      el.overlay.addEventListener("click", (e) => {
+        if(e.target === el.overlay) closeOverlay();
+      });
+    }
+
+    function changeTeamCount(delta){
+      state.teamCount = Math.max(2, Math.min(10, state.teamCount + delta));
+      syncTeams();
+      renderTeamControls();
+    }
+
+    function syncTeams(){
+      const existing = state.teams.slice();
+      const next = [];
+      for(let i = 0; i < state.teamCount; i++){
+        next.push({
+          id: i + 1,
+          name: existing[i]?.name || TEAM_NAME_POOL[i] || `Team ${i+1}`,
+          colour: existing[i]?.colour || TEAM_COLOURS[i % TEAM_COLOURS.length],
+          score: existing[i]?.score || 0
+        });
+      }
+      state.teams = next;
+      el.teamCountValue.textContent = state.teamCount;
+    }
+
+    function renderTeamControls(){
+      el.teamList.innerHTML = "";
+      state.teams.forEach((team, idx) => {
+        const row = document.createElement("div");
+        row.className = "team-row";
+        row.innerHTML = `
+          <div class="team-chip" style="background:${team.colour}"></div>
+          <input type="text" value="${escapeHtml(team.name)}" aria-label="Team name ${idx+1}">
+          <div class="team-score-mini">Ready</div>
+        `;
+        const input = row.querySelector("input");
+        input.addEventListener("input", () => {
+          state.teams[idx].name = input.value.trim() || TEAM_NAME_POOL[idx] || `Team ${idx+1}`;
+        });
+        el.teamList.appendChild(row);
+      });
+    }
+
+    function renderCategories(){
+      el.categoryGrid.innerHTML = "";
+      ALL_CATEGORIES.forEach(cat => {
+        const selected = state.selectedCategories.has(cat);
+        const label = document.createElement("label");
+        label.className = "category-pill" + (selected ? " selected" : "");
+        label.innerHTML = `
+          <input type="checkbox" ${selected ? "checked" : ""}>
+          <div>
+            <div>${escapeHtml(cat)}</div>
+            <div class="small">${escapeHtml(CATEGORY_DESCRIPTIONS[cat])}</div>
+          </div>
+        `;
+        label.addEventListener("click", (e) => {
+          e.preventDefault();
+          toggleCategory(cat);
+        });
+        el.categoryGrid.appendChild(label);
+      });
+      el.categoryCountText.textContent = `${state.selectedCategories.size} selected`;
+    }
+
+    function toggleCategory(cat){
+      if(state.selectedCategories.has(cat)){
+        state.selectedCategories.delete(cat);
+      } else {
+        if(state.selectedCategories.size >= 9){
+          toast("Pick no more than 9 categories.", "bad");
+          return;
+        }
+        state.selectedCategories.add(cat);
+      }
+      renderCategories();
+      updateValidation();
+    }
+
+    function renderChoiceUI(){
+      [...el.pointTierChoices.querySelectorAll(".choice")].forEach(choice => {
+        const radio = choice.querySelector("input");
+        choice.classList.toggle("selected", Number(radio.value) === state.pointTierMode);
+      });
+
+      [...el.doubleModeChoices.querySelectorAll(".choice")].forEach(choice => {
+        const radio = choice.querySelector("input");
+        choice.classList.toggle("selected", radio.value === state.doubleMode);
+      });
+
+      el.bonusToggle.checked = state.bonusEnabled;
+      el.bonusToggleChoice.classList.toggle("selected", state.bonusEnabled);
+    }
+
+    function updateValidation(){
+      const count = state.selectedCategories.size;
+      const ok = count >= 3 && count <= 9;
+      el.validationText.textContent = ok
+        ? `Locked in. ${count} categories selected.`
+        : "Pick 3 to 9 categories, then generate questions.";
+      el.generateBtn.disabled = !ok;
+    }
+
+    async function generateQuestions(singleTarget = null){
+      const categories = [...state.selectedCategories];
+      if(categories.length < 3 || categories.length > 9){
+        toast("Pick 3 to 9 categories first.", "bad");
+        return;
+      }
+
+      setLoading(true);
+      try{
+        const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
+
+        const prompt = buildPrompt(categories, pointValues, singleTarget);
+        const result = await callAI(prompt);
+
+        if(!result || !Array.isArray(result.questions)){
+          throw new Error("The AI response was not valid JSON with a questions array.");
+        }
+
+        const cleaned = normaliseQuestions(result.questions, categories, pointValues);
+        if(singleTarget){
+          const idx = state.questions.findIndex(q => q.category === singleTarget.category && q.points === singleTarget.points);
+          if(idx >= 0 && cleaned[0]){
+            state.questions[idx] = cleaned[0];
+          }
+        } else {
+          state.questions = cleaned;
+          state.wheelOfFortunePhrases = Array.isArray(result.wheelOfFortunePhrases)
+            ? result.wheelOfFortunePhrases.slice(0,3).map(s => String(s).trim().toUpperCase()).filter(Boolean)
+            : fallbackWheelPhrases();
+        }
+
+        state.generated = true;
+        renderPreview();
+        toast(singleTarget ? "Question regenerated." : "Questions generated.", "good");
+      } catch(err){
+        console.error(err);
+        toast(`AI generation failed. ${err.message || "Please try again."}`, "bad", 7000);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function buildPrompt(categories, pointValues, singleTarget){
+      if(singleTarget){
+        return `You are writing ONE question for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
+
+Write one question for:
+Category: ${singleTarget.category}
+Point value: ${singleTarget.points}
+
+Rules:
+- ${singleTarget.points <= 200 ? "Keep it straightforward recall or simple reasoning." : "Make it deeper, multi step, or lateral thinking."}
+- Answerable verbally
+- Readable aloud in under 15 seconds
+- Answer should be short, ideally 1 to 5 words
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "questions": [
+    {
+      "category": "${singleTarget.category}",
+      "points": ${singleTarget.points},
+      "question": "Question text here?",
+      "answer": "Answer here"
+    }
+  ]
+}`;
+      }
+
+      return `You are writing questions for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
+
+Generate questions for the following categories: ${categories.join(", ")}
+Point tiers: ${pointValues.join(", ")}
+
+For each category x point value combination, write ONE question.
+
+Rules:
+- Low point questions 100 to 200 should be straightforward recall or simple reasoning
+- High point questions 300 to 500 should require deeper thinking, multi step reasoning, or lateral thinking
+- All questions must be answerable verbally, no diagrams required
+- Keep questions concise, readable aloud in under 15 seconds
+- Answers should be short, ideally 1 to 5 words
+
+Also generate 3 Wheel of Fortune phrases themed to Machines & Machinery, 3 to 5 words each, all caps.
+
+Respond ONLY with a valid JSON object in this exact format:
+{
+  "questions": [
+    {
+      "category": "Category Name",
+      "points": 100,
+      "question": "Question text here?",
+      "answer": "Answer here"
+    }
+  ],
+  "wheelOfFortunePhrases": [
+    "PHRASE ONE",
+    "PHRASE TWO",
+    "PHRASE THREE"
+  ]
+}`;
+    }
+
+    async function callAI(prompt){
+      const payloads = [
+        {
+          model: MODEL_NAME,
+          messages: [
+            { role: "system", content: "Return only valid JSON." },
+            { role: "user", content: prompt }
+          ]
+        },
+        {
+          model: MODEL_NAME,
+          input: prompt
+        },
+        {
+          prompt
+        }
+      ];
+
+      let lastError = null;
+
+      for(const payload of payloads){
+        try{
+          const response = await fetch(AI_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if(!response.ok){
+            const txt = await response.text().catch(() => "");
+            throw new Error(`HTTP ${response.status}. ${txt.slice(0,200)}`);
+          }
+
+          const raw = await response.json().catch(async () => {
+            const txt = await response.text();
+            return { raw: txt };
+          });
+
+          const json = extractJSON(raw);
+          if(json) return json;
+          throw new Error("Could not parse JSON from AI response.");
+        } catch(err){
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("Unknown AI request failure.");
+    }
+
+    function extractJSON(raw){
+      if(!raw) return null;
+
+      if(typeof raw === "object" && raw.questions) return raw;
+
+      const possibleStrings = [];
+
+      if(typeof raw === "string") possibleStrings.push(raw);
+      if(typeof raw.raw === "string") possibleStrings.push(raw.raw);
+      if(typeof raw.response === "string") possibleStrings.push(raw.response);
+      if(typeof raw.output_text === "string") possibleStrings.push(raw.output_text);
+      if(typeof raw.text === "string") possibleStrings.push(raw.text);
+
+      if(Array.isArray(raw.choices)){
+        raw.choices.forEach(choice => {
+          const content = choice?.message?.content;
+          if(typeof content === "string") possibleStrings.push(content);
+        });
+      }
+
+      if(Array.isArray(raw.output)){
+        raw.output.forEach(item => {
+          if(typeof item?.content?.[0]?.text === "string"){
+            possibleStrings.push(item.content[0].text);
+          }
+        });
+      }
+
+      for(const str of possibleStrings){
+        const parsed = tryParseJSONFromText(str);
+        if(parsed) return parsed;
+      }
+
+      return null;
+    }
+
+    function tryParseJSONFromText(str){
+      if(!str || typeof str !== "string") return null;
+      const cleaned = str.trim();
+
+      try{
+        return JSON.parse(cleaned);
+      } catch {}
+
+      const match = cleaned.match(/\{[\s\S]*\}/);
+      if(match){
+        try{
+          return JSON.parse(match[0]);
+        } catch {}
+      }
+
+      return null;
+    }
+
+    function normaliseQuestions(arr, categories, pointValues){
+      const map = new Map();
+
+      arr.forEach(item => {
+        if(!item) return;
+        const category = String(item.category || "").trim();
+        const points = Number(item.points);
+        const question = String(item.question || "").trim();
+        const answer = String(item.answer || "").trim();
+
+        if(!categories.includes(category)) return;
+        if(!pointValues.includes(points)) return;
+        if(!question || !answer) return;
+
+        map.set(`${category}__${points}`, { category, points, question, answer });
+      });
+
+      const out = [];
+      categories.forEach(category => {
+        pointValues.forEach(points => {
+          const key = `${category}__${points}`;
+          const found = map.get(key);
+          out.push(found || {
+            category,
+            points,
+            question:`Fallback question for ${category} at ${points} points. Replace this with a better one.`,
+            answer:"Answer needed"
+          });
+        });
+      });
+      return out;
+    }
+
+    function fallbackWheelPhrases(){
+      return [
+        "INDUSTRIAL REVOLUTION",
+        "MECHANICAL ADVANTAGE",
+        "STEAM POWERED ENGINE"
+      ];
+    }
+
+    function renderPreview(){
+      el.previewArea.classList.remove("hidden");
+      el.previewList.innerHTML = "";
+
+      state.questions
+        .slice()
+        .sort((a,b) => a.category.localeCompare(b.category) || a.points - b.points)
+        .forEach(q => {
+          const card = document.createElement("div");
+          card.className = "preview-card";
+          card.innerHTML = `
+            <div class="preview-meta">
+              <span class="tag">📚 ${escapeHtml(q.category)}</span>
+              <span class="tag">💰 ${q.points}</span>
+            </div>
+            <div class="preview-q">${escapeHtml(q.question)}</div>
+            <div class="preview-a">Answer: ${escapeHtml(q.answer)}</div>
+            <div class="preview-actions">
+              <button class="btn blue" type="button">Regenerate This One</button>
+            </div>
+          `;
+          card.querySelector("button").addEventListener("click", () => generateQuestions({ category:q.category, points:q.points }));
+          el.previewList.appendChild(card);
+        });
+
+      el.wheelPreviewBox.innerHTML = `
+        <div class="section-title" style="margin-top:0">🎡 Wheel of Fortune Phrases</div>
+        <div class="small">These are used by Wheel of Fortune bonus tiles.</div>
+        <div style="margin-top:10px; display:grid; gap:8px;">
+          ${(state.wheelOfFortunePhrases || []).map(p => `<div class="tag">${escapeHtml(p)}</div>`).join("")}
+        </div>
+      `;
+    }
+
+    function startGame(){
+      if(!state.generated || !state.questions.length){
+        toast("Generate questions first.", "bad");
+        return;
+      }
+
+      state.teams.forEach(t => t.score = 0);
+      state.doublePointsForTeamId = null;
+      buildBoard();
+      renderScorebar(el.scorebar, false);
+      renderBoard();
+      showScreen("game");
+      toast("Game on.", "good");
+    }
+
+    function buildBoard(){
+      const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
+      const categories = [...state.selectedCategories];
+      const board = [];
+
+      categories.forEach(category => {
+        pointValues.forEach(points => {
+          const q = state.questions.find(item => item.category === category && item.points === points);
+          board.push({
+            id: cryptoRandomId(),
+            category,
+            points,
+            used:false,
+            type:"question",
+            question:q?.question || "Question missing",
+            answer:q?.answer || "Answer missing"
+          });
+        });
+      });
+
+      if(state.bonusEnabled){
+        const tileCount = board.length;
+        const bonusCount = tileCount <= 12 ? 3 : 4;
+        const availableIndices = [...Array(board.length).keys()];
+        shuffle(availableIndices);
+        const picked = availableIndices.slice(0, bonusCount);
+
+        picked.forEach((index, i) => {
+          board[index].type = "bonus";
+          board[index].bonusType = BONUS_TYPES[i % BONUS_TYPES.length];
+          board[index].bonusPayload = createBonusPayload(board[index].points);
+        });
+      }
+
+      state.board = board;
+    }
+
+    function createBonusPayload(basePoints){
+      const type = BONUS_TYPES[Math.floor(Math.random() * BONUS_TYPES.length)];
+      if(type === "wheel"){
+        const phrase = state.wheelOfFortunePhrases[Math.floor(Math.random() * state.wheelOfFortunePhrases.length)] || "MECHANICAL ADVANTAGE";
+        return { type, phrase, awardPoints: basePoints * 2 };
+      }
+      if(type === "rapid"){
+        return {
+          type,
+          awardPerCorrect: 50,
+          questions: makeRapidQuestions(5)
+        };
+      }
+      if(type === "double"){
+        return { type, awardPoints: basePoints * 2 };
+      }
+      return {
+        type:"steal",
+        awardPoints: 400,
+        penalty: 200,
+        question:"Name a machine whose main job is to reduce human effort by changing the size or direction of a force.",
+        answer:"Simple machine"
+      };
+    }
+
+    function makeRapidQuestions(count){
+      const pool = [
+        ["What force pulls objects toward Earth?","Gravity"],
+        ["What simple machine is a ramp?","Inclined plane"],
+        ["Who is linked to AC electricity?","Tesla"],
+        ["What does friction do to motion?","Slows it"],
+        ["What turns on an axle?","Wheel"],
+        ["What metal is commonly used in wiring?","Copper"],
+        ["What is a push or pull called?","Force"],
+        ["What machine uses teeth to transfer motion?","Gear"],
+        ["What helps objects float?","Buoyancy"],
+        ["What is the fixed point of a lever?","Fulcrum"]
+      ];
+      shuffle(pool);
+      return pool.slice(0, count).map(([question,answer]) => ({ question, answer, result:null }));
+    }
+
+    function renderBoard(){
+      const categories = [...state.selectedCategories];
+      const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
+
+      el.board.innerHTML = "";
+      el.board.style.gridTemplateColumns = `repeat(${categories.length}, minmax(0, 1fr))`;
+
+      categories.forEach(category => {
+        const header = document.createElement("div");
+        header.className = "board-header";
+        header.textContent = category;
+        el.board.appendChild(header);
+      });
+
+      pointValues.forEach(points => {
+        categories.forEach(category => {
+          const tile = state.board.find(t => t.category === category && t.points === points);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "tile" + (tile.used ? " used" : "") + (tile.type === "bonus" && !tile.used ? " bonusHint" : "");
+          if(state.doublePointsForTeamId && !tile.used && tile.type === "question"){
+            button.classList.add("doubleActiveTarget");
+          }
+          button.innerHTML = `<span class="tile-label">${tile.used ? "✓" : tile.type === "bonus" ? "🎰" : tile.points}</span>`;
+          button.disabled = tile.used;
+          button.addEventListener("click", () => openTile(tile.id));
+          el.board.appendChild(button);
+        });
+      });
+    }
+
+    function openTile(tileId){
+      const tile = state.board.find(t => t.id === tileId);
+      if(!tile || tile.used) return;
+      state.currentTile = tile;
+
+      if(tile.type === "bonus"){
+        openBonusTile(tile);
+      } else {
+        openQuestionTile(tile);
+      }
+    }
+
+    function openQuestionTile(tile){
+      const isDoubleLive = state.doublePointsForTeamId !== null;
+      const displayPoints = isDoubleLive ? tile.points * 2 : tile.points;
+
+      el.overlayModal.innerHTML = `
+        <div class="modal-top">
+          <div>
+            <div class="modal-title">📚 ${escapeHtml(tile.category)}</div>
+            <div class="pill-note">💰 Worth ${displayPoints} points${isDoubleLive ? " because DOUBLE POINTS is live" : ""}</div>
+          </div>
+          <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
+        </div>
+
+        <div class="question-text">${escapeHtml(tile.question)}</div>
+
+        <div class="award-grid" id="awardGrid"></div>
+
+        <div class="control-row">
+          <button class="btn blue" id="openFloorBtn" type="button">🔄 Open to Floor</button>
+          <button class="btn red" id="nobodyBtn" type="button">❌ Nobody Got It</button>
+          <button class="btn pink" id="stealBtn" type="button">🗡️ Steal</button>
+          <button class="btn ghost" id="revealAnswerBtn" type="button">Reveal Answer</button>
+        </div>
+
+        <div class="answer-box" id="answerBox">Answer: ${escapeHtml(tile.answer)}</div>
+      `;
+
+      const awardGrid = document.getElementById("awardGrid");
+      state.teams.forEach(team => {
+        const b = document.createElement("button");
+        b.className = "btn green";
+        b.type = "button";
+        b.textContent = `✅ Award to ${team.name}`;
+        b.addEventListener("click", () => awardQuestion(tile, team.id));
+        awardGrid.appendChild(b);
+      });
+
+      document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
+      document.getElementById("openFloorBtn").addEventListener("click", () => toast("Open to floor. Award manually when ready.", "info"));
+      document.getElementById("nobodyBtn").addEventListener("click", () => {
+        markTileUsed(tile.id);
+        revealAnswer();
+      });
+      document.getElementById("stealBtn").addEventListener("click", () => openStealFlow(tile));
+      document.getElementById("revealAnswerBtn").addEventListener("click", revealAnswer);
+
+      showOverlay();
+    }
+
+    function awardQuestion(tile, teamId){
+      const awardedTeam = getTeam(teamId);
+      if(!awardedTeam) return;
+
+      let points = tile.points;
+      if(state.doublePointsForTeamId === teamId){
+        points *= 2;
+        toast(`${awardedTeam.name} used DOUBLE POINTS.`, "good");
+        state.doublePointsForTeamId = null;
+      } else if(state.doublePointsForTeamId !== null && state.doublePointsForTeamId !== teamId){
+        toast(`DOUBLE POINTS remains with ${getTeam(state.doublePointsForTeamId)?.name || "the marked team"}.`, "info");
+      }
+
+      animateScoreChange(teamId, points);
+      confettiBurst();
+      playSound("correct");
+      markTileUsed(tile.id);
+      revealAnswer();
+    }
+
+    function openStealFlow(tile){
+      const displayPenalty = Math.floor(tile.points / 2);
+
+      el.overlayModal.innerHTML += `
+        <div class="pill-note">🗡️ Steal mode active. Wrong team loses ${displayPenalty} points.</div>
+        <div class="award-grid" id="stealGrid"></div>
+      `;
+      const stealGrid = document.getElementById("stealGrid");
+      stealGrid.innerHTML = "";
+
+      state.teams.forEach(team => {
+        const wrong = document.createElement("button");
+        wrong.className = "btn red";
+        wrong.type = "button";
+        wrong.textContent = `Wrong: ${team.name}`;
+        wrong.addEventListener("click", () => {
+          animateScoreChange(team.id, -displayPenalty);
+          playSound("wrong");
+          toast(`${team.name} loses ${displayPenalty} points.`, "bad");
+        });
+        stealGrid.appendChild(wrong);
+
+        const right = document.createElement("button");
+        right.className = "btn green";
+        right.type = "button";
+        right.textContent = `Award steal to ${team.name}`;
+        right.addEventListener("click", () => {
+          let points = tile.points;
+          if(state.doublePointsForTeamId === team.id){
+            points *= 2;
+            state.doublePointsForTeamId = null;
+          }
+          animateScoreChange(team.id, points);
+          confettiBurst();
+          playSound("correct");
+          markTileUsed(tile.id);
+          revealAnswer();
+        });
+        stealGrid.appendChild(right);
+      });
+    }
+
+    function openBonusTile(tile){
+      const payload = tile.bonusPayload;
+      const type = payload?.type || tile?.bonusType || "double";
+
+      if(type === "wheel"){
+        openWheelBonus(tile, payload);
+        return;
+      }
+      if(type === "rapid"){
+        openRapidBonus(tile, payload);
+        return;
+      }
+      if(type === "double"){
+        openDoubleBonus(tile, payload);
+        return;
+      }
+      openStealBonus(tile, payload);
+    }
+
+    function openWheelBonus(tile, payload){
+      const phrase = String(payload.phrase || "MECHANICAL ADVANTAGE").toUpperCase();
+      let revealed = makeHiddenPhrase(phrase);
+
+      el.overlayModal.innerHTML = `
+        <div class="modal-top">
+          <div class="modal-title">🎡 Wheel of Fortune</div>
+          <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
+        </div>
+        <div class="bonus-reveal">
+          <div class="big">SPIN THE WHEEL</div>
+          <div class="sub">Letters reveal over time. First team to call it gets the points.</div>
+        </div>
+        <div class="pill-note">💰 Suggested award: ${payload.awardPoints} points</div>
+        <div class="phrase-display" id="phraseDisplay">${escapeHtml(revealed)}</div>
+        <div class="control-row">
+          <button class="btn blue" id="revealLetterBtn" type="button">Reveal Letter</button>
+          <button class="btn pink" id="autoRevealBtn" type="button">Auto Reveal</button>
+          <button class="btn ghost" id="revealAnswerBtn" type="button">Reveal Full Phrase</button>
+        </div>
+        <div class="award-grid" id="awardGrid"></div>
+        <div class="answer-box" id="answerBox">Phrase: ${escapeHtml(phrase)}</div>
+      `;
+
+      let autoTimer = null;
+      const updatePhrase = () => {
+        document.getElementById("phraseDisplay").textContent = revealed;
+      };
+
+      const revealOne = () => {
+        const next = revealRandomLetter(phrase, revealed);
+        revealed = next;
+        updatePhrase();
+        playSound("bonus");
+      };
+
+      const revealFull = () => {
+        document.getElementById("answerBox").classList.add("visible");
+        document.getElementById("phraseDisplay").textContent = phrase;
+      };
+
+      document.getElementById("closeOverlayBtn").addEventListener("click", () => {
+        if(autoTimer) clearInterval(autoTimer);
+        closeOverlay();
+      });
+
+      document.getElementById("revealLetterBtn").addEventListener("click", revealOne);
+      document.getElementById("autoRevealBtn").addEventListener("click", () => {
+        if(autoTimer){
+          clearInterval(autoTimer);
+          autoTimer = null;
+          toast("Auto reveal stopped.", "info");
+          return;
+        }
+        autoTimer = setInterval(() => {
+          const before = revealed;
+          revealOne();
+          if(before === revealed || !revealed.includes("_")){
+            clearInterval(autoTimer);
+            autoTimer = null;
+          }
+        }, 3500);
+        toast("Auto reveal started.", "info");
+      });
+      document.getElementById("revealAnswerBtn").addEventListener("click", revealFull);
+
+      const awardGrid = document.getElementById("awardGrid");
+      state.teams.forEach(team => {
+        const b = document.createElement("button");
+        b.className = "btn green";
+        b.type = "button";
+        b.textContent = `✅ Award to ${team.name}`;
+        b.addEventListener("click", () => {
+          animateScoreChange(team.id, payload.awardPoints);
+          confettiBurst();
+          playSound("bonus");
+          markTileUsed(tile.id);
+          revealFull();
+        });
+        awardGrid.appendChild(b);
+      });
+
+      showOverlay();
+    }
+
+    function openRapidBonus(tile, payload){
+      let currentIndex = 0;
+      let seconds = 10;
+      let timer = null;
+
+      el.overlayModal.innerHTML = `
+        <div class="modal-top">
+          <div class="modal-title">⚡ Rapid Round</div>
+          <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
+        </div>
+        <div class="bonus-reveal">
+          <div class="big">FAST FIRE</div>
+          <div class="sub">5 quick questions. 10 seconds each. ${payload.awardPerCorrect} points per correct answer.</div>
+        </div>
+        <div class="rapid-list" id="rapidList"></div>
+        <div class="timer" id="rapidTimer">10</div>
+        <div class="control-row">
+          <button class="btn blue" id="startRapidBtn" type="button">Start Timer</button>
+          <button class="btn ghost" id="nextRapidBtn" type="button">Next Question</button>
+          <button class="btn ghost" id="finishRapidBtn" type="button">Finish Round</button>
+        </div>
+        <div class="award-grid" id="rapidAwardGrid"></div>
+      `;
+
+      const rapidList = document.getElementById("rapidList");
+
+      function renderRapid(){
+        rapidList.innerHTML = "";
+        payload.questions.forEach((q, idx) => {
+          const item = document.createElement("div");
+          item.className = "rapid-item";
+          item.innerHTML = `
+            <div class="rapid-q">${idx + 1}. ${escapeHtml(q.question)}</div>
+            <div class="preview-a">${q.result === true ? "✅ Correct" : q.result === false ? "❌ Wrong" : "Pending"}${q.result !== null ? `, Answer: ${escapeHtml(q.answer)}` : ""}</div>
+            <div class="control-row">
+              <button class="btn green" type="button">✅</button>
+              <button class="btn red" type="button">❌</button>
+            </div>
+          `;
+          const [good, bad] = item.querySelectorAll("button");
+          good.addEventListener("click", () => { q.result = true; renderRapid(); playSound("correct"); });
+          bad.addEventListener("click", () => { q.result = false; renderRapid(); playSound("wrong"); });
+          if(idx !== currentIndex){
+            good.disabled = true;
+            bad.disabled = true;
+          }
+          rapidList.appendChild(item);
+        });
+      }
+
+      function stopTimer(){
+        if(timer){
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      function startTimer(){
+        stopTimer();
+        seconds = 10;
+        document.getElementById("rapidTimer").textContent = seconds;
+        timer = setInterval(() => {
+          seconds -= 1;
+          document.getElementById("rapidTimer").textContent = seconds;
+          if(seconds <= 0){
+            stopTimer();
+            playSound("wrong");
+          }
+        }, 1000);
+      }
+
+      renderRapid();
+
+      document.getElementById("closeOverlayBtn").addEventListener("click", () => {
+        stopTimer();
+        closeOverlay();
+      });
+
+      document.getElementById("startRapidBtn").addEventListener("click", startTimer);
+      document.getElementById("nextRapidBtn").addEventListener("click", () => {
+        stopTimer();
+        currentIndex = Math.min(payload.questions.length - 1, currentIndex + 1);
+        renderRapid();
+      });
+
+      document.getElementById("finishRapidBtn").addEventListener("click", () => {
+        stopTimer();
+        const totalCorrect = payload.questions.filter(q => q.result === true).length;
+        const totalPoints = totalCorrect * payload.awardPerCorrect;
+        const grid = document.getElementById("rapidAwardGrid");
+        grid.innerHTML = "";
+        state.teams.forEach(team => {
+          const btn = document.createElement("button");
+          btn.className = "btn green";
+          btn.type = "button";
+          btn.textContent = `Award ${totalPoints} to ${team.name}`;
+          btn.addEventListener("click", () => {
+            animateScoreChange(team.id, totalPoints);
+            confettiBurst();
+            playSound("bonus");
+            markTileUsed(tile.id);
+            toast(`${team.name} gets ${totalPoints} points.`, "good");
+          });
+          grid.appendChild(btn);
+        });
+      });
+
+      showOverlay();
+    }
+
+    function openDoubleBonus(tile, payload){
+      const points = payload.awardPoints || tile.points * 2;
+
+      if(state.doubleMode === "thisTile"){
+        el.overlayModal.innerHTML = `
+          <div class="modal-top">
+            <div class="modal-title">🎲 Double Points</div>
+            <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
+          </div>
+          <div class="bonus-reveal">
+            <div class="big">DOUBLE POINTS</div>
+            <div class="sub">This bonus tile is worth ${points} points.</div>
+          </div>
+          <div class="question-text">Host choice bonus. Award this blast of points to the team who nails it.</div>
+          <div class="award-grid" id="awardGrid"></div>
+        `;
+        const grid = document.getElementById("awardGrid");
+        state.teams.forEach(team => {
+          const b = document.createElement("button");
+          b.className = "btn green";
+          b.type = "button";
+          b.textContent = `✅ Award ${points} to ${team.name}`;
+          b.addEventListener("click", () => {
+            animateScoreChange(team.id, points);
+            confettiBurst();
+            playSound("bonus");
+            markTileUsed(tile.id);
+            toast(`${team.name} gets DOUBLE POINTS.`, "good");
+          });
+          grid.appendChild(b);
+        });
+      } else {
+        el.overlayModal.innerHTML = `
+          <div class="modal-top">
+            <div class="modal-title">🎲 Double Points</div>
+            <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
+          </div>
+          <div class="bonus-reveal">
+            <div class="big">NEXT QUESTION DOUBLED</div>
+            <div class="sub">Assign the bonus to a team. Their next normal board question is worth double.</div>
+          </div>
+          <div class="award-grid" id="awardGrid"></div>
+        `;
+        const grid = document.getElementById("awardGrid");
+        state.teams.forEach(team => {
+          const b = document.createElement("button");
+          b.className = "btn green";
+          b.type = "button";
+          b.textContent = `Activate for ${team.name}`;
+          b.addEventListener("click", () => {
+            state.doublePointsForTeamId = team.id;
+            markTileUsed(tile.id);
+            renderBoard();
+            toast(`${team.name} has DOUBLE POINTS on their next question.`, "good");
+            playSound("bonus");
+            confettiBurst();
+            closeOverlay();
+          });
+          grid.appendChild(b);
+        });
+      }
+
+      document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
+      showOverlay();
+    }
+
+    function openStealBonus(tile, payload){
+      el.overlayModal.innerHTML = `
+        <div class="modal-top">
+          <div class="modal-title">🗡️ Steal Showdown</div>
+          <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
+        </div>
+        <div class="bonus-reveal">
+          <div class="big">HIGH RISK. HIGH REWARD.</div>
+          <div class="sub">Correct answer wins ${payload.awardPoints}. Wrong answer loses ${payload.penalty}.</div>
+        </div>
+        <div class="question-text">${escapeHtml(payload.question)}</div>
+        <div class="award-grid" id="stealGrid"></div>
+        <div class="control-row">
+          <button class="btn ghost" id="revealAnswerBtn" type="button">Reveal Answer</button>
+        </div>
+        <div class="answer-box" id="answerBox">Answer: ${escapeHtml(payload.answer)}</div>
+      `;
+
+      const grid = document.getElementById("stealGrid");
+      state.teams.forEach(team => {
+        const good = document.createElement("button");
+        good.className = "btn green";
+        good.type = "button";
+        good.textContent = `✅ ${team.name} correct`;
+        good.addEventListener("click", () => {
+          animateScoreChange(team.id, payload.awardPoints);
+          confettiBurst();
+          playSound("bonus");
+          markTileUsed(tile.id);
+          revealAnswer();
+        });
+        grid.appendChild(good);
+
+        const bad = document.createElement("button");
+        bad.className = "btn red";
+        bad.type = "button";
+        bad.textContent = `❌ ${team.name} wrong`;
+        bad.addEventListener("click", () => {
+          animateScoreChange(team.id, -payload.penalty);
+          playSound("wrong");
+          toast(`${team.name} loses ${payload.penalty} points.`, "bad");
+        });
+        grid.appendChild(bad);
+      });
+
+      document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
+      document.getElementById("revealAnswerBtn").addEventListener("click", revealAnswer);
+      showOverlay();
+    }
+
+    function revealAnswer(){
+      const box = document.getElementById("answerBox");
+      if(box) box.classList.add("visible");
+      renderBoard();
+      checkGameOver();
+    }
+
+    function markTileUsed(tileId){
+      const tile = state.board.find(t => t.id === tileId);
+      if(tile) tile.used = true;
+      renderBoard();
+      checkGameOver();
+    }
+
+    function showOverlay(){
+      el.overlay.classList.add("active");
+    }
+
+    function closeOverlay(){
+      el.overlay.classList.remove("active");
+      el.overlayModal.innerHTML = "";
+    }
+
+    function renderScorebar(target, finalMode){
+      target.innerHTML = "";
+      const sorted = [...state.teams].sort((a,b) => b.score - a.score);
+      const list = finalMode ? sorted : state.teams;
+
+      list.forEach(team => {
+        const card = document.createElement("div");
+        card.className = "team-score";
+        card.id = `teamCard_${team.id}_${finalMode ? "final" : "live"}`;
+        card.style.background = `linear-gradient(180deg, ${team.colour}, ${shadeHex(team.colour, -18)})`;
+        card.innerHTML = `
+          <div class="team-score-name">${escapeHtml(team.name)}</div>
+          <div class="team-score-value" data-score="${team.score}">${team.score}</div>
+        `;
+        target.appendChild(card);
+      });
+    }
+
+    function animateScoreChange(teamId, delta){
+      const team = getTeam(teamId);
+      if(!team) return;
+      team.score += delta;
+
+      renderScorebar(el.scorebar, false);
+
+      const liveCard = document.getElementById(`teamCard_${team.id}_live`);
+      if(liveCard) liveCard.classList.add("flash");
+      animateNumber(`[data-score="${team.score}"]`, team.score);
+
+      if(delta > 0){
+        toast(`${team.name} +${delta}`, "good");
+      } else {
+        toast(`${team.name} ${delta}`, "bad");
+      }
+    }
+
+    function animateNumber(selector, endValue){
+      const els = [...document.querySelectorAll(selector)];
+      els.forEach(node => node.textContent = endValue);
+    }
+
+    function getTeam(id){
+      return state.teams.find(t => t.id === id);
+    }
+
+    function showScreen(name){
+      el.setupScreen.classList.remove("active");
+      el.gameScreen.classList.remove("active");
+      el.endScreen.classList.remove("active");
+
+      if(name === "setup") el.setupScreen.classList.add("active");
+      if(name === "game") el.gameScreen.classList.add("active");
+      if(name === "end") el.endScreen.classList.add("active");
+    }
+
+    function checkGameOver(){
+      const allUsed = state.board.length && state.board.every(t => t.used);
+      if(!allUsed) return;
+      closeOverlay();
+      showGameOver();
+    }
+
+    function showGameOver(){
+      const sorted = [...state.teams].sort((a,b) => b.score - a.score);
+      const winner = sorted[0];
+      renderScorebar(el.finalScorebar, true);
+      el.winnerName.textContent = winner ? `${winner.name} takes the crown with ${winner.score} points.` : "Game over.";
+      confettiBurst(180);
+      playSound("bonus");
+      showScreen("end");
+    }
+
+    function playAgain(){
+      state.teams.forEach(t => t.score = 0);
+      state.board = [];
+      state.doublePointsForTeamId = null;
+      closeOverlay();
+      renderTeamControls();
+      renderCategories();
+      renderChoiceUI();
+      updateValidation();
+      showScreen("setup");
+    }
+
+    function setLoading(on){
+      el.loadingWrap.classList.toggle("active", on);
+      el.generateBtn.disabled = on;
+      if(on){
+        let idx = 0;
+        el.loadingText.textContent = LOADING_LINES[idx];
+        clearInterval(window.__loadingTicker);
+        window.__loadingTicker = setInterval(() => {
+          idx = (idx + 1) % LOADING_LINES.length;
+          el.loadingText.textContent = LOADING_LINES[idx];
+        }, 1500);
+      } else {
+        clearInterval(window.__loadingTicker);
+      }
+    }
+
+    function toast(message, type = "info", duration = 3200){
+      const t = document.createElement("div");
+      t.className = `toast ${type}`;
+      t.textContent = message;
+      el.toastWrap.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = "0";
+        t.style.transform = "translateY(6px)";
+        setTimeout(() => t.remove(), 240);
+      }, duration);
+    }
+
+    function confettiBurst(count = 80){
+      const colours = ["#ffd54a","#ff3cac","#39ff88","#53b3ff","#ffffff","#ff6b6b"];
+      for(let i = 0; i < count; i++){
+        const piece = document.createElement("div");
+        piece.className = "particle";
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.top = `${-10 - Math.random() * 20}px`;
+        piece.style.background = colours[Math.floor(Math.random() * colours.length)];
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        piece.style.animationDuration = `${3 + Math.random() * 2.6}s`;
+        piece.style.width = `${8 + Math.random() * 8}px`;
+        piece.style.height = `${10 + Math.random() * 12}px`;
+        el.particles.appendChild(piece);
+        setTimeout(() => piece.remove(), 6200);
+      }
+    }
+
+    function playSound(type){
+      try{
+        const ctx = window.__audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        window.__audioCtx = ctx;
+        const now = ctx.currentTime;
+
+        const o1 = ctx.createOscillator();
+        const g1 = ctx.createGain();
+
+        o1.connect(g1);
+        g1.connect(ctx.destination);
+
+        if(type === "correct"){
+          o1.type = "triangle";
+          o1.frequency.setValueAtTime(660, now);
+          o1.frequency.exponentialRampToValueAtTime(990, now + 0.18);
+          g1.gain.setValueAtTime(0.001, now);
+          g1.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+          g1.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          o1.start(now);
+          o1.stop(now + 0.3);
+        } else if(type === "wrong"){
+          o1.type = "sawtooth";
+          o1.frequency.setValueAtTime(220, now);
+          o1.frequency.exponentialRampToValueAtTime(120, now + 0.25);
+          g1.gain.setValueAtTime(0.001, now);
+          g1.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+          g1.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          o1.start(now);
+          o1.stop(now + 0.3);
+        } else {
+          o1.type = "square";
+          o1.frequency.setValueAtTime(440, now);
+          o1.frequency.setValueAtTime(660, now + 0.1);
+          o1.frequency.setValueAtTime(880, now + 0.2);
+          g1.gain.setValueAtTime(0.001, now);
+          g1.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+          g1.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          o1.start(now);
+          o1.stop(now + 0.46);
+        }
+      } catch(err){
+      }
+    }
+
+    function makeHiddenPhrase(phrase){
+      return phrase.split("").map(ch => /[A-Z0-9]/.test(ch) ? "_" : ch).join("");
+    }
+
+    function revealRandomLetter(phrase, current){
+      const hiddenPositions = [];
+      for(let i = 0; i < phrase.length; i++){
+        if(current[i] === "_" && /[A-Z0-9]/.test(phrase[i])) hiddenPositions.push(i);
+      }
+      if(!hiddenPositions.length) return current;
+      const pos = hiddenPositions[Math.floor(Math.random() * hiddenPositions.length)];
+      return current.slice(0,pos) + phrase[pos] + current.slice(pos+1);
+    }
+
+    function shuffle(arr){
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function shadeHex(hex, percent){
+      const f = parseInt(hex.slice(1), 16);
+      const t = percent < 0 ? 0 : 255;
+      const p = Math.abs(percent) / 100;
+      const R = f >> 16;
+      const G = f >> 8 & 0x00FF;
+      const B = f & 0x0000FF;
+      const newHex = "#" + (
+        0x1000000 +
+        (Math.round((t - R) * p) + R) * 0x10000 +
+        (Math.round((t - G) * p) + G) * 0x100 +
+        (Math.round((t - B) * p) + B)
+      ).toString(16).slice(1);
+      return newHex;
+    }
+
+    function cryptoRandomId(){
+      if(window.crypto?.randomUUID) return crypto.randomUUID();
+      return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    init();
+  </script>
+</body>
+</html>
