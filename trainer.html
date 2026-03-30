@@ -729,6 +729,8 @@
       background:rgba(9,16,37,.96);
       color:var(--white);
       animation:slideIn .22s ease;
+      white-space:pre-wrap;
+      word-break:break-word;
     }
 
     .toast.good{border-color:rgba(57,255,136,.35)}
@@ -1201,9 +1203,10 @@
         const cleaned = normaliseQuestions(result.questions, categories, pointValues);
 
         if(singleTarget){
+          const regenerated = cleaned.find(q => q.category === singleTarget.category && q.points === singleTarget.points);
           const idx = state.questions.findIndex(q => q.category === singleTarget.category && q.points === singleTarget.points);
-          if(idx >= 0 && cleaned[0]){
-            state.questions[idx] = cleaned[0];
+          if(idx >= 0 && regenerated){
+            state.questions[idx] = regenerated;
           }
         } else {
           state.questions = cleaned;
@@ -1217,7 +1220,7 @@
         toast(singleTarget ? "Question regenerated." : "Questions generated.", "good");
       } catch(err){
         console.error(err);
-        toast(`AI generation failed. ${err.message || "Please try again."}`, "bad", 7000);
+        toast(`AI generation failed.\n${err.message || "Please try again."}`, "bad", 9000);
       } finally {
         setLoading(false);
       }
@@ -1285,128 +1288,178 @@ Respond ONLY with a valid JSON object in this exact format:
     }
 
     async function callAI(prompt){
-  const response = await fetch(AI_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      prompt,
-      model: MODEL_NAME
-    })
-  });
+      const payloadOptions = [
+        { prompt, model: MODEL_NAME },
+        { message: prompt, model: MODEL_NAME },
+        { input: prompt, model: MODEL_NAME },
+        {
+          model: MODEL_NAME,
+          messages: [
+            { role: "system", content: "Return only valid JSON." },
+            { role: "user", content: prompt }
+          ]
+        }
+      ];
 
-  const rawText = await response.text();
-  console.log("AI raw response text:", rawText);
+      let lastError = null;
+      let rawResponseForError = "";
 
-  if(!response.ok){
-    throw new Error(`HTTP ${response.status}: ${rawText}`);
-  }
+      for(const payload of payloadOptions){
+        try{
+          const response = await fetch(AI_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
 
-  const parsedOuter = safeJsonParse(rawText);
-  const parsed = extractJSON(parsedOuter ?? rawText);
+          const rawText = await response.text();
+          rawResponseForError = rawText;
+          console.log("AI raw response text:", rawText);
 
-  if(!parsed){
-    throw new Error(`Could not parse JSON from AI response. Raw response: ${rawText}`);
-  }
+          if(!response.ok){
+            lastError = new Error(`HTTP ${response.status}: ${rawText}`);
+            continue;
+          }
 
-  return parsed;
-}
+          const parsedOuter = safeJsonParse(rawText);
+          const parsed = extractJSON(parsedOuter ?? rawText);
 
-function extractJSON(raw){
-  if(raw == null) return null;
+          if(parsed){
+            return parsed;
+          }
 
-  if(typeof raw === "object"){
-    if(Array.isArray(raw.questions)) return raw;
+          lastError = new Error(`Could not parse JSON from AI response. Raw response: ${rawText}`);
+        } catch(err){
+          lastError = err;
+        }
+      }
 
-    const candidateFields = [
-      raw.body,
-      raw.data,
-      raw.result,
-      raw.response,
-      raw.content,
-      raw.text,
-      raw.message,
-      raw.output,
-      raw.completion
-    ];
-
-    for(const field of candidateFields){
-      const parsed = extractJSON(field);
-      if(parsed) return parsed;
+      throw lastError || new Error(`Could not parse JSON from AI response. Raw response: ${rawResponseForError}`);
     }
 
-    if(Array.isArray(raw.choices)){
-      for(const choice of raw.choices){
-        const parsed = extractJSON(choice);
-        if(parsed) return parsed;
+    function extractJSON(raw){
+      if(raw == null) return null;
+
+      if(typeof raw === "object"){
+        if(Array.isArray(raw.questions)) return raw;
+
+        const candidateFields = [
+          raw.body,
+          raw.data,
+          raw.result,
+          raw.response,
+          raw.content,
+          raw.text,
+          raw.message,
+          raw.output,
+          raw.completion,
+          raw.answer
+        ];
+
+        for(const field of candidateFields){
+          const parsed = extractJSON(field);
+          if(parsed) return parsed;
+        }
+
+        if(Array.isArray(raw.choices)){
+          for(const choice of raw.choices){
+            const parsed = extractJSON(choice?.message?.content || choice?.text || choice);
+            if(parsed) return parsed;
+          }
+        }
+
+        if(Array.isArray(raw.output)){
+          for(const item of raw.output){
+            const parsed = extractJSON(item?.content?.[0]?.text || item);
+            if(parsed) return parsed;
+          }
+        }
+
+        return null;
+      }
+
+      if(typeof raw === "string"){
+        const trimmed = raw.trim();
+
+        const direct = safeJsonParse(trimmed);
+        if(direct){
+          const parsed = extractJSON(direct);
+          if(parsed) return parsed;
+        }
+
+        const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+        if(fencedMatch){
+          const fencedParsed = safeJsonParse(fencedMatch[1].trim());
+          if(fencedParsed){
+            const parsed = extractJSON(fencedParsed);
+            if(parsed) return parsed;
+          }
+        }
+
+        const objectMatch = trimmed.match(/\{[\s\S]*\}/);
+        if(objectMatch){
+          const objectParsed = safeJsonParse(objectMatch[0]);
+          if(objectParsed){
+            const parsed = extractJSON(objectParsed);
+            if(parsed) return parsed;
+          }
+        }
+
+        const arrayMatch = trimmed.match(/\[[\s\S]*\]/);
+        if(arrayMatch){
+          const arrayParsed = safeJsonParse(arrayMatch[0]);
+          if(Array.isArray(arrayParsed)){
+            const parsed = extractJSON({ questions: arrayParsed });
+            if(parsed) return parsed;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function safeJsonParse(value){
+      try{
+        return JSON.parse(value);
+      } catch {
+        return null;
       }
     }
 
-    if(Array.isArray(raw.output)){
-      for(const item of raw.output){
-        const parsed = extractJSON(item);
-        if(parsed) return parsed;
-      }
+    function normaliseQuestions(arr, categories, pointValues){
+      const map = new Map();
+
+      arr.forEach(item => {
+        if(!item) return;
+        const category = String(item.category || "").trim();
+        const points = Number(item.points);
+        const question = String(item.question || "").trim();
+        const answer = String(item.answer || "").trim();
+
+        if(!categories.includes(category)) return;
+        if(!pointValues.includes(points)) return;
+        if(!question || !answer) return;
+
+        map.set(`${category}__${points}`, { category, points, question, answer });
+      });
+
+      const out = [];
+      categories.forEach(category => {
+        pointValues.forEach(points => {
+          const key = `${category}__${points}`;
+          const found = map.get(key);
+          out.push(found || {
+            category,
+            points,
+            question:`Fallback question for ${category} at ${points} points. Replace this with a better one.`,
+            answer:"Answer needed"
+          });
+        });
+      });
+      return out;
     }
 
-    if(typeof raw.content === "object"){
-      const parsed = extractJSON(raw.content);
-      if(parsed) return parsed;
-    }
-
-    if(typeof raw.message === "object"){
-      const parsed = extractJSON(raw.message);
-      if(parsed) return parsed;
-    }
-
-    return null;
-  }
-
-  if(typeof raw === "string"){
-    const trimmed = raw.trim();
-
-    const direct = safeJsonParse(trimmed);
-    if(direct){
-      const parsed = extractJSON(direct);
-      if(parsed) return parsed;
-    }
-
-    const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-    if(fencedMatch){
-      const fencedParsed = safeJsonParse(fencedMatch[1].trim());
-      if(fencedParsed){
-        const parsed = extractJSON(fencedParsed);
-        if(parsed) return parsed;
-      }
-    }
-
-    const objectMatch = trimmed.match(/\{[\s\S]*\}/);
-    if(objectMatch){
-      const objectParsed = safeJsonParse(objectMatch[0]);
-      if(objectParsed){
-        const parsed = extractJSON(objectParsed);
-        if(parsed) return parsed;
-      }
-    }
-  }
-
-  return null;
-}
-
-function safeJsonParse(value){
-  try{
-    return JSON.parse(value);
-  } catch {
-    return null;
-  }
-}
-
-function fallbackWheelPhrases(){
-  return [
-    "INDUSTRIAL REVOLUTION",
-    "MECHANICAL ADVANTAGE",
-    "STEAM POWERED ENGINE"
-  ];
-}
+    function fallbackWheelPhrases(){
       return [
         "INDUSTRIAL REVOLUTION",
         "MECHANICAL ADVANTAGE",
