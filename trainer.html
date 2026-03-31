@@ -383,13 +383,6 @@
       line-height:1.4;
     }
 
-    .preview-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-
     .wheel-box{
       margin-top:16px;
       padding:14px;
@@ -765,7 +758,7 @@
     <section id="setupScreen" class="screen active">
       <div class="hero">
         <h1>⚡ Da Vinci Decathlon</h1>
-        <h2>🎮 Bowl Style Machines & Machinery Game 🎮</h2>
+        <h2>🎮 Simple Knowledge Bowl Game 🎮</h2>
       </div>
 
       <div class="panels">
@@ -910,9 +903,9 @@
       "Maths of Machines":"Gear ratios, mechanical advantage, torque, speed, reasoning",
       "Engineering in Nature":"Biomechanics, animal movement, natural structures",
       "Science of Materials":"Metals, composites, stress, strain, load-bearing",
-      "Creative Thinking":"Design choices, trade offs, novel solutions",
-      "Wild Card":"Mixed challenge logic and problem solving",
-      "Da Vinci Specials":"Leonardo's ideas, design thinking, invention logic",
+      "Creative Thinking":"Simple design and problem solving words",
+      "Wild Card":"Mixed quick knowledge questions",
+      "Da Vinci Specials":"Leonardo's ideas, notebooks, inventions",
       "History of Machines":"Industrial change and machine impact",
       "Everyday Engineering":"How daily objects work and why"
     };
@@ -947,67 +940,182 @@
 
     const LOADING_LINES = [
       "Building local challenge bank...",
-      "Stacking conceptual prompts...",
-      "Loading machine dilemmas...",
-      "Sharpening host guides...",
-      "Filling the board with chaos..."
+      "Loading simple knowledge questions...",
+      "Stacking quick answers...",
+      "Warming up the board...",
+      "Almost ready..."
     ];
 
     const BONUS_TYPES = ["wheel", "rapid", "double", "steal"];
 
     const CATEGORY_PROFILES = {
       "Simple Machines": {
-        objects:["heavy crate","stuck door","bucket of bricks","loaded trolley","workshop gate","tool chest","water barrel","stone slab"],
-        mechanisms:["lever","pulley","wheel and axle","inclined plane","screw","wedge"],
-        constraints:["limited strength","a tight space","no electricity","one person only","slippery ground","a short time limit"],
-        tradeoffs:["distance","speed","stability","control","space","effort"]
+        stems: [
+          ["What simple machine is a ramp?", "Inclined plane"],
+          ["What simple machine is a wheel attached to a rod called?", "Wheel and axle"],
+          ["What simple machine has a fulcrum?", "Lever"],
+          ["What simple machine uses a rope over a wheel?", "Pulley"],
+          ["What simple machine is used to split things apart?", "Wedge"],
+          ["What simple machine is a threaded shaft?", "Screw"],
+          ["What is the fixed point of a lever called?", "Fulcrum"],
+          ["Which simple machine helps lift a bucket from a well?", "Pulley"],
+          ["Which simple machine is most like a knife?", "Wedge"],
+          ["Which simple machine is most like a jar lid thread?", "Screw"]
+        ]
       },
       "Engineering Legends": {
-        people:["Leonardo da Vinci","Nikola Tesla","James Watt","Archimedes","Isambard Kingdom Brunel","Marie Curie"],
-        achievements:["design thinking","systems thinking","experimentation","practical application","bold problem solving","long term influence"],
-        contexts:["a growing city","a major transport problem","a new industrial need","a design challenge","a scientific breakthrough","a changing society"]
+        stems: [
+          ["Who sketched many early machine ideas in notebooks?", "Leonardo da Vinci"],
+          ["Who is linked to AC electricity systems?", "Nikola Tesla"],
+          ["Who improved the steam engine?", "James Watt"],
+          ["Who said, Give me a place to stand and I will move the Earth?", "Archimedes"],
+          ["Who is famous for major railway and bridge works in Britain?", "Brunel"],
+          ["Who discovered radium with Pierre Curie?", "Marie Curie"],
+          ["Who is strongly linked to mechanical advantage in levers?", "Archimedes"],
+          ["Who designed ideas for flying machines centuries early?", "Leonardo da Vinci"],
+          ["Whose surname is used in the unit watt?", "James Watt"],
+          ["Which inventor is most associated with Tesla coils?", "Nikola Tesla"]
+        ]
       },
       "Forces & Motion": {
-        objects:["bicycle","shopping trolley","skateboard","box on a ramp","train","soccer ball","swing","wheelbarrow"],
-        forces:["friction","gravity","momentum","inertia","air resistance","push force","balanced forces","unbalanced forces"],
-        changes:["gets steeper","gets heavier","moves faster","has less grip","stops suddenly","changes direction","loses friction","hits a slope"]
+        stems: [
+          ["What force pulls objects toward Earth?", "Gravity"],
+          ["What force opposes motion between surfaces?", "Friction"],
+          ["What is a push or pull called?", "Force"],
+          ["What is the product of mass and velocity?", "Momentum"],
+          ["What resists a change in motion?", "Inertia"],
+          ["What do balanced forces cause?", "No change in motion"],
+          ["What happens when forces are unbalanced?", "Motion changes"],
+          ["What force slows moving objects in air?", "Air resistance"],
+          ["What is the measure of how fast velocity changes?", "Acceleration"],
+          ["What keeps tyres gripping the road?", "Friction"]
+        ]
       },
       "Inventions & Patents": {
-        inventions:["printing press","steam engine","light bulb","telephone","internal combustion engine","assembly line","sewing machine","refrigeration"],
-        impacts:["mass production","communication","transport","daily life","urban growth","work patterns","access to information","global trade"]
+        stems: [
+          ["Who invented the printing press?", "Johannes Gutenberg"],
+          ["What invention spread printed books widely in Europe?", "Printing press"],
+          ["What engine powered many early factories and trains?", "Steam engine"],
+          ["Who is linked to the telephone?", "Alexander Graham Bell"],
+          ["What invention made long distance voice communication possible?", "Telephone"],
+          ["What invention is strongly linked to Thomas Edison in school history?", "Light bulb"],
+          ["What innovation is linked to Henry Ford's factories?", "Assembly line"],
+          ["What document protects a new invention idea?", "Patent"],
+          ["What invention helped keep food cold mechanically?", "Refrigeration"],
+          ["What machine is associated with factory cloth production becoming faster?", "Spinning machinery"]
+        ]
       },
       "Maths of Machines": {
-        systems:["gear train","pulley set","lever arm","ramp design","axle system","crank handle","wheel system","chain drive"],
-        goals:["more force","more speed","better balance","less effort","greater control","steady movement"],
-        variables:["length","ratio","mass","distance","turns","slope","load","radius"]
+        stems: [
+          ["What do gears change, speed or force?", "Both"],
+          ["What is the turning effect of a force called?", "Torque"],
+          ["What do you call the ratio between input and output gear size?", "Gear ratio"],
+          ["What does a higher mechanical advantage do to needed effort?", "Reduces it"],
+          ["If one gear is bigger than another, can speed change?", "Yes"],
+          ["What simple machine idea is measured by mechanical advantage?", "Force multiplication"],
+          ["What is measured when you compare load force to effort force?", "Mechanical advantage"],
+          ["If effort goes down, does distance often go up in machines?", "Yes"],
+          ["What is the outside edge distance from centre of a wheel called?", "Radius"],
+          ["What machine idea links force and distance trade offs?", "Mechanical advantage"]
+        ]
       },
       "Engineering in Nature": {
-        naturalModels:["bird wing","spider web","ant colony","fish body","tree trunk","beehive","gecko foot","kangaroo leg"],
-        engineeringUses:["movement","load distribution","grip","efficiency","cooling","lightness","strength","structure"]
+        stems: [
+          ["What field copies ideas from nature into design?", "Biomimicry"],
+          ["What animal is often copied for flight design, birds or worms?", "Birds"],
+          ["What natural structure is known for strength and lightness, spider web or jelly?", "Spider web"],
+          ["What animal is known for grip inspiring adhesives, gecko or whale?", "Gecko"],
+          ["What insect home is famous for hexagon efficiency?", "Beehive"],
+          ["What body shape is copied for streamlined movement in water?", "Fish"],
+          ["What animal jump can inspire spring like leg design, kangaroo or snail?", "Kangaroo"],
+          ["What plant structure inspires strong vertical support, tree trunk or flower petal?", "Tree trunk"],
+          ["What natural pattern helps distribute load in many structures?", "Triangle pattern"],
+          ["What is the main idea of engineering in nature?", "Copy useful natural solutions"]
+        ]
       },
       "Science of Materials": {
-        materials:["steel","aluminium","rubber","wood","glass","plastic composite","carbon fibre","copper"],
-        demands:["strength","lightness","flexibility","heat resistance","cost control","durability","conductivity","shock absorption"],
-        failures:["bending","snapping","wearing out","overheating","corroding","cracking","fatiguing","warping"]
+        stems: [
+          ["Which metal is commonly used in electrical wiring?", "Copper"],
+          ["Which material is known for being transparent and brittle?", "Glass"],
+          ["Which material is strong and commonly used in building frames?", "Steel"],
+          ["Which metal is lightweight and resists corrosion well?", "Aluminium"],
+          ["What material stretches and returns shape easily, rubber or glass?", "Rubber"],
+          ["What do we call a material made from combined substances?", "Composite"],
+          ["What is a material's ability to bend without snapping called?", "Flexibility"],
+          ["What is the pulling apart force on a material called?", "Tension"],
+          ["What is the pushing together force on a material called?", "Compression"],
+          ["What gradual damage from repeated stress is called?", "Fatigue"]
+        ]
       },
       "Creative Thinking": {
-        problems:["crossing a gap","moving a fragile object","lifting something awkward","saving time in a workshop","making a design safer","reducing waste","sharing limited tools","building with few materials"],
-        constraints:["limited budget","only recycled materials","one person only","minimal space","strict time pressure","no electricity","high safety demands","outdoor conditions"]
+        stems: [
+          ["What do we call producing many possible ideas quickly?", "Brainstorming"],
+          ["What is it called when you improve an idea over several versions?", "Iteration"],
+          ["What is a quick first version of a design called?", "Prototype"],
+          ["What is one word for a design limit or rule?", "Constraint"],
+          ["What thinking style looks for unusual solutions?", "Lateral thinking"],
+          ["What is the first step before solving a problem, define it or decorate it?", "Define it"],
+          ["What is it called when you test an idea and improve it?", "Iteration"],
+          ["What is a user need turned into a design target called?", "Requirement"],
+          ["What is it called when you compare options using set criteria?", "Evaluation"],
+          ["What simple term means one good thing may cost another good thing?", "Trade off"]
+        ]
       },
       "Wild Card": {
-        themes:["efficiency","trade off","design choice","historical impact","material choice","force control","nature inspired design","problem solving"]
+        stems: [
+          ["What machine helps lift loads with a rope and wheel?", "Pulley"],
+          ["What force pulls a dropped object downward?", "Gravity"],
+          ["What is the fixed point on a lever?", "Fulcrum"],
+          ["What word means resistance between moving surfaces?", "Friction"],
+          ["What machine used steam to power early factories?", "Steam engine"],
+          ["What natural design field copies living things?", "Biomimicry"],
+          ["What protects an inventor's new idea legally?", "Patent"],
+          ["What do we call a first test version of a design?", "Prototype"],
+          ["What metal is used for many wires?", "Copper"],
+          ["What turning effect does a force create?", "Torque"]
+        ]
       },
       "Da Vinci Specials": {
-        ideas:["flying machine","armoured vehicle","bridge design","rotating mechanism","notebook sketch","water lifting device","war machine concept","observation based design"],
-        features:["curiosity","sketching","iteration","borrowing from nature","combining ideas","thinking ahead of technology","visual planning","mechanical imagination"]
+        stems: [
+          ["Whose notebooks are full of machine sketches?", "Leonardo da Vinci"],
+          ["What was Leonardo da Vinci famous for besides painting?", "Inventing"],
+          ["Did Leonardo da Vinci live before or after modern electricity?", "Before"],
+          ["What did Leonardo often use to explore ideas, notebooks or engines?", "Notebooks"],
+          ["What kind of machine did Leonardo famously sketch, flying or digital?", "Flying"],
+          ["Was Leonardo da Vinci Italian or English?", "Italian"],
+          ["What helped Leonardo communicate machine ideas, sketches or code?", "Sketches"],
+          ["What was Leonardo da Vinci interested in observing, nature or satellites?", "Nature"],
+          ["What made many of Leonardo's machines hard to build in his time?", "Limited technology"],
+          ["What word describes Leonardo's approach of mixing art and engineering?", "Interdisciplinary"]
+        ]
       },
       "History of Machines": {
-        periods:["Industrial Revolution","early factories","railway age","age of steam","mass production era","electrification period","mechanised agriculture","early communication age"],
-        outcomes:["faster production","social change","urban growth","labour shifts","new transport","new trade networks","wider access to goods","new inequalities"]
+        stems: [
+          ["What period is strongly linked to factory machines and steam power?", "Industrial Revolution"],
+          ["What engine powered many early trains?", "Steam engine"],
+          ["What machine helped spread books widely?", "Printing press"],
+          ["What system made factory production faster, assembly line or candle line?", "Assembly line"],
+          ["What invention transformed long distance speech?", "Telephone"],
+          ["What invention helped keep food cold mechanically?", "Refrigeration"],
+          ["What transport machine changed movement in the railway age?", "Train"],
+          ["What type of power came before widespread electricity in factories?", "Steam power"],
+          ["What broad process means work done increasingly by machines?", "Mechanisation"],
+          ["What happened to production during mechanisation, slower or faster?", "Faster"]
+        ]
       },
       "Everyday Engineering": {
-        items:["zip","can opener","elevator","door hinge","shopping trolley","bottle cap","escalator","bicycle brake"],
-        purposes:["make movement easier","reduce effort","improve safety","control force","transfer motion","save time","increase grip","organise load"]
+        stems: [
+          ["What simple machine is a door hinge closest to?", "Lever"],
+          ["What common object uses a screw thread, bottle cap or napkin?", "Bottle cap"],
+          ["What everyday machine lifts people between floors?", "Elevator"],
+          ["What device helps move people on moving stairs?", "Escalator"],
+          ["What part of a bicycle slows the wheels?", "Brake"],
+          ["What kitchen tool cuts open cans using a turning mechanism?", "Can opener"],
+          ["What object uses teeth to close clothing?", "Zip"],
+          ["What small wheel device helps move supermarket loads?", "Shopping trolley"],
+          ["What everyday transport machine uses pedals and wheels?", "Bicycle"],
+          ["What is an example of everyday engineering that moves vertically in buildings?", "Elevator"]
+        ]
       }
     };
 
@@ -1224,7 +1332,7 @@
       }
 
       setLoading(true);
-      await sleep(450);
+      await sleep(350);
 
       const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
       const questions = [];
@@ -1240,509 +1348,30 @@
       state.generated = true;
       renderPreview();
       setLoading(false);
-      toast("Local challenge bank built.", "good");
-    }
-
-    function generateChallenge(category, points){
-      const profile = CATEGORY_PROFILES[category] || CATEGORY_PROFILES["Wild Card"];
-      const level = points;
-      let out;
-
-      if(category === "Simple Machines") out = simpleMachinesChallenge(profile, level);
-      else if(category === "Engineering Legends") out = engineeringLegendsChallenge(profile, level);
-      else if(category === "Forces & Motion") out = forcesChallenge(profile, level);
-      else if(category === "Inventions & Patents") out = inventionsChallenge(profile, level);
-      else if(category === "Maths of Machines") out = mathsMachinesChallenge(profile, level);
-      else if(category === "Engineering in Nature") out = natureChallenge(profile, level);
-      else if(category === "Science of Materials") out = materialsChallenge(profile, level);
-      else if(category === "Creative Thinking") out = creativeThinkingChallenge(profile, level);
-      else if(category === "Da Vinci Specials") out = daVinciChallenge(profile, level);
-      else if(category === "History of Machines") out = historyMachinesChallenge(profile, level);
-      else if(category === "Everyday Engineering") out = everydayEngineeringChallenge(profile, level);
-      else out = wildCardChallenge(profile, level);
-
-      return {
-        category,
-        points,
-        question: out.question,
-        answer: out.answer,
-        keyIdeas: out.keyIdeas
-      };
+      toast("Simple knowledge set built.", "good");
     }
 
     function sample(arr){
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function simpleMachinesChallenge(p, level){
-      const object = sample(p.objects);
-      const mechanism = sample(p.mechanisms);
-      const constraint = sample(p.constraints);
-      const trade = sample(p.tradeoffs);
+    function generateChallenge(category, points){
+      const profile = CATEGORY_PROFILES[category] || CATEGORY_PROFILES["Wild Card"];
+      const [questionBase, answer] = sample(profile.stems);
 
-      if(level === 100){
-        return {
-          question:`You need to move a ${object} with ${constraint}. Why might a ${mechanism} help?`,
-          answer:`A strong response explains how the ${mechanism} changes force, direction, or effort to make the task easier.`,
-          keyIdeas:["changes force or direction","reduces effort","fits the task"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`A team can use either a ${mechanism} or direct lifting to move a ${object}. Which is smarter, and why?`,
-          answer:`A strong response chooses the better method for the context and explains the mechanical advantage or control benefit.`,
-          keyIdeas:["choice justified","mechanical advantage or control","context matters"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`A ${mechanism} makes moving a ${object} easier. What trade off might still remain?`,
-          answer:`A strong response explains that easier force often comes with a trade off such as more distance, less speed, or more setup.`,
-          keyIdeas:["trade off","distance or speed","setup or control"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`You have to move a ${object} in ${constraint}. Which simple machine would you choose first, and what makes it the best first choice?`,
-          answer:`A strong response selects a machine suited to the space and explains why it best matches the constraint.`,
-          keyIdeas:["best fit","constraint considered","clear reasoning"]
-        };
-      }
+      const pointsLabel =
+        points === 100 ? "Quick one." :
+        points === 200 ? "A bit harder." :
+        points === 300 ? "Know your basics." :
+        points === 400 ? "Upper level." :
+        "Top tier.";
+
       return {
-        question:`Design a solution for moving a ${object} when space, effort, and ${trade} all matter. Which simple machine system would you build, and why?`,
-        answer:`A strong response weighs multiple constraints and argues for a system that balances force reduction with a realistic trade off.`,
-        keyIdeas:["multiple constraints","balanced solution","trade off justified"]
-      };
-    }
-
-    function engineeringLegendsChallenge(p, level){
-      const person = sample(p.people);
-      const achievement = sample(p.achievements);
-      const context = sample(p.contexts);
-
-      if(level === 100){
-        return {
-          question:`Why does ${person} still matter in engineering conversations today?`,
-          answer:`A strong response explains that influence comes from ideas, methods, or designs that shaped later engineering.`,
-          keyIdeas:["lasting influence","ideas or methods","later impact"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`How might ${person}'s ${achievement} have helped solve problems in ${context}?`,
-          answer:`A strong response links the person's way of thinking or designing to a real need or large scale problem.`,
-          keyIdeas:["links idea to problem","practical value","clear example"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`What makes an engineer influential even if they did not build every final product themselves? Use ${person} as a model.`,
-          answer:`A strong response explains that systems, ideas, and methods can shape many later inventions and industries.`,
-          keyIdeas:["influence beyond one product","ideas shape systems","long term impact"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`Which matters more in engineering history, technical skill or vision? Make a case using ${person}.`,
-          answer:`A strong response takes a position, supports it, and shows how vision and skill interact in real engineering impact.`,
-          keyIdeas:["clear position","evidence from example","vision and skill relationship"]
-        };
-      }
-      return {
-        question:`If ${person} were solving a modern engineering problem today, which part of their approach would be most useful, and why?`,
-        answer:`A strong response identifies a transferable habit of mind such as experimentation, systems thinking, or design imagination and justifies it.`,
-        keyIdeas:["transferable habit","modern relevance","well justified"]
-      };
-    }
-
-    function forcesChallenge(p, level){
-      const object = sample(p.objects);
-      const force = sample(p.forces);
-      const change = sample(p.changes);
-
-      if(level === 100){
-        return {
-          question:`Why does ${force} matter when a ${object} moves?`,
-          answer:`A strong response explains what the force does to motion, control, or direction.`,
-          keyIdeas:["force affects motion","control or direction","clear mechanism"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`A ${object} ${change}. Predict one effect on motion and explain why.`,
-          answer:`A strong response predicts a sensible motion change and explains it using a force based reason.`,
-          keyIdeas:["prediction","force based explanation","sensible link"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Two teams argue about what matters more for a moving ${object}, ${force} or mass. Who has the better argument, and under what conditions?`,
-          answer:`A strong response explains that both can matter, but their importance depends on the scenario and what is changing.`,
-          keyIdeas:["depends on conditions","compares factors","not one dimensional"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`How could changing friction completely alter the safety or control of a ${object}?`,
-          answer:`A strong response explains that friction affects grip, braking, stability, and the ability to control motion.`,
-          keyIdeas:["grip","braking or stopping","safety or stability"]
-        };
-      }
-      return {
-        question:`Design a safer motion system for a ${object} if it ${change}. Which force or motion principle would you control first, and why?`,
-        answer:`A strong response prioritises a principle such as friction, momentum, or balance and explains why it is the first lever for safety.`,
-        keyIdeas:["clear priority","force principle chosen","safety reasoning"]
-      };
-    }
-
-    function inventionsChallenge(p, level){
-      const invention = sample(p.inventions);
-      const impact = sample(p.impacts);
-
-      if(level === 100){
-        return {
-          question:`Why was the ${invention} more than just a new machine?`,
-          answer:`A strong response explains that the invention changed how people worked, communicated, travelled, or lived.`,
-          keyIdeas:["broader impact","social change","beyond one machine"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`How could the ${invention} change ${impact} faster than an older method?`,
-          answer:`A strong response explains the efficiency, scale, or access difference created by the invention.`,
-          keyIdeas:["efficiency or scale","older method less effective","clear comparison"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`When does an invention become transformative instead of merely useful? Use the ${invention} as your example.`,
-          answer:`A strong response explains that transformation happens when an invention changes systems, behaviour, or society at scale.`,
-          keyIdeas:["system level change","scale","behaviour or society"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`Would you judge the ${invention} more by technical brilliance or by its impact on ordinary people? Defend your view.`,
-          answer:`A strong response takes a position and explains why either technical breakthrough or social impact should carry more weight.`,
-          keyIdeas:["clear judgement","technical versus social impact","justification"]
-        };
-      }
-      return {
-        question:`A new machine solves one problem but reshapes society in unexpected ways. Why should inventors think about second order effects? Use the ${invention} as a guide.`,
-        answer:`A strong response explains that inventions change systems, jobs, behaviour, and power relations, not only one task.`,
-        keyIdeas:["second order effects","systems thinking","unexpected consequences"]
-      };
-    }
-
-    function mathsMachinesChallenge(p, level){
-      const system = sample(p.systems);
-      const goal = sample(p.goals);
-      const variable = sample(p.variables);
-
-      if(level === 100){
-        return {
-          question:`If a ${system} is designed for ${goal}, which matters more, more force or more speed? Why?`,
-          answer:`A strong response identifies the better priority and explains the trade off between force and speed.`,
-          keyIdeas:["clear priority","force or speed trade off","matches goal"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`How might changing the ${variable} in a ${system} affect performance?`,
-          answer:`A strong response explains that changing one variable alters efficiency, force, speed, balance, or control.`,
-          keyIdeas:["change in variable","effect on performance","mechanical reasoning"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Why do engineers use ratios and proportional thinking instead of only rough guesses when tuning a ${system}?`,
-          answer:`A strong response explains that ratios help predict how changes in one part will affect the whole system.`,
-          keyIdeas:["prediction","relationships between parts","precision over guessing"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`A ${system} gives more ${goal}, but the user complains it feels inefficient. What might the numbers be hiding?`,
-          answer:`A strong response explains that one gain may come with another cost such as energy loss, lower speed, instability, or extra complexity.`,
-          keyIdeas:["hidden trade off","one variable improved","system cost elsewhere"]
-        };
-      }
-      return {
-        question:`You are optimising a ${system} where ${variable}, load, and user control all matter. Which quantity would you adjust first, and why?`,
-        answer:`A strong response chooses a high leverage variable and explains how that choice ripples through the whole system.`,
-        keyIdeas:["high leverage variable","whole system thinking","clear justification"]
-      };
-    }
-
-    function natureChallenge(p, level){
-      const model = sample(p.naturalModels);
-      const use = sample(p.engineeringUses);
-
-      if(level === 100){
-        return {
-          question:`Why might engineers study a ${model} when designing for ${use}?`,
-          answer:`A strong response explains that nature often solves efficiency, strength, grip, or movement problems elegantly.`,
-          keyIdeas:["nature solves problems","useful structure or behaviour","engineering transfer"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`What is one danger of copying nature too literally instead of adapting the idea behind a ${model}?`,
-          answer:`A strong response explains that natural solutions work in specific contexts and may need adjustment for human materials or goals.`,
-          keyIdeas:["context matters","adapt not copy blindly","human constraints"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Which matters more in biomimicry, copying the shape of a ${model} or understanding the function?`,
-          answer:`A strong response argues that function usually matters more, because the engineering goal is to reproduce the useful effect.`,
-          keyIdeas:["function over shape","engineering goal","good reasoning"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`A team wants to mimic a ${model} for ${use}, but the material choices are different. What should they preserve first?`,
-          answer:`A strong response explains that the key performance principle should be preserved, not every visible feature.`,
-          keyIdeas:["preserve principle","not surface appearance","performance first"]
-        };
-      }
-      return {
-        question:`Design a machine inspired by a ${model}. Which natural feature would you borrow, and what engineering problem would it solve best?`,
-        answer:`A strong response selects one useful feature and clearly links it to a specific engineering benefit.`,
-        keyIdeas:["feature selected","problem linked","clear benefit"]
-      };
-    }
-
-    function materialsChallenge(p, level){
-      const material = sample(p.materials);
-      const demand = sample(p.demands);
-      const failure = sample(p.failures);
-
-      if(level === 100){
-        return {
-          question:`Why might ${material} be chosen when ${demand} matters?`,
-          answer:`A strong response explains one property that makes the material useful for the demand.`,
-          keyIdeas:["property named","linked to demand","material choice explained"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`A design using ${material} keeps ${failure}. What property might be mismatched to the job?`,
-          answer:`A strong response identifies that the chosen material may lack the right strength, flexibility, toughness, or resistance.`,
-          keyIdeas:["mismatch identified","property matters","linked to failure"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Why is the strongest material not always the best material? Use ${material} as a starting point.`,
-          answer:`A strong response explains that weight, cost, flexibility, heat, and durability can matter as much as raw strength.`,
-          keyIdeas:["trade offs","strength not everything","multiple criteria"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`If ${demand} and low cost both matter, how should a team judge whether ${material} is still worth using?`,
-          answer:`A strong response explains that teams should balance performance requirements against cost and risk, not optimise one factor only.`,
-          keyIdeas:["balance criteria","cost and performance","risk judgement"]
-        };
-      }
-      return {
-        question:`You must choose a material for a system where ${demand} matters, but ${failure} would be dangerous. What should drive the final decision?`,
-        answer:`A strong response explains that the final decision should prioritise the critical performance requirement and the consequences of failure.`,
-        keyIdeas:["consequence of failure","critical requirement","justified priority"]
-      };
-    }
-
-    function creativeThinkingChallenge(p, level){
-      const problem = sample(p.problems);
-      const constraint = sample(p.constraints);
-
-      if(level === 100){
-        return {
-          question:`What is the first question a smart team should ask before solving ${problem}?`,
-          answer:`A strong response explains that teams should first clarify the real constraint, goal, or user need.`,
-          keyIdeas:["clarify goal","identify constraint","define problem properly"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`How could ${constraint} improve the quality of a solution instead of only making ${problem} harder?`,
-          answer:`A strong response explains that constraints can force clearer priorities, smarter trade offs, and more original solutions.`,
-          keyIdeas:["constraints guide thinking","priorities become clearer","originality through limits"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`When solving ${problem}, why might the weirdest idea be worth testing early?`,
-          answer:`A strong response explains that unusual ideas can reveal assumptions, open new directions, or expose hidden options.`,
-          keyIdeas:["challenge assumptions","opens options","testing ideas early"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`A team has two solutions to ${problem}. One is safe and obvious. One is risky but powerful. How should they choose?`,
-          answer:`A strong response explains that they should judge the solutions against criteria such as feasibility, impact, time, and risk.`,
-          keyIdeas:["criteria based choice","risk versus impact","feasibility matters"]
-        };
-      }
-      return {
-        question:`Design a first draft solution for ${problem} under ${constraint}. What principle should drive the design from the beginning?`,
-        answer:`A strong response picks a design principle such as simplicity, safety, adaptability, or efficiency and justifies it.`,
-        keyIdeas:["clear design principle","fits the constraint","justified from start"]
-      };
-    }
-
-    function wildCardChallenge(p, level){
-      const theme = sample(p.themes);
-      if(level === 100){
-        return {
-          question:`Why does ${theme} matter in machine design?`,
-          answer:`A strong response explains how the theme affects usefulness, safety, or performance.`,
-          keyIdeas:["theme explained","linked to design","performance or safety"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`Give one example of how ${theme} can improve a machine and one way it can create a new problem.`,
-          answer:`A strong response shows that design gains often come with trade offs or side effects.`,
-          keyIdeas:["benefit","new problem","trade off"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Which is harder in engineering, finding a good idea or choosing between good ideas? Explain using ${theme}.`,
-          answer:`A strong response makes a case and shows how evaluation and trade offs shape final engineering decisions.`,
-          keyIdeas:["clear argument","evaluation matters","trade offs"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`A design team optimises for ${theme} and makes the system worse overall. How could that happen?`,
-          answer:`A strong response explains that over optimising one measure can damage balance across the system.`,
-          keyIdeas:["over optimisation","whole system balance","unintended consequences"]
-        };
-      }
-      return {
-        question:`You only get to optimise one thing first in a new machine, and you choose ${theme}. Why might that be brilliant or dangerous?`,
-        answer:`A strong response explains both the strategic benefit and the risk of prioritising a single theme too early.`,
-        keyIdeas:["benefit","risk","strategic judgement"]
-      };
-    }
-
-    function daVinciChallenge(p, level){
-      const idea = sample(p.ideas);
-      const feature = sample(p.features);
-
-      if(level === 100){
-        return {
-          question:`Why was Leonardo da Vinci's ${feature} valuable even when some designs were never built?`,
-          answer:`A strong response explains that the value was in observation, design imagination, and creative engineering thinking.`,
-          keyIdeas:["thinking value","observation or imagination","not only final product"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`What does the ${idea} suggest about how Leonardo approached engineering problems?`,
-          answer:`A strong response explains that he explored mechanisms visually, experimentally, and often by combining ideas.`,
-          keyIdeas:["visual planning","experimentation","combining ideas"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Why is sketching a serious engineering tool instead of just decoration? Use Leonardo as your example.`,
-          answer:`A strong response explains that sketches help test structure, movement, relationships, and design possibilities before building.`,
-          keyIdeas:["test ideas visually","understand relationships","early design reasoning"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`Which mattered more in Leonardo's work, technical detail or curiosity? Defend your answer.`,
-          answer:`A strong response takes a position but recognises that curiosity often drove the search for detail and design insight.`,
-          keyIdeas:["clear position","curiosity and detail linked","supported reasoning"]
-        };
-      }
-      return {
-        question:`If Leonardo were coaching a modern student design team, which habit of mind would be most useful today, and why?`,
-        answer:`A strong response selects a habit such as observation, iteration, or cross disciplinary thinking and shows why it matters now.`,
-        keyIdeas:["habit named","modern relevance","clear justification"]
-      };
-    }
-
-    function historyMachinesChallenge(p, level){
-      const period = sample(p.periods);
-      const outcome = sample(p.outcomes);
-
-      if(level === 100){
-        return {
-          question:`Why did machines in the ${period} change more than one industry?`,
-          answer:`A strong response explains that machines reshape transport, work, cities, trade, and daily life together.`,
-          keyIdeas:["broad change","multiple systems affected","not one industry only"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`How could one machine breakthrough in the ${period} lead to ${outcome}?`,
-          answer:`A strong response links the technical change to a wider social or economic effect.`,
-          keyIdeas:["technical to social link","chain reaction","clear mechanism"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Why might the same machine be seen as progress by some people and a threat by others during the ${period}?`,
-          answer:`A strong response explains that machines bring productivity and opportunity but can also disrupt work, power, and stability.`,
-          keyIdeas:["different perspectives","productivity gains","disruption"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`Which matters more in machine history, what a machine can do or who gains control because of it?`,
-          answer:`A strong response takes a position and explains that technical capability and power can reshape society together.`,
-          keyIdeas:["clear position","power or control","technology and society linked"]
-        };
-      }
-      return {
-        question:`What is the biggest mistake people make when they treat machine history as only a list of inventions from the ${period}?`,
-        answer:`A strong response explains that machine history is about systems, consequences, and changing human life, not isolated devices.`,
-        keyIdeas:["systems not just objects","consequences matter","human life changed"]
-      };
-    }
-
-    function everydayEngineeringChallenge(p, level){
-      const item = sample(p.items);
-      const purpose = sample(p.purposes);
-
-      if(level === 100){
-        return {
-          question:`Why is the ${item} a piece of engineering rather than just an ordinary object?`,
-          answer:`A strong response explains that it solves a practical problem through controlled force, motion, or design.`,
-          keyIdeas:["solves a problem","force or motion","design intention"]
-        };
-      }
-      if(level === 200){
-        return {
-          question:`How does the ${item} help ${purpose} better than a clumsier method?`,
-          answer:`A strong response explains how the object reduces effort, improves control, or saves time.`,
-          keyIdeas:["less effort or more control","clear purpose","comparison made"]
-        };
-      }
-      if(level === 300){
-        return {
-          question:`Why are well designed everyday objects easy to ignore but hard to replace? Use the ${item}.`,
-          answer:`A strong response explains that good engineering feels simple because many decisions have already solved hidden problems.`,
-          keyIdeas:["hidden design work","simplicity is engineered","hard to replace well"]
-        };
-      }
-      if(level === 400){
-        return {
-          question:`If the ${item} keeps failing in public use, what is more likely the problem, weak materials or poor design thinking?`,
-          answer:`A strong response explains that either may be true, but the answer should depend on evidence about context, load, and user behaviour.`,
-          keyIdeas:["depends on evidence","context matters","materials and design both possible"]
-        };
-      }
-      return {
-        question:`Redesign the ${item} for a tougher environment. What would you protect first, function, durability, safety, or cost, and why?`,
-        answer:`A strong response picks a priority and justifies it based on how the object is actually used.`,
-        keyIdeas:["clear priority","use context","justified trade off"]
+        category,
+        points,
+        question: `${questionBase} ${pointsLabel}`,
+        answer,
+        keyIdeas: [answer]
       };
     }
 
@@ -1754,10 +1383,10 @@
         "WHEEL AND AXLE",
         "LOAD BEARING FRAME",
         "FORCE AND MOTION",
-        "DESIGN TRADE OFF",
         "PULLEY BLOCK SYSTEM",
         "STEAM POWER ENGINE",
-        "STRUCTURAL STABILITY"
+        "STRUCTURAL STABILITY",
+        "PRINTING PRESS"
       ];
       return shuffle([...phrases]).slice(0, 3);
     }
@@ -1778,8 +1407,7 @@
               <span class="tag">💰 ${q.points}</span>
             </div>
             <div class="preview-q">${escapeHtml(q.question)}</div>
-            <div class="preview-a"><strong>Host guide:</strong> ${escapeHtml(q.answer)}</div>
-            <div class="preview-a" style="margin-top:8px;"><strong>Key ideas:</strong> ${(q.keyIdeas || []).map(escapeHtml).join(", ")}</div>
+            <div class="preview-a"><strong>Answer:</strong> ${escapeHtml(q.answer)}</div>
           `;
           el.previewList.appendChild(card);
         });
@@ -1822,8 +1450,8 @@
             points,
             used:false,
             type:"question",
-            question:q?.question || "Challenge missing",
-            answer:q?.answer || "Guide missing",
+            question:q?.question || "Question missing",
+            answer:q?.answer || "Answer missing",
             keyIdeas:q?.keyIdeas || []
           });
         });
@@ -1844,7 +1472,6 @@
 
     function createBonusPayload(basePoints){
       const type = BONUS_TYPES[Math.floor(Math.random() * BONUS_TYPES.length)];
-
       if(type === "wheel"){
         return { type, phrase: sample(state.wheelOfFortunePhrases) || "MECHANICAL ADVANTAGE" };
       }
@@ -1862,10 +1489,9 @@
     }
 
     function makeRapidQuestions(count){
-      const categories = ALL_CATEGORIES;
       const bank = [];
       for(let i = 0; i < count * 3; i++){
-        const category = sample(categories);
+        const category = sample(ALL_CATEGORIES);
         const challenge = generateChallenge(category, sample([100,200,300]));
         bank.push({
           question: challenge.question,
@@ -1917,11 +1543,7 @@
 
     function hostGuideHtml(tile){
       return `
-        <div><strong>Host guide:</strong> ${escapeHtml(tile.answer)}</div>
-        ${(tile.keyIdeas && tile.keyIdeas.length)
-          ? `<div style="margin-top:10px;"><strong>Key ideas to listen for:</strong><ul class="host-list">${tile.keyIdeas.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></div>`
-          : ""
-        }
+        <div><strong>Answer:</strong> ${escapeHtml(tile.answer)}</div>
       `;
     }
 
@@ -1940,7 +1562,7 @@
 
         <div class="control-row">
           <button class="btn gold" id="startTimerBtn" type="button">▶ Start 20 Second Timer</button>
-          <button class="btn ghost" id="showGuideBtn" type="button">Show Host Guide</button>
+          <button class="btn ghost" id="showGuideBtn" type="button">Show Answer</button>
           <button class="btn red" id="noAwardBtn" type="button">No Award</button>
           <button class="btn blue" id="passBtn" type="button">Pass to Another Team</button>
         </div>
@@ -2247,7 +1869,7 @@
         </div>
         <div class="bonus-reveal">
           <div class="big">FAST FIRE</div>
-          <div class="sub">5 quick conceptual prompts. 10 seconds each. ${payload.awardPerCorrect} points per correct answer.</div>
+          <div class="sub">5 quick knowledge questions. 10 seconds each. ${payload.awardPerCorrect} points per correct answer.</div>
         </div>
         <div class="rapid-list" id="rapidList"></div>
         <div class="timer" id="rapidTimer">10</div>
@@ -2269,8 +1891,7 @@
           item.innerHTML = `
             <div class="rapid-q">${idx + 1}. ${escapeHtml(q.question)}</div>
             <div class="preview-a">${q.result === true ? "✅ Correct" : q.result === false ? "❌ Wrong" : "Pending"}</div>
-            <div class="preview-a" style="margin-top:8px;"><strong>Guide:</strong> ${escapeHtml(q.answer)}</div>
-            <div class="preview-a" style="margin-top:6px;"><strong>Key ideas:</strong> ${(q.keyIdeas || []).map(escapeHtml).join(", ")}</div>
+            <div class="preview-a" style="margin-top:8px;"><strong>Answer:</strong> ${escapeHtml(q.answer)}</div>
             <div class="control-row">
               <button class="btn green" type="button">✅</button>
               <button class="btn red" type="button">❌</button>
@@ -2638,7 +2259,7 @@
       }
       if(!hiddenPositions.length) return current;
       const pos = hiddenPositions[Math.floor(Math.random() * hiddenPositions.length)];
-      return current.slice(0,pos) + phrase[pos] + current.slice(pos+1);
+      return current.slice(0,pos) + phrase[pos] + current.slice(pos + 1);
     }
 
     function shuffle(arr){
