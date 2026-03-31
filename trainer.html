@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Da Vinci Decathlon Jeopardy</title>
+  <title>Da Vinci Decathlon Bowl Game</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Boogaloo&display=swap" rel="stylesheet">
@@ -24,6 +24,7 @@
     }
 
     *{box-sizing:border-box}
+
     html,body{
       margin:0;
       min-height:100%;
@@ -308,6 +309,7 @@
     }
 
     .loading-wrap.active{display:block}
+
     .loading-text{
       font-size:1.3rem;
       color:var(--gold);
@@ -382,6 +384,7 @@
     .preview-a{
       color:#c2ffd6;
       font-size:.95rem;
+      line-height:1.4;
     }
 
     .preview-actions{
@@ -591,8 +594,8 @@
     }
 
     .question-text{
-      font-size:clamp(1.6rem, 3.5vw, 3rem);
-      line-height:1.25;
+      font-size:clamp(1.45rem, 3.2vw, 2.7rem);
+      line-height:1.3;
       margin:18px 0;
       text-align:center;
       text-shadow:0 0 14px rgba(255,255,255,.05);
@@ -601,14 +604,15 @@
     .answer-box{
       display:none;
       margin:14px auto 0;
-      max-width:900px;
-      text-align:center;
-      font-size:clamp(1.2rem,2.5vw,1.8rem);
+      max-width:950px;
+      text-align:left;
+      font-size:1rem;
       color:#cbffd9;
       background:rgba(57,255,136,.1);
       border:2px solid rgba(57,255,136,.25);
       border-radius:18px;
       padding:16px;
+      line-height:1.5;
     }
 
     .answer-box.visible{display:block}
@@ -686,10 +690,11 @@
     }
 
     .timer{
-      font-size:2rem;
+      font-size:3rem;
       color:var(--gold);
       text-align:center;
-      margin-top:12px;
+      margin-top:14px;
+      text-shadow:0 0 14px rgba(255,212,74,.2);
     }
 
     .final-wrap{
@@ -737,11 +742,6 @@
     .toast.bad{border-color:rgba(255,77,90,.35)}
     .toast.info{border-color:rgba(83,179,255,.35)}
 
-    @keyframes slideIn{
-      from{transform:translateY(8px); opacity:0}
-      to{transform:translateY(0); opacity:1}
-    }
-
     .particles{
       position:fixed;
       inset:0;
@@ -766,7 +766,21 @@
       }
     }
 
+    @keyframes slideIn{
+      from{transform:translateY(8px); opacity:0}
+      to{transform:translateY(0); opacity:1}
+    }
+
     .hidden{display:none!important}
+
+    .host-list{
+      margin:8px 0 0 18px;
+      padding:0;
+    }
+
+    .host-list li{
+      margin:6px 0;
+    }
 
     @keyframes bounceSoft{
       0%,100%{transform:translateY(0)}
@@ -782,7 +796,7 @@
     <section id="setupScreen" class="screen active">
       <div class="hero">
         <h1>⚡ Da Vinci Decathlon</h1>
-        <h2>🎮 Jeopardy Style Training Game 🎮</h2>
+        <h2>🎮 Bowl Style Machines & Machinery Game 🎮</h2>
       </div>
 
       <div class="panels">
@@ -824,26 +838,26 @@
                 <input type="checkbox" id="bonusToggle" checked />
                 <div>
                   <div>Include bonus tiles?</div>
-                  <div class="small">3 to 4 tiles are scattered through the board</div>
+                  <div class="small">3 to 4 bonus tiles across the board</div>
                 </div>
               </label>
             </div>
           </div>
 
           <div style="margin-top:16px">
-            <h3 class="section-title">⚙️ Bonus Mode</h3>
+            <h3 class="section-title">⚙️ Double Points Mode</h3>
             <div class="radio-group" id="doubleModeChoices">
               <label class="choice selected">
                 <input type="radio" name="doubleMode" value="nextQuestion" checked />
                 <div>
-                  <div>Double Points carries to the next board question</div>
-                  <div class="small">Big drama, visible on the board</div>
+                  <div>Carry to next question</div>
+                  <div class="small">Team doubles their next normal tile</div>
                 </div>
               </label>
               <label class="choice">
                 <input type="radio" name="doubleMode" value="thisTile" />
                 <div>
-                  <div>Double Points applies to the bonus tile question itself</div>
+                  <div>Apply to the bonus itself</div>
                   <div class="small">Fast and simple</div>
                 </div>
               </label>
@@ -851,8 +865,8 @@
           </div>
 
           <div class="status-bar">
-            <div id="validationText" class="small">Pick 3 to 9 categories, then generate questions.</div>
-            <button class="btn gold" id="generateBtn" type="button">⚡ Generate Questions ⚡</button>
+            <div id="validationText" class="small">Pick 3 to 9 categories, then generate challenges.</div>
+            <button class="btn gold" id="generateBtn" type="button">⚡ Generate Challenges ⚡</button>
           </div>
 
           <div class="loading-wrap" id="loadingWrap">
@@ -872,7 +886,7 @@
 
           <div id="previewArea" class="hidden">
             <div class="preview-header">
-              <h3 class="section-title" style="margin:0">🧠 Question Preview</h3>
+              <h3 class="section-title" style="margin:0">🧠 Challenge Preview</h3>
               <div style="display:flex; gap:10px; flex-wrap:wrap">
                 <button class="btn blue" id="regenerateAllBtn" type="button">Regenerate All</button>
                 <button class="btn green" id="startGameBtn" type="button">🚀 Start Game</button>
@@ -889,7 +903,7 @@
     <section id="gameScreen" class="screen">
       <div class="game-topbar">
         <div class="hero" style="margin-bottom:0; text-align:left; animation:none">
-          <h1 style="font-size:clamp(1.7rem,3vw,3rem); margin-bottom:0">⚡ Da Vinci Jeopardy</h1>
+          <h1 style="font-size:clamp(1.7rem,3vw,3rem); margin-bottom:0">⚡ Da Vinci Bowl Board</h1>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <button class="btn ghost" id="backToSetupBtn" type="button">Back to Setup</button>
@@ -926,15 +940,15 @@
       "Simple Machines":"Levers, pulleys, wheels, inclined planes, screws, wedges",
       "Engineering Legends":"Da Vinci, Brunel, Tesla, Watt, Curie, Archimedes",
       "Forces & Motion":"Newton's laws, friction, momentum, gravity, mechanical work",
-      "Inventions & Patents":"Famous firsts, dates, inventors, patent trivia",
-      "Maths of Machines":"Gear ratios, mechanical advantage, torque, speed calculations",
-      "Engineering in Nature":"Biomechanics, animal locomotion, natural structures",
+      "Inventions & Patents":"Famous firsts, inventors, ideas, impact",
+      "Maths of Machines":"Gear ratios, mechanical advantage, torque, speed, reasoning",
+      "Engineering in Nature":"Biomechanics, animal movement, natural structures",
       "Science of Materials":"Metals, composites, stress, strain, load-bearing",
-      "Creative Thinking":"Lateral thinking, design problems, what would you do if",
-      "Wild Card":"Surprise mix, anything from any category, high risk reward",
-      "Da Vinci Specials":"Questions about Leonardo da Vinci's inventions and notebooks",
-      "History of Machines":"Industrial Revolution, key inventions through history",
-      "Everyday Engineering":"Machines in daily life, how things work"
+      "Creative Thinking":"Design choices, trade offs, novel solutions",
+      "Wild Card":"Mixed challenge logic and problem solving",
+      "Da Vinci Specials":"Leonardo's ideas, design thinking, invention logic",
+      "History of Machines":"Industrial change and machine impact",
+      "Everyday Engineering":"How daily objects work and why"
     };
 
     const ALL_CATEGORIES = Object.keys(CATEGORY_DESCRIPTIONS);
@@ -968,7 +982,7 @@
     const LOADING_LINES = [
       "Charging the flux capacitor...",
       "Polishing the cogs of genius...",
-      "Spinning up the question engine...",
+      "Spinning up the challenge engine...",
       "Summoning Leonardo's notebook...",
       "Greasing the gears of glory...",
       "Calibrating maximum classroom chaos..."
@@ -1178,7 +1192,7 @@
       const ok = count >= 3 && count <= 9;
       el.validationText.textContent = ok
         ? `Locked in. ${count} categories selected.`
-        : "Pick 3 to 9 categories, then generate questions.";
+        : "Pick 3 to 9 categories, then generate challenges.";
       el.generateBtn.disabled = !ok;
     }
 
@@ -1217,7 +1231,7 @@
 
         state.generated = true;
         renderPreview();
-        toast(singleTarget ? "Question regenerated." : "Questions generated.", "good");
+        toast(singleTarget ? "Challenge regenerated." : "Challenges generated.", "good");
       } catch(err){
         console.error(err);
         toast(`AI generation failed.\n${err.message || "Please try again."}`, "bad", 9000);
@@ -1228,17 +1242,21 @@
 
     function buildPrompt(categories, pointValues, singleTarget){
       if(singleTarget){
-        return `You are writing ONE question for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
+        return `You are writing ONE conceptual challenge for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
 
-Write one question for:
+Write one challenge for:
 Category: ${singleTarget.category}
 Point value: ${singleTarget.points}
 
 Rules:
-- ${singleTarget.points <= 200 ? "Keep it straightforward recall or simple reasoning." : "Make it deeper, multi step, or lateral thinking."}
-- Answerable verbally
-- Readable aloud in under 15 seconds
-- Answer should be short, ideally 1 to 5 words
+- This is NOT trivia
+- Make it conceptual, inferential, strategic, or problem solving based
+- It should feel like a short team bowl challenge
+- Students should be able to discuss and answer verbally in about 20 seconds
+- Avoid questions requiring exact dates, obscure names, or niche factual recall
+- The prompt should be short and clear
+- Also provide a short exemplar answer or key idea for the host, 1 to 3 sentences
+- Also provide 2 to 4 short key ideas the host should listen for
 
 Respond ONLY with valid JSON in this exact format:
 {
@@ -1246,26 +1264,32 @@ Respond ONLY with valid JSON in this exact format:
     {
       "category": "${singleTarget.category}",
       "points": ${singleTarget.points},
-      "question": "Question text here?",
-      "answer": "Answer here"
+      "question": "Challenge prompt here",
+      "answer": "Short exemplar answer or key idea here",
+      "keyIdeas": ["idea one", "idea two"]
     }
   ]
 }`;
       }
 
-      return `You are writing questions for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
+      return `You are writing conceptual challenge prompts for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
 
-Generate questions for the following categories: ${categories.join(", ")}
+Generate challenges for these categories: ${categories.join(", ")}
 Point tiers: ${pointValues.join(", ")}
 
-For each category x point value combination, write ONE question.
+For each category x point value combination, write ONE challenge.
 
 Rules:
-- Low point questions 100 to 200 should be straightforward recall or simple reasoning
-- High point questions 300 to 500 should require deeper thinking, multi step reasoning, or lateral thinking
-- All questions must be answerable verbally, no diagrams required
-- Keep questions concise, readable aloud in under 15 seconds
-- Answers should be short, ideally 1 to 5 words
+- This is NOT a trivia quiz
+- Make each item conceptual, inferential, strategic, or problem solving based
+- It should feel like a short team bowl challenge
+- Students should be able to discuss and answer verbally in about 20 seconds
+- Avoid obscure factual recall, exact dates, or specialist knowledge
+- Lower point items should involve one clear idea or simple application
+- Higher point items should involve comparison, justification, trade offs, prediction, or multi step thinking
+- Keep each prompt concise
+- For each one, provide a short exemplar answer or key idea for the host, 1 to 3 sentences
+- For each one, provide 2 to 4 short key ideas the host should listen for
 
 Also generate 3 Wheel of Fortune phrases themed to Machines & Machinery, 3 to 5 words each, all caps.
 
@@ -1275,8 +1299,9 @@ Respond ONLY with a valid JSON object in this exact format:
     {
       "category": "Category Name",
       "points": 100,
-      "question": "Question text here?",
-      "answer": "Answer here"
+      "question": "Challenge prompt here",
+      "answer": "Short exemplar answer or key idea here",
+      "keyIdeas": ["idea one", "idea two"]
     }
   ],
   "wheelOfFortunePhrases": [
@@ -1409,8 +1434,7 @@ Respond ONLY with a valid JSON object in this exact format:
         if(arrayMatch){
           const arrayParsed = safeJsonParse(arrayMatch[0]);
           if(Array.isArray(arrayParsed)){
-            const parsed = extractJSON({ questions: arrayParsed });
-            if(parsed) return parsed;
+            return { questions: arrayParsed };
           }
         }
       }
@@ -1435,12 +1459,15 @@ Respond ONLY with a valid JSON object in this exact format:
         const points = Number(item.points);
         const question = String(item.question || "").trim();
         const answer = String(item.answer || "").trim();
+        const keyIdeas = Array.isArray(item.keyIdeas)
+          ? item.keyIdeas.map(x => String(x).trim()).filter(Boolean).slice(0,4)
+          : [];
 
         if(!categories.includes(category)) return;
         if(!pointValues.includes(points)) return;
         if(!question || !answer) return;
 
-        map.set(`${category}__${points}`, { category, points, question, answer });
+        map.set(`${category}__${points}`, { category, points, question, answer, keyIdeas });
       });
 
       const out = [];
@@ -1451,8 +1478,9 @@ Respond ONLY with a valid JSON object in this exact format:
           out.push(found || {
             category,
             points,
-            question:`Fallback question for ${category} at ${points} points. Replace this with a better one.`,
-            answer:"Answer needed"
+            question:`Fallback challenge for ${category} at ${points} points. Replace this with a better one.`,
+            answer:"A strong response should show clear reasoning, justify the choice, and explain the trade off or mechanism.",
+            keyIdeas:["clear reasoning", "justification", "trade off or mechanism"]
           });
         });
       });
@@ -1461,9 +1489,9 @@ Respond ONLY with a valid JSON object in this exact format:
 
     function fallbackWheelPhrases(){
       return [
-        "INDUSTRIAL REVOLUTION",
         "MECHANICAL ADVANTAGE",
-        "STEAM POWERED ENGINE"
+        "INDUSTRIAL REVOLUTION",
+        "GEAR TRAIN SYSTEM"
       ];
     }
 
@@ -1483,7 +1511,8 @@ Respond ONLY with a valid JSON object in this exact format:
               <span class="tag">💰 ${q.points}</span>
             </div>
             <div class="preview-q">${escapeHtml(q.question)}</div>
-            <div class="preview-a">Answer: ${escapeHtml(q.answer)}</div>
+            <div class="preview-a"><strong>Host guide:</strong> ${escapeHtml(q.answer)}</div>
+            <div class="preview-a" style="margin-top:8px;"><strong>Key ideas:</strong> ${(q.keyIdeas || []).map(escapeHtml).join(", ")}</div>
             <div class="preview-actions">
               <button class="btn blue" type="button">Regenerate This One</button>
             </div>
@@ -1494,7 +1523,7 @@ Respond ONLY with a valid JSON object in this exact format:
 
       el.wheelPreviewBox.innerHTML = `
         <div class="section-title" style="margin-top:0">🎡 Wheel of Fortune Phrases</div>
-        <div class="small">These are used by Wheel of Fortune bonus tiles.</div>
+        <div class="small">Used by Wheel of Fortune bonus tiles.</div>
         <div style="margin-top:10px; display:grid; gap:8px;">
           ${(state.wheelOfFortunePhrases || []).map(p => `<div class="tag">${escapeHtml(p)}</div>`).join("")}
         </div>
@@ -1503,7 +1532,7 @@ Respond ONLY with a valid JSON object in this exact format:
 
     function startGame(){
       if(!state.generated || !state.questions.length){
-        toast("Generate questions first.", "bad");
+        toast("Generate challenges first.", "bad");
         return;
       }
 
@@ -1530,8 +1559,9 @@ Respond ONLY with a valid JSON object in this exact format:
             points,
             used:false,
             type:"question",
-            question:q?.question || "Question missing",
-            answer:q?.answer || "Answer missing"
+            question:q?.question || "Challenge missing",
+            answer:q?.answer || "Guide missing",
+            keyIdeas:q?.keyIdeas || []
           });
         });
       });
@@ -1557,7 +1587,7 @@ Respond ONLY with a valid JSON object in this exact format:
 
       if(type === "wheel"){
         const phrase = state.wheelOfFortunePhrases[Math.floor(Math.random() * state.wheelOfFortunePhrases.length)] || "MECHANICAL ADVANTAGE";
-        return { type, phrase, awardPoints: basePoints * 2 };
+        return { type, phrase };
       }
 
       if(type === "rapid"){
@@ -1572,30 +1602,24 @@ Respond ONLY with a valid JSON object in this exact format:
         return { type, awardPoints: basePoints * 2 };
       }
 
-      return {
-        type:"steal",
-        awardPoints: 400,
-        penalty: 200,
-        question:"Name a machine whose main job is to reduce human effort by changing the size or direction of a force.",
-        answer:"Simple machine"
-      };
+      return { type:"steal" };
     }
 
     function makeRapidQuestions(count){
       const pool = [
-        ["What force pulls objects toward Earth?","Gravity"],
-        ["What simple machine is a ramp?","Inclined plane"],
-        ["Who is linked to AC electricity?","Tesla"],
-        ["What does friction do to motion?","Slows it"],
-        ["What turns on an axle?","Wheel"],
-        ["What metal is commonly used in wiring?","Copper"],
-        ["What is a push or pull called?","Force"],
-        ["What machine uses teeth to transfer motion?","Gear"],
-        ["What helps objects float?","Buoyancy"],
-        ["What is the fixed point of a lever?","Fulcrum"]
+        ["You need more force but not more speed. What machine setup would help?", "A strong answer suggests increasing mechanical advantage, such as more pulleys or a longer lever.", ["mechanical advantage", "more force", "trade off with speed"]],
+        ["A ramp is made steeper. What changes for the user?", "A strong answer notes that steeper ramps need more force but use less distance.", ["more force", "less distance", "trade off"]],
+        ["Why might engineers choose a triangle frame?", "A strong answer notes stability and load distribution.", ["stability", "load distribution", "rigidity"]],
+        ["If friction suddenly dropped to zero, what problem could appear?", "A strong answer notes loss of grip, traction, or control.", ["loss of grip", "traction", "control"]],
+        ["Why might a material be strong but still a bad choice?", "A strong answer notes other factors like weight, cost, brittleness, or flexibility.", ["trade offs", "weight or cost", "brittleness or flexibility"]],
+        ["Why might gears of different sizes be useful?", "A strong answer notes changing speed, force, or direction.", ["change speed", "change force", "transfer motion"]],
+        ["Why is copying nature useful in engineering?", "A strong answer notes that natural structures solve efficiency, movement, or strength problems.", ["nature solves problems", "efficiency", "strength or movement"]],
+        ["Why is a long handle useful on a wrench?", "A strong answer notes greater turning effect because of more leverage.", ["leverage", "more turning effect", "less force needed"]],
+        ["Why might a wide base help a machine?", "A strong answer notes balance and stability.", ["balance", "stability", "less tipping"]],
+        ["Why might an inventor test many failed ideas?", "A strong answer notes iteration and learning from trial results.", ["iteration", "testing", "learning from failure"]]
       ];
       shuffle(pool);
-      return pool.slice(0, count).map(([question,answer]) => ({ question, answer, result:null }));
+      return pool.slice(0, count).map(([question,answer,keyIdeas]) => ({ question, answer, keyIdeas, result:null }));
     }
 
     function renderBoard(){
@@ -1641,115 +1665,137 @@ Respond ONLY with a valid JSON object in this exact format:
       }
     }
 
+    function hostGuideHtml(tile){
+      return `
+        <div><strong>Host guide:</strong> ${escapeHtml(tile.answer)}</div>
+        ${(tile.keyIdeas && tile.keyIdeas.length)
+          ? `<div style="margin-top:10px;"><strong>Key ideas to listen for:</strong><ul class="host-list">${tile.keyIdeas.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></div>`
+          : ""
+        }
+      `;
+    }
+
     function openQuestionTile(tile){
-      const isDoubleLive = state.doublePointsForTeamId !== null;
-      const displayPoints = isDoubleLive ? tile.points * 2 : tile.points;
+      const displayPoints = tile.points;
 
       el.overlayModal.innerHTML = `
         <div class="modal-top">
           <div>
             <div class="modal-title">📚 ${escapeHtml(tile.category)}</div>
-            <div class="pill-note">💰 Worth ${displayPoints} points${isDoubleLive ? " because DOUBLE POINTS is live" : ""}</div>
+            <div class="pill-note">💰 Worth ${displayPoints} points</div>
           </div>
           <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
         </div>
 
         <div class="question-text">${escapeHtml(tile.question)}</div>
 
-        <div class="award-grid" id="awardGrid"></div>
+        <div class="timer" id="bowlTimer">20</div>
 
         <div class="control-row">
-          <button class="btn blue" id="openFloorBtn" type="button">🔄 Open to Floor</button>
-          <button class="btn red" id="nobodyBtn" type="button">❌ Nobody Got It</button>
-          <button class="btn pink" id="stealBtn" type="button">🗡️ Steal</button>
-          <button class="btn ghost" id="revealAnswerBtn" type="button">Reveal Answer</button>
+          <button class="btn gold" id="startTimerBtn" type="button">▶ Start 20 Second Timer</button>
+          <button class="btn ghost" id="showGuideBtn" type="button">Show Host Guide</button>
+          <button class="btn red" id="noAwardBtn" type="button">No Award</button>
+          <button class="btn blue" id="passBtn" type="button">Pass to Another Team</button>
         </div>
 
-        <div class="answer-box" id="answerBox">Answer: ${escapeHtml(tile.answer)}</div>
+        <div class="answer-box" id="answerBox">${hostGuideHtml(tile)}</div>
+
+        <div class="award-grid" id="awardGrid"></div>
       `;
 
+      let seconds = 20;
+      let timer = null;
+
+      const timerEl = document.getElementById("bowlTimer");
+      const answerBox = document.getElementById("answerBox");
       const awardGrid = document.getElementById("awardGrid");
-      state.teams.forEach(team => {
-        const b = document.createElement("button");
-        b.className = "btn green";
-        b.type = "button";
-        b.textContent = `✅ Award to ${team.name}`;
-        b.addEventListener("click", () => awardQuestion(tile, team.id));
-        awardGrid.appendChild(b);
-      });
 
-      document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
-      document.getElementById("openFloorBtn").addEventListener("click", () => toast("Open to floor. Award manually when ready.", "info"));
-      document.getElementById("nobodyBtn").addEventListener("click", () => {
-        markTileUsed(tile.id);
-        revealAnswer();
-      });
-      document.getElementById("stealBtn").addEventListener("click", () => openStealFlow(tile));
-      document.getElementById("revealAnswerBtn").addEventListener("click", revealAnswer);
-
-      showOverlay();
-    }
-
-    function awardQuestion(tile, teamId){
-      const awardedTeam = getTeam(teamId);
-      if(!awardedTeam) return;
-
-      let points = tile.points;
-      if(state.doublePointsForTeamId === teamId){
-        points *= 2;
-        toast(`${awardedTeam.name} used DOUBLE POINTS.`, "good");
-        state.doublePointsForTeamId = null;
-      } else if(state.doublePointsForTeamId !== null && state.doublePointsForTeamId !== teamId){
-        toast(`DOUBLE POINTS remains with ${getTeam(state.doublePointsForTeamId)?.name || "the marked team"}.`, "info");
+      function stopTimer(){
+        if(timer){
+          clearInterval(timer);
+          timer = null;
+        }
       }
 
-      animateScoreChange(teamId, points);
-      confettiBurst();
-      playSound("correct");
-      markTileUsed(tile.id);
-      revealAnswer();
-    }
+      function startTimer(secondsToUse = 20){
+        stopTimer();
+        seconds = secondsToUse;
+        timerEl.textContent = seconds;
+        playSound("bonus");
 
-    function openStealFlow(tile){
-      const displayPenalty = Math.floor(tile.points / 2);
+        timer = setInterval(() => {
+          seconds -= 1;
+          timerEl.textContent = seconds;
+          if(seconds <= 0){
+            stopTimer();
+            answerBox.classList.add("visible");
+            playSound("wrong");
+            toast("Time.", "info");
+          }
+        }, 1000);
+      }
 
-      el.overlayModal.innerHTML += `
-        <div class="pill-note">🗡️ Steal mode active. Wrong team loses ${displayPenalty} points.</div>
-        <div class="award-grid" id="stealGrid"></div>
-      `;
-      const stealGrid = document.getElementById("stealGrid");
-      stealGrid.innerHTML = "";
+      function awardPoints(teamId, multiplier){
+        const team = getTeam(teamId);
+        if(!team) return;
+
+        let points = Math.round(tile.points * multiplier);
+
+        if(state.doublePointsForTeamId === team.id){
+          points *= 2;
+          state.doublePointsForTeamId = null;
+          toast(`${team.name} used DOUBLE POINTS.`, "good");
+        }
+
+        stopTimer();
+        animateScoreChange(team.id, points);
+        confettiBurst();
+        playSound("correct");
+        markTileUsed(tile.id);
+        answerBox.classList.add("visible");
+      }
 
       state.teams.forEach(team => {
-        const wrong = document.createElement("button");
-        wrong.className = "btn red";
-        wrong.type = "button";
-        wrong.textContent = `Wrong: ${team.name}`;
-        wrong.addEventListener("click", () => {
-          animateScoreChange(team.id, -displayPenalty);
-          playSound("wrong");
-          toast(`${team.name} loses ${displayPenalty} points.`, "bad");
-        });
-        stealGrid.appendChild(wrong);
+        const full = document.createElement("button");
+        full.className = "btn green";
+        full.type = "button";
+        full.textContent = `✅ Full points to ${team.name}`;
+        full.addEventListener("click", () => awardPoints(team.id, 1));
+        awardGrid.appendChild(full);
 
-        const right = document.createElement("button");
-        right.className = "btn green";
-        right.type = "button";
-        right.textContent = `Award steal to ${team.name}`;
-        right.addEventListener("click", () => {
-          let points = tile.points;
-          if(state.doublePointsForTeamId === team.id){
-            points *= 2;
-            state.doublePointsForTeamId = null;
-          }
-          animateScoreChange(team.id, points);
-          confettiBurst();
-          playSound("correct");
-          markTileUsed(tile.id);
-          revealAnswer();
-        });
-        stealGrid.appendChild(right);
+        const half = document.createElement("button");
+        half.className = "btn blue";
+        half.type = "button";
+        half.textContent = `➗ Half points to ${team.name}`;
+        half.addEventListener("click", () => awardPoints(team.id, 0.5));
+        awardGrid.appendChild(half);
       });
+
+      document.getElementById("closeOverlayBtn").addEventListener("click", () => {
+        stopTimer();
+        closeOverlay();
+      });
+
+      document.getElementById("startTimerBtn").addEventListener("click", () => startTimer(20));
+
+      document.getElementById("showGuideBtn").addEventListener("click", () => {
+        answerBox.classList.add("visible");
+      });
+
+      document.getElementById("noAwardBtn").addEventListener("click", () => {
+        stopTimer();
+        markTileUsed(tile.id);
+        answerBox.classList.add("visible");
+      });
+
+      document.getElementById("passBtn").addEventListener("click", () => {
+        stopTimer();
+        answerBox.classList.add("visible");
+        startTimer(10);
+        toast("Passed to another team. 10 second timer started.", "info");
+      });
+
+      showOverlay();
     }
 
     function openBonusTile(tile){
@@ -1774,31 +1820,140 @@ Respond ONLY with a valid JSON object in this exact format:
     function openWheelBonus(tile, payload){
       const phrase = String(payload.phrase || "MECHANICAL ADVANTAGE").toUpperCase();
       let revealed = makeHiddenPhrase(phrase);
+      let spunValue = null;
+      let wheelSpinning = false;
+      let autoTimer = null;
+
+      const wheelValues = [100, 150, 200, 250, 300, 400, 500, 750];
+      const wheelLabels = ["100", "150", "200", "250", "300", "400", "500", "750"];
 
       el.overlayModal.innerHTML = `
         <div class="modal-top">
           <div class="modal-title">🎡 Wheel of Fortune</div>
           <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
         </div>
+
         <div class="bonus-reveal">
           <div class="big">SPIN THE WHEEL</div>
-          <div class="sub">Letters reveal over time. First team to call it gets the points.</div>
+          <div class="sub">Spin first. Then reveal letters until a team solves the phrase.</div>
         </div>
-        <div class="pill-note">💰 Suggested award: ${payload.awardPoints} points</div>
+
+        <div style="display:grid; gap:18px; justify-items:center; margin:18px 0 8px;">
+          <div style="position:relative; width:280px; height:280px;">
+            <div style="
+              position:absolute;
+              top:-8px;
+              left:50%;
+              transform:translateX(-50%);
+              width:0;
+              height:0;
+              border-left:18px solid transparent;
+              border-right:18px solid transparent;
+              border-bottom:34px solid #ffd54a;
+              z-index:3;
+              filter:drop-shadow(0 0 8px rgba(255,212,74,.45));
+            "></div>
+
+            <div id="wheelDisc" style="
+              width:280px;
+              height:280px;
+              border-radius:50%;
+              border:8px solid rgba(255,255,255,.18);
+              box-shadow:0 0 30px rgba(255,60,172,.16), 0 12px 30px rgba(0,0,0,.4);
+              position:relative;
+              overflow:hidden;
+              transition:transform 4.2s cubic-bezier(.12,.8,.18,1);
+              background:
+                conic-gradient(
+                  #ff3cac 0deg 45deg,
+                  #ffd54a 45deg 90deg,
+                  #53b3ff 90deg 135deg,
+                  #39ff88 135deg 180deg,
+                  #ff7b54 180deg 225deg,
+                  #c28cff 225deg 270deg,
+                  #ffd54a 270deg 315deg,
+                  #ff646e 315deg 360deg
+                );
+            ">
+              <div style="
+                position:absolute;
+                inset:18px;
+                border-radius:50%;
+                border:3px solid rgba(255,255,255,.16);
+              "></div>
+
+              <div style="position:absolute; inset:0;">
+                ${wheelLabels.map((label, i) => {
+                  const angle = i * 45 + 22.5;
+                  return `
+                    <div style="
+                      position:absolute;
+                      left:50%;
+                      top:50%;
+                      width:0;
+                      height:0;
+                      transform:rotate(${angle}deg);
+                      transform-origin:center center;
+                    ">
+                      <div style="
+                        position:absolute;
+                        left:-24px;
+                        top:-124px;
+                        width:48px;
+                        text-align:center;
+                        font-size:1.3rem;
+                        font-weight:700;
+                        color:#081126;
+                      ">${label}</div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+
+              <div style="
+                position:absolute;
+                left:50%;
+                top:50%;
+                transform:translate(-50%, -50%);
+                width:64px;
+                height:64px;
+                border-radius:50%;
+                background:linear-gradient(180deg, #fff4b5, #ffb800);
+                border:6px solid rgba(255,255,255,.22);
+                box-shadow:0 4px 12px rgba(0,0,0,.35);
+              "></div>
+            </div>
+          </div>
+
+          <div id="spinResult" class="pill-note">Spin to set the value</div>
+        </div>
+
         <div class="phrase-display" id="phraseDisplay">${escapeHtml(revealed)}</div>
+
         <div class="control-row">
-          <button class="btn blue" id="revealLetterBtn" type="button">Reveal Letter</button>
-          <button class="btn pink" id="autoRevealBtn" type="button">Auto Reveal</button>
+          <button class="btn gold" id="spinWheelBtn" type="button">🎡 Spin Wheel</button>
+          <button class="btn blue" id="revealLetterBtn" type="button" disabled>Reveal Letter</button>
+          <button class="btn pink" id="autoRevealBtn" type="button" disabled>Auto Reveal</button>
           <button class="btn ghost" id="revealAnswerBtn" type="button">Reveal Full Phrase</button>
         </div>
+
         <div class="award-grid" id="awardGrid"></div>
+
         <div class="answer-box" id="answerBox">Phrase: ${escapeHtml(phrase)}</div>
       `;
 
-      let autoTimer = null;
+      const wheelDisc = document.getElementById("wheelDisc");
+      const spinWheelBtn = document.getElementById("spinWheelBtn");
+      const revealLetterBtn = document.getElementById("revealLetterBtn");
+      const autoRevealBtn = document.getElementById("autoRevealBtn");
+      const revealAnswerBtn = document.getElementById("revealAnswerBtn");
+      const phraseDisplay = document.getElementById("phraseDisplay");
+      const spinResult = document.getElementById("spinResult");
+      const awardGrid = document.getElementById("awardGrid");
+      const answerBox = document.getElementById("answerBox");
 
       function updatePhrase(){
-        document.getElementById("phraseDisplay").textContent = revealed;
+        phraseDisplay.textContent = revealed;
       }
 
       function revealOne(){
@@ -1809,23 +1964,82 @@ Respond ONLY with a valid JSON object in this exact format:
       }
 
       function revealFull(){
-        document.getElementById("answerBox").classList.add("visible");
-        document.getElementById("phraseDisplay").textContent = phrase;
+        answerBox.classList.add("visible");
+        phraseDisplay.textContent = phrase;
       }
+
+      function rebuildAwardButtons(){
+        awardGrid.innerHTML = "";
+        state.teams.forEach(team => {
+          const btn = document.createElement("button");
+          btn.className = "btn green";
+          btn.type = "button";
+          btn.disabled = spunValue === null;
+          btn.textContent = spunValue === null ? `✅ Award to ${team.name}` : `✅ Award ${spunValue} to ${team.name}`;
+          btn.addEventListener("click", () => {
+            if(spunValue === null) return;
+            animateScoreChange(team.id, spunValue);
+            confettiBurst();
+            playSound("bonus");
+            markTileUsed(tile.id);
+            revealFull();
+          });
+          awardGrid.appendChild(btn);
+        });
+      }
+
+      function spinWheel(){
+        if(wheelSpinning) return;
+
+        wheelSpinning = true;
+        spunValue = null;
+        spinResult.textContent = "Spinning...";
+        rebuildAwardButtons();
+
+        const index = Math.floor(Math.random() * wheelValues.length);
+        const segmentAngle = 360 / wheelValues.length;
+        const targetAngle = index * segmentAngle + segmentAngle / 2;
+        const extraTurns = 360 * (5 + Math.floor(Math.random() * 3));
+        const finalRotation = extraTurns + (360 - targetAngle);
+
+        wheelDisc.style.transform = `rotate(${finalRotation}deg)`;
+        playSound("bonus");
+
+        setTimeout(() => {
+          spunValue = wheelValues[index];
+          wheelSpinning = false;
+          spinResult.textContent = `Value locked: ${spunValue} points`;
+          revealLetterBtn.disabled = false;
+          autoRevealBtn.disabled = false;
+          rebuildAwardButtons();
+          toast(`Wheel landed on ${spunValue}.`, "good");
+        }, 4300);
+      }
+
+      rebuildAwardButtons();
 
       document.getElementById("closeOverlayBtn").addEventListener("click", () => {
         if(autoTimer) clearInterval(autoTimer);
         closeOverlay();
       });
 
-      document.getElementById("revealLetterBtn").addEventListener("click", revealOne);
-      document.getElementById("autoRevealBtn").addEventListener("click", () => {
+      spinWheelBtn.addEventListener("click", spinWheel);
+
+      revealLetterBtn.addEventListener("click", () => {
+        if(spunValue === null) return;
+        revealOne();
+      });
+
+      autoRevealBtn.addEventListener("click", () => {
+        if(spunValue === null) return;
+
         if(autoTimer){
           clearInterval(autoTimer);
           autoTimer = null;
           toast("Auto reveal stopped.", "info");
           return;
         }
+
         autoTimer = setInterval(() => {
           const before = revealed;
           revealOne();
@@ -1833,26 +2047,12 @@ Respond ONLY with a valid JSON object in this exact format:
             clearInterval(autoTimer);
             autoTimer = null;
           }
-        }, 3500);
+        }, 3000);
+
         toast("Auto reveal started.", "info");
       });
-      document.getElementById("revealAnswerBtn").addEventListener("click", revealFull);
 
-      const awardGrid = document.getElementById("awardGrid");
-      state.teams.forEach(team => {
-        const b = document.createElement("button");
-        b.className = "btn green";
-        b.type = "button";
-        b.textContent = `✅ Award to ${team.name}`;
-        b.addEventListener("click", () => {
-          animateScoreChange(team.id, payload.awardPoints);
-          confettiBurst();
-          playSound("bonus");
-          markTileUsed(tile.id);
-          revealFull();
-        });
-        awardGrid.appendChild(b);
-      });
+      revealAnswerBtn.addEventListener("click", revealFull);
 
       showOverlay();
     }
@@ -1869,13 +2069,13 @@ Respond ONLY with a valid JSON object in this exact format:
         </div>
         <div class="bonus-reveal">
           <div class="big">FAST FIRE</div>
-          <div class="sub">5 quick questions. 10 seconds each. ${payload.awardPerCorrect} points per correct answer.</div>
+          <div class="sub">5 quick conceptual prompts. 10 seconds each. ${payload.awardPerCorrect} points per correct answer.</div>
         </div>
         <div class="rapid-list" id="rapidList"></div>
         <div class="timer" id="rapidTimer">10</div>
         <div class="control-row">
           <button class="btn blue" id="startRapidBtn" type="button">Start Timer</button>
-          <button class="btn ghost" id="nextRapidBtn" type="button">Next Question</button>
+          <button class="btn ghost" id="nextRapidBtn" type="button">Next Prompt</button>
           <button class="btn ghost" id="finishRapidBtn" type="button">Finish Round</button>
         </div>
         <div class="award-grid" id="rapidAwardGrid"></div>
@@ -1890,7 +2090,9 @@ Respond ONLY with a valid JSON object in this exact format:
           item.className = "rapid-item";
           item.innerHTML = `
             <div class="rapid-q">${idx + 1}. ${escapeHtml(q.question)}</div>
-            <div class="preview-a">${q.result === true ? "✅ Correct" : q.result === false ? "❌ Wrong" : "Pending"}${q.result !== null ? `, Answer: ${escapeHtml(q.answer)}` : ""}</div>
+            <div class="preview-a">${q.result === true ? "✅ Correct" : q.result === false ? "❌ Wrong" : "Pending"}</div>
+            <div class="preview-a" style="margin-top:8px;"><strong>Guide:</strong> ${escapeHtml(q.answer)}</div>
+            <div class="preview-a" style="margin-top:6px;"><strong>Key ideas:</strong> ${(q.keyIdeas || []).map(escapeHtml).join(", ")}</div>
             <div class="control-row">
               <button class="btn green" type="button">✅</button>
               <button class="btn red" type="button">❌</button>
@@ -1978,9 +2180,9 @@ Respond ONLY with a valid JSON object in this exact format:
           </div>
           <div class="bonus-reveal">
             <div class="big">DOUBLE POINTS</div>
-            <div class="sub">This bonus tile is worth ${points} points.</div>
+            <div class="sub">This bonus is worth ${points} points.</div>
           </div>
-          <div class="question-text">Host choice bonus. Award this blast of points to the team who nails it.</div>
+          <div class="question-text">Award this hit to the team you choose.</div>
           <div class="award-grid" id="awardGrid"></div>
         `;
         const grid = document.getElementById("awardGrid");
@@ -2006,7 +2208,7 @@ Respond ONLY with a valid JSON object in this exact format:
           </div>
           <div class="bonus-reveal">
             <div class="big">NEXT QUESTION DOUBLED</div>
-            <div class="sub">Assign the bonus to a team. Their next normal board question is worth double.</div>
+            <div class="sub">Assign this to a team. Their next normal tile is worth double.</div>
           </div>
           <div class="award-grid" id="awardGrid"></div>
         `;
@@ -2020,7 +2222,7 @@ Respond ONLY with a valid JSON object in this exact format:
             state.doublePointsForTeamId = team.id;
             markTileUsed(tile.id);
             renderBoard();
-            toast(`${team.name} has DOUBLE POINTS on their next question.`, "good");
+            toast(`${team.name} has DOUBLE POINTS on the next normal tile.`, "good");
             playSound("bonus");
             confettiBurst();
             closeOverlay();
@@ -2033,57 +2235,49 @@ Respond ONLY with a valid JSON object in this exact format:
       showOverlay();
     }
 
-    function openStealBonus(tile, payload){
+    function openStealBonus(tile){
+      const stealingTeam = state.teams[Math.floor(Math.random() * state.teams.length)];
+
       el.overlayModal.innerHTML = `
         <div class="modal-top">
-          <div class="modal-title">🗡️ Steal Showdown</div>
+          <div class="modal-title">🗡️ Steal Card</div>
           <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
         </div>
+
         <div class="bonus-reveal">
-          <div class="big">HIGH RISK. HIGH REWARD.</div>
-          <div class="sub">Correct answer wins ${payload.awardPoints}. Wrong answer loses ${payload.penalty}.</div>
+          <div class="big">POINTS HEIST</div>
+          <div class="sub">${escapeHtml(stealingTeam.name)} can steal 50 points from another team.</div>
         </div>
-        <div class="question-text">${escapeHtml(payload.question)}</div>
+
+        <div class="question-text">Which team are they stealing from?</div>
+
         <div class="award-grid" id="stealGrid"></div>
-        <div class="control-row">
-          <button class="btn ghost" id="revealAnswerBtn" type="button">Reveal Answer</button>
-        </div>
-        <div class="answer-box" id="answerBox">Answer: ${escapeHtml(payload.answer)}</div>
       `;
 
       const grid = document.getElementById("stealGrid");
-      state.teams.forEach(team => {
-        const good = document.createElement("button");
-        good.className = "btn green";
-        good.type = "button";
-        good.textContent = `✅ ${team.name} correct`;
-        good.addEventListener("click", () => {
-          animateScoreChange(team.id, payload.awardPoints);
-          confettiBurst();
-          playSound("bonus");
-          markTileUsed(tile.id);
-          revealAnswer();
+      state.teams
+        .filter(team => team.id !== stealingTeam.id)
+        .forEach(team => {
+          const btn = document.createElement("button");
+          btn.className = "btn red";
+          btn.type = "button";
+          btn.textContent = `Take 50 from ${team.name}`;
+          btn.addEventListener("click", () => {
+            animateScoreChange(team.id, -50);
+            animateScoreChange(stealingTeam.id, 50);
+            confettiBurst();
+            playSound("bonus");
+            markTileUsed(tile.id);
+            closeOverlay();
+          });
+          grid.appendChild(btn);
         });
-        grid.appendChild(good);
-
-        const bad = document.createElement("button");
-        bad.className = "btn red";
-        bad.type = "button";
-        bad.textContent = `❌ ${team.name} wrong`;
-        bad.addEventListener("click", () => {
-          animateScoreChange(team.id, -payload.penalty);
-          playSound("wrong");
-          toast(`${team.name} loses ${payload.penalty} points.`, "bad");
-        });
-        grid.appendChild(bad);
-      });
 
       document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
-      document.getElementById("revealAnswerBtn").addEventListener("click", revealAnswer);
       showOverlay();
     }
 
-    function revealAnswer(){
+    function revealAnswerBox(){
       const box = document.getElementById("answerBox");
       if(box) box.classList.add("visible");
       renderBoard();
