@@ -11,7 +11,6 @@
     :root{
       --bg:#060813;
       --bg2:#0d1330;
-      --panel:#101936;
       --gold:#ffd54a;
       --pink:#ff3cac;
       --green:#39ff88;
@@ -80,9 +79,7 @@
       margin:0 0 6px;
       letter-spacing:1px;
       color:var(--gold);
-      text-shadow:
-        0 0 12px rgba(255,212,74,.4),
-        0 4px 0 rgba(0,0,0,.35);
+      text-shadow:0 0 12px rgba(255,212,74,.4), 0 4px 0 rgba(0,0,0,.35);
     }
 
     .hero h2{
@@ -94,7 +91,7 @@
 
     .panels{
       display:grid;
-      grid-template-columns:1.15fr 1fr;
+      grid-template-columns:1.1fr 1fr;
       gap:18px;
       align-items:start;
     }
@@ -153,7 +150,6 @@
       text-align:center;
       font-size:2rem;
       color:var(--gold);
-      text-shadow:0 0 12px rgba(255,212,74,.25);
     }
 
     .btn{
@@ -167,7 +163,7 @@
       background:linear-gradient(180deg, #2d427f, #1d2c58);
       padding:12px 18px;
       box-shadow:var(--shadow);
-      transition:transform .12s ease, filter .12s ease, box-shadow .12s ease;
+      transition:transform .12s ease, filter .12s ease;
     }
 
     .btn:hover{transform:translateY(-2px) scale(1.01); filter:brightness(1.08)}
@@ -245,7 +241,7 @@
       padding:12px;
       cursor:pointer;
       user-select:none;
-      transition:transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease;
     }
 
     .category-pill:hover{
@@ -420,9 +416,7 @@
       transform-origin:center;
     }
 
-    .team-score.flash{
-      animation:scoreFlash .7s ease;
-    }
+    .team-score.flash{animation:scoreFlash .7s ease}
 
     @keyframes scoreFlash{
       0%{transform:scale(1)}
@@ -490,13 +484,12 @@
       border:3px solid rgba(255,255,255,.15);
       position:relative;
       overflow:hidden;
-      transform-style:preserve-3d;
       transition:transform .16s ease, filter .16s ease, opacity .16s ease;
       animation:tilePulse 2.1s ease-in-out infinite;
     }
 
     .tile:hover{
-      transform:translateY(-4px) scale(1.02) rotateX(4deg);
+      transform:translateY(-4px) scale(1.02);
       filter:brightness(1.06);
     }
 
@@ -518,26 +511,6 @@
     .tile.doubleActiveTarget{
       outline:4px solid var(--green);
       box-shadow:0 0 28px rgba(57,255,136,.25), var(--shadow);
-    }
-
-    .tile-label{
-      position:relative;
-      z-index:2;
-    }
-
-    .tile::before{
-      content:"";
-      position:absolute;
-      inset:-20%;
-      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.18) 50%, transparent 100%);
-      transform:translateX(-120%) rotate(12deg);
-      animation:tileSweep 2.6s linear infinite;
-    }
-
-    .tile.used::before{display:none}
-
-    @keyframes tileSweep{
-      to{transform:translateX(120%) rotate(12deg)}
     }
 
     @keyframes tilePulse{
@@ -598,7 +571,6 @@
       line-height:1.3;
       margin:18px 0;
       text-align:center;
-      text-shadow:0 0 14px rgba(255,255,255,.05);
     }
 
     .answer-box{
@@ -651,7 +623,6 @@
       font-family:"Boogaloo","Fredoka",sans-serif;
       font-size:clamp(2rem, 6vw, 5rem);
       color:var(--pink);
-      text-shadow:0 0 16px rgba(255,60,172,.28);
       animation:bounceSoft 1.5s ease-in-out infinite;
     }
 
@@ -694,7 +665,6 @@
       color:var(--gold);
       text-align:center;
       margin-top:14px;
-      text-shadow:0 0 14px rgba(255,212,74,.2);
     }
 
     .final-wrap{
@@ -706,7 +676,6 @@
       font-family:"Boogaloo","Fredoka",sans-serif;
       font-size:clamp(2rem, 6vw, 5rem);
       color:var(--gold);
-      text-shadow:0 0 18px rgba(255,212,74,.25);
       animation:bounceSoft 1.8s ease-in-out infinite;
     }
 
@@ -870,7 +839,7 @@
           </div>
 
           <div class="loading-wrap" id="loadingWrap">
-            <div class="loading-text" id="loadingText">Charging the flux capacitor...</div>
+            <div class="loading-text" id="loadingText">Building local challenge bank...</div>
             <div class="spinner"></div>
           </div>
         </div>
@@ -933,9 +902,6 @@
   </div>
 
   <script>
-    const AI_ENDPOINT = "https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai";
-    const MODEL_NAME = "gpt-4o";
-
     const CATEGORY_DESCRIPTIONS = {
       "Simple Machines":"Levers, pulleys, wheels, inclined planes, screws, wedges",
       "Engineering Legends":"Da Vinci, Brunel, Tesla, Watt, Curie, Archimedes",
@@ -980,15 +946,70 @@
     ];
 
     const LOADING_LINES = [
-      "Charging the flux capacitor...",
-      "Polishing the cogs of genius...",
-      "Spinning up the challenge engine...",
-      "Summoning Leonardo's notebook...",
-      "Greasing the gears of glory...",
-      "Calibrating maximum classroom chaos..."
+      "Building local challenge bank...",
+      "Stacking conceptual prompts...",
+      "Loading machine dilemmas...",
+      "Sharpening host guides...",
+      "Filling the board with chaos..."
     ];
 
     const BONUS_TYPES = ["wheel", "rapid", "double", "steal"];
+
+    const CATEGORY_PROFILES = {
+      "Simple Machines": {
+        objects:["heavy crate","stuck door","bucket of bricks","loaded trolley","workshop gate","tool chest","water barrel","stone slab"],
+        mechanisms:["lever","pulley","wheel and axle","inclined plane","screw","wedge"],
+        constraints:["limited strength","a tight space","no electricity","one person only","slippery ground","a short time limit"],
+        tradeoffs:["distance","speed","stability","control","space","effort"]
+      },
+      "Engineering Legends": {
+        people:["Leonardo da Vinci","Nikola Tesla","James Watt","Archimedes","Isambard Kingdom Brunel","Marie Curie"],
+        achievements:["design thinking","systems thinking","experimentation","practical application","bold problem solving","long term influence"],
+        contexts:["a growing city","a major transport problem","a new industrial need","a design challenge","a scientific breakthrough","a changing society"]
+      },
+      "Forces & Motion": {
+        objects:["bicycle","shopping trolley","skateboard","box on a ramp","train","soccer ball","swing","wheelbarrow"],
+        forces:["friction","gravity","momentum","inertia","air resistance","push force","balanced forces","unbalanced forces"],
+        changes:["gets steeper","gets heavier","moves faster","has less grip","stops suddenly","changes direction","loses friction","hits a slope"]
+      },
+      "Inventions & Patents": {
+        inventions:["printing press","steam engine","light bulb","telephone","internal combustion engine","assembly line","sewing machine","refrigeration"],
+        impacts:["mass production","communication","transport","daily life","urban growth","work patterns","access to information","global trade"]
+      },
+      "Maths of Machines": {
+        systems:["gear train","pulley set","lever arm","ramp design","axle system","crank handle","wheel system","chain drive"],
+        goals:["more force","more speed","better balance","less effort","greater control","steady movement"],
+        variables:["length","ratio","mass","distance","turns","slope","load","radius"]
+      },
+      "Engineering in Nature": {
+        naturalModels:["bird wing","spider web","ant colony","fish body","tree trunk","beehive","gecko foot","kangaroo leg"],
+        engineeringUses:["movement","load distribution","grip","efficiency","cooling","lightness","strength","structure"]
+      },
+      "Science of Materials": {
+        materials:["steel","aluminium","rubber","wood","glass","plastic composite","carbon fibre","copper"],
+        demands:["strength","lightness","flexibility","heat resistance","cost control","durability","conductivity","shock absorption"],
+        failures:["bending","snapping","wearing out","overheating","corroding","cracking","fatiguing","warping"]
+      },
+      "Creative Thinking": {
+        problems:["crossing a gap","moving a fragile object","lifting something awkward","saving time in a workshop","making a design safer","reducing waste","sharing limited tools","building with few materials"],
+        constraints:["limited budget","only recycled materials","one person only","minimal space","strict time pressure","no electricity","high safety demands","outdoor conditions"]
+      },
+      "Wild Card": {
+        themes:["efficiency","trade off","design choice","historical impact","material choice","force control","nature inspired design","problem solving"]
+      },
+      "Da Vinci Specials": {
+        ideas:["flying machine","armoured vehicle","bridge design","rotating mechanism","notebook sketch","water lifting device","war machine concept","observation based design"],
+        features:["curiosity","sketching","iteration","borrowing from nature","combining ideas","thinking ahead of technology","visual planning","mechanical imagination"]
+      },
+      "History of Machines": {
+        periods:["Industrial Revolution","early factories","railway age","age of steam","mass production era","electrification period","mechanised agriculture","early communication age"],
+        outcomes:["faster production","social change","urban growth","labour shifts","new transport","new trade networks","wider access to goods","new inequalities"]
+      },
+      "Everyday Engineering": {
+        items:["zip","can opener","elevator","door hinge","shopping trolley","bottle cap","escalator","bicycle brake"],
+        purposes:["make movement easier","reduce effort","improve safety","control force","transfer motion","save time","increase grip","organise load"]
+      }
+    };
 
     const state = {
       teamCount: 4,
@@ -1000,7 +1021,6 @@
       questions: [],
       wheelOfFortunePhrases: [],
       board: [],
-      currentTile: null,
       generated: false,
       doublePointsForTeamId: null
     };
@@ -1067,7 +1087,7 @@
         updateValidation();
       });
 
-      el.pointTierChoices.addEventListener("change", (e) => {
+      el.pointTierChoices.addEventListener("change", e => {
         if(e.target.name === "pointTiers"){
           state.pointTierMode = Number(e.target.value);
           renderChoiceUI();
@@ -1079,20 +1099,20 @@
         renderChoiceUI();
       });
 
-      el.doubleModeChoices.addEventListener("change", (e) => {
+      el.doubleModeChoices.addEventListener("change", e => {
         if(e.target.name === "doubleMode"){
           state.doubleMode = e.target.value;
           renderChoiceUI();
         }
       });
 
-      el.generateBtn.addEventListener("click", () => generateQuestions());
-      el.regenerateAllBtn.addEventListener("click", () => generateQuestions());
+      el.generateBtn.addEventListener("click", generateQuestions);
+      el.regenerateAllBtn.addEventListener("click", generateQuestions);
       el.startGameBtn.addEventListener("click", startGame);
       el.backToSetupBtn.addEventListener("click", () => showScreen("setup"));
       el.playAgainBtn.addEventListener("click", playAgain);
 
-      el.overlay.addEventListener("click", (e) => {
+      el.overlay.addEventListener("click", e => {
         if(e.target === el.overlay) closeOverlay();
       });
     }
@@ -1125,12 +1145,12 @@
         row.className = "team-row";
         row.innerHTML = `
           <div class="team-chip" style="background:${team.colour}"></div>
-          <input type="text" value="${escapeHtml(team.name)}" aria-label="Team name ${idx+1}">
+          <input type="text" value="${escapeHtml(team.name)}" aria-label="Team name ${idx + 1}">
           <div class="team-score-mini">Ready</div>
         `;
         const input = row.querySelector("input");
         input.addEventListener("input", () => {
-          state.teams[idx].name = input.value.trim() || TEAM_NAME_POOL[idx] || `Team ${idx+1}`;
+          state.teams[idx].name = input.value.trim() || TEAM_NAME_POOL[idx] || `Team ${idx + 1}`;
         });
         el.teamList.appendChild(row);
       });
@@ -1149,7 +1169,7 @@
             <div class="small">${escapeHtml(CATEGORY_DESCRIPTIONS[cat])}</div>
           </div>
         `;
-        label.addEventListener("click", (e) => {
+        label.addEventListener("click", e => {
           e.preventDefault();
           toggleCategory(cat);
         });
@@ -1196,302 +1216,550 @@
       el.generateBtn.disabled = !ok;
     }
 
-    async function generateQuestions(singleTarget = null){
+    async function generateQuestions(){
       const categories = [...state.selectedCategories];
       if(categories.length < 3 || categories.length > 9){
         toast("Pick 3 to 9 categories first.", "bad");
         return;
       }
 
-      const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
-
       setLoading(true);
-      try{
-        const prompt = buildPrompt(categories, pointValues, singleTarget);
-        const result = await callAI(prompt);
+      await sleep(450);
 
-        if(!result || !Array.isArray(result.questions)){
-          throw new Error("The AI response did not include a questions array.");
-        }
+      const pointValues = state.pointTierMode === 3 ? [100,200,300] : [100,200,300,400,500];
+      const questions = [];
 
-        const cleaned = normaliseQuestions(result.questions, categories, pointValues);
-
-        if(singleTarget){
-          const regenerated = cleaned.find(q => q.category === singleTarget.category && q.points === singleTarget.points);
-          const idx = state.questions.findIndex(q => q.category === singleTarget.category && q.points === singleTarget.points);
-          if(idx >= 0 && regenerated){
-            state.questions[idx] = regenerated;
-          }
-        } else {
-          state.questions = cleaned;
-          state.wheelOfFortunePhrases = Array.isArray(result.wheelOfFortunePhrases)
-            ? result.wheelOfFortunePhrases.slice(0,3).map(s => String(s).trim().toUpperCase()).filter(Boolean)
-            : fallbackWheelPhrases();
-        }
-
-        state.generated = true;
-        renderPreview();
-        toast(singleTarget ? "Challenge regenerated." : "Challenges generated.", "good");
-      } catch(err){
-        console.error(err);
-        toast(`AI generation failed.\n${err.message || "Please try again."}`, "bad", 9000);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    function buildPrompt(categories, pointValues, singleTarget){
-      if(singleTarget){
-        return `You are writing ONE conceptual challenge for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
-
-Write one challenge for:
-Category: ${singleTarget.category}
-Point value: ${singleTarget.points}
-
-Rules:
-- This is NOT trivia
-- Make it conceptual, inferential, strategic, or problem solving based
-- It should feel like a short team bowl challenge
-- Students should be able to discuss and answer verbally in about 20 seconds
-- Avoid questions requiring exact dates, obscure names, or niche factual recall
-- The prompt should be short and clear
-- Also provide a short exemplar answer or key idea for the host, 1 to 3 sentences
-- Also provide 2 to 4 short key ideas the host should listen for
-
-Respond ONLY with valid JSON in this exact format:
-{
-  "questions": [
-    {
-      "category": "${singleTarget.category}",
-      "points": ${singleTarget.points},
-      "question": "Challenge prompt here",
-      "answer": "Short exemplar answer or key idea here",
-      "keyIdeas": ["idea one", "idea two"]
-    }
-  ]
-}`;
-      }
-
-      return `You are writing conceptual challenge prompts for a Da Vinci Decathlon training game for Year 7 to 11 students. The theme is "Machines & Machinery".
-
-Generate challenges for these categories: ${categories.join(", ")}
-Point tiers: ${pointValues.join(", ")}
-
-For each category x point value combination, write ONE challenge.
-
-Rules:
-- This is NOT a trivia quiz
-- Make each item conceptual, inferential, strategic, or problem solving based
-- It should feel like a short team bowl challenge
-- Students should be able to discuss and answer verbally in about 20 seconds
-- Avoid obscure factual recall, exact dates, or specialist knowledge
-- Lower point items should involve one clear idea or simple application
-- Higher point items should involve comparison, justification, trade offs, prediction, or multi step thinking
-- Keep each prompt concise
-- For each one, provide a short exemplar answer or key idea for the host, 1 to 3 sentences
-- For each one, provide 2 to 4 short key ideas the host should listen for
-
-Also generate 3 Wheel of Fortune phrases themed to Machines & Machinery, 3 to 5 words each, all caps.
-
-Respond ONLY with a valid JSON object in this exact format:
-{
-  "questions": [
-    {
-      "category": "Category Name",
-      "points": 100,
-      "question": "Challenge prompt here",
-      "answer": "Short exemplar answer or key idea here",
-      "keyIdeas": ["idea one", "idea two"]
-    }
-  ],
-  "wheelOfFortunePhrases": [
-    "PHRASE ONE",
-    "PHRASE TWO",
-    "PHRASE THREE"
-  ]
-}`;
-    }
-
-    async function callAI(prompt){
-      const payloadOptions = [
-        { prompt, model: MODEL_NAME },
-        { message: prompt, model: MODEL_NAME },
-        { input: prompt, model: MODEL_NAME },
-        {
-          model: MODEL_NAME,
-          messages: [
-            { role: "system", content: "Return only valid JSON." },
-            { role: "user", content: prompt }
-          ]
-        }
-      ];
-
-      let lastError = null;
-
-      for (const payload of payloadOptions) {
-        try {
-          const response = await fetch(AI_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          const rawText = await response.text();
-          console.log("AI raw response text:", rawText);
-
-          if (!response.ok) {
-            lastError = new Error(`HTTP ${response.status}: ${rawText}`);
-            continue;
-          }
-
-          const parsed = parsePossiblyWrappedJson(rawText);
-
-          if (parsed && Array.isArray(parsed.questions)) {
-            return parsed;
-          }
-
-          lastError = new Error(`Could not parse JSON from AI response. Raw response: ${rawText}`);
-        } catch (err) {
-          lastError = err;
-        }
-      }
-
-      throw lastError || new Error("Unknown AI response error.");
-    }
-
-    function parsePossiblyWrappedJson(rawText){
-      if (!rawText) return null;
-
-      let value = safeJsonParse(rawText);
-
-      if (value) {
-        const unwrapped = unwrapJson(value);
-        if (unwrapped) return unwrapped;
-      }
-
-      const fencedMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/i);
-      if (fencedMatch) {
-        value = safeJsonParse(fencedMatch[1].trim());
-        if (value) {
-          const unwrapped = unwrapJson(value);
-          if (unwrapped) return unwrapped;
-        }
-      }
-
-      const firstBrace = rawText.indexOf("{");
-      const lastBrace = rawText.lastIndexOf("}");
-      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-        const candidate = rawText.slice(firstBrace, lastBrace + 1);
-        value = safeJsonParse(candidate);
-        if (value) {
-          const unwrapped = unwrapJson(value);
-          if (unwrapped) return unwrapped;
-        }
-      }
-
-      return null;
-    }
-
-    function unwrapJson(value){
-      if (value == null) return null;
-
-      if (typeof value === "string") {
-        const parsed = safeJsonParse(value);
-        if (parsed) return unwrapJson(parsed);
-        return null;
-      }
-
-      if (typeof value !== "object") return null;
-
-      if (Array.isArray(value.questions)) {
-        return value;
-      }
-
-      const possibleFields = [
-        value.body,
-        value.data,
-        value.result,
-        value.response,
-        value.content,
-        value.text,
-        value.message,
-        value.output,
-        value.completion
-      ];
-
-      for (const field of possibleFields) {
-        const unwrapped = unwrapJson(field);
-        if (unwrapped) return unwrapped;
-      }
-
-      if (Array.isArray(value.choices)) {
-        for (const choice of value.choices) {
-          const unwrapped = unwrapJson(choice?.message?.content || choice?.text || choice);
-          if (unwrapped) return unwrapped;
-        }
-      }
-
-      if (Array.isArray(value.output)) {
-        for (const item of value.output) {
-          const unwrapped = unwrapJson(item?.content?.[0]?.text || item?.text || item);
-          if (unwrapped) return unwrapped;
-        }
-      }
-
-      return null;
-    }
-
-    function safeJsonParse(value){
-      try {
-        return JSON.parse(value);
-      } catch {
-        return null;
-      }
-    }
-
-    function normaliseQuestions(arr, categories, pointValues){
-      const map = new Map();
-
-      arr.forEach(item => {
-        if(!item) return;
-        const category = String(item.category || "").trim();
-        const points = Number(item.points);
-        const question = String(item.question || "").trim();
-        const answer = String(item.answer || "").trim();
-        const keyIdeas = Array.isArray(item.keyIdeas)
-          ? item.keyIdeas.map(x => String(x).trim()).filter(Boolean).slice(0,4)
-          : [];
-
-        if(!categories.includes(category)) return;
-        if(!pointValues.includes(points)) return;
-        if(!question || !answer) return;
-
-        map.set(`${category}__${points}`, { category, points, question, answer, keyIdeas });
-      });
-
-      const out = [];
       categories.forEach(category => {
         pointValues.forEach(points => {
-          const key = `${category}__${points}`;
-          const found = map.get(key);
-          out.push(found || {
-            category,
-            points,
-            question:`Fallback challenge for ${category} at ${points} points. Replace this with a better one.`,
-            answer:"A strong response should show clear reasoning, justify the choice, and explain the trade off or mechanism.",
-            keyIdeas:["clear reasoning", "justification", "trade off or mechanism"]
-          });
+          questions.push(generateChallenge(category, points));
         });
       });
-      return out;
+
+      state.questions = questions;
+      state.wheelOfFortunePhrases = generateWheelPhrases();
+      state.generated = true;
+      renderPreview();
+      setLoading(false);
+      toast("Local challenge bank built.", "good");
     }
 
-    function fallbackWheelPhrases(){
-      return [
+    function generateChallenge(category, points){
+      const profile = CATEGORY_PROFILES[category] || CATEGORY_PROFILES["Wild Card"];
+      const level = points;
+      let out;
+
+      if(category === "Simple Machines") out = simpleMachinesChallenge(profile, level);
+      else if(category === "Engineering Legends") out = engineeringLegendsChallenge(profile, level);
+      else if(category === "Forces & Motion") out = forcesChallenge(profile, level);
+      else if(category === "Inventions & Patents") out = inventionsChallenge(profile, level);
+      else if(category === "Maths of Machines") out = mathsMachinesChallenge(profile, level);
+      else if(category === "Engineering in Nature") out = natureChallenge(profile, level);
+      else if(category === "Science of Materials") out = materialsChallenge(profile, level);
+      else if(category === "Creative Thinking") out = creativeThinkingChallenge(profile, level);
+      else if(category === "Da Vinci Specials") out = daVinciChallenge(profile, level);
+      else if(category === "History of Machines") out = historyMachinesChallenge(profile, level);
+      else if(category === "Everyday Engineering") out = everydayEngineeringChallenge(profile, level);
+      else out = wildCardChallenge(profile, level);
+
+      return {
+        category,
+        points,
+        question: out.question,
+        answer: out.answer,
+        keyIdeas: out.keyIdeas
+      };
+    }
+
+    function sample(arr){
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function simpleMachinesChallenge(p, level){
+      const object = sample(p.objects);
+      const mechanism = sample(p.mechanisms);
+      const constraint = sample(p.constraints);
+      const trade = sample(p.tradeoffs);
+
+      if(level === 100){
+        return {
+          question:`You need to move a ${object} with ${constraint}. Why might a ${mechanism} help?`,
+          answer:`A strong response explains how the ${mechanism} changes force, direction, or effort to make the task easier.`,
+          keyIdeas:["changes force or direction","reduces effort","fits the task"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`A team can use either a ${mechanism} or direct lifting to move a ${object}. Which is smarter, and why?`,
+          answer:`A strong response chooses the better method for the context and explains the mechanical advantage or control benefit.`,
+          keyIdeas:["choice justified","mechanical advantage or control","context matters"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`A ${mechanism} makes moving a ${object} easier. What trade off might still remain?`,
+          answer:`A strong response explains that easier force often comes with a trade off such as more distance, less speed, or more setup.`,
+          keyIdeas:["trade off","distance or speed","setup or control"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`You have to move a ${object} in ${constraint}. Which simple machine would you choose first, and what makes it the best first choice?`,
+          answer:`A strong response selects a machine suited to the space and explains why it best matches the constraint.`,
+          keyIdeas:["best fit","constraint considered","clear reasoning"]
+        };
+      }
+      return {
+        question:`Design a solution for moving a ${object} when space, effort, and ${trade} all matter. Which simple machine system would you build, and why?`,
+        answer:`A strong response weighs multiple constraints and argues for a system that balances force reduction with a realistic trade off.`,
+        keyIdeas:["multiple constraints","balanced solution","trade off justified"]
+      };
+    }
+
+    function engineeringLegendsChallenge(p, level){
+      const person = sample(p.people);
+      const achievement = sample(p.achievements);
+      const context = sample(p.contexts);
+
+      if(level === 100){
+        return {
+          question:`Why does ${person} still matter in engineering conversations today?`,
+          answer:`A strong response explains that influence comes from ideas, methods, or designs that shaped later engineering.`,
+          keyIdeas:["lasting influence","ideas or methods","later impact"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`How might ${person}'s ${achievement} have helped solve problems in ${context}?`,
+          answer:`A strong response links the person's way of thinking or designing to a real need or large scale problem.`,
+          keyIdeas:["links idea to problem","practical value","clear example"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`What makes an engineer influential even if they did not build every final product themselves? Use ${person} as a model.`,
+          answer:`A strong response explains that systems, ideas, and methods can shape many later inventions and industries.`,
+          keyIdeas:["influence beyond one product","ideas shape systems","long term impact"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`Which matters more in engineering history, technical skill or vision? Make a case using ${person}.`,
+          answer:`A strong response takes a position, supports it, and shows how vision and skill interact in real engineering impact.`,
+          keyIdeas:["clear position","evidence from example","vision and skill relationship"]
+        };
+      }
+      return {
+        question:`If ${person} were solving a modern engineering problem today, which part of their approach would be most useful, and why?`,
+        answer:`A strong response identifies a transferable habit of mind such as experimentation, systems thinking, or design imagination and justifies it.`,
+        keyIdeas:["transferable habit","modern relevance","well justified"]
+      };
+    }
+
+    function forcesChallenge(p, level){
+      const object = sample(p.objects);
+      const force = sample(p.forces);
+      const change = sample(p.changes);
+
+      if(level === 100){
+        return {
+          question:`Why does ${force} matter when a ${object} moves?`,
+          answer:`A strong response explains what the force does to motion, control, or direction.`,
+          keyIdeas:["force affects motion","control or direction","clear mechanism"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`A ${object} ${change}. Predict one effect on motion and explain why.`,
+          answer:`A strong response predicts a sensible motion change and explains it using a force based reason.`,
+          keyIdeas:["prediction","force based explanation","sensible link"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Two teams argue about what matters more for a moving ${object}, ${force} or mass. Who has the better argument, and under what conditions?`,
+          answer:`A strong response explains that both can matter, but their importance depends on the scenario and what is changing.`,
+          keyIdeas:["depends on conditions","compares factors","not one dimensional"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`How could changing friction completely alter the safety or control of a ${object}?`,
+          answer:`A strong response explains that friction affects grip, braking, stability, and the ability to control motion.`,
+          keyIdeas:["grip","braking or stopping","safety or stability"]
+        };
+      }
+      return {
+        question:`Design a safer motion system for a ${object} if it ${change}. Which force or motion principle would you control first, and why?`,
+        answer:`A strong response prioritises a principle such as friction, momentum, or balance and explains why it is the first lever for safety.`,
+        keyIdeas:["clear priority","force principle chosen","safety reasoning"]
+      };
+    }
+
+    function inventionsChallenge(p, level){
+      const invention = sample(p.inventions);
+      const impact = sample(p.impacts);
+
+      if(level === 100){
+        return {
+          question:`Why was the ${invention} more than just a new machine?`,
+          answer:`A strong response explains that the invention changed how people worked, communicated, travelled, or lived.`,
+          keyIdeas:["broader impact","social change","beyond one machine"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`How could the ${invention} change ${impact} faster than an older method?`,
+          answer:`A strong response explains the efficiency, scale, or access difference created by the invention.`,
+          keyIdeas:["efficiency or scale","older method less effective","clear comparison"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`When does an invention become transformative instead of merely useful? Use the ${invention} as your example.`,
+          answer:`A strong response explains that transformation happens when an invention changes systems, behaviour, or society at scale.`,
+          keyIdeas:["system level change","scale","behaviour or society"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`Would you judge the ${invention} more by technical brilliance or by its impact on ordinary people? Defend your view.`,
+          answer:`A strong response takes a position and explains why either technical breakthrough or social impact should carry more weight.`,
+          keyIdeas:["clear judgement","technical versus social impact","justification"]
+        };
+      }
+      return {
+        question:`A new machine solves one problem but reshapes society in unexpected ways. Why should inventors think about second order effects? Use the ${invention} as a guide.`,
+        answer:`A strong response explains that inventions change systems, jobs, behaviour, and power relations, not only one task.`,
+        keyIdeas:["second order effects","systems thinking","unexpected consequences"]
+      };
+    }
+
+    function mathsMachinesChallenge(p, level){
+      const system = sample(p.systems);
+      const goal = sample(p.goals);
+      const variable = sample(p.variables);
+
+      if(level === 100){
+        return {
+          question:`If a ${system} is designed for ${goal}, which matters more, more force or more speed? Why?`,
+          answer:`A strong response identifies the better priority and explains the trade off between force and speed.`,
+          keyIdeas:["clear priority","force or speed trade off","matches goal"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`How might changing the ${variable} in a ${system} affect performance?`,
+          answer:`A strong response explains that changing one variable alters efficiency, force, speed, balance, or control.`,
+          keyIdeas:["change in variable","effect on performance","mechanical reasoning"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Why do engineers use ratios and proportional thinking instead of only rough guesses when tuning a ${system}?`,
+          answer:`A strong response explains that ratios help predict how changes in one part will affect the whole system.`,
+          keyIdeas:["prediction","relationships between parts","precision over guessing"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`A ${system} gives more ${goal}, but the user complains it feels inefficient. What might the numbers be hiding?`,
+          answer:`A strong response explains that one gain may come with another cost such as energy loss, lower speed, instability, or extra complexity.`,
+          keyIdeas:["hidden trade off","one variable improved","system cost elsewhere"]
+        };
+      }
+      return {
+        question:`You are optimising a ${system} where ${variable}, load, and user control all matter. Which quantity would you adjust first, and why?`,
+        answer:`A strong response chooses a high leverage variable and explains how that choice ripples through the whole system.`,
+        keyIdeas:["high leverage variable","whole system thinking","clear justification"]
+      };
+    }
+
+    function natureChallenge(p, level){
+      const model = sample(p.naturalModels);
+      const use = sample(p.engineeringUses);
+
+      if(level === 100){
+        return {
+          question:`Why might engineers study a ${model} when designing for ${use}?`,
+          answer:`A strong response explains that nature often solves efficiency, strength, grip, or movement problems elegantly.`,
+          keyIdeas:["nature solves problems","useful structure or behaviour","engineering transfer"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`What is one danger of copying nature too literally instead of adapting the idea behind a ${model}?`,
+          answer:`A strong response explains that natural solutions work in specific contexts and may need adjustment for human materials or goals.`,
+          keyIdeas:["context matters","adapt not copy blindly","human constraints"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Which matters more in biomimicry, copying the shape of a ${model} or understanding the function?`,
+          answer:`A strong response argues that function usually matters more, because the engineering goal is to reproduce the useful effect.`,
+          keyIdeas:["function over shape","engineering goal","good reasoning"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`A team wants to mimic a ${model} for ${use}, but the material choices are different. What should they preserve first?`,
+          answer:`A strong response explains that the key performance principle should be preserved, not every visible feature.`,
+          keyIdeas:["preserve principle","not surface appearance","performance first"]
+        };
+      }
+      return {
+        question:`Design a machine inspired by a ${model}. Which natural feature would you borrow, and what engineering problem would it solve best?`,
+        answer:`A strong response selects one useful feature and clearly links it to a specific engineering benefit.`,
+        keyIdeas:["feature selected","problem linked","clear benefit"]
+      };
+    }
+
+    function materialsChallenge(p, level){
+      const material = sample(p.materials);
+      const demand = sample(p.demands);
+      const failure = sample(p.failures);
+
+      if(level === 100){
+        return {
+          question:`Why might ${material} be chosen when ${demand} matters?`,
+          answer:`A strong response explains one property that makes the material useful for the demand.`,
+          keyIdeas:["property named","linked to demand","material choice explained"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`A design using ${material} keeps ${failure}. What property might be mismatched to the job?`,
+          answer:`A strong response identifies that the chosen material may lack the right strength, flexibility, toughness, or resistance.`,
+          keyIdeas:["mismatch identified","property matters","linked to failure"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Why is the strongest material not always the best material? Use ${material} as a starting point.`,
+          answer:`A strong response explains that weight, cost, flexibility, heat, and durability can matter as much as raw strength.`,
+          keyIdeas:["trade offs","strength not everything","multiple criteria"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`If ${demand} and low cost both matter, how should a team judge whether ${material} is still worth using?`,
+          answer:`A strong response explains that teams should balance performance requirements against cost and risk, not optimise one factor only.`,
+          keyIdeas:["balance criteria","cost and performance","risk judgement"]
+        };
+      }
+      return {
+        question:`You must choose a material for a system where ${demand} matters, but ${failure} would be dangerous. What should drive the final decision?`,
+        answer:`A strong response explains that the final decision should prioritise the critical performance requirement and the consequences of failure.`,
+        keyIdeas:["consequence of failure","critical requirement","justified priority"]
+      };
+    }
+
+    function creativeThinkingChallenge(p, level){
+      const problem = sample(p.problems);
+      const constraint = sample(p.constraints);
+
+      if(level === 100){
+        return {
+          question:`What is the first question a smart team should ask before solving ${problem}?`,
+          answer:`A strong response explains that teams should first clarify the real constraint, goal, or user need.`,
+          keyIdeas:["clarify goal","identify constraint","define problem properly"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`How could ${constraint} improve the quality of a solution instead of only making ${problem} harder?`,
+          answer:`A strong response explains that constraints can force clearer priorities, smarter trade offs, and more original solutions.`,
+          keyIdeas:["constraints guide thinking","priorities become clearer","originality through limits"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`When solving ${problem}, why might the weirdest idea be worth testing early?`,
+          answer:`A strong response explains that unusual ideas can reveal assumptions, open new directions, or expose hidden options.`,
+          keyIdeas:["challenge assumptions","opens options","testing ideas early"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`A team has two solutions to ${problem}. One is safe and obvious. One is risky but powerful. How should they choose?`,
+          answer:`A strong response explains that they should judge the solutions against criteria such as feasibility, impact, time, and risk.`,
+          keyIdeas:["criteria based choice","risk versus impact","feasibility matters"]
+        };
+      }
+      return {
+        question:`Design a first draft solution for ${problem} under ${constraint}. What principle should drive the design from the beginning?`,
+        answer:`A strong response picks a design principle such as simplicity, safety, adaptability, or efficiency and justifies it.`,
+        keyIdeas:["clear design principle","fits the constraint","justified from start"]
+      };
+    }
+
+    function wildCardChallenge(p, level){
+      const theme = sample(p.themes);
+      if(level === 100){
+        return {
+          question:`Why does ${theme} matter in machine design?`,
+          answer:`A strong response explains how the theme affects usefulness, safety, or performance.`,
+          keyIdeas:["theme explained","linked to design","performance or safety"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`Give one example of how ${theme} can improve a machine and one way it can create a new problem.`,
+          answer:`A strong response shows that design gains often come with trade offs or side effects.`,
+          keyIdeas:["benefit","new problem","trade off"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Which is harder in engineering, finding a good idea or choosing between good ideas? Explain using ${theme}.`,
+          answer:`A strong response makes a case and shows how evaluation and trade offs shape final engineering decisions.`,
+          keyIdeas:["clear argument","evaluation matters","trade offs"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`A design team optimises for ${theme} and makes the system worse overall. How could that happen?`,
+          answer:`A strong response explains that over optimising one measure can damage balance across the system.`,
+          keyIdeas:["over optimisation","whole system balance","unintended consequences"]
+        };
+      }
+      return {
+        question:`You only get to optimise one thing first in a new machine, and you choose ${theme}. Why might that be brilliant or dangerous?`,
+        answer:`A strong response explains both the strategic benefit and the risk of prioritising a single theme too early.`,
+        keyIdeas:["benefit","risk","strategic judgement"]
+      };
+    }
+
+    function daVinciChallenge(p, level){
+      const idea = sample(p.ideas);
+      const feature = sample(p.features);
+
+      if(level === 100){
+        return {
+          question:`Why was Leonardo da Vinci's ${feature} valuable even when some designs were never built?`,
+          answer:`A strong response explains that the value was in observation, design imagination, and creative engineering thinking.`,
+          keyIdeas:["thinking value","observation or imagination","not only final product"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`What does the ${idea} suggest about how Leonardo approached engineering problems?`,
+          answer:`A strong response explains that he explored mechanisms visually, experimentally, and often by combining ideas.`,
+          keyIdeas:["visual planning","experimentation","combining ideas"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Why is sketching a serious engineering tool instead of just decoration? Use Leonardo as your example.`,
+          answer:`A strong response explains that sketches help test structure, movement, relationships, and design possibilities before building.`,
+          keyIdeas:["test ideas visually","understand relationships","early design reasoning"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`Which mattered more in Leonardo's work, technical detail or curiosity? Defend your answer.`,
+          answer:`A strong response takes a position but recognises that curiosity often drove the search for detail and design insight.`,
+          keyIdeas:["clear position","curiosity and detail linked","supported reasoning"]
+        };
+      }
+      return {
+        question:`If Leonardo were coaching a modern student design team, which habit of mind would be most useful today, and why?`,
+        answer:`A strong response selects a habit such as observation, iteration, or cross disciplinary thinking and shows why it matters now.`,
+        keyIdeas:["habit named","modern relevance","clear justification"]
+      };
+    }
+
+    function historyMachinesChallenge(p, level){
+      const period = sample(p.periods);
+      const outcome = sample(p.outcomes);
+
+      if(level === 100){
+        return {
+          question:`Why did machines in the ${period} change more than one industry?`,
+          answer:`A strong response explains that machines reshape transport, work, cities, trade, and daily life together.`,
+          keyIdeas:["broad change","multiple systems affected","not one industry only"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`How could one machine breakthrough in the ${period} lead to ${outcome}?`,
+          answer:`A strong response links the technical change to a wider social or economic effect.`,
+          keyIdeas:["technical to social link","chain reaction","clear mechanism"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Why might the same machine be seen as progress by some people and a threat by others during the ${period}?`,
+          answer:`A strong response explains that machines bring productivity and opportunity but can also disrupt work, power, and stability.`,
+          keyIdeas:["different perspectives","productivity gains","disruption"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`Which matters more in machine history, what a machine can do or who gains control because of it?`,
+          answer:`A strong response takes a position and explains that technical capability and power can reshape society together.`,
+          keyIdeas:["clear position","power or control","technology and society linked"]
+        };
+      }
+      return {
+        question:`What is the biggest mistake people make when they treat machine history as only a list of inventions from the ${period}?`,
+        answer:`A strong response explains that machine history is about systems, consequences, and changing human life, not isolated devices.`,
+        keyIdeas:["systems not just objects","consequences matter","human life changed"]
+      };
+    }
+
+    function everydayEngineeringChallenge(p, level){
+      const item = sample(p.items);
+      const purpose = sample(p.purposes);
+
+      if(level === 100){
+        return {
+          question:`Why is the ${item} a piece of engineering rather than just an ordinary object?`,
+          answer:`A strong response explains that it solves a practical problem through controlled force, motion, or design.`,
+          keyIdeas:["solves a problem","force or motion","design intention"]
+        };
+      }
+      if(level === 200){
+        return {
+          question:`How does the ${item} help ${purpose} better than a clumsier method?`,
+          answer:`A strong response explains how the object reduces effort, improves control, or saves time.`,
+          keyIdeas:["less effort or more control","clear purpose","comparison made"]
+        };
+      }
+      if(level === 300){
+        return {
+          question:`Why are well designed everyday objects easy to ignore but hard to replace? Use the ${item}.`,
+          answer:`A strong response explains that good engineering feels simple because many decisions have already solved hidden problems.`,
+          keyIdeas:["hidden design work","simplicity is engineered","hard to replace well"]
+        };
+      }
+      if(level === 400){
+        return {
+          question:`If the ${item} keeps failing in public use, what is more likely the problem, weak materials or poor design thinking?`,
+          answer:`A strong response explains that either may be true, but the answer should depend on evidence about context, load, and user behaviour.`,
+          keyIdeas:["depends on evidence","context matters","materials and design both possible"]
+        };
+      }
+      return {
+        question:`Redesign the ${item} for a tougher environment. What would you protect first, function, durability, safety, or cost, and why?`,
+        answer:`A strong response picks a priority and justifies it based on how the object is actually used.`,
+        keyIdeas:["clear priority","use context","justified trade off"]
+      };
+    }
+
+    function generateWheelPhrases(){
+      const phrases = [
         "MECHANICAL ADVANTAGE",
         "INDUSTRIAL REVOLUTION",
-        "GEAR TRAIN SYSTEM"
+        "GEAR TRAIN SYSTEM",
+        "WHEEL AND AXLE",
+        "LOAD BEARING FRAME",
+        "FORCE AND MOTION",
+        "DESIGN TRADE OFF",
+        "PULLEY BLOCK SYSTEM",
+        "STEAM POWER ENGINE",
+        "STRUCTURAL STABILITY"
       ];
+      return shuffle([...phrases]).slice(0, 3);
     }
 
     function renderPreview(){
@@ -1512,11 +1780,7 @@ Respond ONLY with a valid JSON object in this exact format:
             <div class="preview-q">${escapeHtml(q.question)}</div>
             <div class="preview-a"><strong>Host guide:</strong> ${escapeHtml(q.answer)}</div>
             <div class="preview-a" style="margin-top:8px;"><strong>Key ideas:</strong> ${(q.keyIdeas || []).map(escapeHtml).join(", ")}</div>
-            <div class="preview-actions">
-              <button class="btn blue" type="button">Regenerate This One</button>
-            </div>
           `;
-          card.querySelector("button").addEventListener("click", () => generateQuestions({ category:q.category, points:q.points }));
           el.previewList.appendChild(card);
         });
 
@@ -1566,13 +1830,10 @@ Respond ONLY with a valid JSON object in this exact format:
       });
 
       if(state.bonusEnabled){
-        const tileCount = board.length;
-        const bonusCount = tileCount <= 12 ? 3 : 4;
-        const availableIndices = [...Array(board.length).keys()];
-        shuffle(availableIndices);
-        const picked = availableIndices.slice(0, bonusCount);
-
-        picked.forEach(index => {
+        const bonusCount = board.length <= 12 ? 3 : 4;
+        const available = [...Array(board.length).keys()];
+        shuffle(available);
+        available.slice(0, bonusCount).forEach(index => {
           board[index].type = "bonus";
           board[index].bonusPayload = createBonusPayload(board[index].points);
         });
@@ -1585,10 +1846,8 @@ Respond ONLY with a valid JSON object in this exact format:
       const type = BONUS_TYPES[Math.floor(Math.random() * BONUS_TYPES.length)];
 
       if(type === "wheel"){
-        const phrase = state.wheelOfFortunePhrases[Math.floor(Math.random() * state.wheelOfFortunePhrases.length)] || "MECHANICAL ADVANTAGE";
-        return { type, phrase };
+        return { type, phrase: sample(state.wheelOfFortunePhrases) || "MECHANICAL ADVANTAGE" };
       }
-
       if(type === "rapid"){
         return {
           type,
@@ -1596,29 +1855,26 @@ Respond ONLY with a valid JSON object in this exact format:
           questions: makeRapidQuestions(5)
         };
       }
-
       if(type === "double"){
         return { type, awardPoints: basePoints * 2 };
       }
-
       return { type:"steal" };
     }
 
     function makeRapidQuestions(count){
-      const pool = [
-        ["You need more force but not more speed. What machine setup would help?", "A strong answer suggests increasing mechanical advantage, such as more pulleys or a longer lever.", ["mechanical advantage", "more force", "trade off with speed"]],
-        ["A ramp is made steeper. What changes for the user?", "A strong answer notes that steeper ramps need more force but use less distance.", ["more force", "less distance", "trade off"]],
-        ["Why might engineers choose a triangle frame?", "A strong answer notes stability and load distribution.", ["stability", "load distribution", "rigidity"]],
-        ["If friction suddenly dropped to zero, what problem could appear?", "A strong answer notes loss of grip, traction, or control.", ["loss of grip", "traction", "control"]],
-        ["Why might a material be strong but still a bad choice?", "A strong answer notes other factors like weight, cost, brittleness, or flexibility.", ["trade offs", "weight or cost", "brittleness or flexibility"]],
-        ["Why might gears of different sizes be useful?", "A strong answer notes changing speed, force, or direction.", ["change speed", "change force", "transfer motion"]],
-        ["Why is copying nature useful in engineering?", "A strong answer notes that natural structures solve efficiency, movement, or strength problems.", ["nature solves problems", "efficiency", "strength or movement"]],
-        ["Why is a long handle useful on a wrench?", "A strong answer notes greater turning effect because of more leverage.", ["leverage", "more turning effect", "less force needed"]],
-        ["Why might a wide base help a machine?", "A strong answer notes balance and stability.", ["balance", "stability", "less tipping"]],
-        ["Why might an inventor test many failed ideas?", "A strong answer notes iteration and learning from trial results.", ["iteration", "testing", "learning from failure"]]
-      ];
-      shuffle(pool);
-      return pool.slice(0, count).map(([question,answer,keyIdeas]) => ({ question, answer, keyIdeas, result:null }));
+      const categories = ALL_CATEGORIES;
+      const bank = [];
+      for(let i = 0; i < count * 3; i++){
+        const category = sample(categories);
+        const challenge = generateChallenge(category, sample([100,200,300]));
+        bank.push({
+          question: challenge.question,
+          answer: challenge.answer,
+          keyIdeas: challenge.keyIdeas,
+          result: null
+        });
+      }
+      return bank.slice(0, count);
     }
 
     function renderBoard(){
@@ -1644,7 +1900,7 @@ Respond ONLY with a valid JSON object in this exact format:
           if(state.doublePointsForTeamId && !tile.used && tile.type === "question"){
             button.classList.add("doubleActiveTarget");
           }
-          button.innerHTML = `<span class="tile-label">${tile.used ? "✓" : tile.type === "bonus" ? "🎰" : tile.points}</span>`;
+          button.textContent = tile.used ? "✓" : tile.type === "bonus" ? "🎰" : tile.points;
           button.disabled = tile.used;
           button.addEventListener("click", () => openTile(tile.id));
           el.board.appendChild(button);
@@ -1655,13 +1911,8 @@ Respond ONLY with a valid JSON object in this exact format:
     function openTile(tileId){
       const tile = state.board.find(t => t.id === tileId);
       if(!tile || tile.used) return;
-      state.currentTile = tile;
-
-      if(tile.type === "bonus"){
-        openBonusTile(tile);
-      } else {
-        openQuestionTile(tile);
-      }
+      if(tile.type === "bonus") openBonusTile(tile);
+      else openQuestionTile(tile);
     }
 
     function hostGuideHtml(tile){
@@ -1675,19 +1926,16 @@ Respond ONLY with a valid JSON object in this exact format:
     }
 
     function openQuestionTile(tile){
-      const displayPoints = tile.points;
-
       el.overlayModal.innerHTML = `
         <div class="modal-top">
           <div>
             <div class="modal-title">📚 ${escapeHtml(tile.category)}</div>
-            <div class="pill-note">💰 Worth ${displayPoints} points</div>
+            <div class="pill-note">💰 Worth ${tile.points} points</div>
           </div>
           <button class="btn ghost" id="closeOverlayBtn" type="button">Close</button>
         </div>
 
         <div class="question-text">${escapeHtml(tile.question)}</div>
-
         <div class="timer" id="bowlTimer">20</div>
 
         <div class="control-row">
@@ -1698,7 +1946,6 @@ Respond ONLY with a valid JSON object in this exact format:
         </div>
 
         <div class="answer-box" id="answerBox">${hostGuideHtml(tile)}</div>
-
         <div class="award-grid" id="awardGrid"></div>
       `;
 
@@ -1721,7 +1968,6 @@ Respond ONLY with a valid JSON object in this exact format:
         seconds = secondsToUse;
         timerEl.textContent = seconds;
         playSound("bonus");
-
         timer = setInterval(() => {
           seconds -= 1;
           timerEl.textContent = seconds;
@@ -1739,7 +1985,6 @@ Respond ONLY with a valid JSON object in this exact format:
         if(!team) return;
 
         let points = Math.round(tile.points * multiplier);
-
         if(state.doublePointsForTeamId === team.id){
           points *= 2;
           state.doublePointsForTeamId = null;
@@ -1774,19 +2019,13 @@ Respond ONLY with a valid JSON object in this exact format:
         stopTimer();
         closeOverlay();
       });
-
       document.getElementById("startTimerBtn").addEventListener("click", () => startTimer(20));
-
-      document.getElementById("showGuideBtn").addEventListener("click", () => {
-        answerBox.classList.add("visible");
-      });
-
+      document.getElementById("showGuideBtn").addEventListener("click", () => answerBox.classList.add("visible"));
       document.getElementById("noAwardBtn").addEventListener("click", () => {
         stopTimer();
         markTileUsed(tile.id);
         answerBox.classList.add("visible");
       });
-
       document.getElementById("passBtn").addEventListener("click", () => {
         stopTimer();
         answerBox.classList.add("visible");
@@ -1799,21 +2038,10 @@ Respond ONLY with a valid JSON object in this exact format:
 
     function openBonusTile(tile){
       const payload = tile.bonusPayload;
-      const type = payload?.type || "double";
-
-      if(type === "wheel"){
-        openWheelBonus(tile, payload);
-        return;
-      }
-      if(type === "rapid"){
-        openRapidBonus(tile, payload);
-        return;
-      }
-      if(type === "double"){
-        openDoubleBonus(tile, payload);
-        return;
-      }
-      openStealBonus(tile, payload);
+      if(payload.type === "wheel") openWheelBonus(tile, payload);
+      else if(payload.type === "rapid") openRapidBonus(tile, payload);
+      else if(payload.type === "double") openDoubleBonus(tile, payload);
+      else openStealBonus(tile);
     }
 
     function openWheelBonus(tile, payload){
@@ -1823,8 +2051,8 @@ Respond ONLY with a valid JSON object in this exact format:
       let wheelSpinning = false;
       let autoTimer = null;
 
-      const wheelValues = [100, 150, 200, 250, 300, 400, 500, 750];
-      const wheelLabels = ["100", "150", "200", "250", "300", "400", "500", "750"];
+      const wheelValues = [100,150,200,250,300,400,500,750];
+      const wheelLabels = wheelValues.map(String);
 
       el.overlayModal.innerHTML = `
         <div class="modal-top">
@@ -1840,27 +2068,16 @@ Respond ONLY with a valid JSON object in this exact format:
         <div style="display:grid; gap:18px; justify-items:center; margin:18px 0 8px;">
           <div style="position:relative; width:280px; height:280px;">
             <div style="
-              position:absolute;
-              top:-8px;
-              left:50%;
-              transform:translateX(-50%);
-              width:0;
-              height:0;
-              border-left:18px solid transparent;
-              border-right:18px solid transparent;
-              border-bottom:34px solid #ffd54a;
-              z-index:3;
-              filter:drop-shadow(0 0 8px rgba(255,212,74,.45));
+              position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+              width:0; height:0; border-left:18px solid transparent;
+              border-right:18px solid transparent; border-bottom:34px solid #ffd54a; z-index:3;
             "></div>
 
             <div id="wheelDisc" style="
-              width:280px;
-              height:280px;
-              border-radius:50%;
+              width:280px; height:280px; border-radius:50%;
               border:8px solid rgba(255,255,255,.18);
               box-shadow:0 0 30px rgba(255,60,172,.16), 0 12px 30px rgba(0,0,0,.4);
-              position:relative;
-              overflow:hidden;
+              position:relative; overflow:hidden;
               transition:transform 4.2s cubic-bezier(.12,.8,.18,1);
               background:
                 conic-gradient(
@@ -1874,56 +2091,27 @@ Respond ONLY with a valid JSON object in this exact format:
                   #ff646e 315deg 360deg
                 );
             ">
-              <div style="
-                position:absolute;
-                inset:18px;
-                border-radius:50%;
-                border:3px solid rgba(255,255,255,.16);
-              "></div>
-
+              <div style="position:absolute; inset:18px; border-radius:50%; border:3px solid rgba(255,255,255,.16);"></div>
               <div style="position:absolute; inset:0;">
                 ${wheelLabels.map((label, i) => {
                   const angle = i * 45 + 22.5;
                   return `
-                    <div style="
-                      position:absolute;
-                      left:50%;
-                      top:50%;
-                      width:0;
-                      height:0;
-                      transform:rotate(${angle}deg);
-                      transform-origin:center center;
-                    ">
-                      <div style="
-                        position:absolute;
-                        left:-24px;
-                        top:-124px;
-                        width:48px;
-                        text-align:center;
-                        font-size:1.3rem;
-                        font-weight:700;
-                        color:#081126;
-                      ">${label}</div>
+                    <div style="position:absolute; left:50%; top:50%; width:0; height:0; transform:rotate(${angle}deg);">
+                      <div style="position:absolute; left:-24px; top:-124px; width:48px; text-align:center; font-size:1.3rem; font-weight:700; color:#081126;">
+                        ${label}
+                      </div>
                     </div>
                   `;
                 }).join("")}
               </div>
-
               <div style="
-                position:absolute;
-                left:50%;
-                top:50%;
-                transform:translate(-50%, -50%);
-                width:64px;
-                height:64px;
-                border-radius:50%;
+                position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);
+                width:64px; height:64px; border-radius:50%;
                 background:linear-gradient(180deg, #fff4b5, #ffb800);
                 border:6px solid rgba(255,255,255,.22);
-                box-shadow:0 4px 12px rgba(0,0,0,.35);
               "></div>
             </div>
           </div>
-
           <div id="spinResult" class="pill-note">Spin to set the value</div>
         </div>
 
@@ -1937,7 +2125,6 @@ Respond ONLY with a valid JSON object in this exact format:
         </div>
 
         <div class="award-grid" id="awardGrid"></div>
-
         <div class="answer-box" id="answerBox">Phrase: ${escapeHtml(phrase)}</div>
       `;
 
@@ -1956,8 +2143,7 @@ Respond ONLY with a valid JSON object in this exact format:
       }
 
       function revealOne(){
-        const next = revealRandomLetter(phrase, revealed);
-        revealed = next;
+        revealed = revealRandomLetter(phrase, revealed);
         updatePhrase();
         playSound("bonus");
       }
@@ -1989,7 +2175,6 @@ Respond ONLY with a valid JSON object in this exact format:
 
       function spinWheel(){
         if(wheelSpinning) return;
-
         wheelSpinning = true;
         spunValue = null;
         spinResult.textContent = "Spinning...";
@@ -2023,22 +2208,18 @@ Respond ONLY with a valid JSON object in this exact format:
       });
 
       spinWheelBtn.addEventListener("click", spinWheel);
-
       revealLetterBtn.addEventListener("click", () => {
         if(spunValue === null) return;
         revealOne();
       });
-
       autoRevealBtn.addEventListener("click", () => {
         if(spunValue === null) return;
-
         if(autoTimer){
           clearInterval(autoTimer);
           autoTimer = null;
           toast("Auto reveal stopped.", "info");
           return;
         }
-
         autoTimer = setInterval(() => {
           const before = revealed;
           revealOne();
@@ -2047,10 +2228,8 @@ Respond ONLY with a valid JSON object in this exact format:
             autoTimer = null;
           }
         }, 3000);
-
         toast("Auto reveal started.", "info");
       });
-
       revealAnswerBtn.addEventListener("click", revealFull);
 
       showOverlay();
@@ -2135,14 +2314,12 @@ Respond ONLY with a valid JSON object in this exact format:
         stopTimer();
         closeOverlay();
       });
-
       document.getElementById("startRapidBtn").addEventListener("click", startTimer);
       document.getElementById("nextRapidBtn").addEventListener("click", () => {
         stopTimer();
         currentIndex = Math.min(payload.questions.length - 1, currentIndex + 1);
         renderRapid();
       });
-
       document.getElementById("finishRapidBtn").addEventListener("click", () => {
         stopTimer();
         const totalCorrect = payload.questions.filter(q => q.result === true).length;
@@ -2235,7 +2412,7 @@ Respond ONLY with a valid JSON object in this exact format:
     }
 
     function openStealBonus(tile){
-      const stealingTeam = state.teams[Math.floor(Math.random() * state.teams.length)];
+      const stealingTeam = sample(state.teams);
 
       el.overlayModal.innerHTML = `
         <div class="modal-top">
@@ -2249,28 +2426,25 @@ Respond ONLY with a valid JSON object in this exact format:
         </div>
 
         <div class="question-text">Which team are they stealing from?</div>
-
         <div class="award-grid" id="stealGrid"></div>
       `;
 
       const grid = document.getElementById("stealGrid");
-      state.teams
-        .filter(team => team.id !== stealingTeam.id)
-        .forEach(team => {
-          const btn = document.createElement("button");
-          btn.className = "btn red";
-          btn.type = "button";
-          btn.textContent = `Take 50 from ${team.name}`;
-          btn.addEventListener("click", () => {
-            animateScoreChange(team.id, -50);
-            animateScoreChange(stealingTeam.id, 50);
-            confettiBurst();
-            playSound("bonus");
-            markTileUsed(tile.id);
-            closeOverlay();
-          });
-          grid.appendChild(btn);
+      state.teams.filter(team => team.id !== stealingTeam.id).forEach(team => {
+        const btn = document.createElement("button");
+        btn.className = "btn red";
+        btn.type = "button";
+        btn.textContent = `Take 50 from ${team.name}`;
+        btn.addEventListener("click", () => {
+          animateScoreChange(team.id, -50);
+          animateScoreChange(stealingTeam.id, 50);
+          confettiBurst();
+          playSound("bonus");
+          markTileUsed(tile.id);
+          closeOverlay();
         });
+        grid.appendChild(btn);
+      });
 
       document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
       showOverlay();
@@ -2314,17 +2488,10 @@ Respond ONLY with a valid JSON object in this exact format:
       const team = getTeam(teamId);
       if(!team) return;
       team.score += delta;
-
       renderScorebar(el.scorebar, false);
-
       const liveCard = document.getElementById(`teamCard_${team.id}_live`);
       if(liveCard) liveCard.classList.add("flash");
-
-      if(delta > 0){
-        toast(`${team.name} +${delta}`, "good");
-      } else {
-        toast(`${team.name} ${delta}`, "bad");
-      }
+      toast(delta > 0 ? `${team.name} +${delta}` : `${team.name} ${delta}`, delta > 0 ? "good" : "bad");
     }
 
     function getTeam(id){
@@ -2381,7 +2548,7 @@ Respond ONLY with a valid JSON object in this exact format:
         window.__loadingTicker = setInterval(() => {
           idx = (idx + 1) % LOADING_LINES.length;
           el.loadingText.textContent = LOADING_LINES[idx];
-        }, 1500);
+        }, 1000);
       } else {
         clearInterval(window.__loadingTicker);
       }
@@ -2509,6 +2676,10 @@ Respond ONLY with a valid JSON object in this exact format:
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+    }
+
+    function sleep(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     init();
