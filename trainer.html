@@ -1312,148 +1312,142 @@ Respond ONLY with a valid JSON object in this exact format:
 }`;
     }
 
-<script>
-async function callAI(prompt){
-  const payloadOptions = [
-    { prompt, model: MODEL_NAME },
-    { message: prompt, model: MODEL_NAME },
-    { input: prompt, model: MODEL_NAME },
-    {
-      model: MODEL_NAME,
-      messages: [
-        { role: "system", content: "Return only valid JSON." },
-        { role: "user", content: prompt }
-      ]
-    }
-  ];
+    async function callAI(prompt){
+      const payloadOptions = [
+        { prompt, model: MODEL_NAME },
+        { message: prompt, model: MODEL_NAME },
+        { input: prompt, model: MODEL_NAME },
+        {
+          model: MODEL_NAME,
+          messages: [
+            { role: "system", content: "Return only valid JSON." },
+            { role: "user", content: prompt }
+          ]
+        }
+      ];
 
-  let lastError = null;
+      let lastError = null;
 
-  for (const payload of payloadOptions) {
-    try {
-      const response = await fetch(AI_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      for (const payload of payloadOptions) {
+        try {
+          const response = await fetch(AI_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
 
-      const rawText = await response.text();
-      console.log("AI raw response text:", rawText);
+          const rawText = await response.text();
+          console.log("AI raw response text:", rawText);
 
-      if (!response.ok) {
-        lastError = new Error(`HTTP ${response.status}: ${rawText}`);
-        continue;
+          if (!response.ok) {
+            lastError = new Error(`HTTP ${response.status}: ${rawText}`);
+            continue;
+          }
+
+          const parsed = parsePossiblyWrappedJson(rawText);
+
+          if (parsed && Array.isArray(parsed.questions)) {
+            return parsed;
+          }
+
+          lastError = new Error(`Could not parse JSON from AI response. Raw response: ${rawText}`);
+        } catch (err) {
+          lastError = err;
+        }
       }
 
-      const parsed = parsePossiblyWrappedJson(rawText);
+      throw lastError || new Error("Unknown AI response error.");
+    }
 
-      if (parsed && Array.isArray(parsed.questions)) {
-        return parsed;
+    function parsePossiblyWrappedJson(rawText){
+      if (!rawText) return null;
+
+      let value = safeJsonParse(rawText);
+
+      if (value) {
+        const unwrapped = unwrapJson(value);
+        if (unwrapped) return unwrapped;
       }
 
-      lastError = new Error(`Could not parse JSON from AI response. Raw response: ${rawText}`);
-    } catch (err) {
-      lastError = err;
+      const fencedMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      if (fencedMatch) {
+        value = safeJsonParse(fencedMatch[1].trim());
+        if (value) {
+          const unwrapped = unwrapJson(value);
+          if (unwrapped) return unwrapped;
+        }
+      }
+
+      const firstBrace = rawText.indexOf("{");
+      const lastBrace = rawText.lastIndexOf("}");
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        const candidate = rawText.slice(firstBrace, lastBrace + 1);
+        value = safeJsonParse(candidate);
+        if (value) {
+          const unwrapped = unwrapJson(value);
+          if (unwrapped) return unwrapped;
+        }
+      }
+
+      return null;
     }
-  }
 
-  throw lastError || new Error("Unknown AI response error.");
-}
+    function unwrapJson(value){
+      if (value == null) return null;
 
-function parsePossiblyWrappedJson(rawText){
-  if (!rawText) return null;
+      if (typeof value === "string") {
+        const parsed = safeJsonParse(value);
+        if (parsed) return unwrapJson(parsed);
+        return null;
+      }
 
-  let value = safeJsonParse(rawText);
+      if (typeof value !== "object") return null;
 
-  if (value) {
-    const unwrapped = unwrapJson(value);
-    if (unwrapped) return unwrapped;
-  }
+      if (Array.isArray(value.questions)) {
+        return value;
+      }
 
-  const fencedMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fencedMatch) {
-    value = safeJsonParse(fencedMatch[1].trim());
-    if (value) {
-      const unwrapped = unwrapJson(value);
-      if (unwrapped) return unwrapped;
+      const possibleFields = [
+        value.body,
+        value.data,
+        value.result,
+        value.response,
+        value.content,
+        value.text,
+        value.message,
+        value.output,
+        value.completion
+      ];
+
+      for (const field of possibleFields) {
+        const unwrapped = unwrapJson(field);
+        if (unwrapped) return unwrapped;
+      }
+
+      if (Array.isArray(value.choices)) {
+        for (const choice of value.choices) {
+          const unwrapped = unwrapJson(choice?.message?.content || choice?.text || choice);
+          if (unwrapped) return unwrapped;
+        }
+      }
+
+      if (Array.isArray(value.output)) {
+        for (const item of value.output) {
+          const unwrapped = unwrapJson(item?.content?.[0]?.text || item?.text || item);
+          if (unwrapped) return unwrapped;
+        }
+      }
+
+      return null;
     }
-  }
 
-  const firstBrace = rawText.indexOf("{");
-  const lastBrace = rawText.lastIndexOf("}");
-  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-    const candidate = rawText.slice(firstBrace, lastBrace + 1);
-    value = safeJsonParse(candidate);
-    if (value) {
-      const unwrapped = unwrapJson(value);
-      if (unwrapped) return unwrapped;
+    function safeJsonParse(value){
+      try {
+        return JSON.parse(value);
+      } catch {
+        return null;
+      }
     }
-  }
-
-  return null;
-}
-
-function unwrapJson(value){
-  if (value == null) return null;
-
-  if (typeof value === "string") {
-    const parsed = safeJsonParse(value);
-    if (parsed) return unwrapJson(parsed);
-    return null;
-  }
-
-  if (typeof value !== "object") return null;
-
-  if (Array.isArray(value.questions)) {
-    return value;
-  }
-
-  const possibleFields = [
-    value.body,
-    value.data,
-    value.result,
-    value.response,
-    value.content,
-    value.text,
-    value.message,
-    value.output,
-    value.completion
-  ];
-
-  for (const field of possibleFields) {
-    const unwrapped = unwrapJson(field);
-    if (unwrapped) return unwrapped;
-  }
-
-  if (Array.isArray(value.choices)) {
-    for (const choice of value.choices) {
-      const unwrapped = unwrapJson(choice?.message?.content || choice?.text || choice);
-      if (unwrapped) return unwrapped;
-    }
-  }
-
-  if (Array.isArray(value.output)) {
-    for (const item of value.output) {
-      const unwrapped = unwrapJson(item?.content?.[0]?.text || item?.text || item);
-      if (unwrapped) return unwrapped;
-    }
-  }
-
-  return null;
-}
-
-function extractJSON(raw){
-  return unwrapJson(raw);
-}
-
-function safeJsonParse(value){
-  try {
-    return JSON.parse(value);
-  } catch {
-    return null;
-  }
-}
-</script>
 
     function normaliseQuestions(arr, categories, pointValues){
       const map = new Map();
@@ -2280,13 +2274,6 @@ function safeJsonParse(value){
 
       document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
       showOverlay();
-    }
-
-    function revealAnswerBox(){
-      const box = document.getElementById("answerBox");
-      if(box) box.classList.add("visible");
-      renderBoard();
-      checkGameOver();
     }
 
     function markTileUsed(tileId){
