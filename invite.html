@@ -179,7 +179,7 @@ html, body {
 /* ── Oven glow — arch opening x:73–97%, y:13–61% ── */
 #og {
   position: absolute;
-  left: 73%; top: 13%;
+  left: 64%; top: 14%;
   width: 24%; height: 48%;
   pointer-events: none; z-index: 5;
 }
@@ -213,7 +213,7 @@ html, body {
 /* ── Oven flames — inside arch, pixel-calibrated ── */
 #of {
   position: absolute;
-  left: 73%; top: 15%;
+  left: 65%; top: 19%;
   width: 21%; height: 43%;
   pointer-events: none; z-index: 6;
   overflow: visible;
@@ -222,7 +222,7 @@ html, body {
 /* ── Pendant lamp — dome lamp, x:46–56%, y:0–12% ── */
 #lg {
   position: absolute;
-  left: 46%; top: 0%;
+  left: 51%; top: 4%;
   width: 11%; height: 13%;
   pointer-events: none; z-index: 4;
 }
@@ -241,7 +241,7 @@ html, body {
 /* ── Right wall lantern — hanging lamp near oven, x:61–70%, y:1–14% ── */
 #lg2 {
   position: absolute;
-  left: 61%; top: 1%;
+  left: 60%; top: 5%;
   width: 10%; height: 14%;
   pointer-events: none; z-index: 4;
 }
@@ -259,7 +259,7 @@ html, body {
 /* ── Moon glow — crescent through window, pixel-measured x:1-14%, y:10-31% ── */
 #mg {
   position: absolute;
-  left: 1%; top: 14%;
+  left: 2%; top: 22%;
   width: 12%; aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(circle,
@@ -696,12 +696,12 @@ html, body {
     <div id="lh"></div>
     <div id="ch"></div>
     <!-- Steam over pizzas — pixel-calibrated to pizza positions ~x:38-50%, y:68% -->
-    <div class="sg" style="left:33%;top:63%">
+    <div class="sg" style="left:76%;top:35%">
       <div class="ws" style="--sd:0s;   left:0px"></div>
       <div class="ws" style="--sd:.85s; left:6px"></div>
       <div class="ws" style="--sd:1.7s; left:-4px"></div>
     </div>
-    <div class="sg" style="left:40%;top:63%">
+    <div class="sg" style="left:80%;top:42%">
       <div class="ws" style="--sd:.42s; left:0px"></div>
       <div class="ws" style="--sd:1.25s;left:5px"></div>
     </div>
@@ -811,15 +811,14 @@ function animIn() {
   const h = document.getElementById("lh");
   // x%, y% — pixel-calibrated from actual image analysis (1536x1024)
   const pts = [
-    [ 8.0,  8.8],
-    [14.9, 11.9],
-    [18.4, 14.6],
-    [20.2, 15.2],
-    [24.3, 17.5],
-    [28.8, 11.9],
-    [29.7, 12.4],
-    [45.0, 14.0],
-    [44.5, 16.0]
+    [ 6, 15],
+    [10, 12],
+    [14, 15],
+    [18, 12],
+    [22, 15],
+    [26, 12],
+    [30, 14],
+    [34, 12]
   ];
   pts.forEach(([x, y]) => {
     const b = document.createElement("div");
@@ -840,9 +839,8 @@ function animIn() {
   // Left side: front counter candles (bottom-left area)
   // Right side: tables beside oven
   const pos = [
-    [ 7.6, 55.5], [12.0, 79.0], [13.5, 77.5],   // left side candles (pixel-measured from Scene2)
-    [87.7, 74.0], [90.9, 70.5], [88.4, 60.5],   // right table candles (pixel-measured from Scene2)
-    [80.0, 55.5], [95.1, 70.5], [76.1, 82.0]    // right side candles (pixel-measured from Scene2)
+    [10, 52], [13, 60], [8, 62],          // left candles
+    [74, 68], [79, 65], [84, 68], [87, 72], [90, 68]  // right candles (round table)
   ];
   pos.forEach(([x, y], i) => {
     const w = document.createElement("div");
