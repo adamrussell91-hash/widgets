@@ -7,24 +7,368 @@
   <style>
     html, body {
       margin: 0;
-      padding: 0;
       width: 100%;
       height: 100%;
-      background: #000;
+      overflow: hidden;
+      background: #e8dcc4;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255,255,255,0.32) 0 2px, transparent 45px),
+        radial-gradient(circle at 78% 28%, rgba(255,255,255,0.22) 0 2px, transparent 65px),
+        radial-gradient(circle at 15% 72%, rgba(255,255,255,0.18) 0 2px, transparent 80px),
+        radial-gradient(circle at 84% 76%, rgba(255,255,255,0.16) 0 2px, transparent 70px),
+        linear-gradient(rgba(255,255,255,0.08), rgba(255,255,255,0.03)),
+        linear-gradient(90deg, rgba(130,110,70,0.045) 0, rgba(255,255,255,0.03) 50%, rgba(130,110,70,0.045) 100%),
+        linear-gradient(#efe5cf, #e5d7bb);
+    }
+
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(120, 95, 55, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 95, 55, 0.06) 1px, transparent 1px);
+      background-size: 36px 36px, 36px 36px;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle, rgba(255,255,255,0.12) 0 18px, transparent 56px),
+        radial-gradient(circle, rgba(255,240,220,0.10) 0 12px, transparent 44px),
+        radial-gradient(circle, rgba(255,255,255,0.08) 0 24px, transparent 68px);
+      background-size: 340px 340px, 460px 460px, 620px 620px;
+      background-position: 10% 10%, 70% 20%, 40% 75%;
+      animation: backgroundGlow 14s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .bokeh {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
       overflow: hidden;
     }
 
-    video {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
+    .bokeh span {
+      position: absolute;
+      top: -12vh;
       display: block;
+      border-radius: 50%;
+      filter: blur(1px);
+      opacity: 0;
+      animation: driftDown linear infinite;
+    }
+
+    .bokeh span:nth-child(1) {
+      left: 8%;
+      width: 18px;
+      height: 18px;
+      background: rgba(255,255,255,0.22);
+      animation-duration: 14s;
+      animation-delay: 0s;
+    }
+
+    .bokeh span:nth-child(2) {
+      left: 18%;
+      width: 34px;
+      height: 34px;
+      background: rgba(255,245,230,0.18);
+      animation-duration: 19s;
+      animation-delay: 3s;
+    }
+
+    .bokeh span:nth-child(3) {
+      left: 31%;
+      width: 14px;
+      height: 14px;
+      background: rgba(255,255,255,0.20);
+      animation-duration: 15s;
+      animation-delay: 5s;
+    }
+
+    .bokeh span:nth-child(4) {
+      left: 46%;
+      width: 44px;
+      height: 44px;
+      background: rgba(255,245,220,0.14);
+      animation-duration: 22s;
+      animation-delay: 1s;
+    }
+
+    .bokeh span:nth-child(5) {
+      left: 58%;
+      width: 20px;
+      height: 20px;
+      background: rgba(255,255,255,0.18);
+      animation-duration: 17s;
+      animation-delay: 7s;
+    }
+
+    .bokeh span:nth-child(6) {
+      left: 71%;
+      width: 12px;
+      height: 12px;
+      background: rgba(255,255,255,0.20);
+      animation-duration: 13s;
+      animation-delay: 2s;
+    }
+
+    .bokeh span:nth-child(7) {
+      left: 82%;
+      width: 30px;
+      height: 30px;
+      background: rgba(255,246,228,0.16);
+      animation-duration: 20s;
+      animation-delay: 6s;
+    }
+
+    .bokeh span:nth-child(8) {
+      left: 92%;
+      width: 16px;
+      height: 16px;
+      background: rgba(255,255,255,0.18);
+      animation-duration: 16s;
+      animation-delay: 9s;
+    }
+
+    .seal-wrap {
+      position: relative;
+      width: min(62vw, 620px);
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+    }
+
+    .seal-shadow {
+      position: absolute;
+      inset: 12% 10% 6% 10%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(90, 10, 10, 0.28) 0%, rgba(90, 10, 10, 0.08) 48%, transparent 72%);
+      transform: translateY(8%);
+      filter: blur(18px);
+    }
+
+    .seal {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 48%, #bc2115 0%, #a91410 34%, #8f0f0e 68%, #7b090b 100%);
+      box-shadow:
+        inset 0 0 0 12px rgba(120, 8, 8, 0.22),
+        inset 0 0 0 15px rgba(198, 138, 55, 0.78),
+        inset 0 0 0 48px transparent,
+        inset 0 0 60px rgba(255, 120, 70, 0.12),
+        0 20px 40px rgba(70, 18, 10, 0.18);
+    }
+
+    .seal::before {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 2px solid rgba(188, 117, 45, 0.42);
+      box-shadow: inset 0 0 24px rgba(255, 170, 120, 0.04);
+    }
+
+    .seal::after {
+      content: "";
+      position: absolute;
+      inset: 4.4%;
+      border-radius: 50%;
+      border: 3px solid rgba(205, 150, 62, 0.78);
+      pointer-events: none;
+    }
+
+    .title {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #c08a39;
+      font-size: clamp(2.8rem, 6vw, 6rem);
+      font-style: italic;
+      letter-spacing: 0.02em;
+      text-shadow:
+        0 1px 0 rgba(255, 220, 150, 0.35),
+        0 2px 2px rgba(80, 30, 10, 0.28),
+        0 4px 12px rgba(70, 10, 5, 0.16);
+      z-index: 2;
+    }
+
+    .seal-sparkles,
+    .bg-sparkles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      opacity: 0;
+      animation: twinkle 4s ease-in-out infinite;
+    }
+
+    .sparkle::before,
+    .sparkle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,240,200,0.75) 28%, rgba(255,220,170,0.35) 48%, transparent 72%);
+      border-radius: 999px;
+      filter: blur(0.3px);
+    }
+
+    .sparkle::before {
+      width: 2px;
+      height: 16px;
+    }
+
+    .sparkle::after {
+      width: 16px;
+      height: 2px;
+    }
+
+    .seal-sparkles .sparkle:nth-child(1) { top: 20%; left: 28%; animation-delay: 0.4s; }
+    .seal-sparkles .sparkle:nth-child(2) { top: 24%; right: 22%; animation-delay: 2.1s; }
+    .seal-sparkles .sparkle:nth-child(3) { top: 42%; right: 12%; animation-delay: 1.3s; }
+    .seal-sparkles .sparkle:nth-child(4) { bottom: 18%; left: 47%; animation-delay: 2.8s; }
+    .seal-sparkles .sparkle:nth-child(5) { bottom: 31%; left: 23%; animation-delay: 1.8s; }
+    .seal-sparkles .sparkle:nth-child(6) { top: 54%; left: 10%; animation-delay: 3.2s; }
+
+    .bg-sparkles .sparkle {
+      width: 22px;
+      height: 22px;
+      animation-duration: 6s;
+    }
+
+    .bg-sparkles .sparkle:nth-child(1) { top: 12%; left: 16%; animation-delay: 0s; }
+    .bg-sparkles .sparkle:nth-child(2) { top: 18%; right: 12%; animation-delay: 2s; }
+    .bg-sparkles .sparkle:nth-child(3) { bottom: 22%; left: 12%; animation-delay: 1s; }
+    .bg-sparkles .sparkle:nth-child(4) { bottom: 16%; right: 16%; animation-delay: 3.2s; }
+    .bg-sparkles .sparkle:nth-child(5) { top: 50%; left: 7%; animation-delay: 4.1s; }
+    .bg-sparkles .sparkle:nth-child(6) { top: 62%; right: 6%; animation-delay: 2.7s; }
+
+    @keyframes driftDown {
+      0% {
+        transform: translate3d(0, -10vh, 0) scale(0.9);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.55;
+      }
+      85% {
+        opacity: 0.18;
+      }
+      100% {
+        transform: translate3d(18px, 115vh, 0) scale(1.12);
+        opacity: 0;
+      }
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        transform: scale(0.5);
+        opacity: 0.08;
+      }
+      30% {
+        transform: scale(1);
+        opacity: 0.85;
+      }
+      55% {
+        transform: scale(0.75);
+        opacity: 0.28;
+      }
+    }
+
+    @keyframes backgroundGlow {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(2%) scale(1.04);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .seal-wrap {
+        width: min(84vw, 520px);
+      }
+
+      .title {
+        font-size: clamp(2.4rem, 10vw, 4.5rem);
+      }
     }
   </style>
 </head>
 <body>
-  <video autoplay muted loop playsinline controls>
-    <source src="./Landing_Seal.mp4" type="video/mp4">
-  </video>
+  <div class="scene">
+    <div class="bokeh">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="bg-sparkles">
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+    </div>
+
+    <div class="seal-wrap">
+      <div class="seal-shadow"></div>
+      <div class="seal">
+        <div class="seal-sparkles">
+          <span class="sparkle"></span>
+          <span class="sparkle"></span>
+          <span class="sparkle"></span>
+          <span class="sparkle"></span>
+          <span class="sparkle"></span>
+          <span class="sparkle"></span>
+        </div>
+        <div class="title">13th July</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
