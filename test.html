@@ -734,6 +734,38 @@
       }
       .landing-blooms .orb-1 { filter: saturate(1.02); }
       .landing-blooms .orb-2 { filter: saturate(1.02); }
+
+      /* Debug mobile visibility overrides requested by user */
+      .landing-blooms,
+      .invite-blooms {
+        opacity: 1 !important;
+      }
+      .landing-blooms span,
+      .invite-blooms span {
+        opacity: 1 !important;
+        background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0.82) 34%, rgba(0,0,0,0.42) 58%, transparent 80%) !important;
+        filter: none !important;
+        mix-blend-mode: normal !important;
+      }
+      .landing-sparkles,
+      .invite-edge-sparkles,
+      .mobile-shell-sparkles {
+        opacity: 1 !important;
+      }
+      .landing-sparkles .sparkle,
+      .invite-edge-sparkles .sparkle,
+      .mobile-shell-sparkles .sparkle {
+        opacity: 1 !important;
+      }
+      .landing-sparkles .sparkle::before,
+      .landing-sparkles .sparkle::after,
+      .invite-edge-sparkles .sparkle::before,
+      .invite-edge-sparkles .sparkle::after,
+      .mobile-shell-sparkles .sparkle::before,
+      .mobile-shell-sparkles .sparkle::after {
+        background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0.92) 40%, transparent 82%) !important;
+        filter: none !important;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
