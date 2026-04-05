@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Cormorant+Garamond:wght@400;500;600;700&family=Forum&family=Imperial+Script&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -163,18 +163,18 @@
       padding: 2rem;
       z-index: 5;
       transition:
-        opacity 2.6s var(--ease),
-        visibility 2.6s var(--ease),
-        transform 2.6s var(--ease),
-        filter 2.6s var(--ease);
+        opacity 3.2s var(--ease),
+        visibility 3.2s var(--ease),
+        transform 3.2s var(--ease),
+        filter 3.2s var(--ease);
       background: rgba(0,0,0,0);
     }
 
     body.entering .landing {
       opacity: 0;
       visibility: hidden;
-      transform: scale(1.07);
-      filter: blur(14px);
+      transform: scale(1.08);
+      filter: blur(18px);
       pointer-events: none;
     }
 
@@ -284,7 +284,7 @@
       display: grid;
       place-items: center;
       text-align: center;
-      gap: 0.55rem;
+      gap: 0.75rem;
       pointer-events: none;
     }
 
@@ -317,19 +317,19 @@
     }
 
     .seal-prompt {
-      font-family: "Cinzel", serif;
-      font-size: 0.78rem;
+      font-family: "Forum", serif;
+      font-size: 0.92rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: rgba(245, 226, 180, 0.88);
       text-shadow: 0 1px 4px rgba(30, 8, 4, 0.28);
-      transform: translateY(10px);
+      transform: translateY(16px);
     }
 
     .landing-copy {
-      max-width: 36rem;
+      max-width: 44rem;
       margin: 0;
-      font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+      font-size: clamp(1rem, 1.55vw, 1.2rem);
       line-height: 1.45;
       color: rgba(68, 46, 24, 0.86);
       white-space: nowrap;
@@ -339,12 +339,12 @@
       position: relative;
       min-height: 100vh;
       opacity: 0;
-      transform: scale(1.025);
-      filter: blur(16px);
+      transform: scale(1.018);
+      filter: blur(18px);
       transition:
-        opacity 2.8s var(--ease),
-        transform 2.8s var(--ease),
-        filter 2.8s var(--ease);
+        opacity 3.6s var(--ease),
+        transform 3.6s var(--ease),
+        filter 3.6s var(--ease);
       padding: 4.5rem 1.5rem 7rem;
       z-index: 2;
       pointer-events: none;
@@ -375,54 +375,54 @@
     .times-wrap,
     .bottom-actions {
       opacity: 0;
-      transform: translateY(24px);
+      transform: translateY(34px);
       transition:
-        opacity 1.4s var(--ease),
-        transform 1.4s var(--ease),
-        filter 1.4s var(--ease);
-      filter: blur(8px);
+        opacity 1.9s var(--ease),
+        transform 1.9s var(--ease),
+        filter 1.9s var(--ease);
+      filter: blur(12px);
     }
 
     body.entered .names {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 1.15s;
+      transition-delay: 1.45s;
     }
 
     body.entered .invite-copy {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 1.5s;
+      transition-delay: 1.8s;
     }
 
     body.entered .feature-media {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 1.85s;
+      transition-delay: 2.2s;
     }
 
     body.entered .details {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 2.15s;
+      transition-delay: 2.65s;
     }
 
     body.entered .times-wrap {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 2.45s;
+      transition-delay: 3s;
     }
 
     body.entered .bottom-actions {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 2.7s;
+      transition-delay: 3.3s;
     }
 
     .ornament-line {
@@ -454,13 +454,13 @@
     }
 
     .names-main {
-      font-family: "Ballet", cursive;
-      font-size: clamp(3.8rem, 8vw, 6.8rem);
-      line-height: 0.95;
+      font-family: "Imperial Script", cursive;
+      font-size: clamp(4rem, 8vw, 6.8rem);
+      line-height: 0.92;
       color: var(--ink-deep);
       margin: 0;
       letter-spacing: 0.01em;
-      text-shadow: 0 2px 8px rgba(120, 80, 25, 0.08);
+      text-shadow: 0 2px 10px rgba(120, 80, 25, 0.10);
     }
 
     .ampersand {
@@ -481,12 +481,12 @@
     }
 
     .invite-copy .small {
-      font-family: "Cinzel", serif;
-      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+      font-family: "Forum", serif;
+      font-size: clamp(1rem, 1.65vw, 1.22rem);
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: rgba(88, 58, 30, 0.88);
-      line-height: 1.9;
+      line-height: 1.85;
       margin: 0;
     }
 
@@ -531,85 +531,90 @@
     }
 
     .venue {
-      font-family: "Marcellus SC", serif;
-      font-size: clamp(1.55rem, 3vw, 2.35rem);
-      line-height: 1.38;
-      letter-spacing: 0.12em;
+      font-family: "Forum", serif;
+      font-size: clamp(1.9rem, 3.2vw, 2.9rem);
+      line-height: 1.22;
+      letter-spacing: 0.11em;
       color: var(--ink-deep);
       margin: 0;
       text-transform: uppercase;
     }
 
     .detail-sub {
-      margin: 1rem auto 0;
-      max-width: 34rem;
-      font-size: clamp(1.15rem, 2vw, 1.4rem);
+      margin: 1.2rem auto 0;
+      max-width: 38rem;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(1.28rem, 2.2vw, 1.7rem);
       line-height: 1.5;
-      color: rgba(78, 55, 35, 0.90);
+      font-style: italic;
+      color: rgba(86, 58, 33, 0.90);
     }
 
     .times-wrap {
-      margin: 2.6rem auto 0;
-      max-width: 38rem;
+      margin: 3rem auto 0;
+      max-width: 42rem;
     }
 
     .section-title {
       text-align: center;
-      font-family: "Marcellus SC", serif;
+      font-family: "Forum", serif;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-size: 1.35rem;
+      letter-spacing: 0.22em;
+      font-size: 1.55rem;
       color: var(--ink-mid);
-      margin: 0 0 1rem;
+      margin: 0 0 1.35rem;
     }
 
     .timeline {
       display: grid;
-      gap: 0.8rem;
+      gap: 1rem;
       position: relative;
-      padding: 0.6rem 0;
+      padding: 1rem 0;
     }
 
     .timeline::before {
       content: "";
       position: absolute;
       left: 50%;
-      top: 0;
-      bottom: 0;
+      top: 0.5rem;
+      bottom: 0.5rem;
       width: 1px;
       transform: translateX(-50%);
-      background: linear-gradient(180deg, rgba(184,136,57,0), rgba(184,136,57,0.75), rgba(184,136,57,0));
+      background: linear-gradient(180deg, rgba(184,136,57,0), rgba(184,136,57,0.82), rgba(184,136,57,0));
     }
 
     .timeline-item {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      gap: 1rem;
-      min-height: 2.4rem;
+      gap: 1.2rem;
+      min-height: 2.8rem;
     }
 
     .timeline-time {
       justify-self: end;
-      font-size: 1.3rem;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.5rem;
       font-style: italic;
       color: #8d6122;
     }
 
     .timeline-dot {
-      width: 9px;
-      height: 9px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: linear-gradient(180deg, var(--gold-2), var(--gold-4));
-      box-shadow: 0 0 10px rgba(184,136,57,0.16);
+      box-shadow: 0 0 12px rgba(184,136,57,0.18);
       position: relative;
       z-index: 1;
     }
 
     .timeline-copy {
       justify-self: start;
-      font-size: 1.25rem;
-      color: rgba(75, 51, 31, 0.92);
+      font-family: "Forum", serif;
+      font-size: 1.42rem;
+      letter-spacing: 0.03em;
+      color: rgba(75, 51, 31, 0.94);
     }
 
     .bottom-actions {
@@ -680,9 +685,9 @@
     .rsvp-label {
       position: relative;
       z-index: 1;
-      font-family: "Cinzel", serif;
-      font-size: 0.98rem;
-      letter-spacing: 0.22em;
+      font-family: "Forum", serif;
+      font-size: 1rem;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
       background: linear-gradient(180deg, var(--gold-1), var(--gold-3) 58%, var(--gold-5));
       -webkit-background-clip: text;
@@ -848,17 +853,17 @@
       }
 
       .venue {
-        font-size: 1.22rem;
+        font-size: 1.4rem;
         letter-spacing: 0.10em;
       }
 
       .detail-sub {
-        font-size: 1.04rem;
+        font-size: 1.08rem;
       }
 
       .timeline-time,
       .timeline-copy {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
       }
     }
   </style>
@@ -905,7 +910,11 @@
 
         <section class="feature-media">
           <div class="media-frame">
-            <img src="Wedding_Invite_2.gif" alt="Wedding invitation illustration">
+            <img
+              id="inviteGif"
+              src="/widgets/Wedding%20Invite-2.gif?v=4"
+              alt="Wedding invitation illustration"
+            >
           </div>
         </section>
 
@@ -977,7 +986,7 @@
 
       setTimeout(() => {
         document.body.classList.add('entered');
-      }, 1500);
+      }, 2100);
     });
 
     openRsvp.addEventListener('click', () => {
