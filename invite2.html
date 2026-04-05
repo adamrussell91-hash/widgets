@@ -284,3 +284,707 @@
       display: grid;
       place-items: center;
       text-align: center;
+      gap: 0.2rem;
+      pointer-events: none;
+    }
+
+    .seal-date {
+      font-family: "Ballet", cursive;
+      font-size: clamp(4.2rem, 9vw, 7.6rem);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      background: linear-gradient(
+        180deg,
+        var(--gold-1) 0%,
+        #fff0bf 9%,
+        var(--gold-2) 22%,
+        #f4d78d 36%,
+        var(--gold-3) 52%,
+        var(--gold-4) 74%,
+        var(--gold-5) 90%,
+        var(--gold-6) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow:
+        0 1px 0 rgba(255, 247, 220, 0.32),
+        0 2px 1px rgba(125, 78, 12, 0.20),
+        0 3px 3px rgba(94, 56, 10, 0.18),
+        0 8px 18px rgba(48, 16, 4, 0.20);
+      filter: drop-shadow(0 2px 4px rgba(70, 32, 8, 0.18));
+      transform: translateY(-2%);
+    }
+
+    .seal-prompt {
+      font-family: "Cinzel", serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(245, 226, 180, 0.88);
+      text-shadow: 0 1px 4px rgba(30, 8, 4, 0.28);
+    }
+
+    .landing-copy {
+      max-width: 30rem;
+      margin: 0;
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      line-height: 1.45;
+      color: rgba(68, 46, 24, 0.86);
+    }
+
+    .invitation {
+      position: relative;
+      min-height: 100vh;
+      opacity: 0;
+      transform: scale(1.03);
+      filter: blur(10px);
+      transition:
+        opacity 1.8s var(--ease),
+        transform 1.8s var(--ease),
+        filter 1.8s var(--ease);
+      padding: 4.5rem 1.5rem 7rem;
+      z-index: 2;
+    }
+
+    body.entered .invitation {
+      opacity: 1;
+      transform: scale(1);
+      filter: blur(0);
+    }
+
+    .card {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      position: relative;
+      padding: clamp(1.5rem, 3vw, 2.7rem);
+      border-radius: 28px;
+      background: rgba(255, 250, 240, 0.18);
+      backdrop-filter: blur(4px);
+      box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.30);
+    }
+
+    .names,
+    .invite-copy,
+    .feature-media,
+    .details,
+    .times-wrap,
+    .bottom-actions {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity 1s var(--ease),
+        transform 1s var(--ease);
+    }
+
+    body.entered .names {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.9s;
+    }
+
+    body.entered .invite-copy {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 1.15s;
+    }
+
+    body.entered .feature-media {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 1.35s;
+    }
+
+    body.entered .details {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 1.55s;
+    }
+
+    body.entered .times-wrap {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 1.75s;
+    }
+
+    body.entered .bottom-actions {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 1.95s;
+    }
+
+    .ornament-line {
+      width: min(34rem, 100%);
+      margin: 1.1rem auto 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 0.8rem;
+      color: rgba(182, 136, 57, 0.9);
+    }
+
+    .ornament-line::before,
+    .ornament-line::after {
+      content: "";
+      height: 1px;
+      background: linear-gradient(90deg, rgba(184,136,57,0), rgba(184,136,57,0.8), rgba(184,136,57,0));
+    }
+
+    .ornament-mark {
+      font-size: 1.2rem;
+      line-height: 1;
+      opacity: 0.9;
+    }
+
+    .names {
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+
+    .names-main {
+      font-family: "Ballet", cursive;
+      font-size: clamp(3.8rem, 8vw, 6.8rem);
+      line-height: 0.95;
+      color: var(--ink-deep);
+      margin: 0;
+      letter-spacing: 0.01em;
+      text-shadow: 0 2px 8px rgba(120, 80, 25, 0.08);
+    }
+
+    .ampersand {
+      display: inline-block;
+      margin: 0 0.06em;
+      background: linear-gradient(180deg, var(--gold-1), var(--gold-3) 55%, var(--gold-5));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transform: translateY(0.03em);
+      filter: drop-shadow(0 2px 5px rgba(90, 48, 10, 0.12));
+    }
+
+    .invite-copy {
+      text-align: center;
+      margin: 1.4rem auto 2rem;
+      max-width: 36rem;
+    }
+
+    .invite-copy .small {
+      font-family: "Cinzel", serif;
+      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(88, 58, 30, 0.88);
+      line-height: 1.9;
+      margin: 0;
+    }
+
+    .feature-media {
+      margin: 2.2rem auto 2.6rem;
+      width: 100%;
+    }
+
+    .media-frame {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.34);
+      padding: clamp(0.4rem, 0.8vw, 0.7rem);
+      box-shadow: var(--shadow-deep);
+    }
+
+    .media-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.24), transparent 18%, transparent 82%, rgba(120,75,20,0.08));
+      border-radius: inherit;
+    }
+
+    .media-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      object-fit: cover;
+      background: #d8c19a;
+    }
+
+    .details {
+      text-align: center;
+      max-width: 44rem;
+      margin: 0 auto;
+    }
+
+    .venue {
+      font-family: "Cinzel", serif;
+      font-size: clamp(1.45rem, 3vw, 2.25rem);
+      line-height: 1.35;
+      letter-spacing: 0.10em;
+      color: var(--ink-deep);
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .detail-sub {
+      margin: 1rem auto 0;
+      max-width: 34rem;
+      font-size: clamp(1.15rem, 2vw, 1.4rem);
+      line-height: 1.5;
+      color: rgba(78, 55, 35, 0.90);
+    }
+
+    .times-wrap {
+      margin: 2.6rem auto 0;
+      max-width: 38rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: "Cinzel", serif;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 1.2rem;
+      color: var(--ink-mid);
+      margin: 0 0 1rem;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0.8rem;
+      position: relative;
+      padding: 0.6rem 0;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, rgba(184,136,57,0), rgba(184,136,57,0.75), rgba(184,136,57,0));
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 1rem;
+      min-height: 2.4rem;
+    }
+
+    .timeline-time {
+      justify-self: end;
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #8d6122;
+    }
+
+    .timeline-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, var(--gold-2), var(--gold-4));
+      box-shadow: 0 0 10px rgba(184,136,57,0.16);
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-copy {
+      justify-self: start;
+      font-size: 1.25rem;
+      color: rgba(75, 51, 31, 0.92);
+    }
+
+    .bottom-actions {
+      display: grid;
+      place-items: center;
+      margin-top: 3rem;
+    }
+
+    .rsvp-button {
+      position: relative;
+      display: inline-grid;
+      place-items: center;
+      min-width: 190px;
+      padding: 1rem 2.2rem;
+      text-decoration: none;
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      background:
+        linear-gradient(180deg, rgba(128,10,14,0.96), rgba(82,5,9,0.99));
+      box-shadow:
+        inset 0 8px 12px rgba(255, 180, 150, 0.08),
+        inset 0 -14px 18px rgba(14, 0, 2, 0.46),
+        0 12px 24px rgba(35, 6, 7, 0.18);
+      transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+      overflow: hidden;
+    }
+
+    .rsvp-button::before {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border-radius: inherit;
+      border: 2px solid rgba(188, 137, 54, 0.78);
+      pointer-events: none;
+    }
+
+    .rsvp-button::after {
+      content: "";
+      position: absolute;
+      inset: -35%;
+      background:
+        linear-gradient(
+          115deg,
+          transparent 0%,
+          transparent 40%,
+          rgba(255,250,230,0.00) 44%,
+          rgba(255,236,195,0.16) 48%,
+          rgba(255,250,230,0.26) 51%,
+          rgba(255,220,170,0.10) 54%,
+          transparent 60%,
+          transparent 100%
+        );
+      transform: translateX(-90%) rotate(8deg);
+      animation: sweep 8s ease-in-out infinite;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .rsvp-button:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        inset 0 8px 12px rgba(255, 180, 150, 0.08),
+        inset 0 -14px 18px rgba(14, 0, 2, 0.46),
+        0 18px 34px rgba(35, 6, 7, 0.24);
+    }
+
+    .rsvp-label {
+      position: relative;
+      z-index: 1;
+      font-family: "Cinzel", serif;
+      font-size: 0.98rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, var(--gold-1), var(--gold-3) 58%, var(--gold-5));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      background: rgba(16, 8, 5, 0.56);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s var(--ease);
+      z-index: 20;
+    }
+
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-panel {
+      position: relative;
+      width: min(980px, 100%);
+      height: min(86vh, 820px);
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(250,242,228,0.96), rgba(236,221,196,0.98));
+      box-shadow: 0 28px 90px rgba(24, 10, 4, 0.30);
+      transform: scale(0.96);
+      transition: transform 0.45s var(--ease);
+    }
+
+    .modal.open .modal-panel {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 0;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--ink-deep);
+      background: rgba(255,255,255,0.86);
+      box-shadow: 0 8px 20px rgba(20,10,4,0.12);
+      z-index: 2;
+    }
+
+    .modal iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+
+    @keyframes floatDown {
+      0% {
+        transform: translate3d(0, 0, 0) scale(0.96);
+        opacity: 0.9;
+      }
+      65% {
+        opacity: 0.84;
+      }
+      100% {
+        transform: translate3d(40px, 145vh, 0) scale(1.10);
+        opacity: 0;
+      }
+    }
+
+    @keyframes sweep {
+      0% {
+        transform: translateX(-95%) rotate(8deg);
+        opacity: 0;
+      }
+      12% {
+        opacity: 0.9;
+      }
+      42% {
+        opacity: 0.95;
+      }
+      58% {
+        opacity: 0.35;
+      }
+      100% {
+        transform: translateX(95%) rotate(8deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .seal-button {
+        width: min(80vw, 400px);
+      }
+
+      .card {
+        padding: 1.3rem;
+      }
+
+      .timeline {
+        gap: 1rem;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        gap: 0.35rem;
+      }
+
+      .timeline::before {
+        display: none;
+      }
+
+      .timeline-time,
+      .timeline-copy {
+        justify-self: center;
+      }
+
+      .modal-panel {
+        height: min(88vh, 760px);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .seal-date {
+        font-size: clamp(3.2rem, 16vw, 5.6rem);
+      }
+
+      .seal-prompt {
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+      }
+
+      .landing-copy {
+        font-size: 1.02rem;
+      }
+
+      .names-main {
+        font-size: clamp(3rem, 18vw, 5rem);
+      }
+
+      .invite-copy .small {
+        font-size: 0.82rem;
+        letter-spacing: 0.15em;
+      }
+
+      .venue {
+        font-size: 1.24rem;
+        letter-spacing: 0.08em;
+      }
+
+      .detail-sub {
+        font-size: 1.04rem;
+      }
+
+      .timeline-time,
+      .timeline-copy {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bokeh" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <main class="page">
+    <section class="landing" id="landing">
+      <div class="landing-inner">
+        <button class="seal-button" id="enterInvitation" aria-label="Open invitation">
+          <span class="seal-shadow"></span>
+          <span class="seal-surface"></span>
+          <span class="seal-light"></span>
+          <span class="seal-text">
+            <span class="seal-date">13th July</span>
+            <span class="seal-prompt">Click to Enter</span>
+          </span>
+        </button>
+
+        <p class="landing-copy">
+          A warm evening of candlelight, music, and celebration awaits.
+        </p>
+      </div>
+    </section>
+
+    <section class="invitation" id="invitation">
+      <div class="card">
+        <header class="names">
+          <h1 class="names-main">Corey <span class="ampersand">&amp;</span> Adam</h1>
+
+          <div class="ornament-line" aria-hidden="true">
+            <span class="ornament-mark">✦</span>
+          </div>
+        </header>
+
+        <section class="invite-copy">
+          <p class="small">Invite you to celebrate their wedding</p>
+        </section>
+
+        <section class="feature-media">
+          <div class="media-frame">
+            <img src="Wedding%20Invite-2.gif" alt="Wedding invitation illustration">
+          </div>
+        </section>
+
+        <section class="details">
+          <h2 class="venue">Bar Sole, Mayfield<br>173 Maitland Rd, Tighes Hill</h2>
+          <p class="detail-sub">
+            All you can eat pizza and cheesy garlic bread, an intimate evening, and a room full of people we love.
+          </p>
+        </section>
+
+        <section class="times-wrap">
+          <div class="ornament-line" aria-hidden="true">
+            <span class="ornament-mark">✦</span>
+          </div>
+
+          <h3 class="section-title">Times</h3>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">5:00 pm</div>
+              <div class="timeline-dot"></div>
+              <div class="timeline-copy">Bar Sole opens</div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">6:00 pm</div>
+              <div class="timeline-dot"></div>
+              <div class="timeline-copy">Live music</div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">8:00 pm</div>
+              <div class="timeline-dot"></div>
+              <div class="timeline-copy">Cake</div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">10:00 pm</div>
+              <div class="timeline-dot"></div>
+              <div class="timeline-copy">Evening closes</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="bottom-actions">
+          <button class="rsvp-button" id="openRsvp" type="button">
+            <span class="rsvp-label">RSVP</span>
+          </button>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="rsvpModal" aria-hidden="true">
+    <div class="modal-panel">
+      <button class="modal-close" id="closeRsvp" aria-label="Close RSVP form">✕</button>
+      <iframe src="https://mrrussellteaching.notion.site/ebd//f8d31efbc71d4d6290259b5ba3e774a7" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    const enterButton = document.getElementById('enterInvitation');
+    const openRsvp = document.getElementById('openRsvp');
+    const closeRsvp = document.getElementById('closeRsvp');
+    const rsvpModal = document.getElementById('rsvpModal');
+
+    enterButton.addEventListener('click', () => {
+      document.body.classList.add('entered');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    openRsvp.addEventListener('click', () => {
+      rsvpModal.classList.add('open');
+      rsvpModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
+
+    closeRsvp.addEventListener('click', () => {
+      rsvpModal.classList.remove('open');
+      rsvpModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+
+    rsvpModal.addEventListener('click', (event) => {
+      if (event.target === rsvpModal) {
+        rsvpModal.classList.remove('open');
+        rsvpModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && rsvpModal.classList.contains('open')) {
+        rsvpModal.classList.remove('open');
+        rsvpModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    });
+  </script>
+</body>
+</html>
