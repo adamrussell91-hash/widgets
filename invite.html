@@ -7,6 +7,7 @@
   <style>
     html, body {
       margin: 0;
+      padding: 0;
       width: 100%;
       height: 100%;
       background: #000;
@@ -16,14 +17,14 @@
     video {
       width: 100vw;
       height: 100vh;
-      object-fit: contain;
+      object-fit: cover;
       display: block;
     }
   </style>
 </head>
 <body>
-  <video autoplay muted loop playsinline>
-    <source src="Landing_Seal.mp4" type="video/mp4">
+  <video autoplay muted loop playsinline controls>
+    <source src="./Landing_Seal.mp4" type="video/mp4">
   </video>
 </body>
 </html>
