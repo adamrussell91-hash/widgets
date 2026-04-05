@@ -11,9 +11,10 @@
 
   <style>
     :root {
-      --paper-1: #efe5d1;
-      --paper-2: #e3d4ba;
-      --paper-3: #d7c5a7;
+      --paper-1: #f1e6d2;
+      --paper-2: #e6d5b8;
+      --paper-3: #d8c09d;
+      --paper-4: #c8ab80;
 
       --wax-darkest: #220103;
       --wax-dark: #350306;
@@ -21,11 +22,12 @@
       --wax-rich: #66080d;
       --wax-light: #891015;
 
-      --gold-1: #f7e8bb;
-      --gold-2: #dfc37f;
-      --gold-3: #bc9342;
-      --gold-4: #8a611d;
-      --gold-5: #5b390d;
+      --gold-1: #fff6d7;
+      --gold-2: #f2e0a7;
+      --gold-3: #dfc37f;
+      --gold-4: #bf9545;
+      --gold-5: #8b611d;
+      --gold-6: #5a390d;
     }
 
     * {
@@ -54,42 +56,68 @@
       align-items: center;
       justify-content: center;
       background:
-        radial-gradient(circle at 15% 18%, rgba(255, 249, 235, 0.42) 0 120px, transparent 260px),
-        radial-gradient(circle at 84% 22%, rgba(255, 245, 225, 0.32) 0 110px, transparent 240px),
-        radial-gradient(circle at 23% 80%, rgba(255, 247, 232, 0.22) 0 130px, transparent 260px),
-        radial-gradient(circle at 80% 78%, rgba(255, 244, 220, 0.22) 0 120px, transparent 250px),
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.04)),
-        linear-gradient(180deg, var(--paper-1), var(--paper-2) 48%, var(--paper-3));
+        radial-gradient(circle at 14% 18%, rgba(255,250,240,0.55) 0 140px, transparent 320px),
+        radial-gradient(circle at 86% 20%, rgba(255,245,225,0.38) 0 120px, transparent 280px),
+        radial-gradient(circle at 20% 82%, rgba(255,247,232,0.24) 0 170px, transparent 320px),
+        radial-gradient(circle at 82% 78%, rgba(255,242,218,0.26) 0 150px, transparent 300px),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.05)),
+        linear-gradient(180deg, var(--paper-1) 0%, var(--paper-2) 42%, var(--paper-3) 74%, var(--paper-4) 100%);
     }
 
     .scene::before {
       content: "";
       position: absolute;
       inset: 0;
-      opacity: 0.12;
-      background-image:
-        linear-gradient(rgba(118, 92, 53, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(118, 92, 53, 0.06) 1px, transparent 1px);
-      background-size: 34px 34px, 34px 34px;
-      mix-blend-mode: multiply;
       pointer-events: none;
+      opacity: 0.22;
+      background:
+        radial-gradient(circle at 12% 26%, rgba(120, 88, 45, 0.10) 0 2px, transparent 3px),
+        radial-gradient(circle at 76% 66%, rgba(120, 88, 45, 0.09) 0 2px, transparent 3px),
+        radial-gradient(circle at 58% 28%, rgba(120, 88, 45, 0.08) 0 2px, transparent 3px),
+        radial-gradient(circle at 28% 72%, rgba(120, 88, 45, 0.09) 0 2px, transparent 3px),
+        linear-gradient(rgba(126, 95, 58, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126, 95, 58, 0.06) 1px, transparent 1px);
+      background-size:
+        180px 180px,
+        220px 220px,
+        200px 200px,
+        240px 240px,
+        34px 34px,
+        34px 34px;
+      mix-blend-mode: multiply;
     }
 
     .scene::after {
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(120, 75, 18, 0.10), transparent 58%),
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 72%);
       pointer-events: none;
+      opacity: 0.55;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(130, 82, 26, 0.12), transparent 58%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 72%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 20%, transparent 80%, rgba(90,50,10,0.08));
+    }
+
+    .paper-age {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.42;
+      background:
+        radial-gradient(ellipse at top left, rgba(255,255,255,0.12), transparent 48%),
+        radial-gradient(ellipse at bottom right, rgba(100,65,20,0.12), transparent 52%),
+        radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 44%),
+        radial-gradient(ellipse at 50% 85%, rgba(90,60,20,0.08), transparent 42%);
+      mix-blend-mode: soft-light;
     }
 
     .vignette {
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at center, transparent 40%, rgba(40, 24, 12, 0.20) 72%, rgba(18, 10, 6, 0.46) 100%);
+        radial-gradient(circle at center, transparent 38%, rgba(44, 26, 12, 0.18) 68%, rgba(18, 10, 6, 0.48) 100%);
       pointer-events: none;
       z-index: 3;
     }
@@ -282,22 +310,58 @@
     }
 
     .title span {
+      position: relative;
       font-family: "Luxurious Script", cursive;
       font-size: clamp(4.8rem, 8vw, 8.8rem);
       font-weight: 400;
       line-height: 1;
-      color: var(--gold-2);
-      background: linear-gradient(180deg, var(--gold-1) 0%, #edd897 16%, var(--gold-2) 40%, var(--gold-3) 70%, var(--gold-4) 88%, var(--gold-5) 100%);
+      letter-spacing: 0.018em;
+      transform: translateY(-3%) scale(1.02);
+      background: linear-gradient(
+        180deg,
+        var(--gold-1) 0%,
+        #fff0bf 9%,
+        var(--gold-2) 22%,
+        #f4d78d 36%,
+        var(--gold-3) 52%,
+        var(--gold-4) 74%,
+        var(--gold-5) 90%,
+        var(--gold-6) 100%
+      );
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow:
-        0 1px 0 rgba(255, 243, 205, 0.26),
-        0 2px 2px rgba(86, 47, 6, 0.24),
-        0 6px 14px rgba(48, 16, 4, 0.16);
-      transform: translateY(-3%) scale(1.02);
-      letter-spacing: 0.02em;
-      filter: drop-shadow(0 2px 5px rgba(75, 32, 8, 0.20));
+        0 1px 0 rgba(255, 247, 220, 0.32),
+        0 2px 1px rgba(125, 78, 12, 0.20),
+        0 3px 3px rgba(94, 56, 10, 0.18),
+        0 8px 18px rgba(48, 16, 4, 0.20);
+      filter: drop-shadow(0 2px 4px rgba(70, 32, 8, 0.18));
+    }
+
+    .title span::before {
+      content: "13th July";
+      position: absolute;
+      inset: 0;
+      color: transparent;
+      background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.08) 36%, transparent 60%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0.72;
+      transform: translateY(-1px);
+      pointer-events: none;
+    }
+
+    .title span::after {
+      content: "13th July";
+      position: absolute;
+      inset: 0;
+      color: transparent;
+      text-shadow:
+        0 0 10px rgba(255, 231, 170, 0.22),
+        0 0 22px rgba(255, 212, 120, 0.16);
+      pointer-events: none;
     }
 
     .seal-sparkles,
@@ -457,6 +521,8 @@
 </head>
 <body>
   <div class="scene">
+    <div class="paper-age"></div>
+
     <div class="bokeh">
       <span></span>
       <span></span>
