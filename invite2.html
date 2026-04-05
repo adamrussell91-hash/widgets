@@ -4,53 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Corey & Adam</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Cormorant+Garamond:wght@400;500;600;700&family=Forum&family=Imperial+Script&family=Italiana&display=swap" rel="stylesheet">
-
   <style>
     :root {
       --paper-1: #f2e8d5;
       --paper-2: #e7d8bf;
       --paper-3: #d8c19e;
       --paper-4: #c7a97c;
-
       --ink-soft: #7b5b3b;
       --ink-mid: #5e4128;
       --ink-deep: #382416;
       --venue-brown: #6b4a2d;
-
       --gold-1: #fff7dc;
       --gold-2: #f3e2b1;
       --gold-3: #dfc27c;
       --gold-4: #bc8f42;
       --gold-5: #7d5418;
       --gold-6: #53320d;
-
       --wax-darkest: #220103;
       --wax-dark: #340306;
       --wax-mid: #4d0508;
       --wax-rich: #67080d;
       --wax-light: #8d1015;
-
       --shadow-soft: 0 18px 40px rgba(46, 26, 10, 0.12);
       --shadow-deep: 0 24px 70px rgba(26, 10, 3, 0.16);
       --ease: cubic-bezier(0.22, 1, 0.36, 1);
       --page-max: 980px;
     }
-
     * {
       box-sizing: border-box;
     }
-
     html, body {
       margin: 0;
       min-height: 100%;
       background: #130c08;
       overflow-x: hidden;
     }
-
     body {
       position: relative;
       color: var(--ink-mid);
@@ -63,7 +54,6 @@
         linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.04)),
         linear-gradient(180deg, var(--paper-1) 0%, var(--paper-2) 42%, var(--paper-3) 76%, var(--paper-4) 100%);
     }
-
     body::before {
       content: "";
       position: fixed;
@@ -87,7 +77,6 @@
       mix-blend-mode: multiply;
       z-index: 0;
     }
-
     body::after {
       content: "";
       position: fixed;
@@ -97,7 +86,6 @@
         radial-gradient(circle at center, transparent 38%, rgba(44, 26, 12, 0.15) 68%, rgba(18, 10, 6, 0.42) 100%);
       z-index: 0;
     }
-
     .bokeh {
       position: fixed;
       inset: 0;
@@ -107,7 +95,6 @@
       isolation: isolate;
       transition: opacity 1.6s var(--ease);
     }
-
     .bokeh span {
       position: absolute;
       display: block;
@@ -118,6 +105,8 @@
       animation-name: floatDown;
       animation-timing-function: linear;
       animation-iteration-count: infinite;
+      will-change: transform, opacity;
+      backface-visibility: hidden;
       background:
         radial-gradient(circle,
           rgba(255,255,255,1) 0%,
@@ -132,7 +121,6 @@
         0 0 160px rgba(255,242,214,0.30),
         0 0 260px rgba(255,232,194,0.18);
     }
-
     .bokeh span:nth-child(1)  { left: 4%;  top: 14%; width: 420px; height: 420px; animation-duration: 72s; animation-delay: -18s; }
     .bokeh span:nth-child(2)  { left: 18%; top: -14%; width: 760px; height: 760px; animation-duration: 102s; animation-delay: -44s; }
     .bokeh span:nth-child(3)  { left: 30%; top: 48%; width: 240px; height: 240px; animation-duration: 58s; animation-delay: -16s; }
@@ -151,7 +139,6 @@
     .bokeh span:nth-child(16) { left: 8%; top: -24%; width: 540px; height: 540px; animation-duration: 86s; animation-delay: -36s; }
     .bokeh span:nth-child(17) { left: 82%; top: 70%; width: 160px; height: 160px; animation-duration: 48s; animation-delay: -10s; }
     .bokeh span:nth-child(18) { left: 34%; top: 68%; width: 680px; height: 680px; animation-duration: 98s; animation-delay: -50s; }
-
     .bg-sparkles {
       position: fixed;
       inset: 0;
@@ -159,13 +146,11 @@
       z-index: 2;
       transition: opacity 1.6s var(--ease);
     }
-
     .sparkle {
       position: absolute;
       opacity: 0;
       animation: twinkle 5.4s ease-in-out infinite;
     }
-
     .sparkle::before,
     .sparkle::after {
       content: "";
@@ -177,23 +162,19 @@
       border-radius: 999px;
       filter: blur(0.2px);
     }
-
     .sparkle::before {
       width: 2px;
       height: 22px;
     }
-
     .sparkle::after {
       width: 22px;
       height: 2px;
     }
-
     .bg-sparkles .sparkle {
       width: 34px;
       height: 34px;
       animation-duration: 7.5s;
     }
-
     .bg-sparkles .sparkle:nth-child(1)  { top: 8%;  left: 10%; animation-delay: 0s; }
     .bg-sparkles .sparkle:nth-child(2)  { top: 13%; right: 12%; animation-delay: 1.2s; }
     .bg-sparkles .sparkle:nth-child(3)  { bottom: 18%; left: 10%; animation-delay: 3.1s; }
@@ -206,12 +187,10 @@
     .bg-sparkles .sparkle:nth-child(10) { bottom: 26%; right: 24%; animation-delay: 6.1s; }
     .bg-sparkles .sparkle:nth-child(11) { top: 52%; left: 18%; animation-delay: 3.8s; }
     .bg-sparkles .sparkle:nth-child(12) { top: 56%; right: 18%; animation-delay: 2.2s; }
-
     .page {
       position: relative;
       z-index: 3;
     }
-
     .landing {
       position: fixed;
       inset: 0;
@@ -226,7 +205,6 @@
         filter 3.2s var(--ease);
       background: rgba(0,0,0,0);
     }
-
     body.entering .landing {
       opacity: 0;
       visibility: hidden;
@@ -234,7 +212,6 @@
       filter: blur(18px);
       pointer-events: none;
     }
-
     .landing-inner {
       display: grid;
       gap: 1.8rem;
@@ -242,7 +219,6 @@
       text-align: center;
       max-width: 44rem;
     }
-
     .seal-button {
       appearance: none;
       border: 0;
@@ -258,15 +234,12 @@
       filter: drop-shadow(0 28px 50px rgba(35, 6, 7, 0.22));
       overflow: visible;
     }
-
     .seal-button:hover {
       transform: translateY(-4px) scale(1.015);
     }
-
     .seal-button:active {
       transform: scale(0.99);
     }
-
     .seal-shadow {
       position: absolute;
       inset: 5%;
@@ -275,12 +248,17 @@
       transform: translateY(10%);
       filter: blur(26px);
     }
-
-    .seal-surface {
+    /* Clip container so the sweep stays inside the wax circle */
+    .seal-face {
       position: absolute;
       inset: 0;
       border-radius: 50%;
       overflow: hidden;
+    }
+    .seal-surface {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
       background:
         radial-gradient(circle at 34% 24%, rgba(255, 188, 162, 0.18) 0%, rgba(255, 188, 162, 0.08) 10%, transparent 22%),
         radial-gradient(circle at 64% 72%, rgba(255, 120, 96, 0.08) 0%, transparent 18%),
@@ -292,7 +270,6 @@
         inset -30px 0 38px rgba(20, 0, 3, 0.24),
         0 28px 65px rgba(35, 6, 7, 0.24);
     }
-
     .seal-surface::before {
       content: "";
       position: absolute;
@@ -304,7 +281,6 @@
         0 0 12px rgba(140, 90, 20, 0.14);
       opacity: 0.98;
     }
-
     .seal-surface::after {
       content: "";
       position: absolute;
@@ -313,7 +289,6 @@
       border: 2px solid rgba(168, 112, 36, 0.34);
       box-shadow: inset 0 0 14px rgba(255, 195, 120, 0.06);
     }
-
     .seal-light {
       position: absolute;
       inset: -12%;
@@ -336,19 +311,16 @@
       pointer-events: none;
       z-index: 2;
     }
-
     .seal-sparkles {
       position: absolute;
       inset: 0;
       z-index: 3;
       pointer-events: none;
     }
-
     .seal-sparkles .sparkle {
       width: 24px;
       height: 24px;
     }
-
     .seal-sparkles .sparkle:nth-child(1) { top: 16%; left: 23%; animation-delay: 0.2s; }
     .seal-sparkles .sparkle:nth-child(2) { top: 21%; right: 18%; animation-delay: 2.2s; }
     .seal-sparkles .sparkle:nth-child(3) { top: 41%; right: 10%; animation-delay: 3.1s; }
@@ -356,7 +328,6 @@
     .seal-sparkles .sparkle:nth-child(5) { bottom: 28%; left: 17%; animation-delay: 4.2s; }
     .seal-sparkles .sparkle:nth-child(6) { top: 58%; left: 11%; animation-delay: 2.9s; }
     .seal-sparkles .sparkle:nth-child(7) { top: 30%; left: 70%; animation-delay: 5.1s; }
-
     .seal-text {
       position: relative;
       z-index: 4;
@@ -366,7 +337,6 @@
       gap: 0.75rem;
       pointer-events: none;
     }
-
     .seal-date {
       font-family: "Ballet", cursive;
       font-size: clamp(4.2rem, 9vw, 7.6rem);
@@ -394,7 +364,6 @@
       filter: drop-shadow(0 2px 4px rgba(70, 32, 8, 0.18));
       transform: translateY(-2%);
     }
-
     .seal-prompt {
       font-family: "Forum", serif;
       font-size: 0.92rem;
@@ -404,7 +373,6 @@
       text-shadow: 0 1px 4px rgba(30, 8, 4, 0.28);
       transform: translateY(16px);
     }
-
     .landing-copy {
       max-width: 44rem;
       margin: 0;
@@ -413,15 +381,12 @@
       color: rgba(68, 46, 24, 0.86);
       white-space: nowrap;
     }
-
     body.entered .bokeh {
       opacity: 0.34;
     }
-
     body.entered .bg-sparkles {
       opacity: 0.5;
     }
-
     .invitation {
       position: relative;
       min-height: 100vh;
@@ -436,14 +401,12 @@
       z-index: 3;
       pointer-events: none;
     }
-
     body.entered .invitation {
       opacity: 1;
       transform: scale(1);
       filter: blur(0);
       pointer-events: auto;
     }
-
     .card {
       max-width: var(--page-max);
       margin: 0 auto;
@@ -455,7 +418,6 @@
       box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.30);
       overflow: hidden;
     }
-
     .names,
     .invite-copy,
     .feature-media,
@@ -472,49 +434,42 @@
         filter 2.2s var(--ease);
       filter: blur(10px);
     }
-
     body.entered .names {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
       transition-delay: 1.55s;
     }
-
     body.entered .invite-copy {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
       transition-delay: 1.95s;
     }
-
     body.entered .feature-media {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
       transition-delay: 2.35s;
     }
-
     body.entered .details {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
       transition-delay: 2.7s;
     }
-
     body.entered .times-wrap {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
       transition-delay: 3s;
     }
-
     body.entered .bottom-actions {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
       transition-delay: 3.25s;
     }
-
     .ornament-line {
       width: min(34rem, 100%);
       margin: 1.1rem auto 0;
@@ -524,25 +479,21 @@
       gap: 0.8rem;
       color: rgba(182, 136, 57, 0.9);
     }
-
     .ornament-line::before,
     .ornament-line::after {
       content: "";
       height: 1px;
       background: linear-gradient(90deg, rgba(184,136,57,0), rgba(184,136,57,0.8), rgba(184,136,57,0));
     }
-
     .ornament-mark {
       font-size: 1.2rem;
       line-height: 1;
       opacity: 0.9;
     }
-
     .names {
       text-align: center;
       margin-bottom: 1.4rem;
     }
-
     .names-main {
       font-family: "Imperial Script", cursive;
       font-size: clamp(4rem, 8vw, 6.8rem);
@@ -552,7 +503,6 @@
       letter-spacing: 0.01em;
       text-shadow: 0 2px 10px rgba(120, 80, 25, 0.10);
     }
-
     .ampersand {
       display: inline-block;
       margin: 0 0.06em;
@@ -563,13 +513,11 @@
       transform: translateY(0.03em);
       filter: drop-shadow(0 2px 5px rgba(90, 48, 10, 0.12));
     }
-
     .invite-copy {
       text-align: center;
       margin: 1.4rem auto 2rem;
       max-width: 36rem;
     }
-
     .invite-copy .small {
       font-family: "Forum", serif;
       font-size: clamp(1rem, 1.65vw, 1.22rem);
@@ -579,12 +527,10 @@
       line-height: 1.85;
       margin: 0;
     }
-
     .feature-media {
       margin: 2.2rem auto 2.6rem;
       width: 100%;
     }
-
     .media-frame {
       position: relative;
       width: 100%;
@@ -594,7 +540,6 @@
       padding: clamp(0.4rem, 0.8vw, 0.7rem);
       box-shadow: var(--shadow-deep);
     }
-
     .media-frame::before {
       content: "";
       position: absolute;
@@ -605,7 +550,6 @@
       border-radius: inherit;
       z-index: 1;
     }
-
     .media-frame img {
       display: block;
       width: 100%;
@@ -621,20 +565,17 @@
         transform 2.4s var(--ease),
         filter 2.4s var(--ease);
     }
-
     body.entered .media-frame img {
       opacity: 1;
       transform: scale(1);
       filter: blur(0);
       transition-delay: 2.45s;
     }
-
     .details {
       text-align: center;
       max-width: 46rem;
       margin: 0 auto;
     }
-
     .venue {
       font-family: "Italiana", serif;
       font-size: clamp(1.52rem, 2.45vw, 2.2rem);
@@ -644,7 +585,6 @@
       margin: 0;
       text-transform: uppercase;
     }
-
     .detail-sub {
       margin: 1.2rem auto 0;
       max-width: 40rem;
@@ -654,14 +594,12 @@
       font-style: italic;
       color: rgba(86, 58, 33, 0.90);
     }
-
     .detail-notes {
       margin: 1.4rem auto 0;
       max-width: 34rem;
       display: grid;
       gap: 0.55rem;
     }
-
     .detail-note {
       font-family: "Forum", serif;
       font-size: clamp(1.02rem, 1.5vw, 1.2rem);
@@ -669,12 +607,10 @@
       color: rgba(82, 57, 34, 0.92);
       line-height: 1.45;
     }
-
     .times-wrap {
       margin: 3.2rem auto 0;
       max-width: 46rem;
     }
-
     .section-title {
       text-align: center;
       font-family: "Italiana", serif;
@@ -684,7 +620,6 @@
       color: var(--ink-mid);
       margin: 0 0 1.6rem;
     }
-
     .timeline {
       display: grid;
       gap: 1.25rem;
@@ -693,7 +628,6 @@
       max-width: 42rem;
       margin: 0 auto;
     }
-
     .timeline::before {
       content: "";
       position: absolute;
@@ -704,7 +638,6 @@
       transform: translateX(-50%);
       background: linear-gradient(180deg, rgba(184,136,57,0), rgba(184,136,57,0.75), rgba(184,136,57,0));
     }
-
     .timeline-item {
       display: grid;
       grid-template-columns: minmax(150px, 1fr) 18px minmax(220px, 1fr);
@@ -712,7 +645,6 @@
       column-gap: 1.35rem;
       min-height: 3.2rem;
     }
-
     .timeline-time {
       justify-self: end;
       font-family: "Imperial Script", cursive;
@@ -722,7 +654,6 @@
       white-space: nowrap;
       transform: translateY(0.04em);
     }
-
     .timeline-dot {
       width: 11px;
       height: 11px;
@@ -735,7 +666,6 @@
       z-index: 1;
       justify-self: center;
     }
-
     .timeline-copy {
       justify-self: start;
       font-family: "Italiana", serif;
@@ -745,13 +675,11 @@
       color: rgba(75, 51, 31, 0.94);
       white-space: nowrap;
     }
-
     .bottom-actions {
       display: grid;
       place-items: center;
       margin-top: 3.2rem;
     }
-
     .rsvp-button {
       position: relative;
       display: inline-grid;
@@ -771,7 +699,6 @@
       transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
       overflow: hidden;
     }
-
     .rsvp-button::before {
       content: "";
       position: absolute;
@@ -780,7 +707,6 @@
       border: 2px solid rgba(188, 137, 54, 0.78);
       pointer-events: none;
     }
-
     .rsvp-button::after {
       content: "";
       position: absolute;
@@ -802,7 +728,6 @@
       mix-blend-mode: screen;
       pointer-events: none;
     }
-
     .rsvp-button:hover {
       transform: translateY(-3px);
       box-shadow:
@@ -810,7 +735,6 @@
         inset 0 -14px 18px rgba(14, 0, 2, 0.46),
         0 18px 34px rgba(35, 6, 7, 0.24);
     }
-
     .rsvp-label {
       position: relative;
       z-index: 1;
@@ -823,7 +747,6 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .modal {
       position: fixed;
       inset: 0;
@@ -837,12 +760,10 @@
       transition: opacity 0.45s var(--ease);
       z-index: 20;
     }
-
     .modal.open {
       opacity: 1;
       pointer-events: auto;
     }
-
     .modal-panel {
       position: relative;
       width: min(980px, 100%);
@@ -854,11 +775,9 @@
       transform: scale(0.96);
       transition: transform 0.45s var(--ease);
     }
-
     .modal.open .modal-panel {
       transform: scale(1);
     }
-
     .modal-close {
       position: absolute;
       top: 14px;
@@ -874,7 +793,6 @@
       box-shadow: 0 8px 20px rgba(20,10,4,0.12);
       z-index: 2;
     }
-
     .modal iframe {
       width: 100%;
       height: 100%;
@@ -882,7 +800,6 @@
       display: block;
       background: #fff;
     }
-
     @keyframes floatDown {
       0% {
         transform: translate3d(0, 0, 0) scale(0.96);
@@ -896,7 +813,6 @@
         opacity: 0;
       }
     }
-
     @keyframes twinkle {
       0%, 100% {
         transform: scale(0.5);
@@ -911,7 +827,6 @@
         opacity: 0.26;
       }
     }
-
     @keyframes sweep {
       0% {
         transform: translateX(-95%) rotate(8deg);
@@ -931,7 +846,6 @@
         opacity: 0;
       }
     }
-
     @keyframes sweepSeal {
       0% {
         transform: translateX(-95%) rotate(8deg);
@@ -951,91 +865,175 @@
         opacity: 0;
       }
     }
-
     @media (max-width: 900px) {
       .landing-copy {
         white-space: normal;
       }
     }
-
     @media (max-width: 820px) {
       .seal-button {
         width: min(80vw, 400px);
       }
-
       .card {
         padding: 1.3rem;
       }
-
       .timeline {
         gap: 1rem;
       }
-
       .timeline-item {
         grid-template-columns: 1fr;
         justify-items: center;
         text-align: center;
         row-gap: 0.45rem;
       }
-
       .timeline::before {
         display: none;
       }
-
       .timeline-time,
       .timeline-copy {
         justify-self: center;
         white-space: normal;
       }
-
       .timeline-time {
         font-size: 1.9rem;
       }
-
       .timeline-copy {
         font-size: 1.38rem;
       }
-
       .modal-panel {
         height: min(88vh, 760px);
       }
     }
-
     @media (max-width: 560px) {
       .seal-date {
         font-size: clamp(3.2rem, 16vw, 5.6rem);
       }
-
       .seal-prompt {
         font-size: 0.68rem;
         letter-spacing: 0.2em;
         transform: translateY(12px);
       }
-
       .landing-copy {
         font-size: 1.02rem;
       }
-
       .names-main {
         font-size: clamp(3rem, 18vw, 5rem);
       }
-
       .invite-copy .small {
         font-size: 0.82rem;
         letter-spacing: 0.15em;
       }
-
       .venue {
         font-size: 1.45rem;
         letter-spacing: 0.08em;
       }
-
       .detail-sub {
         font-size: 1.08rem;
       }
-
       .detail-note {
         font-size: 0.98rem;
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       MOBILE CRASH PREVENTION
+       Only these targeted overrides fire on phones/tablets.
+       Everything else stays exactly as designed.
+    ───────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+
+      /* 1. The bokeh is the primary crash cause:
+            18 animated elements × huge blur × mix-blend-mode = GPU death.
+            Hide entirely on mobile — the parchment background is still beautiful. */
+      .bokeh { display: none !important; }
+
+      /* 2. The fixed pseudo-element texture layer adds compositing pressure. */
+      body::before, body::after { display: none !important; }
+
+      /* 3. Simpler body background without the heavy radial gradient stack. */
+      body {
+        background: linear-gradient(
+          175deg,
+          var(--paper-1) 0%,
+          var(--paper-2) 44%,
+          var(--paper-3) 76%,
+          var(--paper-4) 100%
+        );
+      }
+
+      /* 4. Sparkles are cheap but pile on top of everything else. */
+      .bg-sparkles { display: none; }
+
+      /* 5. The invitation entry blur (16px) on an entire section is expensive.
+            Replace with a clean opacity + slight translateY — still elegant. */
+      .invitation {
+        filter: none !important;
+        transform: translateY(12px) !important;
+        transition: opacity 3.0s var(--ease), transform 3.0s var(--ease) !important;
+      }
+      body.entered .invitation {
+        opacity: 1;
+        transform: translateY(0) !important;
+        filter: none !important;
+      }
+
+      /* 6. Section stagger elements: drop the blur, keep the float-up. */
+      .names,
+      .invite-copy,
+      .feature-media,
+      .details,
+      .times-wrap,
+      .bottom-actions {
+        filter: none !important;
+        transition: opacity 2.0s var(--ease), transform 2.0s var(--ease) !important;
+      }
+      body.entered .names,
+      body.entered .invite-copy,
+      body.entered .feature-media,
+      body.entered .details,
+      body.entered .times-wrap,
+      body.entered .bottom-actions {
+        filter: none !important;
+      }
+
+      /* 7. Image blur-in transition — just fade and scale, no blur. */
+      .media-frame img {
+        filter: none !important;
+        transition: opacity 2.4s var(--ease), transform 2.4s var(--ease) !important;
+      }
+      body.entered .media-frame img {
+        filter: none !important;
+      }
+
+      /* 8. Card: no backdrop-filter on mobile (triggers expensive compositing). */
+      .card {
+        background: rgba(252, 244, 228, 0.96);
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+
+      /* 9. Landing exit: reduce to a lighter blur. */
+      body.entering .landing {
+        filter: blur(8px);
+      }
+
+      /* 10. Modal: lighter backdrop-filter. */
+      .modal {
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
+      }
+
+      /* 11. RSVP sweep uses mix-blend-mode — remove on mobile. */
+      .rsvp-button::after { display: none; }
+    }
+
+    /* Honour reduced-motion system preference. */
+    @media (prefers-reduced-motion: reduce) {
+      .bokeh span, .sparkle, .seal-light, .rsvp-button::after { animation: none; }
+      .landing, .invitation,
+      .names, .invite-copy, .feature-media,
+      .details, .times-wrap, .bottom-actions {
+        transition: opacity 0.5s ease !important;
       }
     }
   </style>
@@ -1046,53 +1044,47 @@
     <span></span><span></span><span></span><span></span><span></span><span></span>
     <span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
-
   <div class="bg-sparkles" aria-hidden="true">
     <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
     <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
     <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
   </div>
-
   <main class="page">
     <section class="landing" id="landing">
       <div class="landing-inner">
         <button class="seal-button" id="enterInvitation" aria-label="Open invitation">
           <span class="seal-shadow"></span>
-          <span class="seal-surface"></span>
-          <span class="seal-light"></span>
-
+          <!-- seal-face clips the light sweep to the circle boundary -->
+          <span class="seal-face">
+            <span class="seal-surface"></span>
+            <span class="seal-light"></span>
+          </span>
           <span class="seal-sparkles">
             <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
             <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
             <span class="sparkle"></span>
           </span>
-
           <span class="seal-text">
             <span class="seal-date">13th July</span>
             <span class="seal-prompt">Click to Enter</span>
           </span>
         </button>
-
         <p class="landing-copy">
           A warm evening of candlelight, music, and celebration awaits.
         </p>
       </div>
     </section>
-
     <section class="invitation" id="invitation">
       <div class="card">
         <header class="names">
           <h1 class="names-main">Corey <span class="ampersand">&amp;</span> Adam</h1>
-
           <div class="ornament-line" aria-hidden="true">
             <span class="ornament-mark">✦</span>
           </div>
         </header>
-
         <section class="invite-copy">
           <p class="small">Invite you to celebrate their wedding</p>
         </section>
-
         <section class="feature-media">
           <div class="media-frame">
             <img
@@ -1102,7 +1094,6 @@
             >
           </div>
         </section>
-
         <section class="details">
           <h2 class="venue">Bar Sole, Mayfield<br>173 Maitland Rd, Tighes Hill</h2>
           <p class="detail-sub">
@@ -1114,33 +1105,27 @@
             <div class="detail-note">The venue is BYO.</div>
           </div>
         </section>
-
         <section class="times-wrap">
           <div class="ornament-line" aria-hidden="true">
             <span class="ornament-mark">✦</span>
           </div>
-
           <h3 class="section-title">Times</h3>
-
           <div class="timeline">
             <div class="timeline-item">
               <div class="timeline-time">5:30 pm</div>
               <div class="timeline-dot"></div>
               <div class="timeline-copy">Bar Sole opens</div>
             </div>
-
             <div class="timeline-item">
               <div class="timeline-time">6:00 pm</div>
               <div class="timeline-dot"></div>
               <div class="timeline-copy">Live music</div>
             </div>
-
             <div class="timeline-item">
               <div class="timeline-time">8:00 pm</div>
               <div class="timeline-dot"></div>
               <div class="timeline-copy">Cake</div>
             </div>
-
             <div class="timeline-item">
               <div class="timeline-time">10:00 pm</div>
               <div class="timeline-dot"></div>
@@ -1148,7 +1133,6 @@
             </div>
           </div>
         </section>
-
         <section class="bottom-actions">
           <button class="rsvp-button" id="openRsvp" type="button">
             <span class="rsvp-label">Let Us Know</span>
@@ -1157,53 +1141,45 @@
       </div>
     </section>
   </main>
-
   <div class="modal" id="rsvpModal" aria-hidden="true">
     <div class="modal-panel">
       <button class="modal-close" id="closeRsvp" aria-label="Close RSVP form">✕</button>
       <iframe src="https://mrrussellteaching.notion.site/ebd//f8d31efbc71d4d6290259b5ba3e774a7" allowfullscreen></iframe>
     </div>
   </div>
-
   <script>
-    const enterButton = document.getElementById('enterInvitation');
-    const openRsvp = document.getElementById('openRsvp');
-    const closeRsvp = document.getElementById('closeRsvp');
-    const rsvpModal = document.getElementById('rsvpModal');
+    var enterButton = document.getElementById('enterInvitation');
+    var openRsvp    = document.getElementById('openRsvp');
+    var closeRsvp   = document.getElementById('closeRsvp');
+    var rsvpModal   = document.getElementById('rsvpModal');
 
-    enterButton.addEventListener('click', () => {
+    enterButton.addEventListener('click', function () {
       document.body.classList.add('entering');
-      setTimeout(() => {
+      setTimeout(function () {
         document.body.classList.add('entered');
       }, 2100);
     });
 
-    openRsvp.addEventListener('click', () => {
+    openRsvp.addEventListener('click', function () {
       rsvpModal.classList.add('open');
       rsvpModal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
     });
 
-    closeRsvp.addEventListener('click', () => {
+    function closeModal() {
       rsvpModal.classList.remove('open');
       rsvpModal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+    }
+
+    closeRsvp.addEventListener('click', closeModal);
+
+    rsvpModal.addEventListener('click', function (e) {
+      if (e.target === rsvpModal) closeModal();
     });
 
-    rsvpModal.addEventListener('click', (event) => {
-      if (event.target === rsvpModal) {
-        rsvpModal.classList.remove('open');
-        rsvpModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && rsvpModal.classList.contains('open')) {
-        rsvpModal.classList.remove('open');
-        rsvpModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && rsvpModal.classList.contains('open')) closeModal();
     });
   </script>
 </body>
