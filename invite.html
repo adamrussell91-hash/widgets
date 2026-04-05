@@ -7,21 +7,25 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Luxurious+Script&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --paper-1: #efe4cf;
-      --paper-2: #e3d5bc;
-      --paper-3: #d7c6aa;
-      --wax-dark: #4f0508;
-      --wax-mid: #7d0a0f;
-      --wax-rich: #990d13;
-      --wax-light: #b71b1e;
-      --gold-1: #f3df9b;
-      --gold-2: #d8b76b;
-      --gold-3: #9d6f21;
-      --gold-4: #6b4610;
+      --paper-1: #efe5d1;
+      --paper-2: #e3d4ba;
+      --paper-3: #d7c5a7;
+
+      --wax-darkest: #2b0205;
+      --wax-dark: #430407;
+      --wax-mid: #5d060b;
+      --wax-rich: #760b10;
+      --wax-light: #9a1218;
+
+      --gold-1: #f7e8bb;
+      --gold-2: #dfc37f;
+      --gold-3: #bc9342;
+      --gold-4: #8a611d;
+      --gold-5: #5b390d;
     }
 
     * {
@@ -33,7 +37,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #16110c;
+      background: #130c08;
     }
 
     body {
@@ -50,11 +54,11 @@
       align-items: center;
       justify-content: center;
       background:
-        radial-gradient(circle at 18% 20%, rgba(255, 249, 235, 0.32) 0 90px, transparent 180px),
-        radial-gradient(circle at 82% 24%, rgba(255, 246, 228, 0.22) 0 70px, transparent 170px),
-        radial-gradient(circle at 24% 78%, rgba(255, 247, 232, 0.16) 0 100px, transparent 200px),
-        radial-gradient(circle at 78% 76%, rgba(255, 245, 225, 0.16) 0 90px, transparent 180px),
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.03)),
+        radial-gradient(circle at 15% 18%, rgba(255, 249, 235, 0.42) 0 120px, transparent 260px),
+        radial-gradient(circle at 84% 22%, rgba(255, 245, 225, 0.32) 0 110px, transparent 240px),
+        radial-gradient(circle at 23% 80%, rgba(255, 247, 232, 0.22) 0 130px, transparent 260px),
+        radial-gradient(circle at 80% 78%, rgba(255, 244, 220, 0.22) 0 120px, transparent 250px),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.04)),
         linear-gradient(180deg, var(--paper-1), var(--paper-2) 48%, var(--paper-3));
     }
 
@@ -62,7 +66,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      opacity: 0.14;
+      opacity: 0.12;
       background-image:
         linear-gradient(rgba(118, 92, 53, 0.08) 1px, transparent 1px),
         linear-gradient(90deg, rgba(118, 92, 53, 0.06) 1px, transparent 1px);
@@ -76,7 +80,7 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 50% 50%, rgba(120, 75, 18, 0.08), transparent 58%),
+        radial-gradient(circle at 50% 50%, rgba(120, 75, 18, 0.10), transparent 58%),
         radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 72%);
       pointer-events: none;
     }
@@ -85,9 +89,9 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at center, transparent 42%, rgba(40, 24, 12, 0.18) 72%, rgba(18, 10, 6, 0.42) 100%);
+        radial-gradient(circle at center, transparent 40%, rgba(40, 24, 12, 0.20) 72%, rgba(18, 10, 6, 0.46) 100%);
       pointer-events: none;
-      z-index: 2;
+      z-index: 3;
     }
 
     .bokeh {
@@ -100,104 +104,47 @@
 
     .bokeh span {
       position: absolute;
-      top: -20vh;
+      top: -30vh;
       border-radius: 50%;
       opacity: 0;
       filter: blur(2px);
       animation: floatDown linear infinite;
-      box-shadow: 0 0 30px rgba(255, 248, 230, 0.18);
+      box-shadow:
+        0 0 30px rgba(255, 248, 232, 0.32),
+        0 0 70px rgba(255, 239, 210, 0.16);
     }
 
-    .bokeh span:nth-child(1) {
-      left: 6%;
-      width: 110px;
-      height: 110px;
-      background: radial-gradient(circle, rgba(255,255,255,0.28) 0%, rgba(255,247,228,0.16) 40%, transparent 78%);
-      animation-duration: 18s;
-      animation-delay: 0s;
-    }
-
-    .bokeh span:nth-child(2) {
-      left: 16%;
-      width: 60px;
-      height: 60px;
-      background: radial-gradient(circle, rgba(255,255,255,0.26) 0%, rgba(255,241,215,0.14) 42%, transparent 78%);
-      animation-duration: 14s;
-      animation-delay: 3s;
-    }
-
-    .bokeh span:nth-child(3) {
-      left: 28%;
-      width: 140px;
-      height: 140px;
-      background: radial-gradient(circle, rgba(255,249,240,0.24) 0%, rgba(255,239,208,0.12) 44%, transparent 78%);
-      animation-duration: 22s;
-      animation-delay: 1s;
-    }
-
-    .bokeh span:nth-child(4) {
-      left: 43%;
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,245,223,0.13) 42%, transparent 78%);
-      animation-duration: 16s;
-      animation-delay: 6s;
-    }
-
-    .bokeh span:nth-child(5) {
-      left: 58%;
-      width: 150px;
-      height: 150px;
-      background: radial-gradient(circle, rgba(255,250,240,0.24) 0%, rgba(255,237,206,0.12) 44%, transparent 78%);
-      animation-duration: 24s;
-      animation-delay: 2s;
-    }
-
-    .bokeh span:nth-child(6) {
-      left: 72%;
-      width: 72px;
-      height: 72px;
-      background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,242,214,0.12) 42%, transparent 78%);
-      animation-duration: 17s;
-      animation-delay: 4s;
-    }
-
-    .bokeh span:nth-child(7) {
-      left: 84%;
-      width: 125px;
-      height: 125px;
-      background: radial-gradient(circle, rgba(255,249,235,0.22) 0%, rgba(255,236,205,0.11) 45%, transparent 78%);
-      animation-duration: 20s;
-      animation-delay: 7s;
-    }
-
-    .bokeh span:nth-child(8) {
-      left: 92%;
-      width: 56px;
-      height: 56px;
-      background: radial-gradient(circle, rgba(255,255,255,0.24) 0%, rgba(255,240,210,0.12) 42%, transparent 78%);
-      animation-duration: 15s;
-      animation-delay: 9s;
-    }
+    .bokeh span:nth-child(1)  { left: 3%;  width: 120px; height: 120px; animation-duration: 16s; animation-delay: 0s;  background: radial-gradient(circle, rgba(255,255,255,0.48) 0%, rgba(255,245,225,0.26) 42%, transparent 78%); }
+    .bokeh span:nth-child(2)  { left: 10%; width: 76px;  height: 76px;  animation-duration: 12s; animation-delay: 2s;  background: radial-gradient(circle, rgba(255,255,255,0.40) 0%, rgba(255,240,215,0.22) 42%, transparent 78%); }
+    .bokeh span:nth-child(3)  { left: 18%; width: 155px; height: 155px; animation-duration: 20s; animation-delay: 4s;  background: radial-gradient(circle, rgba(255,249,240,0.38) 0%, rgba(255,238,206,0.22) 44%, transparent 78%); }
+    .bokeh span:nth-child(4)  { left: 27%; width: 95px;  height: 95px;  animation-duration: 15s; animation-delay: 1s;  background: radial-gradient(circle, rgba(255,255,255,0.40) 0%, rgba(255,242,218,0.24) 42%, transparent 78%); }
+    .bokeh span:nth-child(5)  { left: 36%; width: 175px; height: 175px; animation-duration: 22s; animation-delay: 5s;  background: radial-gradient(circle, rgba(255,248,236,0.36) 0%, rgba(255,235,205,0.20) 44%, transparent 78%); }
+    .bokeh span:nth-child(6)  { left: 46%; width: 84px;  height: 84px;  animation-duration: 13s; animation-delay: 3s;  background: radial-gradient(circle, rgba(255,255,255,0.42) 0%, rgba(255,240,210,0.22) 42%, transparent 78%); }
+    .bokeh span:nth-child(7)  { left: 56%; width: 145px; height: 145px; animation-duration: 19s; animation-delay: 6s;  background: radial-gradient(circle, rgba(255,250,240,0.36) 0%, rgba(255,236,205,0.20) 44%, transparent 78%); }
+    .bokeh span:nth-child(8)  { left: 66%; width: 70px;  height: 70px;  animation-duration: 11s; animation-delay: 1.5s;background: radial-gradient(circle, rgba(255,255,255,0.40) 0%, rgba(255,241,214,0.22) 42%, transparent 78%); }
+    .bokeh span:nth-child(9)  { left: 73%; width: 165px; height: 165px; animation-duration: 23s; animation-delay: 7s;  background: radial-gradient(circle, rgba(255,248,235,0.34) 0%, rgba(255,234,203,0.18) 44%, transparent 78%); }
+    .bokeh span:nth-child(10) { left: 81%; width: 92px;  height: 92px;  animation-duration: 14s; animation-delay: 2.5s;background: radial-gradient(circle, rgba(255,255,255,0.42) 0%, rgba(255,240,212,0.22) 42%, transparent 78%); }
+    .bokeh span:nth-child(11) { left: 88%; width: 135px; height: 135px; animation-duration: 18s; animation-delay: 5.5s;background: radial-gradient(circle, rgba(255,249,238,0.34) 0%, rgba(255,235,205,0.18) 44%, transparent 78%); }
+    .bokeh span:nth-child(12) { left: 95%; width: 64px;  height: 64px;  animation-duration: 12s; animation-delay: 8s;  background: radial-gradient(circle, rgba(255,255,255,0.42) 0%, rgba(255,239,210,0.20) 42%, transparent 78%); }
 
     .seal-wrap {
       position: relative;
-      width: min(52vw, 700px);
+      width: min(54vw, 720px);
       aspect-ratio: 1 / 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 4;
+      z-index: 5;
     }
 
     .seal-shadow {
       position: absolute;
-      width: 92%;
-      height: 92%;
+      width: 94%;
+      height: 94%;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(30, 7, 6, 0.42) 0%, rgba(30, 7, 6, 0.18) 46%, transparent 72%);
-      transform: translateY(8%);
-      filter: blur(22px);
+      background: radial-gradient(circle, rgba(18, 2, 3, 0.52) 0%, rgba(18, 2, 3, 0.24) 46%, transparent 72%);
+      transform: translateY(10%);
+      filter: blur(24px);
     }
 
     .seal {
@@ -205,36 +152,40 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
+      overflow: hidden;
       background:
-        radial-gradient(circle at 36% 28%, rgba(255, 160, 130, 0.18) 0%, transparent 18%),
-        radial-gradient(circle at 50% 45%, var(--wax-light) 0%, var(--wax-rich) 32%, var(--wax-mid) 62%, var(--wax-dark) 100%);
+        radial-gradient(circle at 34% 24%, rgba(255, 188, 162, 0.18) 0%, rgba(255, 188, 162, 0.08) 10%, transparent 22%),
+        radial-gradient(circle at 64% 72%, rgba(255, 120, 96, 0.08) 0%, transparent 18%),
+        radial-gradient(circle at 50% 44%, var(--wax-light) 0%, var(--wax-rich) 26%, var(--wax-mid) 56%, var(--wax-dark) 78%, var(--wax-darkest) 100%);
       box-shadow:
-        inset 0 22px 28px rgba(255, 170, 135, 0.14),
-        inset 0 -30px 42px rgba(45, 2, 6, 0.48),
-        inset 22px 0 28px rgba(130, 8, 12, 0.24),
-        inset -22px 0 28px rgba(48, 2, 6, 0.22),
-        0 24px 60px rgba(55, 10, 10, 0.32);
+        inset 0 30px 35px rgba(255, 180, 150, 0.10),
+        inset 0 -42px 54px rgba(14, 0, 2, 0.60),
+        inset 32px 0 40px rgba(125, 6, 10, 0.18),
+        inset -30px 0 38px rgba(20, 0, 3, 0.24),
+        0 28px 65px rgba(35, 6, 7, 0.34);
     }
 
     .seal::before {
       content: "";
       position: absolute;
-      inset: 3.6%;
+      inset: 3.7%;
       border-radius: 50%;
-      border: 3px solid rgba(188, 137, 54, 0.72);
+      border: 3px solid rgba(188, 137, 54, 0.78);
       box-shadow:
-        inset 0 0 0 1px rgba(255, 220, 150, 0.12),
-        0 0 10px rgba(140, 90, 20, 0.12);
-      opacity: 0.95;
+        inset 0 0 0 1px rgba(255, 225, 155, 0.12),
+        0 0 12px rgba(140, 90, 20, 0.14);
+      opacity: 0.98;
+      z-index: 2;
     }
 
     .seal::after {
       content: "";
       position: absolute;
-      inset: 17%;
+      inset: 16.7%;
       border-radius: 50%;
       border: 2px solid rgba(168, 112, 36, 0.34);
       box-shadow: inset 0 0 14px rgba(255, 195, 120, 0.06);
+      z-index: 2;
     }
 
     .wax-texture {
@@ -242,14 +193,15 @@
       inset: 0;
       border-radius: 50%;
       background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.07) 0 1px, transparent 2px),
-        radial-gradient(circle at 62% 44%, rgba(255,255,255,0.05) 0 1px, transparent 2px),
-        radial-gradient(circle at 55% 70%, rgba(255,255,255,0.05) 0 1px, transparent 2px),
-        radial-gradient(circle at 42% 58%, rgba(0,0,0,0.08) 0 1px, transparent 2px);
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.08) 0 1px, transparent 2px),
+        radial-gradient(circle at 62% 44%, rgba(255,255,255,0.06) 0 1px, transparent 2px),
+        radial-gradient(circle at 55% 70%, rgba(255,255,255,0.06) 0 1px, transparent 2px),
+        radial-gradient(circle at 42% 58%, rgba(0,0,0,0.10) 0 1px, transparent 2px);
       background-size: 120px 120px, 160px 160px, 180px 180px, 140px 140px;
       mix-blend-mode: soft-light;
-      opacity: 0.55;
+      opacity: 0.60;
       pointer-events: none;
+      z-index: 1;
     }
 
     .highlight {
@@ -257,9 +209,33 @@
       inset: 0;
       border-radius: 50%;
       background:
-        radial-gradient(ellipse at 34% 24%, rgba(255, 198, 166, 0.22) 0%, rgba(255, 198, 166, 0.08) 16%, transparent 28%),
-        radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(40, 4, 5, 0.10) 85%, rgba(20, 2, 2, 0.18) 100%);
+        radial-gradient(ellipse at 34% 23%, rgba(255, 205, 175, 0.22) 0%, rgba(255, 205, 175, 0.08) 16%, transparent 28%),
+        radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(20, 2, 2, 0.12) 85%, rgba(10, 0, 1, 0.20) 100%);
       pointer-events: none;
+      z-index: 1;
+    }
+
+    .light-sweep {
+      position: absolute;
+      inset: -12%;
+      border-radius: 50%;
+      background:
+        linear-gradient(
+          115deg,
+          transparent 0%,
+          transparent 38%,
+          rgba(255, 235, 195, 0.00) 43%,
+          rgba(255, 235, 195, 0.14) 47%,
+          rgba(255, 250, 230, 0.24) 50%,
+          rgba(255, 225, 180, 0.10) 53%,
+          transparent 58%,
+          transparent 100%
+        );
+      mix-blend-mode: screen;
+      transform: translateX(-95%) rotate(8deg);
+      animation: sweep 8s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 2;
     }
 
     .title {
@@ -268,27 +244,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 3;
+      z-index: 4;
       pointer-events: none;
     }
 
     .title span {
-      font-family: "Great Vibes", cursive;
-      font-size: clamp(4.2rem, 7.2vw, 7.8rem);
+      font-family: "Luxurious Script", cursive;
+      font-size: clamp(4.8rem, 8vw, 8.8rem);
       font-weight: 400;
       line-height: 1;
       color: var(--gold-2);
-      background: linear-gradient(180deg, var(--gold-1) 0%, #ebd18c 18%, var(--gold-2) 42%, var(--gold-3) 76%, var(--gold-4) 100%);
+      background: linear-gradient(180deg, var(--gold-1) 0%, #edd897 16%, var(--gold-2) 40%, var(--gold-3) 70%, var(--gold-4) 88%, var(--gold-5) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow:
-        0 1px 0 rgba(255, 239, 190, 0.22),
-        0 2px 2px rgba(86, 47, 6, 0.22),
-        0 5px 10px rgba(48, 16, 4, 0.12);
-      transform: translateY(-2%);
+        0 1px 0 rgba(255, 243, 205, 0.26),
+        0 2px 2px rgba(86, 47, 6, 0.24),
+        0 6px 14px rgba(48, 16, 4, 0.16);
+      transform: translateY(-3%) scale(1.02);
       letter-spacing: 0.02em;
-      filter: drop-shadow(0 2px 4px rgba(75, 32, 8, 0.22));
+      filter: drop-shadow(0 2px 5px rgba(75, 32, 8, 0.20));
     }
 
     .seal-sparkles,
@@ -301,7 +277,7 @@
     .sparkle {
       position: absolute;
       opacity: 0;
-      animation: twinkle 5.5s ease-in-out infinite;
+      animation: twinkle 5.4s ease-in-out infinite;
     }
 
     .sparkle::before,
@@ -318,24 +294,26 @@
 
     .sparkle::before {
       width: 2px;
-      height: 20px;
+      height: 22px;
     }
 
     .sparkle::after {
-      width: 20px;
+      width: 22px;
       height: 2px;
     }
 
     .seal-sparkles .sparkle {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
     }
 
-    .seal-sparkles .sparkle:nth-child(1) { top: 19%; left: 24%; animation-delay: 0.2s; }
-    .seal-sparkles .sparkle:nth-child(2) { top: 23%; right: 19%; animation-delay: 2.2s; }
-    .seal-sparkles .sparkle:nth-child(3) { top: 43%; right: 10%; animation-delay: 3.1s; }
-    .seal-sparkles .sparkle:nth-child(4) { bottom: 16%; left: 48%; animation-delay: 1.6s; }
-    .seal-sparkles .sparkle:nth-child(5) { bottom: 30%; left: 18%; animation-delay: 4.2s; }
+    .seal-sparkles .sparkle:nth-child(1) { top: 16%; left: 23%; animation-delay: 0.2s; }
+    .seal-sparkles .sparkle:nth-child(2) { top: 21%; right: 18%; animation-delay: 2.2s; }
+    .seal-sparkles .sparkle:nth-child(3) { top: 41%; right: 10%; animation-delay: 3.1s; }
+    .seal-sparkles .sparkle:nth-child(4) { bottom: 16%; left: 49%; animation-delay: 1.6s; }
+    .seal-sparkles .sparkle:nth-child(5) { bottom: 28%; left: 17%; animation-delay: 4.2s; }
+    .seal-sparkles .sparkle:nth-child(6) { top: 58%; left: 11%; animation-delay: 2.9s; }
+    .seal-sparkles .sparkle:nth-child(7) { top: 30%; left: 70%; animation-delay: 5.1s; }
 
     .bg-sparkles .sparkle {
       width: 34px;
@@ -343,66 +321,94 @@
       animation-duration: 7.5s;
     }
 
-    .bg-sparkles .sparkle:nth-child(1) { top: 10%; left: 12%; animation-delay: 0s; }
-    .bg-sparkles .sparkle:nth-child(2) { top: 16%; right: 11%; animation-delay: 1.8s; }
-    .bg-sparkles .sparkle:nth-child(3) { bottom: 18%; left: 11%; animation-delay: 3.3s; }
-    .bg-sparkles .sparkle:nth-child(4) { bottom: 14%; right: 13%; animation-delay: 2.5s; }
-    .bg-sparkles .sparkle:nth-child(5) { top: 46%; left: 6%; animation-delay: 4.4s; }
-    .bg-sparkles .sparkle:nth-child(6) { top: 62%; right: 7%; animation-delay: 5.2s; }
+    .bg-sparkles .sparkle:nth-child(1)  { top: 8%;  left: 10%; animation-delay: 0s; }
+    .bg-sparkles .sparkle:nth-child(2)  { top: 13%; right: 12%; animation-delay: 1.2s; }
+    .bg-sparkles .sparkle:nth-child(3)  { bottom: 18%; left: 10%; animation-delay: 3.1s; }
+    .bg-sparkles .sparkle:nth-child(4)  { bottom: 14%; right: 13%; animation-delay: 2.5s; }
+    .bg-sparkles .sparkle:nth-child(5)  { top: 45%; left: 5%; animation-delay: 4.4s; }
+    .bg-sparkles .sparkle:nth-child(6)  { top: 61%; right: 6%; animation-delay: 5.2s; }
+    .bg-sparkles .sparkle:nth-child(7)  { top: 24%; left: 24%; animation-delay: 2.9s; }
+    .bg-sparkles .sparkle:nth-child(8)  { top: 28%; right: 24%; animation-delay: 4.8s; }
+    .bg-sparkles .sparkle:nth-child(9)  { bottom: 28%; left: 24%; animation-delay: 1.8s; }
+    .bg-sparkles .sparkle:nth-child(10) { bottom: 26%; right: 24%; animation-delay: 6.1s; }
+    .bg-sparkles .sparkle:nth-child(11) { top: 52%; left: 18%; animation-delay: 3.8s; }
+    .bg-sparkles .sparkle:nth-child(12) { top: 56%; right: 18%; animation-delay: 2.2s; }
 
     @keyframes floatDown {
       0% {
-        transform: translate3d(0, -18vh, 0) scale(0.92);
+        transform: translate3d(0, -22vh, 0) scale(0.92);
         opacity: 0;
       }
       8% {
-        opacity: 0.72;
+        opacity: 0.95;
       }
-      55% {
-        opacity: 0.34;
+      50% {
+        opacity: 0.46;
       }
       100% {
-        transform: translate3d(24px, 120vh, 0) scale(1.14);
+        transform: translate3d(26px, 122vh, 0) scale(1.16);
         opacity: 0;
       }
     }
 
     @keyframes twinkle {
       0%, 100% {
-        transform: scale(0.55);
+        transform: scale(0.5);
         opacity: 0.08;
       }
       22% {
-        transform: scale(1.08);
-        opacity: 0.92;
+        transform: scale(1.1);
+        opacity: 0.96;
       }
       46% {
         transform: scale(0.72);
-        opacity: 0.24;
+        opacity: 0.26;
+      }
+    }
+
+    @keyframes sweep {
+      0% {
+        transform: translateX(-95%) rotate(8deg);
+        opacity: 0;
+      }
+      12% {
+        opacity: 0.9;
+      }
+      42% {
+        opacity: 0.95;
+      }
+      58% {
+        opacity: 0.35;
+      }
+      100% {
+        transform: translateX(95%) rotate(8deg);
+        opacity: 0;
       }
     }
 
     @media (max-width: 900px) {
       .seal-wrap {
-        width: min(72vw, 620px);
+        width: min(74vw, 620px);
       }
 
       .title span {
-        font-size: clamp(3.6rem, 10vw, 6.2rem);
+        font-size: clamp(4rem, 11vw, 7rem);
       }
     }
 
     @media (max-width: 600px) {
       .seal-wrap {
-        width: min(84vw, 520px);
+        width: min(86vw, 520px);
       }
 
       .bokeh span:nth-child(1),
       .bokeh span:nth-child(3),
       .bokeh span:nth-child(5),
-      .bokeh span:nth-child(7) {
-        width: 90px;
-        height: 90px;
+      .bokeh span:nth-child(7),
+      .bokeh span:nth-child(9),
+      .bokeh span:nth-child(11) {
+        width: 110px;
+        height: 110px;
       }
     }
   </style>
@@ -410,6 +416,10 @@
 <body>
   <div class="scene">
     <div class="bokeh">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
       <span></span>
       <span></span>
       <span></span>
@@ -427,15 +437,25 @@
       <span class="sparkle"></span>
       <span class="sparkle"></span>
       <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
+      <span class="sparkle"></span>
     </div>
 
     <div class="seal-wrap">
       <div class="seal-shadow"></div>
+
       <div class="seal">
         <div class="wax-texture"></div>
         <div class="highlight"></div>
+        <div class="light-sweep"></div>
 
         <div class="seal-sparkles">
+          <span class="sparkle"></span>
+          <span class="sparkle"></span>
           <span class="sparkle"></span>
           <span class="sparkle"></span>
           <span class="sparkle"></span>
