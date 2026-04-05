@@ -1,3 +1,7 @@
+Got it. Keep the landing seal page as is. Only soften and simplify the invitation page.
+
+Use this full file.
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -16,10 +20,10 @@
       --paper-3: #d8c19e;
       --paper-4: #c7a97c;
 
-      --ink-soft: #6a5138;
-      --ink-mid: #513826;
-      --ink-deep: #2b1a10;
-      --ink-monogram: #7a5a2b;
+      --ink-soft: #7b5b3b;
+      --ink-mid: #5e4128;
+      --ink-deep: #382416;
+      --venue-brown: #6b4a2d;
 
       --gold-1: #fff7dc;
       --gold-2: #f3e2b1;
@@ -105,6 +109,7 @@
       pointer-events: none;
       z-index: 1;
       isolation: isolate;
+      transition: opacity 1.6s var(--ease);
     }
 
     .bokeh span {
@@ -151,9 +156,64 @@
     .bokeh span:nth-child(17) { left: 82%; top: 70%; width: 160px; height: 160px; animation-duration: 48s; animation-delay: -10s; }
     .bokeh span:nth-child(18) { left: 34%; top: 68%; width: 680px; height: 680px; animation-duration: 98s; animation-delay: -50s; }
 
+    .bg-sparkles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 1.6s var(--ease);
+    }
+
+    .sparkle {
+      position: absolute;
+      opacity: 0;
+      animation: twinkle 5.4s ease-in-out infinite;
+    }
+
+    .sparkle::before,
+    .sparkle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,255,255,0.98) 0%, rgba(255,241,202,0.82) 28%, rgba(255,217,154,0.36) 55%, transparent 78%);
+      border-radius: 999px;
+      filter: blur(0.2px);
+    }
+
+    .sparkle::before {
+      width: 2px;
+      height: 22px;
+    }
+
+    .sparkle::after {
+      width: 22px;
+      height: 2px;
+    }
+
+    .bg-sparkles .sparkle {
+      width: 34px;
+      height: 34px;
+      animation-duration: 7.5s;
+    }
+
+    .bg-sparkles .sparkle:nth-child(1)  { top: 8%;  left: 10%; animation-delay: 0s; }
+    .bg-sparkles .sparkle:nth-child(2)  { top: 13%; right: 12%; animation-delay: 1.2s; }
+    .bg-sparkles .sparkle:nth-child(3)  { bottom: 18%; left: 10%; animation-delay: 3.1s; }
+    .bg-sparkles .sparkle:nth-child(4)  { bottom: 14%; right: 13%; animation-delay: 2.5s; }
+    .bg-sparkles .sparkle:nth-child(5)  { top: 45%; left: 5%; animation-delay: 4.4s; }
+    .bg-sparkles .sparkle:nth-child(6)  { top: 61%; right: 6%; animation-delay: 5.2s; }
+    .bg-sparkles .sparkle:nth-child(7)  { top: 24%; left: 24%; animation-delay: 2.9s; }
+    .bg-sparkles .sparkle:nth-child(8)  { top: 28%; right: 24%; animation-delay: 4.8s; }
+    .bg-sparkles .sparkle:nth-child(9)  { bottom: 28%; left: 24%; animation-delay: 1.8s; }
+    .bg-sparkles .sparkle:nth-child(10) { bottom: 26%; right: 24%; animation-delay: 6.1s; }
+    .bg-sparkles .sparkle:nth-child(11) { top: 52%; left: 18%; animation-delay: 3.8s; }
+    .bg-sparkles .sparkle:nth-child(12) { top: 56%; right: 18%; animation-delay: 2.2s; }
+
     .page {
       position: relative;
-      z-index: 2;
+      z-index: 3;
     }
 
     .landing {
@@ -162,7 +222,7 @@
       display: grid;
       place-items: center;
       padding: 2rem;
-      z-index: 5;
+      z-index: 6;
       transition:
         opacity 3.2s var(--ease),
         visibility 3.2s var(--ease),
@@ -200,6 +260,7 @@
       place-items: center;
       transition: transform 0.45s var(--ease), filter 0.45s var(--ease);
       filter: drop-shadow(0 28px 50px rgba(35, 6, 7, 0.22));
+      overflow: visible;
     }
 
     .seal-button:hover {
@@ -259,29 +320,50 @@
 
     .seal-light {
       position: absolute;
-      inset: 14%;
+      inset: -12%;
       border-radius: 50%;
       background:
         linear-gradient(
-          98deg,
+          115deg,
           transparent 0%,
-          transparent 44%,
-          rgba(255, 244, 220, 0.00) 46.6%,
-          rgba(255, 244, 220, 0.04) 48.2%,
-          rgba(255, 252, 240, 0.11) 49.6%,
-          rgba(255, 230, 190, 0.05) 50.8%,
-          transparent 53.4%,
+          transparent 38%,
+          rgba(255, 235, 195, 0.00) 43%,
+          rgba(255, 235, 195, 0.11) 47%,
+          rgba(255, 250, 230, 0.18) 50%,
+          rgba(255, 225, 180, 0.07) 53%,
+          transparent 58%,
           transparent 100%
         );
       mix-blend-mode: screen;
-      transform: translateX(-132%) rotate(2deg);
-      animation: sweepSeal 8.5s ease-in-out infinite;
+      transform: translateX(-95%) rotate(8deg);
+      animation: sweepSeal 8s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .seal-sparkles {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
       pointer-events: none;
     }
 
+    .seal-sparkles .sparkle {
+      width: 24px;
+      height: 24px;
+    }
+
+    .seal-sparkles .sparkle:nth-child(1) { top: 16%; left: 23%; animation-delay: 0.2s; }
+    .seal-sparkles .sparkle:nth-child(2) { top: 21%; right: 18%; animation-delay: 2.2s; }
+    .seal-sparkles .sparkle:nth-child(3) { top: 41%; right: 10%; animation-delay: 3.1s; }
+    .seal-sparkles .sparkle:nth-child(4) { bottom: 16%; left: 49%; animation-delay: 1.6s; }
+    .seal-sparkles .sparkle:nth-child(5) { bottom: 28%; left: 17%; animation-delay: 4.2s; }
+    .seal-sparkles .sparkle:nth-child(6) { top: 58%; left: 11%; animation-delay: 2.9s; }
+    .seal-sparkles .sparkle:nth-child(7) { top: 30%; left: 70%; animation-delay: 5.1s; }
+
     .seal-text {
       position: relative;
-      z-index: 2;
+      z-index: 4;
       display: grid;
       place-items: center;
       text-align: center;
@@ -336,18 +418,26 @@
       white-space: nowrap;
     }
 
+    body.entered .bokeh {
+      opacity: 0.34;
+    }
+
+    body.entered .bg-sparkles {
+      opacity: 0.5;
+    }
+
     .invitation {
       position: relative;
       min-height: 100vh;
       opacity: 0;
-      transform: scale(1.018);
-      filter: blur(18px);
+      transform: scale(1.01);
+      filter: blur(16px);
       transition:
-        opacity 3.6s var(--ease),
-        transform 3.6s var(--ease),
-        filter 3.6s var(--ease);
+        opacity 3.8s var(--ease),
+        transform 3.8s var(--ease),
+        filter 3.8s var(--ease);
       padding: 4.5rem 1.5rem 7rem;
-      z-index: 2;
+      z-index: 3;
       pointer-events: none;
     }
 
@@ -370,29 +460,6 @@
       overflow: hidden;
     }
 
-    .card::after {
-      content: "";
-      position: absolute;
-      inset: -8%;
-      pointer-events: none;
-      background:
-        linear-gradient(
-          108deg,
-          transparent 0%,
-          transparent 43%,
-          rgba(255, 244, 214, 0.00) 47%,
-          rgba(255, 244, 214, 0.06) 48.5%,
-          rgba(255, 251, 239, 0.10) 50%,
-          rgba(255, 228, 182, 0.04) 51.5%,
-          transparent 55%,
-          transparent 100%
-        );
-      mix-blend-mode: screen;
-      transform: translateX(-125%) rotate(6deg);
-      animation: candleSweep 18s ease-in-out infinite;
-      z-index: 0;
-    }
-
     .names,
     .invite-copy,
     .feature-media,
@@ -402,40 +469,40 @@
       position: relative;
       z-index: 1;
       opacity: 0;
-      transform: translateY(34px);
+      transform: translateY(26px);
       transition:
-        opacity 1.9s var(--ease),
-        transform 1.9s var(--ease),
-        filter 1.9s var(--ease);
-      filter: blur(12px);
+        opacity 2.2s var(--ease),
+        transform 2.2s var(--ease),
+        filter 2.2s var(--ease);
+      filter: blur(10px);
     }
 
     body.entered .names {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 1.45s;
+      transition-delay: 1.55s;
     }
 
     body.entered .invite-copy {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 1.8s;
+      transition-delay: 1.95s;
     }
 
     body.entered .feature-media {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 2.2s;
+      transition-delay: 2.35s;
     }
 
     body.entered .details {
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 2.65s;
+      transition-delay: 2.7s;
     }
 
     body.entered .times-wrap {
@@ -449,7 +516,7 @@
       opacity: 1;
       transform: translateY(0);
       filter: blur(0);
-      transition-delay: 3.3s;
+      transition-delay: 3.25s;
     }
 
     .ornament-line {
@@ -473,42 +540,6 @@
       font-size: 1.2rem;
       line-height: 1;
       opacity: 0.9;
-    }
-
-    .monogram-wrap {
-      display: grid;
-      place-items: center;
-      margin-bottom: 0.9rem;
-      opacity: 0.98;
-    }
-
-    .monogram {
-      width: clamp(112px, 13vw, 154px);
-      height: auto;
-      overflow: visible;
-      filter: drop-shadow(0 2px 10px rgba(120, 78, 22, 0.08));
-    }
-
-    .monogram .stroke {
-      stroke: var(--ink-monogram);
-      stroke-width: 2.8;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .monogram .stroke-thin {
-      stroke: var(--ink-monogram);
-      stroke-width: 2.1;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      opacity: 0.98;
-    }
-
-    .monogram .wash {
-      fill: rgba(140, 106, 54, 0.10);
-      stroke: none;
     }
 
     .names {
@@ -579,31 +610,6 @@
       z-index: 1;
     }
 
-    .media-frame::after {
-      content: "";
-      position: absolute;
-      inset: -10%;
-      pointer-events: none;
-      background:
-        linear-gradient(
-          110deg,
-          transparent 0%,
-          transparent 41%,
-          rgba(255, 245, 222, 0.00) 46%,
-          rgba(255, 245, 222, 0.07) 48.5%,
-          rgba(255, 252, 243, 0.14) 50%,
-          rgba(255, 231, 190, 0.05) 52%,
-          transparent 57%,
-          transparent 100%
-        );
-      mix-blend-mode: screen;
-      transform: translateX(-125%) rotate(5deg);
-      animation: gifSweep 8.5s ease-out 1 forwards;
-      animation-delay: 2.8s;
-      z-index: 2;
-      opacity: 0;
-    }
-
     .media-frame img {
       display: block;
       width: 100%;
@@ -612,12 +618,12 @@
       object-fit: cover;
       background: #d8c19a;
       opacity: 0;
-      transform: scale(1.04);
-      filter: blur(14px);
+      transform: scale(1.02);
+      filter: blur(12px);
       transition:
-        opacity 2.1s var(--ease),
-        transform 2.1s var(--ease),
-        filter 2.1s var(--ease);
+        opacity 2.4s var(--ease),
+        transform 2.4s var(--ease),
+        filter 2.4s var(--ease);
     }
 
     body.entered .media-frame img {
@@ -625,10 +631,6 @@
       transform: scale(1);
       filter: blur(0);
       transition-delay: 2.45s;
-    }
-
-    body.entered .media-frame::after {
-      opacity: 1;
     }
 
     .details {
@@ -639,10 +641,10 @@
 
     .venue {
       font-family: "Italiana", serif;
-      font-size: clamp(2.05rem, 3.3vw, 3.1rem);
-      line-height: 1.18;
-      letter-spacing: 0.14em;
-      color: var(--ink-deep);
+      font-size: clamp(1.52rem, 2.45vw, 2.2rem);
+      line-height: 1.24;
+      letter-spacing: 0.11em;
+      color: var(--venue-brown);
       margin: 0;
       text-transform: uppercase;
     }
@@ -899,6 +901,21 @@
       }
     }
 
+    @keyframes twinkle {
+      0%, 100% {
+        transform: scale(0.5);
+        opacity: 0.08;
+      }
+      22% {
+        transform: scale(1.1);
+        opacity: 0.96;
+      }
+      46% {
+        transform: scale(0.72);
+        opacity: 0.26;
+      }
+    }
+
     @keyframes sweep {
       0% {
         transform: translateX(-95%) rotate(8deg);
@@ -921,63 +938,20 @@
 
     @keyframes sweepSeal {
       0% {
-        transform: translateX(-132%) rotate(2deg);
+        transform: translateX(-95%) rotate(8deg);
         opacity: 0;
       }
-      16% {
-        opacity: 0.52;
+      12% {
+        opacity: 0.58;
       }
       42% {
         opacity: 0.72;
       }
       58% {
-        opacity: 0.10;
+        opacity: 0.24;
       }
       100% {
-        transform: translateX(132%) rotate(2deg);
-        opacity: 0;
-      }
-    }
-
-    @keyframes candleSweep {
-      0%, 100% {
-        transform: translateX(-125%) rotate(6deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0;
-      }
-      28% {
-        opacity: 0.5;
-      }
-      46% {
-        opacity: 0.75;
-      }
-      62% {
-        opacity: 0.18;
-      }
-      100% {
-        transform: translateX(125%) rotate(6deg);
-        opacity: 0;
-      }
-    }
-
-    @keyframes gifSweep {
-      0% {
-        transform: translateX(-125%) rotate(5deg);
-        opacity: 0;
-      }
-      16% {
-        opacity: 0.65;
-      }
-      46% {
-        opacity: 0.9;
-      }
-      70% {
-        opacity: 0.12;
-      }
-      100% {
-        transform: translateX(125%) rotate(5deg);
+        transform: translateX(95%) rotate(8deg);
         opacity: 0;
       }
     }
@@ -1046,10 +1020,6 @@
         font-size: 1.02rem;
       }
 
-      .monogram {
-        width: 112px;
-      }
-
       .names-main {
         font-size: clamp(3rem, 18vw, 5rem);
       }
@@ -1060,8 +1030,8 @@
       }
 
       .venue {
-        font-size: 1.6rem;
-        letter-spacing: 0.10em;
+        font-size: 1.45rem;
+        letter-spacing: 0.08em;
       }
 
       .detail-sub {
@@ -1081,6 +1051,12 @@
     <span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
 
+  <div class="bg-sparkles" aria-hidden="true">
+    <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
+    <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
+    <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
+  </div>
+
   <main class="page">
     <section class="landing" id="landing">
       <div class="landing-inner">
@@ -1088,6 +1064,13 @@
           <span class="seal-shadow"></span>
           <span class="seal-surface"></span>
           <span class="seal-light"></span>
+
+          <span class="seal-sparkles">
+            <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
+            <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
+            <span class="sparkle"></span>
+          </span>
+
           <span class="seal-text">
             <span class="seal-date">13th July</span>
             <span class="seal-prompt">Click to Enter</span>
@@ -1103,19 +1086,6 @@
     <section class="invitation" id="invitation">
       <div class="card">
         <header class="names">
-          <div class="monogram-wrap" aria-hidden="true">
-            <svg class="monogram" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-              <path class="wash" d="M44 48 C58 24, 104 25, 115 48 C121 61, 118 76, 106 86 C116 95, 119 111, 110 124 C98 141, 58 142, 43 122 C31 106, 31 84, 47 72 C35 63, 34 54, 44 48 Z"/>
-              <path class="stroke" d="M98 46 C88 34, 61 30, 45 42 C28 54, 29 79, 47 88 C59 94, 73 93, 84 88"/>
-              <path class="stroke" d="M96 116 C87 127, 63 131, 46 122 C29 113, 28 89, 46 80 C58 73, 72 73, 85 78"/>
-              <path class="stroke-thin" d="M93 60 C102 68, 106 80, 103 94"/>
-              <path class="stroke" d="M92 126 L109 38"/>
-              <path class="stroke" d="M76 82 L120 82"/>
-              <path class="stroke-thin" d="M86 60 C93 50, 102 42, 113 36 C122 31, 132 31, 140 36"/>
-              <path class="stroke-thin" d="M108 38 C111 31, 116 25, 122 22"/>
-            </svg>
-          </div>
-
           <h1 class="names-main">Corey <span class="ampersand">&amp;</span> Adam</h1>
 
           <div class="ornament-line" aria-hidden="true">
@@ -1207,7 +1177,6 @@
 
     enterButton.addEventListener('click', () => {
       document.body.classList.add('entering');
-
       setTimeout(() => {
         document.body.classList.add('entered');
       }, 2100);
