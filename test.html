@@ -390,6 +390,8 @@
     .invitation {
       position: relative;
       min-height: 100vh;
+      max-width: var(--page-max);
+      margin: 0 auto;
       opacity: 0;
       transform: scale(1.01);
       filter: blur(16px);
@@ -397,26 +399,20 @@
         opacity 3.8s var(--ease),
         transform 3.8s var(--ease),
         filter 3.8s var(--ease);
-      padding: 4.5rem 1.5rem 7rem;
+      padding: clamp(1.5rem, 3vw, 2.7rem);
       z-index: 3;
       pointer-events: none;
+      border-radius: 28px;
+      background: rgba(255, 250, 240, 0.18);
+      backdrop-filter: blur(4px);
+      box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.30);
+      overflow: hidden;
     }
     body.entered .invitation {
       opacity: 1;
       transform: scale(1);
       filter: blur(0);
       pointer-events: auto;
-    }
-    .card {
-      max-width: var(--page-max);
-      margin: 0 auto;
-      position: relative;
-      padding: clamp(1.5rem, 3vw, 2.7rem);
-      border-radius: 28px;
-      background: rgba(255, 250, 240, 0.18);
-      backdrop-filter: blur(4px);
-      box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.30);
-      overflow: hidden;
     }
     .names,
     .invite-copy,
@@ -869,7 +865,7 @@
        Scattered inside the invitation card itself. Uses the existing
        .sparkle class and twinkle keyframe — no extra animation cost.
     ─────────────────────────────────────────────────────────────── */
-    .card-sparkles {
+    .invitation-sparkles {
       position: absolute;
       inset: 0;
       pointer-events: none;
@@ -877,25 +873,25 @@
       overflow: hidden;
       border-radius: inherit;
     }
-    .card-sparkles .sparkle {
+    .invitation-sparkles .sparkle {
       width: 28px;
       height: 28px;
     }
     /* Hugging the left and right edges so they never overlap body text */
-    .card-sparkles .sparkle:nth-child(1)  { top: 3%;    left: 2%;   animation-delay: 0.4s;  animation-duration: 6.8s; }
-    .card-sparkles .sparkle:nth-child(2)  { top: 3%;    right: 3%;  animation-delay: 2.1s;  animation-duration: 7.2s; }
-    .card-sparkles .sparkle:nth-child(3)  { top: 16%;   left: 4%;   animation-delay: 3.8s;  animation-duration: 5.6s; }
-    .card-sparkles .sparkle:nth-child(4)  { top: 16%;   right: 4%;  animation-delay: 1.5s;  animation-duration: 8.1s; }
-    .card-sparkles .sparkle:nth-child(5)  { top: 36%;   left: 1%;   animation-delay: 4.6s;  animation-duration: 6.4s; }
-    .card-sparkles .sparkle:nth-child(6)  { top: 36%;   right: 1%;  animation-delay: 0.9s;  animation-duration: 7.8s; }
-    .card-sparkles .sparkle:nth-child(7)  { top: 56%;   left: 3%;   animation-delay: 2.8s;  animation-duration: 6.1s; }
-    .card-sparkles .sparkle:nth-child(8)  { top: 56%;   right: 2%;  animation-delay: 5.3s;  animation-duration: 7.4s; }
-    .card-sparkles .sparkle:nth-child(9)  { bottom: 16%; left: 3%;  animation-delay: 1.2s;  animation-duration: 5.9s; }
-    .card-sparkles .sparkle:nth-child(10) { bottom: 16%; right: 2%; animation-delay: 3.4s;  animation-duration: 8.4s; }
-    .card-sparkles .sparkle:nth-child(11) { bottom: 4%;  left: 6%;  animation-delay: 0.7s;  animation-duration: 6.6s; }
-    .card-sparkles .sparkle:nth-child(12) { bottom: 4%;  right: 6%; animation-delay: 4.1s;  animation-duration: 7.1s; }
-    .card-sparkles .sparkle:nth-child(13) { top: 75%;   left: 2%;  animation-delay: 2.5s;  animation-duration: 9.0s; }
-    .card-sparkles .sparkle:nth-child(14) { top: 75%;   right: 2%; animation-delay: 6.2s;  animation-duration: 6.3s; }
+    .invitation-sparkles .sparkle:nth-child(1)  { top: 3%;    left: 2%;   animation-delay: 0.4s;  animation-duration: 6.8s; }
+    .invitation-sparkles .sparkle:nth-child(2)  { top: 3%;    right: 3%;  animation-delay: 2.1s;  animation-duration: 7.2s; }
+    .invitation-sparkles .sparkle:nth-child(3)  { top: 16%;   left: 4%;   animation-delay: 3.8s;  animation-duration: 5.6s; }
+    .invitation-sparkles .sparkle:nth-child(4)  { top: 16%;   right: 4%;  animation-delay: 1.5s;  animation-duration: 8.1s; }
+    .invitation-sparkles .sparkle:nth-child(5)  { top: 36%;   left: 1%;   animation-delay: 4.6s;  animation-duration: 6.4s; }
+    .invitation-sparkles .sparkle:nth-child(6)  { top: 36%;   right: 1%;  animation-delay: 0.9s;  animation-duration: 7.8s; }
+    .invitation-sparkles .sparkle:nth-child(7)  { top: 56%;   left: 3%;   animation-delay: 2.8s;  animation-duration: 6.1s; }
+    .invitation-sparkles .sparkle:nth-child(8)  { top: 56%;   right: 2%;  animation-delay: 5.3s;  animation-duration: 7.4s; }
+    .invitation-sparkles .sparkle:nth-child(9)  { bottom: 16%; left: 3%;  animation-delay: 1.2s;  animation-duration: 5.9s; }
+    .invitation-sparkles .sparkle:nth-child(10) { bottom: 16%; right: 2%; animation-delay: 3.4s;  animation-duration: 8.4s; }
+    .invitation-sparkles .sparkle:nth-child(11) { bottom: 4%;  left: 6%;  animation-delay: 0.7s;  animation-duration: 6.6s; }
+    .invitation-sparkles .sparkle:nth-child(12) { bottom: 4%;  right: 6%; animation-delay: 4.1s;  animation-duration: 7.1s; }
+    .invitation-sparkles .sparkle:nth-child(13) { top: 75%;   left: 2%;  animation-delay: 2.5s;  animation-duration: 9.0s; }
+    .invitation-sparkles .sparkle:nth-child(14) { top: 75%;   right: 2%; animation-delay: 6.2s;  animation-duration: 6.3s; }
 
     /* ── Mobile ambient glow ───────────────────────────────────────
        Hidden on desktop (display:none), turned on in the mobile
@@ -957,7 +953,7 @@
       .seal-button {
         width: min(80vw, 400px);
       }
-      .card {
+      .invitation {
         padding: 1.3rem;
       }
       .timeline {
@@ -1065,7 +1061,7 @@
       }
       body.entered .invitation {
         opacity: 1;
-        transform: none !important;
+        transform: translateY(0) !important;
         filter: none !important;
       }
 
@@ -1100,11 +1096,11 @@
       /* 8. Card: no backdrop-filter on mobile. Also switch overflow from hidden
             (which creates a scroll container on iOS and traps touch events)
             to clip (same visual behaviour, no scroll context). */
-      .card {
+      .invitation {
         background: rgba(252, 244, 228, 0.96);
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
-        overflow: hidden;     /* keep visual clipping, do not create clipped touch layer */
+        overflow: hidden;
       }
 
       /* Ensure natural inertia scrolling on iOS */
@@ -1115,11 +1111,7 @@
       /* Tell the browser these areas pan vertically — helps iOS route
          the touch event straight to the body scroll, not hunt for a
          scroll container inside the card. */
-      .page,
-      .invitation,
-      .card {
-        touch-action: auto;
-      }
+      
 
       /* 9. Landing exit: reduce to a lighter blur. */
       body.entering .landing {
@@ -1144,7 +1136,7 @@
     /* Honour reduced-motion system preference. */
     @media (prefers-reduced-motion: reduce) {
       .bokeh span, .sparkle, .seal-light, .rsvp-button::after,
-      .mobile-glow span, .card-sparkles .sparkle { animation: none; }
+      .mobile-glow span, .invitation-sparkles .sparkle { animation: none; }
       .landing, .invitation,
       .names, .invite-copy, .feature-media,
       .details, .times-wrap, .bottom-actions {
@@ -1194,7 +1186,6 @@
       </div>
     </section>
     <section class="invitation" id="invitation">
-      <div class="card">
         <!-- Sparkles scattered across the invitation card -->
         <div class="card-sparkles" aria-hidden="true">
           <span class="sparkle"></span><span class="sparkle"></span>
@@ -1267,7 +1258,6 @@
             <span class="rsvp-label">Let Us Know</span>
           </button>
         </section>
-      </div>
     </section>
   </main>
   <div class="modal" id="rsvpModal" aria-hidden="true">
