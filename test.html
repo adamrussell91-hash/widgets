@@ -139,8 +139,8 @@
       position: absolute;
       display: block;
       border-radius: 50%;
-      background: radial-gradient(circle, var(--c1) 0%, var(--c2) 42%, transparent 74%);
-      opacity: 0.95;
+      background: radial-gradient(circle, var(--c1) 0%, var(--c2) 38%, rgba(255,240,205,0.05) 58%, transparent 78%);
+      opacity: 1;
       will-change: transform, opacity;
       animation: bloomFloat var(--dur) ease-in-out infinite;
       animation-delay: var(--delay);
@@ -166,10 +166,10 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      z-index: 0;
+      z-index: 1;
       overflow: hidden;
       border-radius: inherit;
-      opacity: 0.95;
+      opacity: 1;
     }
 
     .sparkle {
@@ -311,7 +311,7 @@
       background:rgba(255,250,240,0.18); backdrop-filter:blur(4px);
       box-shadow:var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.30); overflow:hidden;
     }
-    .card > *:not(.invite-edge-sparkles) { position:relative; z-index:1; }
+    .card > *:not(.invite-edge-sparkles) { position:relative; z-index:2; }
     .names,.invite-copy,.feature-media,.details,.times-wrap,.bottom-actions {
       opacity:0; transform:translateY(26px); transition:opacity 2.2s var(--ease), transform 2.2s var(--ease), filter 2.2s var(--ease); filter:blur(10px);
     }
@@ -524,7 +524,7 @@
       }
       .mobile-panel-content {
         position:relative;
-        z-index:1;
+        z-index:2;
         flex:1 1 auto;
         display:flex;
         flex-direction:column;
@@ -536,9 +536,10 @@
         position:absolute;
         inset:0;
         pointer-events:none;
-        z-index:0;
+        z-index:1;
         overflow:hidden;
         border-radius:inherit;
+        opacity:1;
       }
       .mobile-shell-sparkles .sparkle {
         width:20px;
@@ -581,12 +582,20 @@
         object-fit:cover;
         border-radius:8px;
       }
+      .mobile-media-large img {
+        max-height:28svh;
+      }
+      .mobile-venue-block {
+        display:grid;
+        gap:0.55rem;
+        margin-top:0.2rem;
+      }
       .mobile-venue {
         text-align:center;
         font-family:"Italiana", serif;
-        font-size:clamp(1.18rem, 5.4vw, 1.55rem);
-        line-height:1.18;
-        letter-spacing:0.08em;
+        font-size:clamp(1.08rem, 4.9vw, 1.35rem);
+        line-height:1.24;
+        letter-spacing:0.07em;
         color:var(--venue-brown);
         text-transform:uppercase;
       }
@@ -594,9 +603,31 @@
         text-align:center;
         font-family:"Cormorant Garamond", serif;
         font-size:1rem;
-        line-height:1.28;
+        line-height:1.34;
         font-style:italic;
         color:rgba(86,58,33,0.92);
+      }
+      .mobile-note-single {
+        text-align:center;
+        font-family:"Forum", serif;
+        font-size:0.92rem;
+        line-height:1.2;
+        color:rgba(82,57,34,0.94);
+      }
+      .mobile-divider {
+        text-align:center;
+        font-family:"Cormorant Garamond", serif;
+        font-size:1.1rem;
+        color:rgba(182,136,57,0.95);
+        line-height:1;
+        margin-top:0.15rem;
+      }
+      .mobile-times-title {
+        text-align:center;
+        font-family:"Italiana", serif;
+        font-size:1.06rem;
+        letter-spacing:0.18em;
+        color:var(--ink-mid);
       }
       .mobile-times {
         display:grid;
@@ -641,7 +672,7 @@
       }
       .mobile-rsvp-inner {
         position:relative;
-        z-index:1;
+        z-index:2;
         display:grid;
         gap:0.8rem;
         width:100%;
@@ -697,6 +728,12 @@
       .modal { backdrop-filter:none; }
       .rsvp-button::after { display:none; }
       .landing-sparkles .sparkle:nth-child(n+51) { display:none; }
+
+      .ambient-blooms span {
+        opacity: 1;
+      }
+      .landing-blooms .orb-1 { filter: saturate(1.02); }
+      .landing-blooms .orb-2 { filter: saturate(1.02); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -709,20 +746,20 @@
 </head>
 <body>
   <div class="landing-blooms ambient-blooms" aria-hidden="true">
-    <span class="landing-orb orb-1" style="width:420px; height:420px; top:-12%; left:-16%; --c1:rgba(255,248,224,0.58); --c2:rgba(255,241,205,0.24); --dur:26s; --delay:0s;"></span>
-<span class="landing-orb orb-2" style="width:320px; height:320px; top:8%; left:78%; --c1:rgba(255,244,216,0.48); --c2:rgba(255,236,198,0.18); --dur:30s; --delay:-7s;"></span>
-<span class="landing-orb orb-3" style="width:280px; height:280px; top:38%; left:-10%; --c1:rgba(255,247,225,0.42); --c2:rgba(255,240,206,0.16); --dur:24s; --delay:-11s;"></span>
-<span class="landing-orb orb-4" style="width:360px; height:360px; top:50%; left:82%; --c1:rgba(255,246,220,0.48); --c2:rgba(255,238,200,0.18); --dur:28s; --delay:-15s;"></span>
-<span class="landing-orb orb-5" style="width:240px; height:240px; top:74%; left:16%; --c1:rgba(255,248,228,0.28); --c2:rgba(255,241,205,0.10); --dur:20s; --delay:-5s;"></span>
-<span class="landing-orb orb-6" style="width:280px; height:280px; top:78%; left:68%; --c1:rgba(255,245,220,0.26); --c2:rgba(255,236,198,0.10); --dur:24s; --delay:-12s;"></span>
+    <span class="landing-orb orb-1" style="width:620px; height:620px; top:-10%; left:-22%; --c1:rgba(255,248,224,0.84); --c2:rgba(255,241,205,0.36); --dur:26s; --delay:0s;"></span>
+<span class="landing-orb orb-2" style="width:460px; height:460px; top:4%; left:72%; --c1:rgba(255,244,216,0.76); --c2:rgba(255,236,198,0.30); --dur:30s; --delay:-7s;"></span>
+<span class="landing-orb orb-3" style="width:380px; height:380px; top:34%; left:-8%; --c1:rgba(255,247,225,0.66); --c2:rgba(255,240,206,0.24); --dur:24s; --delay:-11s;"></span>
+<span class="landing-orb orb-4" style="width:520px; height:520px; top:48%; left:76%; --c1:rgba(255,246,220,0.74); --c2:rgba(255,238,200,0.28); --dur:28s; --delay:-15s;"></span>
+<span class="landing-orb orb-5" style="width:300px; height:300px; top:74%; left:12%; --c1:rgba(255,248,228,0.52); --c2:rgba(255,241,205,0.18); --dur:20s; --delay:-5s;"></span>
+<span class="landing-orb orb-6" style="width:340px; height:340px; top:78%; left:62%; --c1:rgba(255,245,220,0.48); --c2:rgba(255,236,198,0.16); --dur:24s; --delay:-12s;"></span>
   </div>
   <div class="invite-blooms ambient-blooms" aria-hidden="true">
-    <span class="invite-orb orb-1" style="width:420px; height:420px; top:-12%; left:-16%; --c1:rgba(255,248,224,0.58); --c2:rgba(255,241,205,0.24); --dur:26s; --delay:0s;"></span>
-<span class="invite-orb orb-2" style="width:320px; height:320px; top:8%; left:78%; --c1:rgba(255,244,216,0.48); --c2:rgba(255,236,198,0.18); --dur:30s; --delay:-7s;"></span>
-<span class="invite-orb orb-3" style="width:280px; height:280px; top:38%; left:-10%; --c1:rgba(255,247,225,0.42); --c2:rgba(255,240,206,0.16); --dur:24s; --delay:-11s;"></span>
-<span class="invite-orb orb-4" style="width:360px; height:360px; top:50%; left:82%; --c1:rgba(255,246,220,0.48); --c2:rgba(255,238,200,0.18); --dur:28s; --delay:-15s;"></span>
-<span class="invite-orb orb-5" style="width:240px; height:240px; top:74%; left:16%; --c1:rgba(255,248,228,0.28); --c2:rgba(255,241,205,0.10); --dur:20s; --delay:-5s;"></span>
-<span class="invite-orb orb-6" style="width:280px; height:280px; top:78%; left:68%; --c1:rgba(255,245,220,0.26); --c2:rgba(255,236,198,0.10); --dur:24s; --delay:-12s;"></span>
+    <span class="invite-orb orb-1" style="width:620px; height:620px; top:-10%; left:-22%; --c1:rgba(255,248,224,0.84); --c2:rgba(255,241,205,0.36); --dur:26s; --delay:0s;"></span>
+<span class="invite-orb orb-2" style="width:460px; height:460px; top:4%; left:72%; --c1:rgba(255,244,216,0.76); --c2:rgba(255,236,198,0.30); --dur:30s; --delay:-7s;"></span>
+<span class="invite-orb orb-3" style="width:380px; height:380px; top:34%; left:-8%; --c1:rgba(255,247,225,0.66); --c2:rgba(255,240,206,0.24); --dur:24s; --delay:-11s;"></span>
+<span class="invite-orb orb-4" style="width:520px; height:520px; top:48%; left:76%; --c1:rgba(255,246,220,0.74); --c2:rgba(255,238,200,0.28); --dur:28s; --delay:-15s;"></span>
+<span class="invite-orb orb-5" style="width:300px; height:300px; top:74%; left:12%; --c1:rgba(255,248,228,0.52); --c2:rgba(255,241,205,0.18); --dur:20s; --delay:-5s;"></span>
+<span class="invite-orb orb-6" style="width:340px; height:340px; top:78%; left:62%; --c1:rgba(255,245,220,0.48); --c2:rgba(255,236,198,0.16); --dur:24s; --delay:-12s;"></span>
   </div>
 
   <div class="bokeh" aria-hidden="true">
@@ -929,21 +966,21 @@
                 <h1>Corey <span class="ampersand">&amp;</span> Adam</h1>
               </div>
               <div class="mobile-kicker">Invite you to celebrate their wedding</div>
-              <div class="mobile-media">
+              <div class="mobile-media mobile-media-large">
                 <img src="/widgets/Wedding%20Invite-2.gif?v=4" alt="Wedding invitation illustration">
               </div>
-              <div class="mobile-venue">Bar Sole, Mayfield<br>173 Maitland Rd, Tighes Hill</div>
-              <div class="mobile-copy">All you can eat pizza and cheesy garlic bread, an evening with our favourite people.</div>
-              <div class="mobile-times">
-                <div class="mobile-time-row"><div class="time">5:30 pm</div><div class="label">Bar Sole opens</div></div>
-                <div class="mobile-time-row"><div class="time">6:00 pm</div><div class="label">Live music</div></div>
-                <div class="mobile-time-row"><div class="time">8:00 pm</div><div class="label">Cake</div></div>
-                <div class="mobile-time-row"><div class="time">10:00 pm</div><div class="label">Evening closes</div></div>
-              </div>
-              <div class="mobile-notes">
-                <div class="note">Smart casual attire is welcome.</div>
-                <div class="note">Please keep photos off social media.</div>
-                <div class="note">The venue is BYO.</div>
+              <div class="mobile-venue-block">
+                <div class="mobile-venue">BAR SOLE, MAYFIELD<br>173 MAITLAND RD, TIGHES HILL</div>
+                <div class="mobile-copy">All you can eat pizza and cheesy garlic bread, an evening with our favourite people.</div>
+                <div class="mobile-note-single">The venue is BYO.</div>
+                <div class="mobile-divider">✦</div>
+                <div class="mobile-times-title">TIMES</div>
+                <div class="mobile-times">
+                  <div class="mobile-time-row"><div class="time">5:30 pm</div><div class="label">Bar Sole opens</div></div>
+                  <div class="mobile-time-row"><div class="time">6:00 pm</div><div class="label">Live music</div></div>
+                  <div class="mobile-time-row"><div class="time">8:00 pm</div><div class="label">Cake</div></div>
+                  <div class="mobile-time-row"><div class="time">10:00 pm</div><div class="label">Evening closes</div></div>
+                </div>
               </div>
             </div>
           </section>
@@ -951,11 +988,11 @@
           <section class="mobile-panel mobile-rsvp-panel" data-panel="rsvp">
             <div class="mobile-rsvp-inner">
               <div class="mobile-rsvp-title">RSVP</div>
-              <div class="mobile-rsvp-copy">Let us know if you'll be there. Tap below to open the RSVP form.</div>
+              <div class="mobile-rsvp-copy">Smart casual attire is welcome.</div>
+              <div class="mobile-rsvp-copy">We&#39;d love for you to capture the memories. We simply ask that photos remain off social media.</div>
               <button class="rsvp-button" id="openRsvpMobile" type="button">
                 <span class="rsvp-label">Let Us Know</span>
               </button>
-              <div class="mobile-rsvp-copy">Smart casual, BYO, and please keep photos off social media.</div>
             </div>
           </section>
         </div>
