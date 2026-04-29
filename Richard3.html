@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Richard III — Annotated Script | St Aloysius' College</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /* ── SAC tokens ── */
+  :root {
+    --blue:        #000099;
+    --blue-dark:   #00006a;
+    --blue-mid:    #0000cc;
+    --gold:        #FFCC00;
+    --gold-dark:   #c9a000;
+    --gold-light:  #fff3b0;
+    --cream:       #faf6ec;
+    --parchment:   #f2ead8;
+    --ink:         #1a1040;
+    --red:         #CC0033;
+    --font-display: 'Cinzel', serif;
+    --font-text:    'IM Fell English', Georgia, 'Book Antiqua', Palatino, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--blue-dark);
+    font-family: var(--font-text);
+    color: var(--ink);
+    min-height: 100vh;
+    /* illuminated manuscript texture */
+    background-image:
+      radial-gradient(ellipse at 20% 0%, #0000cc 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, #000077 0%, transparent 60%);
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--blue);
+    border-bottom: 4px solid var(--gold);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 32px;
+  }
+
+  .header-crest {
+    height: 56px;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .header-titles {
+    flex: 1;
+  }
+
+  .header-institution {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.85;
+    margin-bottom: 3px;
+  }
+
+  .header-play-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+
+  .header-play-subtitle {
+    font-family: var(--font-text);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-light);
+    margin-top: 3px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── SCENE NAV ── */
+  .scene-nav {
+    background: var(--blue-dark);
+    border-bottom: 2px solid rgba(255,204,0,0.3);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .scene-nav-label {
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.6;
+    padding-right: 20px;
+    border-right: 1px solid rgba(255,204,0,0.2);
+    margin-right: 16px;
+    white-space: nowrap;
+  }
+
+  .scene-tab {
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    padding: 13px 20px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .scene-tab:hover { color: var(--gold-light); }
+
+  .scene-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .page-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* ── SCRIPT COLUMN ── */
+  .script-column {
+    background: var(--parchment);
+    border: 1px solid rgba(255,204,0,0.3);
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(255,204,0,0.08),
+      0 8px 40px rgba(0,0,0,0.4),
+      inset 0 0 80px rgba(210,185,120,0.12);
+  }
+
+  /* Decorative illuminated border */
+  .script-column::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(200,160,0,0.25);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .script-column::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(200,160,0,0.12);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── SCENE SECTIONS ── */
+  .scene-section {
+    display: none;
+    padding: 48px 56px 56px;
+  }
+
+  .scene-section.active { display: block; }
+
+  /* ── SCENE HEADER ── */
+  .scene-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid var(--gold-dark);
+    position: relative;
+  }
+
+  .scene-header::after {
+    content: '✦';
+    display: block;
+    color: var(--gold-dark);
+    font-size: 18px;
+    margin-top: 16px;
+    letter-spacing: 12px;
+  }
+
+  .scene-act-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--blue);
+    opacity: 0.65;
+    margin-bottom: 8px;
+  }
+
+  .scene-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .scene-location {
+    font-family: var(--font-text);
+    font-style: italic;
+    font-size: 16px;
+    color: #555;
+  }
+
+  /* ── STAGE DIRECTIONS ── */
+  .stage-direction {
+    font-style: italic;
+    font-size: 17px;
+    color: #664400;
+    text-align: center;
+    margin: 20px 0 16px;
+    letter-spacing: 0.01em;
+    opacity: 0.82;
+  }
+
+  /* ── SPEECH ── */
+  .speech {
+    margin-bottom: 24px;
+  }
+
+  .speaker {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .lines {
+    font-size: 19px;
+    line-height: 1.85;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+
+  .lines .line {
+    display: block;
+  }
+
+  /* ── ANNOTATED PASSAGE ── */
+  .ann {
+    cursor: pointer;
+    border-bottom: 2px solid var(--gold-dark);
+    background: linear-gradient(to bottom, transparent 60%, rgba(255,204,0,0.18) 60%);
+    padding-bottom: 1px;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+  }
+
+  .ann:hover {
+    background: linear-gradient(to bottom, transparent 40%, rgba(255,204,0,0.32) 40%);
+    border-bottom-color: var(--gold);
+  }
+
+  .ann.active-ann {
+    background: linear-gradient(to bottom, transparent 30%, rgba(255,204,0,0.45) 30%);
+    border-bottom-color: var(--gold);
+  }
+
+  /* Annotation superscript marker */
+  .ann-marker {
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--blue);
+    vertical-align: super;
+    margin-left: 1px;
+    letter-spacing: 0;
+    background: var(--gold);
+    padding: 0 3px 1px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+    top: -2px;
+    line-height: 1;
+  }
+
+  .ann:hover .ann-marker,
+  .ann.active-ann .ann-marker {
+    background: var(--gold-dark);
+    color: white;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .scene-divider {
+    text-align: center;
+    margin: 36px 0 28px;
+    color: var(--gold-dark);
+    font-size: 13px;
+    letter-spacing: 10px;
+    opacity: 0.5;
+  }
+
+  /* ── ANNOTATION PANEL (right column) ── */
+  .annotation-panel {
+    position: sticky;
+    top: 120px;
+    background: var(--blue);
+    border: 1px solid var(--gold-dark);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    min-height: 300px;
+    transition: opacity 0.25s;
+  }
+
+  .annotation-panel::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid rgba(255,204,0,0.18);
+    pointer-events: none;
+  }
+
+  .panel-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 32px;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .panel-empty-icon {
+    font-size: 32px;
+    color: var(--gold);
+    opacity: 0.4;
+    font-family: var(--font-display);
+  }
+
+  .panel-empty-text {
+    font-family: var(--font-text);
+    font-style: italic;
+    font-size: 16px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
+  }
+
+  .panel-content {
+    display: none;
+    padding: 0 0 28px;
+  }
+
+  .panel-content.visible { display: block; }
+
+  .panel-header {
+    background: var(--gold);
+    padding: 18px 24px 14px;
+    border-bottom: 2px solid var(--gold-dark);
+  }
+
+  .panel-technique-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .technique-tag {
+    font-family: var(--font-display);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--blue);
+    color: var(--gold);
+    padding: 3px 8px;
+    border: 1px solid rgba(255,204,0,0.3);
+  }
+
+  .panel-quote {
+    font-family: var(--font-text);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--blue-dark);
+    line-height: 1.5;
+    font-weight: 700;
+  }
+
+  .panel-body {
+    padding: 20px 24px 0;
+  }
+
+  .panel-note {
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 16px;
+    text-wrap: pretty;
+  }
+
+  .panel-note + .panel-note {
+    border-top: 1px solid rgba(255,204,0,0.12);
+    padding-top: 14px;
+  }
+
+  .panel-note b, .panel-note strong {
+    color: var(--gold);
+    font-weight: normal;
+    font-style: italic;
+  }
+
+  .panel-close {
+    display: block;
+    margin: 16px 24px 0;
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,204,0,0.5);
+    cursor: pointer;
+    background: none;
+    border: 1px solid rgba(255,204,0,0.2);
+    padding: 8px 16px;
+    transition: color 0.15s, border-color 0.15s;
+    text-align: center;
+  }
+
+  .panel-close:hover {
+    color: var(--gold);
+    border-color: rgba(255,204,0,0.5);
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    margin-top: 24px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,204,0,0.15);
+    padding: 18px 24px;
+  }
+
+  .legend-title {
+    font-family: var(--font-display);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.6;
+    margin-bottom: 12px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-family: var(--font-text);
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .legend-mark {
+    display: inline-block;
+    width: 28px;
+    height: 16px;
+    background: linear-gradient(to bottom, transparent 50%, rgba(255,204,0,0.35) 50%);
+    border-bottom: 2px solid var(--gold-dark);
+    flex-shrink: 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .page-wrapper {
+      grid-template-columns: 1fr;
+      padding: 20px 16px 60px;
+    }
+    .annotation-panel {
+      position: static;
+      order: -1;
+    }
+    .scene-section { padding: 32px 24px 40px; }
+    .lines { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-titles">
+      <div class="header-institution">St Aloysius' College &nbsp;·&nbsp; English Advanced</div>
+      <div class="header-play-title">Richard III</div>
+      <div class="header-play-subtitle">An Annotated Text — Act I, Scenes 1 &amp; 2</div>
+    </div>
+  </div>
+  <!-- SCENE TABS (inside sticky header for always-accessible nav) -->
+  <div style="background:var(--blue-dark); border-top: 1px solid rgba(255,204,0,0.15);">
+    <nav class="scene-nav">
+      <span class="scene-nav-label">Scene</span>
+      <button class="scene-tab active" onclick="switchScene('s1', this)">Act I · Scene 1 — Richard's Soliloquy</button>
+      <button class="scene-tab" onclick="switchScene('s2', this)">Act I · Scene 2 — The Wooing of Anne</button>
+    </nav>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="page-wrapper">
+
+  <!-- SCRIPT COLUMN -->
+  <article class="script-column">
+
+    <!-- ══════════════════════════════════════════════
+         ACT I, SCENE 1
+    ══════════════════════════════════════════════ -->
+    <section class="scene-section active" id="s1">
+      <header class="scene-header">
+        <div class="scene-act-label">Act I · Scene 1</div>
+        <h1 class="scene-title">Richard's Opening Soliloquy &amp; Duplicity</h1>
+        <div class="scene-location">London. A street.</div>
+      </header>
+
+      <p class="stage-direction">Enter RICHARD, DUKE OF GLOUCESTER, solus.</p>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="1">Now is the winter of our discontent<span class="ann-marker">1</span></span></span>
+          <span class="line"><span class="ann" data-ann="1">Made glorious summer by this sun of York;</span></span>
+          <span class="line">And all the clouds that lour'd upon our house</span>
+          <span class="line">In the deep bosom of the ocean buried.</span>
+          <span class="line"><span class="ann" data-ann="2">Now are our brows bound with victorious wreaths;<span class="ann-marker">2</span></span></span>
+          <span class="line"><span class="ann" data-ann="2">Our bruisèd arms hung up for monuments;</span></span>
+          <span class="line"><span class="ann" data-ann="2">Our stern alarums changed to merry meetings,</span></span>
+          <span class="line"><span class="ann" data-ann="2">Our dreadful marches to delightful measures.</span></span>
+          <span class="line"><span class="ann" data-ann="3">Grim-visaged war hath smooth'd his wrinkled front;<span class="ann-marker">3</span></span></span>
+          <span class="line"><span class="ann" data-ann="3">And now, instead of mounting barded steeds</span></span>
+          <span class="line"><span class="ann" data-ann="3">To fright the souls of fearful adversaries,</span></span>
+          <span class="line"><span class="ann" data-ann="3">He capers nimbly in a lady's chamber</span></span>
+          <span class="line"><span class="ann" data-ann="3">To the lascivious pleasing of a lute.</span></span>
+          <span class="line"><span class="ann" data-ann="4">But I, that am not shap'd for sportive tricks,<span class="ann-marker">4</span></span></span>
+          <span class="line"><span class="ann" data-ann="4">Nor made to court an amorous looking-glass;</span></span>
+          <span class="line"><span class="ann" data-ann="4">I, that am rudely stamp'd, and want love's majesty</span></span>
+          <span class="line"><span class="ann" data-ann="4">To strut before a wanton ambling nymph;</span></span>
+          <span class="line"><span class="ann" data-ann="4">I, that am curtail'd of this fair proportion,</span></span>
+          <span class="line"><span class="ann" data-ann="4">Cheated of feature by dissembling nature,</span></span>
+          <span class="line"><span class="ann" data-ann="4">Deform'd, unfinish'd, sent before my time</span></span>
+          <span class="line"><span class="ann" data-ann="4">Into this breathing world, scarce half made up,</span></span>
+          <span class="line"><span class="ann" data-ann="4">And that so lamely and unfashionable</span></span>
+          <span class="line"><span class="ann" data-ann="4">That dogs bark at me as I halt by them;</span></span>
+          <span class="line"><span class="ann" data-ann="5">Why, I, in this weak piping time of peace,<span class="ann-marker">5</span></span></span>
+          <span class="line"><span class="ann" data-ann="5">Have no delight to pass away the time,</span></span>
+          <span class="line"><span class="ann" data-ann="5">Unless to spy my shadow in the sun</span></span>
+          <span class="line"><span class="ann" data-ann="5">And descant on mine own deformity:</span></span>
+          <span class="line"><span class="ann" data-ann="5">And therefore, since I cannot prove a lover,</span></span>
+          <span class="line"><span class="ann" data-ann="5">To entertain these fair well-spoken days,</span></span>
+          <span class="line"><span class="ann" data-ann="5">I am determined to prove a villain</span></span>
+          <span class="line"><span class="ann" data-ann="5">And hate the idle pleasures of these days.</span></span>
+          <span class="line"><span class="ann" data-ann="6">Plots have I laid, inductions dangerous,<span class="ann-marker">6</span></span></span>
+          <span class="line"><span class="ann" data-ann="6">By drunken prophecies, libels, and dreams,</span></span>
+          <span class="line"><span class="ann" data-ann="6">To set my brother Clarence and the King</span></span>
+          <span class="line"><span class="ann" data-ann="6">In deadly hate the one against the other:</span></span>
+          <span class="line"><span class="ann" data-ann="6">And if King Edward be as true and just</span></span>
+          <span class="line"><span class="ann" data-ann="6">As I am subtle, false, and treacherous,</span></span>
+          <span class="line"><span class="ann" data-ann="6">This day should Clarence closely be mew'd up,</span></span>
+          <span class="line"><span class="ann" data-ann="6">About a prophecy, which says that G</span></span>
+          <span class="line"><span class="ann" data-ann="6">Of Edward's heirs the murderer shall be.</span></span>
+          <span class="line">Dive, thoughts, down to my soul: here Clarence comes.</span>
+        </div>
+      </div>
+
+      <p class="stage-direction">Enter CLARENCE, guarded, and BRAKENBURY.</p>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="7">Brother, good day; what means this armed guard<span class="ann-marker">7</span></span></span>
+          <span class="line"><span class="ann" data-ann="7">That waits upon your Grace?</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Clarence</span>
+        <div class="lines">
+          <span class="line">His Majesty,</span>
+          <span class="line">Tend'ring my person's safety, hath appointed</span>
+          <span class="line">This conduct to convey me to the Tower.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line">Upon what cause?</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Clarence</span>
+        <div class="lines">
+          <span class="line">Because my name is George.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line">Alack, my lord, that fault is none of yours;</span>
+          <span class="line">He should, for that, commit your godfathers.</span>
+          <span class="line">O, belike his Majesty hath some intent</span>
+          <span class="line">That you shall be new-christen'd in the Tower.</span>
+          <span class="line">But what's the matter, Clarence? may I know?</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Clarence</span>
+        <div class="lines">
+          <span class="line">Yea, Richard, when I know; for I protest</span>
+          <span class="line">As yet I do not: but, as I can learn,</span>
+          <span class="line">He hearkens after prophecies and dreams;</span>
+          <span class="line">And from the cross-row plucks the letter G,</span>
+          <span class="line">And says a wizard told him that by G</span>
+          <span class="line">His issue disinherited should be;</span>
+          <span class="line">And, for my name of George begins with G,</span>
+          <span class="line">It follows in his thought that I am he.</span>
+          <span class="line">These, as I learn, and such like toys as these</span>
+          <span class="line">Have moved his highness to commit me now.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="8">Why, this it is, when men are ruled by women:<span class="ann-marker">8</span></span></span>
+          <span class="line"><span class="ann" data-ann="8">'Tis not the King that sends you to the Tower;</span></span>
+          <span class="line"><span class="ann" data-ann="8">My Lady Grey his wife, Clarence, 'tis she</span></span>
+          <span class="line"><span class="ann" data-ann="8">That tempts him to this harsh extremity.</span></span>
+          <span class="line"><span class="ann" data-ann="8">Was it not she, and that good man of worship,</span></span>
+          <span class="line"><span class="ann" data-ann="8">Anthony Woodville, her brother there,</span></span>
+          <span class="line"><span class="ann" data-ann="8">That made him send Lord Hastings to the Tower,</span></span>
+          <span class="line"><span class="ann" data-ann="8">From whence this present day he is deliver'd?</span></span>
+          <span class="line"><span class="ann" data-ann="8">We are not safe, Clarence; we are not safe.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Clarence</span>
+        <div class="lines">
+          <span class="line">By heaven, I think there's no man is secure</span>
+          <span class="line">But the Queen's kindred, and night-walking heralds</span>
+          <span class="line">That trudge betwixt the King and Mistress Shore.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="9">Humbly complaining to her deity<span class="ann-marker">9</span></span></span>
+          <span class="line"><span class="ann" data-ann="9">Got my lord chamberlain his liberty.</span></span>
+          <span class="line"><span class="ann" data-ann="9">I'll tell you what, I think it is our way,</span></span>
+          <span class="line"><span class="ann" data-ann="9">If we will keep in favour with the King,</span></span>
+          <span class="line"><span class="ann" data-ann="9">To be her men and wear her livery:</span></span>
+          <span class="line"><span class="ann" data-ann="9">The jealous o'erworn widow and herself,</span></span>
+          <span class="line"><span class="ann" data-ann="9">Since that our brother dubb'd them gentlewomen,</span></span>
+          <span class="line"><span class="ann" data-ann="9">Are mighty gossips in this monarchy.</span></span>
+        </div>
+      </div>
+
+      <p class="stage-direction">Exeunt Clarence with Brakenbury and guard.</p>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="10">Go, tread the path that thou shalt ne'er return.<span class="ann-marker">10</span></span></span>
+          <span class="line"><span class="ann" data-ann="10">Simple, plain Clarence! I do love thee so</span></span>
+          <span class="line"><span class="ann" data-ann="10">That I will shortly send thy soul to heaven,</span></span>
+          <span class="line"><span class="ann" data-ann="10">If heaven will take the present at our hands.</span></span>
+        </div>
+      </div>
+
+      <p class="stage-direction">Enter LORD HASTINGS.</p>
+
+      <div class="speech">
+        <span class="speaker">Hastings</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="11">My lord, whoever journeys to the Prince,<span class="ann-marker">11</span></span></span>
+          <span class="line"><span class="ann" data-ann="11">For God's sake, let not us two stay at home:</span></span>
+          <span class="line"><span class="ann" data-ann="11">For by the way I'll sort occasion,</span></span>
+          <span class="line"><span class="ann" data-ann="11">As index to the story we late talk'd of,</span></span>
+          <span class="line"><span class="ann" data-ann="11">To part the Queen's proud kindred from the Prince.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line">My other self, my counsel's consistory,</span>
+          <span class="line">My oracle, my prophet! My dear cousin,</span>
+          <span class="line">I, as a child, will go by thy direction.</span>
+          <span class="line">Towards Ludlow then, for we'll not stay behind.</span>
+        </div>
+      </div>
+
+      <div class="scene-divider">· · · · · · · · ·</div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="12">He cannot live, I hope, and must not die<span class="ann-marker">12</span></span></span>
+          <span class="line"><span class="ann" data-ann="12">Till George be pack'd with post-horse up to heaven.</span></span>
+          <span class="line"><span class="ann" data-ann="12">I'll in, to urge his hatred more to Clarence:</span></span>
+          <span class="line"><span class="ann" data-ann="12">With lies well steel'd with weighty arguments;</span></span>
+          <span class="line"><span class="ann" data-ann="12">And, if I fail not in my deep intent,</span></span>
+          <span class="line"><span class="ann" data-ann="12">Clarence hath not another day to live:</span></span>
+          <span class="line"><span class="ann" data-ann="12">Which done, God take King Edward to his mercy,</span></span>
+          <span class="line"><span class="ann" data-ann="12">And leave the world for me to bustle in!</span></span>
+          <span class="line"><span class="ann" data-ann="12">For then I'll marry Warwick's youngest daughter.</span></span>
+          <span class="line"><span class="ann" data-ann="12">What though I kill'd her husband and her father?</span></span>
+          <span class="line"><span class="ann" data-ann="12">The readiest way to make the wench amends</span></span>
+          <span class="line"><span class="ann" data-ann="12">Is to become her husband and her father:</span></span>
+          <span class="line"><span class="ann" data-ann="12">The which will I; not all so much for love</span></span>
+          <span class="line"><span class="ann" data-ann="12">As for another secret close intent</span></span>
+          <span class="line"><span class="ann" data-ann="12">By marrying her which I must reach unto.</span></span>
+          <span class="line"><span class="ann" data-ann="12">But yet I run before my horse to market:</span></span>
+          <span class="line"><span class="ann" data-ann="12">Clarence still breathes; Edward still lives and reigns:</span></span>
+          <span class="line"><span class="ann" data-ann="12">When they are gone, then must I count my gains.</span></span>
+        </div>
+      </div>
+    </section><!-- /s1 -->
+
+    <!-- ══════════════════════════════════════════════
+         ACT I, SCENE 2
+    ══════════════════════════════════════════════ -->
+    <section class="scene-section" id="s2">
+      <header class="scene-header">
+        <div class="scene-act-label">Act I · Scene 2</div>
+        <h1 class="scene-title">The Wooing of Anne over Henry's Corpse</h1>
+        <div class="scene-location">London. Another street.</div>
+      </header>
+
+      <p class="stage-direction">Enter the corpse of KING HENRY VI, with halberds to guard it; LADY ANNE being the mourner.</p>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="13">Set down, set down your honourable load,<span class="ann-marker">13</span></span></span>
+          <span class="line"><span class="ann" data-ann="13">If honour may be shrouded in a hearse,</span></span>
+          <span class="line"><span class="ann" data-ann="13">Whilst I awhile obsequiously lament</span></span>
+          <span class="line"><span class="ann" data-ann="13">The untimely fall of virtuous Lancaster.</span></span>
+          <span class="line"><span class="ann" data-ann="13">Poor key-cold figure of a holy king!</span></span>
+          <span class="line"><span class="ann" data-ann="13">Pale ashes of the house of Lancaster!</span></span>
+          <span class="line"><span class="ann" data-ann="13">Thou bloodless remnant of that royal blood!</span></span>
+          <span class="line">Be it lawful that I invocate thy ghost,</span>
+          <span class="line">To hear the lamentations of poor Anne,</span>
+          <span class="line">Wife to thy Edward, to thy slaughter'd son,</span>
+          <span class="line">Stabb'd by the selfsame hand that made these wounds!</span>
+          <span class="line"><span class="ann" data-ann="14">Lo, in these windows that let forth thy life,<span class="ann-marker">14</span></span></span>
+          <span class="line"><span class="ann" data-ann="14">I pour the helpless balm of my poor eyes.</span></span>
+          <span class="line"><span class="ann" data-ann="14">O, cursed be the hand that made these holes!</span></span>
+          <span class="line"><span class="ann" data-ann="14">Cursed the heart that had the heart to do it!</span></span>
+          <span class="line"><span class="ann" data-ann="14">Cursed the blood that let this blood from hence!</span></span>
+          <span class="line"><span class="ann" data-ann="14">More direful hap betide that hated wretch,</span></span>
+          <span class="line"><span class="ann" data-ann="14">That makes us wretched by the death of thee,</span></span>
+          <span class="line"><span class="ann" data-ann="14">Than I can wish to adders, spiders, toads,</span></span>
+          <span class="line"><span class="ann" data-ann="14">Or any creeping venom'd thing that lives!</span></span>
+          <span class="line"><span class="ann" data-ann="14">If ever he have child, abortive be it,</span></span>
+          <span class="line"><span class="ann" data-ann="14">Prodigious, and untimely brought to light,</span></span>
+          <span class="line"><span class="ann" data-ann="14">Whose ugly and unnatural aspect</span></span>
+          <span class="line"><span class="ann" data-ann="14">May fright the hopeful mother at the view;</span></span>
+          <span class="line"><span class="ann" data-ann="14">And that be heir to his unhappiness!</span></span>
+          <span class="line">If ever he have wife, let her be made</span>
+          <span class="line">More miserable by the death of him</span>
+          <span class="line">Than I am made by my young lord and thee!</span>
+        </div>
+      </div>
+
+      <p class="stage-direction">Enter RICHARD DUKE OF GLOUCESTER.</p>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="15">Stay, you that bear the corse, and set it down.<span class="ann-marker">15</span></span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line">What black magician conjures up this fiend,</span>
+          <span class="line">To stop devoted charitable deeds?</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line">Villains, set down the corse; or, by Saint Paul,</span>
+          <span class="line"><span class="ann" data-ann="15">I'll make a corse of him that disobeys.<span class="ann-marker">↑</span></span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="16">What, do you tremble? are you all afraid?<span class="ann-marker">16</span></span></span>
+          <span class="line"><span class="ann" data-ann="16">Alas, I blame you not; for you are mortal,</span></span>
+          <span class="line"><span class="ann" data-ann="16">And mortal eyes cannot endure the devil.</span></span>
+          <span class="line"><span class="ann" data-ann="16">Avaunt, thou dreadful minister of hell!</span></span>
+          <span class="line"><span class="ann" data-ann="16">Thou hadst but power over his mortal body,</span></span>
+          <span class="line"><span class="ann" data-ann="16">His soul thou canst not have; therefore be gone.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line">Sweet saint, for charity, be not so curst.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="17">Foul devil, for God's sake, hence, and trouble us not;<span class="ann-marker">17</span></span></span>
+          <span class="line"><span class="ann" data-ann="17">For thou hast made the happy earth thy hell,</span></span>
+          <span class="line"><span class="ann" data-ann="17">Fill'd it with cursing cries and deep exclaims.</span></span>
+          <span class="line"><span class="ann" data-ann="17">If thou delight to view thy heinous deeds,</span></span>
+          <span class="line"><span class="ann" data-ann="17">Behold this pattern of thy butcheries.</span></span>
+          <span class="line"><span class="ann" data-ann="17">O, gentlemen, see, see! dead Henry's wounds</span></span>
+          <span class="line"><span class="ann" data-ann="17">Open their congealed mouths and bleed afresh!</span></span>
+          <span class="line"><span class="ann" data-ann="17">Blush, blush, thou lump of foul deformity;</span></span>
+          <span class="line"><span class="ann" data-ann="17">For 'tis thy presence that exhales this blood</span></span>
+          <span class="line"><span class="ann" data-ann="17">From cold and empty veins, where no blood dwells;</span></span>
+          <span class="line">Thy deed, inhuman and unnatural,</span>
+          <span class="line">Provokes this deluge most unnatural.</span>
+          <span class="line">O God, which this blood madest, revenge his death!</span>
+          <span class="line">O earth, which this blood drink'st, revenge his death!</span>
+          <span class="line">Either heaven with lightning strike the murderer dead,</span>
+          <span class="line">Or earth, gape open wide, and eat him quick,</span>
+          <span class="line">As thou dost swallow up this good king's blood,</span>
+          <span class="line">Which his hell-govern'd arm hath butchered!</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line">Lady, you know no rules of charity,</span>
+          <span class="line">Which renders good for bad, blessings for curses.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line">Villain, thou know'st no law of God nor man:</span>
+          <span class="line"><span class="ann" data-ann="18">No beast so fierce but knows some touch of pity.<span class="ann-marker">18</span></span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="18">But I know none, and therefore am no beast.<span class="ann-marker">↑</span></span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="18">O wonderful, when devils tell the truth!</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="18">More wonderful, when angels are so angry.</span></span>
+          <span class="line"><span class="ann" data-ann="18">Vouchsafe, divine perfection of a woman,</span></span>
+          <span class="line"><span class="ann" data-ann="18">Of these supposed crimes, to give me leave,</span></span>
+          <span class="line"><span class="ann" data-ann="18">By circumstance, but to acquit myself.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line">Vouchsafe, diffused infection of a man,</span>
+          <span class="line">For these known evils, but to give me leave,</span>
+          <span class="line">By circumstance, to curse thy cursed self.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="19">Fairer than tongue can name thee, let me have<span class="ann-marker">19</span></span></span>
+          <span class="line"><span class="ann" data-ann="19">Some patient leisure to excuse myself.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="19">Fouler than heart can think thee, thou canst make</span></span>
+          <span class="line"><span class="ann" data-ann="19">No excuse current, but to hang thyself.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="19">By such despair, I should accuse myself.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line">And, by despairing, shouldst thou stand excused;</span>
+          <span class="line">For doing worthy vengeance on thyself,</span>
+          <span class="line">Which didst unworthy slaughter upon others.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="19">Say that I slew them not?</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line">Why, then they are not dead:</span>
+          <span class="line">But dead they are, and devilish slave, by thee.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="20">I did not kill your husband.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="20">Why, then he is alive.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="20">Nay, he is dead; and slain by Edward's hand.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="20">In thy foul throat thou liest: Queen Margaret saw</span></span>
+          <span class="line"><span class="ann" data-ann="20">Thy murd'rous falchion smoking in his blood;</span></span>
+          <span class="line"><span class="ann" data-ann="20">The which thou once didst bend against her breast,</span></span>
+          <span class="line"><span class="ann" data-ann="20">But that thy brothers beat aside the point.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="21">Your beauty was the cause of that effect;<span class="ann-marker">21</span></span></span>
+          <span class="line"><span class="ann" data-ann="21">Your beauty that did haunt me in my sleep</span></span>
+          <span class="line"><span class="ann" data-ann="21">To undertake the death of all the world,</span></span>
+          <span class="line"><span class="ann" data-ann="21">So I might live one hour in your sweet bosom.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line">If I thought that, I tell thee, homicide,</span>
+          <span class="line">These nails should rend that beauty from my cheeks.</span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line">These eyes could not endure that beauty's wreck;</span>
+          <span class="line"><span class="ann" data-ann="22">You should not blemish it, if I stood by:<span class="ann-marker">22</span></span></span>
+          <span class="line"><span class="ann" data-ann="22">As all the world is cheered by the sun,</span></span>
+          <span class="line"><span class="ann" data-ann="22">So I by that; it is my day, my life.</span></span>
+          <span class="line"><span class="ann" data-ann="22">These eyes, which never shed remorseful tear,</span></span>
+          <span class="line"><span class="ann" data-ann="22">No, when my father York and Edward wept,</span></span>
+          <span class="line"><span class="ann" data-ann="22">To hear the piteous moan that Rutland made</span></span>
+          <span class="line"><span class="ann" data-ann="22">When black-faced Clifford shook his sword at him;</span></span>
+          <span class="line"><span class="ann" data-ann="22">Nor when thy warlike father, like a child,</span></span>
+          <span class="line"><span class="ann" data-ann="22">Told the sad story of my father's death,</span></span>
+          <span class="line"><span class="ann" data-ann="22">And twenty times made pause to sob and weep,</span></span>
+          <span class="line"><span class="ann" data-ann="22">That all the standers-by had wet their cheeks</span></span>
+          <span class="line"><span class="ann" data-ann="22">Like trees bedash'd with rain: in that sad time</span></span>
+          <span class="line"><span class="ann" data-ann="22">My manly eyes did scorn an humble tear;</span></span>
+          <span class="line"><span class="ann" data-ann="22">And what these sorrows could not thence exhale,</span></span>
+          <span class="line"><span class="ann" data-ann="22">Thy beauty hath, and made them blind with weeping.</span></span>
+        </div>
+      </div>
+
+      <p class="stage-direction">RICHARD lays his sword down and kneels.</p>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="23">Nay, do not pause; for I did kill King Henry,<span class="ann-marker">23</span></span></span>
+          <span class="line"><span class="ann" data-ann="23">But 'twas thy beauty that provoked me.</span></span>
+          <span class="line"><span class="ann" data-ann="23">Nay, now dispatch; 'twas I that stabb'd young Edward,</span></span>
+          <span class="line"><span class="ann" data-ann="23">But 'twas thy heavenly face that set me on.</span></span>
+          <span class="line"><span class="ann" data-ann="23">Take up the sword again, or take up me.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="23">Arise, dissembler: though I wish thy death,</span></span>
+          <span class="line"><span class="ann" data-ann="23">I will not be the executioner.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="24">Look, how this ring encompasseth thy finger,<span class="ann-marker">24</span></span></span>
+          <span class="line"><span class="ann" data-ann="24">Even so thy breast encloseth my poor heart;</span></span>
+          <span class="line"><span class="ann" data-ann="24">Wear both of them, for both of them are thine.</span></span>
+        </div>
+      </div>
+
+      <div class="speech">
+        <span class="speaker">Anne</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="24">To take is not to give.</span></span>
+        </div>
+      </div>
+
+      <p class="stage-direction">Exeunt all except GLOUCESTER.</p>
+
+      <div class="speech">
+        <span class="speaker">Gloucester</span>
+        <div class="lines">
+          <span class="line"><span class="ann" data-ann="25">Was ever woman in this humour woo'd?<span class="ann-marker">25</span></span></span>
+          <span class="line"><span class="ann" data-ann="25">Was ever woman in this humour won?</span></span>
+          <span class="line"><span class="ann" data-ann="25">I'll have her; but I will not keep her long.</span></span>
+          <span class="line"><span class="ann" data-ann="25">What! I, that kill'd her husband and his father,</span></span>
+          <span class="line"><span class="ann" data-ann="25">To take her in her heart's extremest hate,</span></span>
+          <span class="line"><span class="ann" data-ann="25">With curses in her mouth, tears in her eyes,</span></span>
+          <span class="line"><span class="ann" data-ann="25">The bleeding witness of my hatred by;</span></span>
+          <span class="line"><span class="ann" data-ann="25">Having God, her conscience, and these bars against me,</span></span>
+          <span class="line"><span class="ann" data-ann="25">And I no friends to back my suit withal,</span></span>
+          <span class="line"><span class="ann" data-ann="25">But the plain devil and dissembling looks,</span></span>
+          <span class="line"><span class="ann" data-ann="25">And yet to win her, all the world to nothing!</span></span>
+          <span class="line"><span class="ann" data-ann="25">Hath she forgot already that brave prince,</span></span>
+          <span class="line"><span class="ann" data-ann="25">Edward, her lord, whom I, some three months since,</span></span>
+          <span class="line"><span class="ann" data-ann="25">Stabb'd in my angry mood at Tewkesbury?</span></span>
+          <span class="line">A sweeter and a lovelier gentleman,</span>
+          <span class="line">Framed in the prodigality of nature,</span>
+          <span class="line">Young, valiant, wise, and, no doubt, right royal,</span>
+          <span class="line">The spacious world cannot again afford;</span>
+          <span class="line">And will she yet debase her eyes on me,</span>
+          <span class="line">That cropp'd the golden prime of this sweet prince,</span>
+          <span class="line">And made her widow to a woeful bed?</span>
+          <span class="line"><span class="ann" data-ann="25">On me, that halts and am misshapen thus?</span></span>
+          <span class="line"><span class="ann" data-ann="25">My dukedom to a beggarly denier,</span></span>
+          <span class="line"><span class="ann" data-ann="25">I do mistake my person all this while:</span></span>
+          <span class="line"><span class="ann" data-ann="25">Upon my life, she finds, although I cannot,</span></span>
+          <span class="line"><span class="ann" data-ann="25">Myself to be a marvellous proper man.</span></span>
+          <span class="line"><span class="ann" data-ann="25">I'll be at charges for a looking-glass,</span></span>
+          <span class="line"><span class="ann" data-ann="25">And entertain a score or two of tailors,</span></span>
+          <span class="line"><span class="ann" data-ann="25">To study fashions to adorn my body:</span></span>
+          <span class="line"><span class="ann" data-ann="25">Since I am crept in favour with myself,</span></span>
+          <span class="line"><span class="ann" data-ann="25">I will maintain it with some little cost.</span></span>
+          <span class="line"><span class="ann" data-ann="25">But first I'll turn yon fellow in his grave,</span></span>
+          <span class="line"><span class="ann" data-ann="25">And then return lamenting to my love.</span></span>
+          <span class="line"><span class="ann" data-ann="25">Shine out, fair sun, till I have bought a glass,</span></span>
+          <span class="line"><span class="ann" data-ann="25">That I may see my shadow as I pass.</span></span>
+        </div>
+      </div>
+
+      <p class="stage-direction">Exit.</p>
+    </section><!-- /s2 -->
+
+  </article><!-- /script-column -->
+
+  <!-- ANNOTATION PANEL -->
+  <aside class="annotation-panel" id="annotationPanel">
+    <div class="panel-empty" id="panelEmpty">
+      <div class="panel-empty-icon">✦</div>
+      <p class="panel-empty-text">Select any <span style="border-bottom:2px solid #FFCC00; padding-bottom:1px;">underlined passage</span> in the text to reveal the annotation.</p>
+    </div>
+
+    <div class="panel-content" id="panelContent">
+      <div class="panel-header" id="panelHeader">
+        <div class="panel-technique-tags" id="panelTags"></div>
+        <div class="panel-quote" id="panelQuote"></div>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+      <button class="panel-close" onclick="closePanel()">✕ &nbsp; Close Annotation</button>
+    </div>
+
+    <div class="legend">
+      <div class="legend-title">How to use this text</div>
+      <div class="legend-item">
+        <span class="legend-mark"></span>
+        <span>Underlined text has an annotation</span>
+      </div>
+      <div class="legend-item" style="gap:10px; align-items:flex-start;">
+        <span style="font-family:'Cinzel',serif;font-size:9px;background:#FFCC00;color:#000099;padding:2px 5px;flex-shrink:0;margin-top:2px;">1</span>
+        <span>Gold badge — click to open note</span>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<script>
+// ── ANNOTATION DATA ──────────────────────────────────────────
+const ANNOTATIONS = {
+  "1": {
+    quote: "“Now is the winter of our discontent / Made glorious summer by this son of York”",
+    tags: ["Soliloquy", "Antithesis", "Pun", "Pathetic Fallacy"],
+    notes: [
+      "Richard opens with a direct address to the audience, establishing himself as narrator, confider, and unreliable commentator. The <b>soliloquy</b> form grants him intimacy — we are his co-conspirators from the very first line.",
+      "<b>Antithesis</b> and <b>pathetic fallacy</b>: 'winter' versus 'glorious summer' and the 'clouds that loured upon our house' now 'buried' encode the end of civil war as a shift in weather. Political peace becomes natural harmony.",
+      "<b>Pun</b>: 'son of York' is simultaneously heard as 'sun of York.' Richard outwardly praises his brother Edward IV's kingship even as he privately seethes with resentment. The pun plants ambiguity at the very first line."
+    ]
+  },
+  "2": {
+    quote: "“Now are our brows bound with victorious wreaths; / Our bruisèd arms hung up for monuments”",
+    tags: ["Inclusive Pronoun", "Antithesis", "Lexical Chain", "Alliteration"],
+    notes: [
+      "The repeated <b>inclusive 'our'</b> superficially aligns Richard with the victorious Yorkists and the nation. He performs solidarity with a dynasty he intends to destroy.",
+      "<b>Lexical chain</b> of war terms — 'bruisèd arms,' 'stern alarums,' 'dreadful marches' — is set against festive language: 'merry meetings,' 'delightful measures.' The contrast underscores the shift from battlefield to courtly pleasure.",
+      "<b>Alliteration</b> ('merry meetings,' 'dreadful marches,' 'delightful measures') creates compelling rhythm that makes the peace sound attractive — which Richard will immediately reject as inadequate for a man of his ambition."
+    ]
+  },
+  "3": {
+    quote: "“Grim-visaged war hath smooth'd his wrinkled front… He capers nimbly in a lady's chamber”",
+    tags: ["Personification", "Feminisation of Peace", "Richard as Misfit"],
+    notes: [
+      "<b>Personification</b>: War is cast as a stern-faced soldier now relaxed. The image signals that the time for Richard's martial skills is over — he has no place in this new world.",
+      "War is feminised and sexualised: the world has turned from swords to seduction, from battlefields to 'a lady's chamber' and 'the lascivious pleasing of a lute.' Richard claims he cannot participate in this erotic culture.",
+      "This sets up Richard's central grievance: he is a man out of time, out of place, denied the pleasures of both war and courtly love. His villainy is presented as a logical response to exclusion."
+    ]
+  },
+  "4": {
+    quote: "“I, that am not shap'd for sportive tricks… Cheated of feature by dissembling Nature”",
+    tags: ["Anaphora", "Physiognomy", "Self-fashioning", "Dark Humour"],
+    notes: [
+      "<b>Anaphora</b>: 'I, that am…' repeated three times frames his body as mis-made and isolates him. The triple structure builds rhetorical momentum toward his declaration of villainy.",
+      "Richard blames 'Nature' for his deformity, presenting it as cosmic injustice — 'Deformed, unfinished, sent before my time.' Renaissance <b>physiognomy</b> linked physical deformity with inner corruption; Shakespeare deliberately fuses Richard's body with his moral role as villain.",
+      "'That dogs bark at me as I halt by them' — likely <b>hyperbole</b>, darkly comic. It invites the audience to laugh with Richard even as he solicits a degree of pity. This sardonic self-presentation is key to his seductive hold over the audience."
+    ]
+  },
+  "5": {
+    quote: "“I am determinèd to prove a villain / And hate the idle pleasures of these days”",
+    tags: ["Thesis Statement", "Pun on 'Determined'", "Machiavellian Declaration", "Free Will vs Fate"],
+    notes: [
+      "'Weak piping time of peace' — contemptuous phrase. Peace is trivial, a time for flutes and dalliance rather than swords. Richard's contempt justifies his rejection of the settled order.",
+      "<b>Pun on 'determined'</b>: Richard frames villainy as both a conscious choice and an almost fated role. 'Determined' means decided-upon and also predestined — he plays with the boundary between free will and determinism.",
+      "This is Richard's <b>thesis statement</b>: he will transform personal grievance into political evil. The declaration is addressed directly to the audience, making us complicit witnesses to his plan from the outset."
+    ]
+  },
+  "6": {
+    quote: "“Plots have I laid, inductions dangerous, / By drunken prophecies, libels, and dreams”",
+    tags: ["Tricolon", "Dramatic Irony", "Manipulation of Superstition"],
+    notes: [
+      "<b>Tricolon</b>: 'prophecies, libels, dreams' — three instruments of manipulation. Richard weaponises the superstitious and the irrational to engineer political outcomes.",
+      "The prophecy about 'G' is a device of deliberate ambiguity: it could point to <b>George</b> (Clarence) or to <b>Gloucester</b> himself. Richard has engineered it to implicate his brother.",
+      "<b>Dramatic irony</b>: the audience watches Richard perform ignorance while knowing he is the architect of Clarence's arrest. Every expression of concern is a performance. We are given superior knowledge that heightens the tragic comedy of every exchange."
+    ]
+  },
+  "7": {
+    quote: "“Brother, good day; what means this armed guard / That waits upon your Grace?”",
+    tags: ["Appearance vs Reality", "Dramatic Irony", "Public Mask"],
+    notes: [
+      "Richard's polite greeting — 'Brother, good day' — contrasts starkly with his just-declared intent to destroy Clarence. The gap between public performance and private intent is established in a single breath.",
+      "His feigned ignorance ('Upon what cause?') is a masterclass in duplicity. The audience knows he engineered the arrest; every courteous question is weaponised innocence.",
+      "Mark this exchange as a practical demonstration of <b>appearance versus reality</b>: Richard's public face is brotherly concern; his private intent is fratricide. The gap between the two is where his Machiavellian power lies."
+    ]
+  },
+  "8": {
+    quote: "“Why, this it is, when men are ruled by women… We are not safe, Clarence; we are not safe.”",
+    tags: ["Misogyny", "Scapegoating", "Political Manipulation"],
+    notes: [
+      "Blanket <b>misogynistic generalisation</b>: Richard blames Queen Elizabeth ('my Lady Grey his wife') and her kin for Clarence's imprisonment, deflecting from his own responsibility as the actual cause.",
+      "He casts the Queen and her relatives as dangerous political meddlers, 'mighty gossips in this monarchy,' feeding into patriarchal anxieties about female influence at court.",
+      "Richard primes Clarence — and the audience — to view women as the real threat, concealing his own agency. This is political manipulation through the exploitation of existing prejudice: a technique Richard will deploy repeatedly."
+    ]
+  },
+  "9": {
+    quote: "“Are mighty gossips in this monarchy”",
+    tags: ["Bawdy Wit", "Vice Tradition", "Court Morality"],
+    notes: [
+      "Richard's remarks about Mistress Shore (the King's mistress) are coarse in their double meaning — anyone who 'does naught' with her 'were best to do it secretly, alone.' The <b>double entendre</b> makes Richard seem witty and irreverent.",
+      "The joke aligns him with the <b>Vice</b> figure from morality plays: a character who wins audience complicity through humour, mocking court morality while remaining the most dangerous person in the room.",
+      "He uses sexual gossip to undermine both the Queen's faction and the dignity of the court as a whole. His wit is weaponised: laughter is a form of social subversion."
+    ]
+  },
+  "10": {
+    quote: "“Go, tread the path that thou shalt ne'er return… I will shortly send thy soul to heaven”",
+    tags: ["Parodic Tenderness", "Dramatic Irony", "Machiavellian Language"],
+    notes: [
+      "As soon as Clarence exits, Richard declares his murderous intent. The solitude returns us to his 'true' voice — the one that speaks to us, the audience, in confidence.",
+      "<b>Parodic tenderness</b>: 'I do love thee so / That I will shortly send thy soul to heaven.' Richard perverts Christian charity — love expressed as impending murder — and perverts familial language to justify fratricide.",
+      "This reinforces his Machiavellian character: he weaponises the language of religion and family for purely selfish political ends. The grotesque irony is the source of dark comedy that runs throughout the play."
+    ]
+  },
+  "11": {
+    quote: "“The King is sickly, weak, and melancholy”",
+    tags: ["Political Opportunism", "Foreshadowing", "Dramatic Irony"],
+    notes: [
+      "Hastings' news of the King's illness signals the coming succession crisis — the political instability that Richard will exploit.",
+      "Richard's outward response — grieving concern — contrasts with what the audience knows: he welcomes Edward's decline as the necessary precondition for his own ascent to the crown.",
+      "Mark as <b>political opportunism</b> masked as concern. Every piece of bad news is, for Richard, a step on his private roadmap. His apparent grief is performance for an audience that doesn't know what we know."
+    ]
+  },
+  "12": {
+    quote: "“He cannot live, I hope, and must not die / Till George be pack'd with post-horse up to heaven”",
+    tags: ["Machiavellian Roadmap", "Foreshadowing", "Dark Humour"],
+    notes: [
+      "Chilling strategic logic: Richard wants Edward to live just long enough to authorise Clarence's destruction. He treats his brothers as instruments in a precise sequence of moves.",
+      "'For then I'll marry Warwick's youngest daughter. / What though I kill'd her husband and her father?' — Lady Anne is a political asset, not a person. Richard views marriage purely as a consolidation of power. This line directly foreshadows Act I Scene 2.",
+      "The closing couplet — 'Clarence still breathes; Edward still lives and reigns: / When they are gone, then must I count my gains' — is Richard's Machiavellian score-card. Economical, chilling, and darkly comic in its bluntness."
+    ]
+  },
+  "13": {
+    quote: "“Poor key-cold figure of a holy king! / Pale ashes of the house of Lancaster!”",
+    tags: ["Metaphor", "Epithet", "Women as Mourners", "Lamentation"],
+    notes: [
+      "<b>Metaphor</b> and <b>epithets</b>: 'holy king,' 'key-cold figure,' 'pale ashes' — Anne presents Henry as sacred and victimised. Her language constructs him as a martyr and amplifies the moral outrage of his murder.",
+      "Anne defines herself entirely through grief: 'wife to thy Edward, to thy slaughtered son.' Her identity is tethered to the men she has lost. Shakespeare foregrounds the <b>voices of women as mourners and cursers</b> — a structural pattern repeated throughout the play (Margaret, the Duchess of York, Elizabeth).",
+      "The funeral procession creates a powerful theatrical image: Anne is the only voice of moral condemnation in a world Richard has bent to his will. Her grief is righteous but, as we will see, ultimately unable to resist his rhetoric."
+    ]
+  },
+  "14": {
+    quote: "“If ever he have child, abortive be it, / Prodigious, and untimely brought to light”",
+    tags: ["Curse Motif", "Dramatic Irony", "Supernatural Retribution"],
+    notes: [
+      "Anne's curse on Richard's future child is savage: 'abortive… prodigious, and untimely brought to light,' wishing him an offspring as 'ugly and unnatural' as his crimes.",
+      "<b>Dramatic irony</b>: Anne prays that any future wife will be 'more miserable by the death of him / Than I am made by my young lord and thee.' She is unknowingly cursing herself — she will become that wife.",
+      "This is a key example of the play's preoccupation with <b>curses that rebound on their speakers</b>. The supernatural justice motif — where the wronged call down heaven's vengeance — runs throughout. Anne's curse is a form of tragic prophecy she cannot yet read."
+    ]
+  },
+  "15": {
+    quote: "“Stay, you that bear the corse, and set it down… I'll make a corse of him that disobeys.”",
+    tags: ["Pun", "Bullying", "Sacred vs Political"],
+    notes: [
+      "<b>Pun</b> on 'corse/corpse': Richard's threat — 'I'll make a corse of him that disobeys' — collapses the distinction between the dead body before them and the bodies he will create. It signals his complete indifference to sacred ritual.",
+      "His violent intrusion into the funeral procession is a theatrical statement of power: he can override grief, ceremony, and common humanity. The sacred is no protection from his will.",
+      "The contrast between Anne's solemnity and Richard's brute assertion of force establishes the terms of their confrontation: her world is one of spiritual order and grief; his is one of raw political power. The scene asks which will prevail."
+    ]
+  },
+  "16": {
+    quote: "“Avaunt, thou dreadful minister of hell! / Thou hadst but power over his mortal body”",
+    tags: ["Demon Imagery", "Hell vs Heaven", "Spiritual Warfare"],
+    notes: [
+      "Anne calls Richard a 'dreadful minister of hell' and insists he has power only over Henry's 'mortal body' — not his soul. She attempts to draw a boundary that Richard will spend the rest of the scene erasing.",
+      "'Mortal eyes cannot endure the devil' — Anne aligns Richard visually with demonic horror, making their confrontation a matter of <b>spiritual warfare</b> rather than mere political dispute.",
+      "The hell/heaven contrast runs throughout the scene. Anne's insistence on spiritual categories is ultimately overridden by Richard's rhetorical skill — but it gives the scene its moral stakes and makes his eventual 'success' feel genuinely disturbing."
+    ]
+  },
+  "17": {
+    quote: "“O, gentlemen, see, see! dead Henry's wounds / Open their congealed mouths and bleed afresh!”",
+    tags: ["Supernatural Proof", "Physiognomy", "Cosmic Justice"],
+    notes: [
+      "Anne invokes the Renaissance belief that a murdered body bleeds in the presence of its killer. The bleeding wounds are presented as <b>supernatural confirmation of Richard's guilt</b> — heaven itself accuses him.",
+      "'Thou lump of foul deformity' — Anne connects Richard's physical body to his moral corruption, reinforcing <b>physiognomic thinking</b>: what is outside reflects what is inside.",
+      "For the original audience, the bleeding corpse would have carried genuine supernatural weight. It frames the confrontation as cosmic as well as personal — Richard is not just a villain but an offence against the divine order. Anne's appeals to God and earth amplify this sense of cosmic stakes."
+    ]
+  },
+  "18": {
+    quote: "“No beast so fierce but knows some touch of pity." / "But I know none, and therefore am no beast.”",
+    tags: ["Stichomythia", "Logic & Paradox", "Wit Combat", "Antithesis"],
+    notes: [
+      "Anne's line — 'no beast so fierce but knows some touch of pity' — is designed to shame Richard. His reply — 'But I know none, and therefore am no beast' — is a <b>twisted logic</b> that inverts her meaning: he is something worse than an animal.",
+      "<b>Stichomythia</b>: rapid-fire single-line exchanges show both characters matching each other intellectually. Anne is not passive — she is Richard's verbal equal, and her resistance is genuine, even if ultimately overcome.",
+      "'O, wonderful, when devils tell the truth!' / 'More wonderful, when angels are so angry' — the <b>devil/angel antithesis</b> turns their exchange into a theological sparring match. Richard's wit here is dangerous precisely because it is dazzling."
+    ]
+  },
+  "19": {
+    quote: "“Say that I slew them not?" / "In thy foul throat thou liest…”",
+    tags: ["Unreliable Narrator", "Rhetorical Self-exoneration", "Revisionism"],
+    notes: [
+      "Richard first denies killing Anne's husband, then is forced to qualify when she cites eyewitness testimony. He retreats to blame-shifting: Margaret 'laid their guilt upon my guiltless shoulders.'",
+      "He portrays himself as provoked by Margaret's 'sland'rous tongue' — a habitual rhetorical move that casts him as the real victim. This <b>revisionism</b> is central to his character: he is always rewriting the story.",
+      "Anne's appeal to evidence ('Queen Margaret saw / Thy murd'rous falchion smoking in his blood') is the kind of plain factual testimony Richard's rhetoric is designed to dissolve. Watch how he pivots immediately from denial to flattery — the transition is seamless."
+    ]
+  },
+  "20": {
+    quote: "“I did not kill your husband." / "Why, then he is alive.”",
+    tags: ["Denial", "Blame-shifting", "Unreliable Narrator"],
+    notes: [
+      "Richard's brazen denial — 'I did not kill your husband' — is immediately exposed as absurd. The exchange is darkly comic: Anne's retort 'Why, then he is alive' is devastating in its simplicity.",
+      "He then attempts to redirect blame onto Edward IV ('Nay, he is dead; and slain by Edward's hand'), a transparent lie Anne immediately refutes with eyewitness testimony.",
+      "This sequence shows Richard's technique under pressure: when direct denial fails, shift responsibility. When that fails, pivot to flattery. His rhetoric is adaptive, not principled."
+    ]
+  },
+  "21": {
+    quote: "“Your beauty was the cause of that effect… To undertake the death of all the world”",
+    tags: ["Petrarchan Love Poetry", "Appropriating Discourse", "Flattery as Weapon"],
+    notes: [
+      "Richard borrows <b>Petrarchan love-poetry conventions</b> — love as haunting, the beloved's beauty as irresistible tyranny — but applies them grotesquely to political murders. He is saying, essentially: your face made me kill.",
+      "The strategy is audacious: it makes Anne responsible for the deaths of her husband and father-in-law. He transforms his crimes into a tribute to her beauty.",
+      "This is Richard <b>appropriating the discourse of romantic love to justify atrocity</b>. The Petrarchan framework is familiar and flattering; by inhabiting it, he forces Anne to respond within its terms rather than on the terrain of guilt and justice."
+    ]
+  },
+  "22": {
+    quote: "“These eyes, which never shed remorseful tear… Thy beauty hath, and made them blind with weeping.”",
+    tags: ["Self-theatricalisation", "Emotional Manipulation", "Performance of Feeling"],
+    notes: [
+      "Richard self-mythologises as beyond normal feeling — unmoved by his father's grief, by Rutland's death, by any of the war's tragedies — until he saw Anne. This is designed to make her feel uniquely powerful over him.",
+      "The speech is almost certainly a <b>calculated performance</b> rather than sincere confession. Richard has shown us, in the soliloquy, that he feels nothing but political ambition. His tears are theatre.",
+      "The irony is painful: he weaponises the language of genuine emotion to win a woman he plans to discard ('I'll have her; but I will not keep her long'). The gap between his private calculation and his public performance is the engine of the scene's horror."
+    ]
+  },
+  "23": {
+    quote: "“Nay, do not pause; for I did kill King Henry… Take up the sword again, or take up me.”",
+    tags: ["Stagecraft", "Suicidal Rhetoric", "Confession as Seduction", "Theatrical Gesture"],
+    notes: [
+      "Richard kneels and offers his sword — an extreme <b>theatrical gesture of submission</b>. He invites Anne to kill him if she cannot forgive. The gesture performs vulnerability while actually demonstrating control: he knows she won't kill him.",
+      "He explicitly confesses both murders, tying each to her beauty: 'I did kill King Henry — but 'twas thy beauty that provoked me.' Confession and flattery are fused into a single rhetorical move.",
+      "Anne raises the sword but drops it. Her hesitation is crucial: it shows the power of Richard's rhetoric to create genuine internal conflict even in someone who knows he is a murderer. The stagecraft here is brilliant — a moment of physical theatre that turns on a pause."
+    ]
+  },
+  "24": {
+    quote: "“Look, how this ring encompasseth thy finger, / Even so thy breast encloseth my poor heart”",
+    tags: ["Enclosure & Possession", "Ambiguous Consent", "Symbol"],
+    notes: [
+      "The ring image — 'even so thy breast encloseth my poor heart' — presents possession disguised as devotion. The <b>conceit of enclosure</b> frames Anne as already containing him, already bound.",
+      "Anne's response — 'To take is not to give' — is a crucial line. She accepts the token but withholds explicit forgiveness. She has not surrendered; she has negotiated a fragile, coerced truce.",
+      "This is a moment of <b>ambiguous consent</b>: Anne is not simply 'won.' She is subject to sustained pressure in an extraordinary situation (her father-in-law's corpse present), isolated, and faced with a man whose rhetorical skill she cannot match. The play does not present this as a straightforward romantic victory."
+    ]
+  },
+  "25": {
+    quote: "“Was ever woman in this humour woo'd? / Was ever woman in this humour won?”",
+    tags: ["Meta-theatricality", "Self-admiration", "Echo of Act 1.1", "Narcissism"],
+    notes: [
+      "<b>Rhetorical questions</b> celebrating his own success: Richard marvels at what he has achieved — seducing a woman who was cursing him minutes earlier, with her murdered father-in-law's body present. The self-congratulation is both comic and chilling.",
+      "He returns to his body — 'On me, that halts and am misshapen thus?' — and turns self-mockery into narcissism: 'Myself to be a marvellous proper man. / I'll be at charges for a looking-glass.' His deformity, earlier a source of grievance, is now something to admire in the mirror of his own success.",
+      "The final couplet — 'Shine out, fair sun, till I have bought a glass, / That I may see my shadow as I pass' — <b>echoes the opening sun imagery</b> ('this sun of York'). Richard's fascination with his own image and shadow is an early marker of the narcissism that will eventually isolate and destroy him. The <b>meta-theatrical</b> quality — Richard as playwright directing his own scenes — reaches its peak here."
+    ]
+  }
+};
+
+// ── PANEL LOGIC ──────────────────────────────────────────────
+let currentAnn = null;
+
+function openAnnotation(id) {
+  const data = ANNOTATIONS[id];
+  if (!data) return;
+
+  // Deactivate previous
+  if (currentAnn) {
+    document.querySelectorAll(`.ann[data-ann="${currentAnn}"]`).forEach(el => el.classList.remove('active-ann'));
+  }
+
+  // Activate new
+  currentAnn = id;
+  document.querySelectorAll(`.ann[data-ann="${id}"]`).forEach(el => el.classList.add('active-ann'));
+
+  // Populate panel
+  const tagsEl = document.getElementById('panelTags');
+  const quoteEl = document.getElementById('panelQuote');
+  const bodyEl  = document.getElementById('panelBody');
+
+  tagsEl.innerHTML = data.tags.map(t => `<span class="technique-tag">${t}</span>`).join('');
+  quoteEl.textContent = data.quote;
+  bodyEl.innerHTML = data.notes.map(n => `<p class="panel-note">${n}</p>`).join('');
+
+  document.getElementById('panelEmpty').style.display = 'none';
+  document.getElementById('panelContent').classList.add('visible');
+}
+
+function closePanel() {
+  if (currentAnn) {
+    document.querySelectorAll(`.ann[data-ann="${currentAnn}"]`).forEach(el => el.classList.remove('active-ann'));
+    currentAnn = null;
+  }
+  document.getElementById('panelEmpty').style.display = 'flex';
+  document.getElementById('panelContent').classList.remove('visible');
+}
+
+// ── EVENT DELEGATION ─────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  const annEl = e.target.closest('.ann');
+  if (annEl) {
+    const id = annEl.getAttribute('data-ann');
+    if (id === currentAnn) {
+      closePanel();
+    } else {
+      openAnnotation(id);
+    }
+    return;
+  }
+  // Click outside panel & text → close
+  const panel = document.getElementById('annotationPanel');
+  const scriptCol = document.querySelector('.script-column');
+  if (!panel.contains(e.target) && !scriptCol.contains(e.target)) {
+    closePanel();
+  }
+});
+
+// ── SCENE SWITCHING ───────────────────────────────────────────
+function switchScene(id, btn) {
+  closePanel();
+  document.querySelectorAll('.scene-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.scene-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
