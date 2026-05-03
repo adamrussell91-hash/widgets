@@ -6,23 +6,23 @@
   <title>Neuroanatomy and Neuroscience Nomenclature Mind Map</title>
   <style>
     :root {
-      --bg: #050b15;
-      --bg2: #0a1425;
-      --ink: #edf7ff;
-      --soft: #b8c7d8;
-      --faint: #7f91a7;
-      --card: rgba(13, 25, 42, 0.82);
-      --card2: rgba(19, 36, 57, 0.92);
-      --stroke: rgba(255,255,255,0.13);
-      --teal: #7de8dc;
-      --blue: #91bcff;
-      --sage: #a8ddb3;
-      --rose: #ffb5ac;
-      --gold: #efd06f;
-      --violet: #c6b7ff;
-      --line: rgba(125, 232, 220, 0.52);
-      --lineBright: rgba(158, 255, 242, 0.96);
-      --shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+      --bg: #f6f4ef;
+      --bg2: #eef4f1;
+      --ink: #1f2d38;
+      --soft: #526574;
+      --faint: #7a8b96;
+      --card: rgba(255, 255, 255, 0.82);
+      --card2: rgba(255, 255, 255, 0.94);
+      --stroke: rgba(75, 91, 103, 0.16);
+      --teal: #4f9f98;
+      --blue: #5f82b8;
+      --sage: #719b75;
+      --clay: #bd796e;
+      --gold: #b38d3c;
+      --lavender: #8576b8;
+      --line: rgba(89, 132, 128, 0.42);
+      --lineBright: rgba(58, 126, 120, 0.92);
+      --shadow: 0 24px 70px rgba(38, 55, 70, 0.14);
     }
 
     * { box-sizing: border-box; }
@@ -32,9 +32,9 @@
       margin: 0;
       overflow: hidden;
       background:
-        radial-gradient(circle at 14% 16%, rgba(125, 232, 220, 0.13), transparent 30%),
-        radial-gradient(circle at 78% 18%, rgba(198, 183, 255, 0.12), transparent 28%),
-        radial-gradient(circle at 70% 82%, rgba(239, 208, 111, 0.08), transparent 34%),
+        radial-gradient(circle at 12% 10%, rgba(79, 159, 152, 0.12), transparent 32%),
+        radial-gradient(circle at 76% 18%, rgba(133, 118, 184, 0.10), transparent 30%),
+        radial-gradient(circle at 72% 84%, rgba(179, 141, 60, 0.10), transparent 36%),
         linear-gradient(135deg, var(--bg), var(--bg2));
       color: var(--ink);
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -46,23 +46,23 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: radial-gradient(circle at center, black, transparent 78%);
+        linear-gradient(rgba(31, 45, 56, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 45, 56, 0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black, transparent 76%);
     }
 
     .app {
       height: 100%;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 420px;
+      grid-template-columns: minmax(0, 1fr) 430px;
       gap: 18px;
       padding: 18px;
     }
 
     .stage, .side {
       border: 1px solid var(--stroke);
-      background: rgba(7, 16, 29, 0.70);
+      background: rgba(255, 255, 255, 0.54);
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
       border-radius: 30px;
@@ -81,23 +81,21 @@
       right: 18px;
       top: 18px;
       display: grid;
-      grid-template-columns: minmax(320px, 500px) auto;
+      grid-template-columns: minmax(330px, 520px) auto;
       gap: 12px;
       pointer-events: none;
     }
 
-    .hero, .controls, .miniMap, .toast {
-      border: 1px solid rgba(255,255,255,0.13);
-      background: rgba(10, 22, 38, 0.78);
+    .hero, .controls, .badge {
+      border: 1px solid rgba(75, 91, 103, 0.15);
+      background: rgba(255, 255, 255, 0.74);
       backdrop-filter: blur(22px);
-      box-shadow: 0 18px 50px rgba(0,0,0,0.32);
+      box-shadow: 0 16px 42px rgba(38, 55, 70, 0.10);
       border-radius: 22px;
       pointer-events: auto;
     }
 
-    .hero {
-      padding: 16px 18px;
-    }
+    .hero { padding: 16px 18px; }
 
     .eyebrow {
       margin: 0 0 6px;
@@ -129,15 +127,15 @@
       align-items: center;
       padding: 10px;
       flex-wrap: wrap;
-      max-width: 720px;
+      max-width: 760px;
     }
 
     button, input { font: inherit; }
 
     .search {
       width: 280px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.075);
+      border: 1px solid rgba(75, 91, 103, 0.18);
+      background: rgba(255, 255, 255, 0.78);
       color: var(--ink);
       outline: none;
       border-radius: 16px;
@@ -146,13 +144,13 @@
     }
 
     .search:focus {
-      border-color: rgba(125,232,220,0.70);
-      box-shadow: 0 0 0 3px rgba(125,232,220,0.10);
+      border-color: rgba(79, 159, 152, 0.70);
+      box-shadow: 0 0 0 4px rgba(79, 159, 152, 0.10);
     }
 
     .btn {
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.075);
+      border: 1px solid rgba(75, 91, 103, 0.16);
+      background: rgba(255, 255, 255, 0.72);
       color: var(--ink);
       border-radius: 16px;
       padding: 11px 13px;
@@ -164,14 +162,14 @@
 
     .btn:hover {
       transform: translateY(-1px);
-      background: rgba(255,255,255,0.12);
-      border-color: rgba(125,232,220,0.48);
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(79, 159, 152, 0.48);
     }
 
     .btn.active {
-      background: rgba(125,232,220,0.16);
-      border-color: rgba(125,232,220,0.58);
-      color: #dffffb;
+      background: rgba(79, 159, 152, 0.13);
+      border-color: rgba(79, 159, 152, 0.55);
+      color: #1b5d58;
     }
 
     .viewport {
@@ -203,34 +201,33 @@
     .link {
       fill: none;
       stroke: var(--line);
-      stroke-width: 3.4;
+      stroke-width: 3.2;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-dasharray: var(--len);
       stroke-dashoffset: var(--len);
-      filter: drop-shadow(0 0 10px rgba(125,232,220,0.12));
       transition: stroke-dashoffset 780ms cubic-bezier(.2, .9, .18, 1), opacity 420ms ease, stroke 420ms ease, stroke-width 420ms ease;
     }
 
     .link.visible { stroke-dashoffset: 0; opacity: 1; }
     .link.hiddenLine { stroke-dashoffset: var(--len); opacity: 0; }
     .link.dim { opacity: 0.10; }
-    .link.hot { stroke: var(--lineBright); stroke-width: 5.2; opacity: 1; }
+    .link.hot { stroke: var(--lineBright); stroke-width: 5; opacity: 1; }
 
     .node {
       position: absolute;
       transform: translate(-50%, -50%) scale(0.86);
       opacity: 0;
-      min-width: 260px;
-      max-width: 360px;
-      border: 1px solid rgba(255,255,255,0.14);
+      min-width: 270px;
+      max-width: 380px;
+      border: 1px solid rgba(75, 91, 103, 0.16);
       color: var(--ink);
       border-radius: 22px;
       padding: 16px 18px 15px;
       background:
-        linear-gradient(150deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035)),
-        rgba(18, 34, 54, 0.92);
-      box-shadow: 0 22px 56px rgba(0,0,0,0.28);
+        linear-gradient(150deg, rgba(255,255,255,0.98), rgba(248,250,249,0.82)),
+        rgba(255,255,255,0.90);
+      box-shadow: 0 18px 46px rgba(45, 64, 80, 0.13);
       cursor: pointer;
       user-select: none;
       text-align: left;
@@ -239,19 +236,8 @@
         opacity 520ms ease,
         filter 360ms ease,
         border 220ms ease,
-        background 220ms ease;
-    }
-
-    .node:before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.26), rgba(255,255,255,0.04));
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      mask-composite: exclude;
-      pointer-events: none;
+        background 220ms ease,
+        box-shadow 220ms ease;
     }
 
     .node.visible {
@@ -266,33 +252,32 @@
     }
 
     .node:hover {
-      border-color: rgba(125,232,220,0.64);
-      background:
-        linear-gradient(150deg, rgba(255,255,255,0.14), rgba(255,255,255,0.045)),
-        rgba(22, 44, 68, 0.96);
+      border-color: rgba(79,159,152,0.52);
+      box-shadow: 0 22px 54px rgba(45, 64, 80, 0.17);
     }
 
     .node.dim {
       opacity: 0.18;
-      filter: saturate(0.35) blur(0.2px);
+      filter: saturate(0.45);
     }
 
     .node.hot {
-      border-color: rgba(125,232,220,0.95);
-      box-shadow: 0 0 0 1px rgba(125,232,220,0.28), 0 24px 62px rgba(0,0,0,0.34);
+      border-color: rgba(79,159,152,0.84);
+      box-shadow: 0 0 0 1px rgba(79,159,152,0.20), 0 22px 58px rgba(45, 64, 80, 0.18);
     }
 
     .root {
-      min-width: 430px;
+      min-width: 440px;
       padding: 22px 24px;
       background:
-        linear-gradient(150deg, rgba(198,183,255,0.18), rgba(125,232,220,0.08)),
-        rgba(16, 29, 50, 0.96);
+        linear-gradient(150deg, rgba(255,255,255,0.98), rgba(238,244,241,0.88)),
+        rgba(255,255,255,0.96);
+      border-color: rgba(133, 118, 184, 0.25);
     }
 
-    .branch { min-width: 350px; }
-    .sub { min-width: 315px; }
-    .leaf { min-width: 285px; }
+    .branch { min-width: 360px; }
+    .sub { min-width: 330px; }
+    .leaf { min-width: 305px; }
 
     .nodeTitle {
       font-size: 20px;
@@ -320,14 +305,14 @@
       height: 10px;
       border-radius: 99px;
       background: var(--teal);
-      box-shadow: 0 0 18px rgba(125,232,220,0.78);
+      box-shadow: 0 0 0 5px rgba(79,159,152,0.11);
       flex: 0 0 auto;
     }
 
-    [data-family="technology"] .bead { background: var(--blue); box-shadow: 0 0 18px rgba(145,188,255,0.78); }
-    [data-family="terminology"] .bead { background: var(--sage); box-shadow: 0 0 18px rgba(168,221,179,0.78); }
-    [data-family="eponyms"] .bead { background: var(--rose); box-shadow: 0 0 18px rgba(255,181,172,0.78); }
-    [data-family="institution"] .bead { background: var(--gold); box-shadow: 0 0 18px rgba(239,208,111,0.78); }
+    [data-family="technology"] .bead { background: var(--blue); box-shadow: 0 0 0 5px rgba(95,130,184,0.12); }
+    [data-family="terminology"] .bead { background: var(--sage); box-shadow: 0 0 0 5px rgba(113,155,117,0.12); }
+    [data-family="eponyms"] .bead { background: var(--clay); box-shadow: 0 0 0 5px rgba(189,121,110,0.12); }
+    [data-family="institution"] .bead { background: var(--gold); box-shadow: 0 0 0 5px rgba(179,141,60,0.12); }
 
     .toggle {
       position: absolute;
@@ -338,7 +323,7 @@
       border-radius: 14px;
       display: grid;
       place-items: center;
-      background: rgba(255,255,255,0.09);
+      background: rgba(31,45,56,0.055);
       color: var(--ink);
       font-size: 20px;
       font-weight: 950;
@@ -347,7 +332,7 @@
 
     .node.open .toggle {
       transform: rotate(180deg);
-      background: rgba(125,232,220,0.16);
+      background: rgba(79,159,152,0.13);
     }
 
     .badgeRow {
@@ -362,9 +347,6 @@
     }
 
     .badge {
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(10, 22, 38, 0.72);
-      backdrop-filter: blur(14px);
       color: var(--soft);
       border-radius: 999px;
       padding: 10px 13px;
@@ -377,14 +359,15 @@
       display: grid;
       grid-template-rows: auto 1fr;
       min-width: 0;
+      background: rgba(255,255,255,0.68);
     }
 
     .sideTop {
       padding: 22px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
+      border-bottom: 1px solid rgba(75, 91, 103, 0.12);
       background:
-        radial-gradient(circle at 20% 20%, rgba(125,232,220,0.12), transparent 36%),
-        rgba(255,255,255,0.025);
+        radial-gradient(circle at 18% 15%, rgba(79,159,152,0.11), transparent 35%),
+        rgba(255,255,255,0.50);
     }
 
     .sideBody {
@@ -397,9 +380,9 @@
       margin: 0 0 14px;
       padding: 8px 11px;
       border-radius: 999px;
-      border: 1px solid rgba(125,232,220,0.22);
-      color: var(--teal);
-      background: rgba(125,232,220,0.08);
+      border: 1px solid rgba(79,159,152,0.24);
+      color: #2b746f;
+      background: rgba(79,159,152,0.09);
       font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -415,7 +398,7 @@
 
     .side p {
       margin: 0 0 18px;
-      color: #dce9f7;
+      color: #304553;
       font-size: 19px;
       line-height: 1.55;
     }
@@ -429,25 +412,30 @@
       font-weight: 950;
     }
 
-    .eduCard {
-      border: 1px solid rgba(255,255,255,0.11);
-      background: rgba(255,255,255,0.055);
+    .infoCard {
+      border: 1px solid rgba(75, 91, 103, 0.12);
+      background: rgba(255,255,255,0.62);
       border-radius: 20px;
       padding: 16px;
       margin-bottom: 12px;
     }
 
-    .eduCard strong {
+    .infoCard strong {
       display: block;
       margin-bottom: 6px;
       color: var(--ink);
       font-size: 18px;
     }
 
-    .eduCard span {
+    .infoCard span, .infoCard li {
       color: var(--soft);
       font-size: 17px;
       line-height: 1.48;
+    }
+
+    .infoCard ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
     }
 
     .crumbs {
@@ -459,23 +447,23 @@
 
     .crumb {
       color: var(--soft);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(75,91,103,0.12);
       border-radius: 999px;
       padding: 7px 9px;
       font-size: 13px;
     }
 
     .quiz {
-      margin-top: 18px;
-      border: 1px solid rgba(239,208,111,0.18);
-      background: rgba(239,208,111,0.07);
+      margin-top: 12px;
+      border: 1px solid rgba(179,141,60,0.18);
+      background: rgba(179,141,60,0.07);
       border-radius: 20px;
       padding: 16px;
     }
 
     .quiz .q {
-      color: var(--gold);
+      color: #8d6a23;
       font-size: 13px;
       letter-spacing: 0.10em;
       font-weight: 950;
@@ -484,7 +472,7 @@
     }
 
     mark {
-      background: rgba(239,208,111,0.30);
+      background: rgba(179,141,60,0.22);
       color: var(--ink);
       padding: 0 3px;
       border-radius: 5px;
@@ -493,18 +481,10 @@
     @media (max-width: 1150px) {
       .app {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 340px;
+        grid-template-rows: 1fr 360px;
       }
-
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-
-      .controls {
-        justify-self: start;
-        max-width: none;
-      }
-
+      .toolbar { grid-template-columns: 1fr; }
+      .controls { justify-self: start; max-width: none; }
       .search { width: 220px; }
     }
   </style>
@@ -516,7 +496,7 @@
         <div class="hero">
           <p class="eyebrow">Interactive study map</p>
           <h1>Neuroscience Nomenclature</h1>
-          <p class="subtitle">Trace how brain language moves through anatomy, metaphor, ethics, and standardisation.</p>
+          <p class="subtitle">How brain language moves through anatomy, metaphor, ethics, and standards.</p>
         </div>
         <div class="controls">
           <input id="search" class="search" placeholder="Search the map" aria-label="Search map" />
@@ -555,7 +535,9 @@
       family: "overview",
       type: "Course map",
       text: "This map shows how neuroscience language is built from historical anatomy, cultural metaphor, contested naming practices, and modern standards.",
-      learn: "Scientific vocabulary is not neutral. Names carry assumptions about function, history, status, and whose work is recognised.",
+      rule: "Scientific vocabulary is not neutral. Names carry assumptions about function, history, status, and whose work is recognised.",
+      examples: ["Hippocampus", "Amygdala", "Thalamus", "Clara cells", "Neural networks"],
+      fact: "Many brain terms began as ordinary comparisons. A name often tells us what something looked like to earlier anatomists, not what it does.",
       question: "When does a name help understanding, and when does it hide more than it explains?",
       children: [
         {
@@ -564,23 +546,25 @@
           family: "technology",
           type: "Metaphor pathway",
           text: "Neuroscience often borrows language from the dominant technologies of an era. These metaphors make invisible processes easier to picture, but they shape interpretation.",
-          learn: "Metaphors are useful teaching tools, but they also set limits. A brain is not a machine, computer, or communications network in a literal sense.",
+          rule: "The brain is described through familiar machines. Each era uses its own technology to explain the body.",
+          examples: ["Clockwork body", "Heart as pump", "Neural circuits", "Brain wiring", "Information processing"],
+          fact: "The same brain process can sound different depending on the metaphor. Rewiring suggests engineering. Plasticity suggests living adaptation.",
           question: "Which metaphor gives the clearest explanation without oversimplifying the brain?",
           children: [
-            { id: "historical", title: "Historical Origins", family: "technology", type: "Historical frame", text: "Older anatomical explanation drew on architecture, machinery, and spiritual philosophy.", learn: "Early terms reveal how anatomy was interpreted before modern neuroscience existed.", question: "What does each older metaphor make visible or invisible?", children: [
-              { id: "vesalius", title: "Vesalius: Mechanical and Fortification", family: "technology", type: "Example", text: "Vesalius helped shift anatomy towards observation, while description still used structural language such as walls, chambers, and defences.", learn: "Anatomical language often begins with visible structure before later being linked to function.", question: "How does structural language influence how students picture the body?" },
-              { id: "harvey", title: "Harvey: Heart as Pump", family: "technology", type: "Example", text: "Harvey’s explanation of circulation made mechanical comparison central. The heart became easier to understand through the pump model.", learn: "A good metaphor helps explain function, but it does not capture every feature of living tissue.", question: "Why is the pump metaphor so memorable?" },
-              { id: "descartes", title: "Descartes: Seat of the Soul", family: "technology", type: "Example", text: "Descartes linked mind, body, and soul through anatomical speculation, especially around the pineal gland.", learn: "Some terms preserve outdated theories because language often lasts longer than the theory behind it.", question: "Should outdated concepts stay in teaching if they have historical value?" }
+            { id: "historical", title: "Historical Origins", family: "technology", type: "Historical frame", text: "Older anatomical explanation drew on architecture, machinery, and spiritual philosophy.", rule: "Early anatomists named what they could see, then interpreted those parts through available cultural models.", examples: ["Chambers", "Vessels", "Valves", "Fortifications"], fact: "Anatomical language often sounds architectural because early anatomy relied on visible structure before function was fully understood.", question: "What does each older metaphor make visible or invisible?", children: [
+              { id: "vesalius", title: "Vesalius: Mechanical and Fortification", family: "technology", type: "Example", text: "Vesalius helped shift anatomy towards observation, while description still used structural language such as walls, chambers, and defences.", rule: "Structure first naming often treats the body as a built environment.", examples: ["Ventricles", "Walls", "Canals", "Chambers"], fact: "Vesalius corrected many inherited anatomical errors by placing observation above classical authority.", question: "How does structural language influence how students picture the body?" },
+              { id: "harvey", title: "Harvey: Heart as Pump", family: "technology", type: "Example", text: "Harvey’s explanation of circulation made mechanical comparison central. The heart became easier to understand through the pump model.", rule: "A strong metaphor explains function by linking an unfamiliar process to a familiar tool.", examples: ["Pump", "Pressure", "Flow", "Circulation"], fact: "Harvey’s circulation model was persuasive partly because it turned the heart into a functional system, not merely an anatomical part.", question: "Why is the pump metaphor so memorable?" },
+              { id: "descartes", title: "Descartes: Seat of the Soul", family: "technology", type: "Example", text: "Descartes linked mind, body, and soul through anatomical speculation, especially around the pineal gland.", rule: "Some names and explanations preserve old theories long after the theory weakens.", examples: ["Pineal gland", "Mind body dualism", "Seat of the soul"], fact: "The pineal gland attracted philosophical interest partly because it looked singular, unlike many paired brain structures.", question: "Should outdated concepts stay in teaching if they have historical value?" }
             ]},
-            { id: "communications", title: "Modern Communications", family: "technology", type: "Modern metaphor", text: "Modern neuroscience often describes neural activity as communication. Neurons encode, transmit, route, and output information.", learn: "Communication language makes neural systems easier to model, especially when describing networks and signalling.", question: "Where does communication language become too neat for biological systems?", children: [
-              { id: "encoding", title: "Encoding and Transmission", family: "technology", type: "Key term", text: "Neural activity is often described as information being encoded and transmitted through signals.", learn: "This supports clear explanation of sensory processing, memory, and motor output.", question: "What is gained by calling neural activity information?" },
-              { id: "networks", title: "Neural Networks", family: "technology", type: "Key term", text: "Network language describes distributed activity, connectivity, and system level processing.", learn: "This helps students move beyond single structure explanations towards system level thinking.", question: "How does network thinking change the way we explain learning?" },
-              { id: "encryption", title: "Encryption and Output", family: "technology", type: "Extension", text: "Terms such as decoding, signal, and output show how computational and communications models influence neuroscience.", learn: "The language suggests hidden codes, which is useful but sometimes overstates precision.", question: "Does decoding language make cognition sound too mechanical?" }
+            { id: "communications", title: "Modern Communications", family: "technology", type: "Modern metaphor", text: "Modern neuroscience often describes neural activity as communication. Neurons encode, transmit, route, and output information.", rule: "Communication language turns neural activity into messages, channels, signals, and outputs.", examples: ["Signal", "Encoding", "Transmission", "Relay", "Output"], fact: "This language is useful for teaching, but neurons are living cells, not wires carrying simple messages.", question: "Where does communication language become too neat for biological systems?", children: [
+              { id: "encoding", title: "Encoding and Transmission", family: "technology", type: "Key term", text: "Neural activity is often described as information being encoded and transmitted through signals.", rule: "Encoding language links brain activity to representation.", examples: ["Sensory encoding", "Motor output", "Synaptic transmission"], fact: "The term encoding can make a process sound more exact than it is. Neural patterns often vary across context and individuals.", question: "What is gained by calling neural activity information?" },
+              { id: "networks", title: "Neural Networks", family: "technology", type: "Key term", text: "Network language describes distributed activity, connectivity, and system level processing.", rule: "Network language shifts attention from isolated parts to relationships between parts.", examples: ["Default mode network", "Salience network", "Executive control network"], fact: "Modern brain imaging helped make network language common because it shows patterns of activity across regions.", question: "How does network thinking change the way we explain learning?" },
+              { id: "encryption", title: "Encryption and Output", family: "technology", type: "Extension", text: "Terms such as decoding, signal, and output show how computational and communications models influence neuroscience.", rule: "Decoding language treats brain activity as patterned information to interpret.", examples: ["Signal decoding", "Neural code", "Output pathway"], fact: "Decoding is a useful research term, but it can make cognition sound like a hidden file waiting to be opened.", question: "Does decoding language make cognition sound too mechanical?" }
             ]},
-            { id: "computing", title: "Computing Metaphors", family: "technology", type: "Modern metaphor", text: "Computing metaphors frame the brain as a system of storage, processing, programming, and error correction.", learn: "These terms are vivid and teachable, but biological memory and plasticity are more dynamic than digital files.", question: "Which brain processes resist computer comparison?", children: [
-              { id: "reprogramming", title: "Reprogramming Circuits", family: "technology", type: "Applied language", text: "Clinical and educational language often describes intervention as rewiring or reprogramming circuits.", learn: "This language conveys change and plasticity, but it can make learning sound more direct than it is.", question: "What does reprogramming imply about agency and effort?" },
-              { id: "erasing", title: "Hard Drive Erasing", family: "technology", type: "Applied language", text: "Memory is often compared with storage, although biological memory is reconstructed and context sensitive.", learn: "This is useful for beginners but weak for explaining trauma, emotion, and retrieval.", question: "Why is memory not like deleting a file?" },
-              { id: "viruses", title: "Infection by Viruses", family: "technology", type: "Applied language", text: "Virus language appears when describing intrusive ideas, spreading patterns, or biological infection.", learn: "Such language is vivid, but it can stigmatise psychological experience if used carelessly.", question: "When does metaphor become harmful?" }
+            { id: "computing", title: "Computing Metaphors", family: "technology", type: "Modern metaphor", text: "Computing metaphors frame the brain as a system of storage, processing, programming, and error correction.", rule: "Computer language makes the brain teachable through storage, processing, coding, and circuits.", examples: ["Hard drive", "Reprogramming", "Processing", "Inputs and outputs", "Circuits"], fact: "The computer metaphor is common because it fits modern life, but biological memory is reconstructed, not retrieved like a file.", question: "Which brain processes resist computer comparison?", children: [
+              { id: "reprogramming", title: "Reprogramming Circuits", family: "technology", type: "Applied language", text: "Clinical and educational language often describes intervention as rewiring or reprogramming circuits.", rule: "Reprogramming language frames change as technical intervention.", examples: ["Rewiring", "Habit loops", "Neural circuits", "Cognitive retraining"], fact: "The phrase can motivate students by implying change is possible, but it can also oversimplify learning and recovery.", question: "What does reprogramming imply about agency and effort?" },
+              { id: "erasing", title: "Hard Drive Erasing", family: "technology", type: "Applied language", text: "Memory is often compared with storage, although biological memory is reconstructed and context sensitive.", rule: "Storage metaphors imply fixed files, while memory research points to reconstruction.", examples: ["Memory storage", "Retrieval", "Working memory", "Forgetting"], fact: "You do not retrieve a memory in the same form every time. Context, emotion, and later knowledge influence recall.", question: "Why is memory not like deleting a file?" },
+              { id: "viruses", title: "Infection by Viruses", family: "technology", type: "Applied language", text: "Virus language appears when describing intrusive ideas, spreading patterns, or biological infection.", rule: "Contagion language makes ideas or conditions sound invasive.", examples: ["Viral ideas", "Cognitive contamination", "Intrusive thoughts", "Neurotropic viruses"], fact: "This metaphor needs care because it can stigmatise psychological experience if used loosely.", question: "When does metaphor become harmful?" }
             ]}
           ]
         },
@@ -590,19 +574,21 @@
           family: "terminology",
           type: "Language pathway",
           text: "Many neuroscience terms come from classical languages, shape based naming, early medical traditions, and later reinterpretation.",
-          learn: "Naming often begins with analogy. Structures are named because they look like something familiar.",
+          rule: "Anatomical terms often begin as shape, location, or translation labels before they become scientific vocabulary.",
+          examples: ["Hippocampus", "Amygdala", "Thalamus", "Cortex", "Ventricle"],
+          fact: "Etymology helps memory when it links word form to visible structure, but it can mislead when students assume the name explains function.",
           question: "Does etymology make terms easier to remember or easier to misunderstand?",
           children: [
-            { id: "classical", title: "Classical Roots", family: "terminology", type: "Etymology", text: "Greek and Latin roots gave anatomy a shared scholarly vocabulary. Many labels began as visual comparisons rather than precise scientific explanations.", learn: "Shape based labels help memory, but they rarely explain function by themselves.", question: "What happens when students memorise labels without function?", children: [
-              { id: "greeklatin", title: "Greek and Latin Origins", family: "terminology", type: "Origin", text: "Greek and Latin terms gave anatomical naming a formal structure across medical traditions.", learn: "Shared roots supported communication across languages and institutions.", question: "Why did classical language become so durable in science?" },
-              { id: "metaphoric", title: "Metaphoric Labels", family: "terminology", type: "Concept", text: "Many anatomical labels compare structures with familiar objects or shapes.", learn: "Metaphoric labels are memory aids, not full explanations.", question: "Which terms in science are really metaphors?" },
-              { id: "hippocampus", title: "Hippocampus: Seahorse", family: "terminology", type: "Example", text: "The hippocampus was named through resemblance to a seahorse shape.", learn: "The name is visually memorable, but memory function must be taught separately.", question: "Does the name hippocampus help students understand memory?" },
-              { id: "amygdala", title: "Amygdala: Almond", family: "terminology", type: "Example", text: "Amygdala comes from a word meaning almond, reflecting shape based anatomical naming.", learn: "The label captures shape, not the complexity of fear, salience, or emotional learning.", question: "What does the almond metaphor leave out?" }
+            { id: "classical", title: "Classical Roots", family: "terminology", type: "Etymology", text: "Greek and Latin roots gave anatomy a shared scholarly vocabulary. Many labels began as visual comparisons rather than precise scientific explanations.", rule: "Classical roots turn everyday objects, shapes, and places into formal scientific terms.", examples: ["Hippocampus as seahorse", "Amygdala as almond", "Cortex as bark", "Cerebellum as little brain"], fact: "A single classical root can appear across many scientific fields, which makes pattern recognition useful for students.", question: "What happens when students memorise labels without function?", children: [
+              { id: "greeklatin", title: "Greek and Latin Origins", family: "terminology", type: "Origin", text: "Greek and Latin terms gave anatomical naming a formal structure across medical traditions.", rule: "A root often carries a clue about shape, size, position, or comparison.", examples: ["Cortex", "Cerebellum", "Hippocampus", "Amygdala"], fact: "Latin became a stable naming language in anatomy because it was not tied to everyday speech in one nation.", question: "Why did classical language become so durable in science?" },
+              { id: "metaphoric", title: "Metaphoric Labels", family: "terminology", type: "Concept", text: "Many anatomical labels compare structures with familiar objects or shapes.", rule: "If a term sounds strange, it may be describing what a structure looked like to an early anatomist.", examples: ["Seahorse", "Almond", "Bark", "Little brain"], fact: "These labels are memory hooks. They are not definitions.", question: "Which terms in science are really metaphors?" },
+              { id: "hippocampus", title: "Hippocampus: Seahorse", family: "terminology", type: "Example", text: "The hippocampus was named through resemblance to a seahorse shape.", rule: "Shape based names often survive because they are vivid and easy to remember.", examples: ["Hippocampus", "Cochlea", "Vermis", "Pons"], fact: "The hippocampus is strongly linked to memory, but the word itself tells you shape, not function.", question: "Does the name hippocampus help students understand memory?" },
+              { id: "amygdala", title: "Amygdala: Almond", family: "terminology", type: "Example", text: "Amygdala comes from a word meaning almond, reflecting shape based anatomical naming.", rule: "A simple object comparison can become a formal anatomical term.", examples: ["Amygdala", "Tonsil", "Nucleus", "Olive"], fact: "The amygdala is often reduced to fear, but it is better understood as part of broader salience, emotion, and learning systems.", question: "What does the almond metaphor leave out?" }
             ]},
-            { id: "thalamus", title: "The Thalamus Journey", family: "terminology", type: "Term history", text: "The thalamus shows how terms travel across languages and meanings before becoming fixed in scientific use.", learn: "A term can shift meaning as it moves across medical traditions, translation, and new anatomical knowledge.", question: "How much history should sit behind a modern scientific label?", children: [
-              { id: "galen", title: "Galen: Inner Chamber", family: "terminology", type: "Historical meaning", text: "Older anatomical traditions linked thalamus language with chamber like meanings.", learn: "Spatial language was central because anatomy was first mapped through visible form.", question: "Why do so many anatomical terms sound architectural?" },
-              { id: "arabic", title: "Arabic: Canopy or Alcove", family: "terminology", type: "Translation history", text: "Arabic medical translation traditions helped carry and reshape anatomical vocabulary.", learn: "Scientific language is often a chain of translations, not a single clean origin.", question: "How do translation pathways affect scientific authority?" },
-              { id: "willis", title: "Willis: Optic Chambers", family: "terminology", type: "Reinterpretation", text: "Willis used terms connected to optic pathways, showing how function and location influenced naming.", learn: "Naming shifted as anatomy became linked to emerging functional theories.", question: "Should function or location dominate anatomical naming?" }
+            { id: "thalamus", title: "The Thalamus Journey", family: "terminology", type: "Term history", text: "The thalamus shows how terms travel across languages and meanings before becoming fixed in scientific use.", rule: "Terms shift as they move through translation, anatomy, and new theories of function.", examples: ["Inner chamber", "Canopy", "Alcove", "Optic chambers"], fact: "The thalamus is a good case study because its name history reflects structure, translation, and changing ideas about sensory pathways.", question: "How much history should sit behind a modern scientific label?", children: [
+              { id: "galen", title: "Galen: Inner Chamber", family: "terminology", type: "Historical meaning", text: "Older anatomical traditions linked thalamus language with chamber like meanings.", rule: "Architectural terms were common because anatomy was mapped spatially.", examples: ["Chamber", "Ventricle", "Atrium", "Foramen"], fact: "Words such as chamber and ventricle remind us anatomy was first organised through visible compartments.", question: "Why do so many anatomical terms sound architectural?" },
+              { id: "arabic", title: "Arabic: Canopy or Alcove", family: "terminology", type: "Translation history", text: "Arabic medical translation traditions helped carry and reshape anatomical vocabulary.", rule: "Translation can preserve, bend, or enrich the meaning of a scientific term.", examples: ["Canopy", "Alcove", "Chamber", "Seat"], fact: "Arabic medicine was central to preserving and extending classical medical knowledge, so anatomical language often travelled through Arabic scholarly traditions before later European use.", question: "How do translation pathways affect scientific authority?" },
+              { id: "willis", title: "Willis: Optic Chambers", family: "terminology", type: "Reinterpretation", text: "Willis used terms connected to optic pathways, showing how function and location influenced naming.", rule: "A term can be reinterpreted when new anatomical relationships become important.", examples: ["Optic chambers", "Optic tract", "Sensory relay", "Thalamic nuclei"], fact: "The thalamus is now often taught as a relay hub, but that modern function label sits on top of a much older word history.", question: "Should function or location dominate anatomical naming?" }
             ]}
           ]
         },
@@ -612,24 +598,26 @@
           family: "eponyms",
           type: "Ethics pathway",
           text: "Eponyms honour people by attaching names to discoveries or structures, but they raise questions about accuracy, ethics, memory, and inclusion.",
-          learn: "Eponyms are compact, but they often hide function and reproduce uneven histories of recognition.",
+          rule: "Eponyms name people, not properties. They rarely tell learners what a structure does.",
+          examples: ["Parkinson disease", "Broca area", "Wernicke area", "Clara cells", "Golgi apparatus"],
+          fact: "An eponym can keep scientific history visible, but it can also hide contributors, function, or ethical problems.",
           question: "Should neuroscience keep contested names or replace them with descriptive terms?",
           children: [
-            { id: "support", title: "Support for Eponyms", family: "eponyms", type: "Position", text: "Supporters argue eponyms preserve history, recognise researchers, and open discussion about science as a human activity.", learn: "Names can act as historical prompts when taught critically.", question: "Can an eponym be useful if it is taught with context?", children: [
-              { id: "significance", title: "Historical Significance", family: "eponyms", type: "Argument", text: "Eponyms act as reminders of scientific history and discovery contexts.", learn: "They can lead students into the history of science rather than only content recall.", question: "When does historical memory belong in terminology?" },
-              { id: "honouring", title: "Honouring Scientists", family: "eponyms", type: "Argument", text: "They recognise people who shaped anatomical or clinical knowledge.", learn: "Recognition matters, but it depends on fair attribution.", question: "Who gets named, and who gets forgotten?" },
-              { id: "bioethical", title: "Bioethical Discussion Tool", family: "eponyms", type: "Teaching use", text: "Contested names give students a way to discuss ethics, attribution, and the social history of science.", learn: "A problematic term can become a useful discussion point if not treated as neutral.", question: "How should teachers handle ethically difficult names?" }
+            { id: "support", title: "Support for Eponyms", family: "eponyms", type: "Position", text: "Supporters argue eponyms preserve history, recognise researchers, and open discussion about science as a human activity.", rule: "An eponym can function as a historical doorway if it is taught with context.", examples: ["Broca area", "Wernicke area", "Golgi apparatus", "Parkinson disease"], fact: "Some eponyms are so widely embedded that replacing them may require long transition periods.", question: "Can an eponym be useful if it is taught with context?", children: [
+              { id: "significance", title: "Historical Significance", family: "eponyms", type: "Argument", text: "Eponyms act as reminders of scientific history and discovery contexts.", rule: "A name can act as a prompt for historical inquiry.", examples: ["Broca", "Wernicke", "Golgi", "Parkinson"], fact: "The strongest use of eponyms in teaching is not memorisation. It is using them to ask how knowledge was made.", question: "When does historical memory belong in terminology?" },
+              { id: "honouring", title: "Honouring Scientists", family: "eponyms", type: "Argument", text: "They recognise people who shaped anatomical or clinical knowledge.", rule: "Naming is a form of professional recognition.", examples: ["Golgi apparatus", "Purkinje cells", "Broca area"], fact: "Honouring one person can obscure teams, assistants, translators, patients, and earlier observers.", question: "Who gets named, and who gets forgotten?" },
+              { id: "bioethical", title: "Bioethical Discussion Tool", family: "eponyms", type: "Teaching use", text: "Contested names give students a way to discuss ethics, attribution, and the social history of science.", rule: "A problematic name can become useful when it opens ethical analysis.", examples: ["Clara cells", "Reiter syndrome", "Hallervorden Spatz disease"], fact: "Some medical eponyms have been replaced because the people named were linked to unethical research or Nazi medicine.", question: "How should teachers handle ethically difficult names?" }
             ]},
-            { id: "opposition", title: "Opposition to Eponyms", family: "eponyms", type: "Position", text: "Critics argue eponyms often hide function, misattribute discovery, or preserve names linked to unethical conduct.", learn: "Descriptive terms usually support clearer learning because they encode more scientific information.", question: "Is clarity more important than tradition?", children: [
-              { id: "accuracy", title: "Lack of Scientific Accuracy", family: "eponyms", type: "Critique", text: "An eponym rarely tells a learner what a structure does, where it is, or how it connects.", learn: "This increases memorisation burden without supporting understanding.", question: "What makes a term educationally useful?" },
-              { id: "infamy", title: "Historical Infamy: Max Clara", family: "eponyms", type: "Ethical concern", text: "Some eponyms are tied to figures whose research history raises serious ethical problems.", learn: "Scientific naming can preserve harms if ethical history is ignored.", question: "Should ethically compromised names be removed?" },
-              { id: "misattrib", title: "Misattribution of Discovery", family: "eponyms", type: "Critique", text: "Names often credit a single person even when discovery involved earlier or collaborative work.", learn: "Eponyms can simplify history into a false single discoverer story.", question: "How should science acknowledge collaboration?" },
-              { id: "cognitive", title: "Cognitive Load on Students", family: "eponyms", type: "Learning issue", text: "Memorising names adds load without always adding conceptual understanding.", learn: "For students, descriptive names often work better because the term itself carries meaning.", question: "Which terms reduce unnecessary memory load?" }
+            { id: "opposition", title: "Opposition to Eponyms", family: "eponyms", type: "Position", text: "Critics argue eponyms often hide function, misattribute discovery, or preserve names linked to unethical conduct.", rule: "Descriptive terms usually teach more than personal names.", examples: ["Club cell instead of Clara cell", "Reactive airway disease labels", "Function based anatomical terms"], fact: "Renaming does not erase history. It can shift a term from honouring to analysing history.", question: "Is clarity more important than tradition?", children: [
+              { id: "accuracy", title: "Lack of Scientific Accuracy", family: "eponyms", type: "Critique", text: "An eponym rarely tells a learner what a structure does, where it is, or how it connects.", rule: "A descriptive name lowers the amount of extra memory work required.", examples: ["Medial temporal lobe", "Sensory relay", "Prefrontal cortex", "Club cell"], fact: "Students learn faster when a term contains a clue about location, shape, or function.", question: "What makes a term educationally useful?" },
+              { id: "infamy", title: "Historical Infamy: Max Clara", family: "eponyms", type: "Ethical concern", text: "Some eponyms are tied to figures whose research history raises serious ethical problems.", rule: "Names can become honours, even when the history behind them is ethically compromised.", examples: ["Clara cells", "Reiter syndrome", "Hallervorden Spatz disease"], fact: "Clara cells are now widely called club cells to avoid honouring Max Clara and to use a more descriptive term.", question: "Should ethically compromised names be removed?" },
+              { id: "misattrib", title: "Misattribution of Discovery", family: "eponyms", type: "Critique", text: "Names often credit a single person even when discovery involved earlier or collaborative work.", rule: "An eponym can create a false single discoverer story.", examples: ["Broca area", "Wernicke area", "Golgi apparatus", "Parkinson disease"], fact: "Scientific discovery is often cumulative, but eponyms compress it into one remembered name.", question: "How should science acknowledge collaboration?" },
+              { id: "cognitive", title: "Cognitive Load on Students", family: "eponyms", type: "Learning issue", text: "Memorising names adds load without always adding conceptual understanding.", rule: "A term should ideally carry meaning, not only require recall.", examples: ["Descriptive anatomy", "Function based terms", "Location based terms"], fact: "Eponyms are harder for novices because they give few clues unless the story has been taught.", question: "Which terms reduce unnecessary memory load?" }
             ]},
-            { id: "inclusivity", title: "Inclusivity Concerns", family: "eponyms", type: "Equity issue", text: "Eponym traditions often reflect who had access to scientific institutions, publication, and recognition.", learn: "Naming systems can reproduce gender, cultural, and institutional bias.", question: "What would a more inclusive naming system look like?", children: [
-              { id: "male", title: "Male Dominance", family: "eponyms", type: "Pattern", text: "Many eponyms preserve male names because scientific recognition historically excluded women.", learn: "The naming record reflects unequal access to professional science.", question: "How does naming shape who students see as scientific authorities?" },
-              { id: "diversity", title: "Lack of Diversity", family: "eponyms", type: "Pattern", text: "Eponym lists often underrepresent researchers outside dominant institutions and traditions.", learn: "Recognition patterns reflect social structures, not pure scientific merit.", question: "Whose contributions are missing from common terms?" },
-              { id: "western", title: "Western Centralisation", family: "eponyms", type: "Pattern", text: "Western naming traditions sometimes obscure contributions from other medical and scientific cultures.", learn: "Scientific vocabulary often centralises European academic histories.", question: "How should global scientific histories appear in teaching?" }
+            { id: "inclusivity", title: "Inclusivity Concerns", family: "eponyms", type: "Equity issue", text: "Eponym traditions often reflect who had access to scientific institutions, publication, and recognition.", rule: "Naming systems can reproduce the inequalities of the institutions that created them.", examples: ["Male eponyms", "European eponyms", "Clinical names from elite institutions"], fact: "The list of famous names in science often tells us as much about access and status as it does about discovery.", question: "What would a more inclusive naming system look like?", children: [
+              { id: "male", title: "Male Dominance", family: "eponyms", type: "Pattern", text: "Many eponyms preserve male names because scientific recognition historically excluded women.", rule: "Recognition patterns reflect access to education, publication, and authority.", examples: ["Male named areas", "Male named diseases", "Male named instruments"], fact: "Absence from eponym lists does not mean absence from scientific labour.", question: "How does naming shape who students see as scientific authorities?" },
+              { id: "diversity", title: "Lack of Diversity", family: "eponyms", type: "Pattern", text: "Eponym lists often underrepresent researchers outside dominant institutions and traditions.", rule: "A naming tradition can make a narrow group appear more central than it was.", examples: ["Western clinical eponyms", "European anatomical eponyms", "Elite university traditions"], fact: "Many contributions from technicians, patients, translators, nurses, and non western scholars are hard to see in eponym based teaching.", question: "Whose contributions are missing from common terms?" },
+              { id: "western", title: "Western Centralisation", family: "eponyms", type: "Pattern", text: "Western naming traditions sometimes obscure contributions from other medical and scientific cultures.", rule: "The language of a field can centralise one historical tradition over others.", examples: ["Greek roots", "Latin standards", "European eponyms", "Western textbook conventions"], fact: "A global view of neuroscience vocabulary shows translation, preservation, and reinterpretation across many cultures.", question: "How should global scientific histories appear in teaching?" }
             ]}
           ]
         },
@@ -639,18 +627,20 @@
           family: "institution",
           type: "Discipline pathway",
           text: "Modern neuroscience became more unified through research programmes, societies, shared terminology, and digital standards.",
-          learn: "A discipline becomes stable when communities agree on shared language, methods, and institutional structures.",
+          rule: "Fields become stable when people agree on shared language, methods, organisations, and publication practices.",
+          examples: ["Society for Neuroscience", "Terminologia Anatomica", "Neuroinformatics", "Brain atlases"],
+          fact: "Standardisation is not only administrative. It shapes what researchers can compare, search, teach, and build into databases.",
           question: "Who gets to decide which terms become official?",
           children: [
-            { id: "unified", title: "Unified Discipline", family: "institution", type: "Field formation", text: "Neuroscience became more coherent when biology, psychology, medicine, and computation were brought into shared research structures.", learn: "The field grew through interdisciplinary synthesis rather than one single origin point.", question: "What makes neuroscience a discipline rather than a collection of topics?", children: [
-              { id: "schmitt", title: "Schmitt: NRP at MIT", family: "institution", type: "Institutional example", text: "Francis O. Schmitt’s Neurosciences Research Program helped bring together researchers across disciplines.", learn: "Institutional programmes shaped the field by creating networks of researchers and shared problems.", question: "How do institutions shape what counts as knowledge?" },
-              { id: "sfn", title: "Society for Neuroscience: 1969", family: "institution", type: "Professional body", text: "The Society for Neuroscience helped formalise neuroscience as a shared professional field.", learn: "Professional societies stabilise a field through conferences, publications, and shared identity.", question: "Why do disciplines need societies?" },
-              { id: "synthesis", title: "Interdisciplinary Synthesis", family: "institution", type: "Concept", text: "Neuroscience developed through the synthesis of anatomy, physiology, psychology, chemistry, computation, and medicine.", learn: "The field is strongest when it connects levels of explanation, from cells to behaviour.", question: "Which disciplines matter most for explaining learning?" }
+            { id: "unified", title: "Unified Discipline", family: "institution", type: "Field formation", text: "Neuroscience became more coherent when biology, psychology, medicine, and computation were brought into shared research structures.", rule: "A discipline is created through institutions as much as through ideas.", examples: ["Research programmes", "Professional societies", "Conferences", "Journals"], fact: "Neuroscience is relatively young as a unified field, even though its component questions are ancient.", question: "What makes neuroscience a discipline rather than a collection of topics?", children: [
+              { id: "schmitt", title: "Schmitt: NRP at MIT", family: "institution", type: "Institutional example", text: "Francis O. Schmitt’s Neurosciences Research Program helped bring together researchers across disciplines.", rule: "Interdisciplinary fields need structures that help different experts work on shared problems.", examples: ["Neurosciences Research Program", "MIT", "Interdisciplinary research groups"], fact: "Programmes like this helped make neuroscience a meeting point for anatomy, psychology, physiology, chemistry, and computation.", question: "How do institutions shape what counts as knowledge?" },
+              { id: "sfn", title: "Society for Neuroscience: 1969", family: "institution", type: "Professional body", text: "The Society for Neuroscience helped formalise neuroscience as a shared professional field.", rule: "Professional societies stabilise identity, standards, and communication in a field.", examples: ["Annual meetings", "Professional networks", "Shared publications"], fact: "A society gives a field a public structure. It helps researchers see themselves as part of the same discipline.", question: "Why do disciplines need societies?" },
+              { id: "synthesis", title: "Interdisciplinary Synthesis", family: "institution", type: "Concept", text: "Neuroscience developed through the synthesis of anatomy, physiology, psychology, chemistry, computation, and medicine.", rule: "Neuroscience works across levels, from cells to behaviour.", examples: ["Cellular neuroscience", "Cognitive neuroscience", "Clinical neurology", "Computational neuroscience"], fact: "Many neuroscience explanations fail when they stay at only one level of analysis.", question: "Which disciplines matter most for explaining learning?" }
             ]},
-            { id: "standards", title: "Standardisation", family: "institution", type: "System building", text: "Standardisation reduces confusion, supports shared databases, and helps teaching, research, and clinical practice communicate clearly.", learn: "Shared terms matter more as fields become digital, collaborative, and data intensive.", question: "What is lost when terms become standardised?", children: [
-              { id: "terminologia", title: "Terminologia Anatomica", family: "institution", type: "Standard", text: "Terminologia Anatomica supports standard naming across anatomical science.", learn: "Standard lists reduce ambiguity in medical and anatomical communication.", question: "Does standardisation improve learning or flatten history?" },
-              { id: "neuronames", title: "Neuroscience Based Nomenclature", family: "institution", type: "Standard", text: "Neuroscience based naming seeks clearer labels connected to function, anatomy, and systems.", learn: "Descriptive naming can reduce memory load and support conceptual clarity.", question: "What should a good neuroscience name include?" },
-              { id: "informatics", title: "Neuroinformatics Standards", family: "institution", type: "Digital standard", text: "Digital neuroscience needs consistent terms so data, models, and atlases connect accurately.", learn: "Informatics turns naming into infrastructure because databases depend on shared labels.", question: "Why does terminology matter more in digital science?" }
+            { id: "standards", title: "Standardisation", family: "institution", type: "System building", text: "Standardisation reduces confusion, supports shared databases, and helps teaching, research, and clinical practice communicate clearly.", rule: "Shared terms make collaboration possible, especially when knowledge is stored digitally.", examples: ["Terminologia Anatomica", "Brain atlases", "Neuroinformatics standards", "Ontologies"], fact: "The more data a field produces, the more important naming becomes.", question: "What is lost when terms become standardised?", children: [
+              { id: "terminologia", title: "Terminologia Anatomica", family: "institution", type: "Standard", text: "Terminologia Anatomica supports standard naming across anatomical science.", rule: "A standard list reduces ambiguity between teachers, clinicians, and researchers.", examples: ["Latin anatomical terms", "International anatomical terminology", "Descriptive structure names"], fact: "Anatomical standards try to replace local variation with shared reference language.", question: "Does standardisation improve learning or flatten history?" },
+              { id: "neuronames", title: "Neuroscience Based Nomenclature", family: "institution", type: "Standard", text: "Neuroscience based naming seeks clearer labels connected to function, anatomy, and systems.", rule: "Better names connect the term to useful scientific information.", examples: ["Location based terms", "Function based terms", "System based terms"], fact: "A useful neuroscience term often combines anatomical location with functional relevance.", question: "What should a good neuroscience name include?" },
+              { id: "informatics", title: "Neuroinformatics Standards", family: "institution", type: "Digital standard", text: "Digital neuroscience needs consistent terms so data, models, and atlases connect accurately.", rule: "Databases need consistent labels or related findings become hard to connect.", examples: ["Brain atlases", "Ontologies", "Data dictionaries", "Model repositories"], fact: "In digital science, terminology becomes infrastructure. Bad labels create bad search, weak comparison, and broken data links.", question: "Why does terminology matter more in digital science?" }
             ]}
           ]
         }
@@ -658,22 +648,22 @@
     };
 
     const coords = {
-      root: [180, 850],
-      technology: [560, 260], terminology: [560, 700], eponyms: [560, 1125], institution: [560, 1545],
-      historical: [960, 105], communications: [960, 285], computing: [960, 465],
-      vesalius: [1370, 35], harvey: [1370, 105], descartes: [1370, 175],
-      encoding: [1370, 260], networks: [1370, 330], encryption: [1370, 400],
-      reprogramming: [1370, 500], erasing: [1370, 570], viruses: [1370, 640],
-      classical: [960, 685], thalamus: [960, 910],
-      greeklatin: [1370, 650], metaphoric: [1370, 720], hippocampus: [1370, 790], amygdala: [1370, 860],
-      galen: [1370, 950], arabic: [1370, 1020], willis: [1370, 1090],
-      support: [960, 1115], opposition: [960, 1320], inclusivity: [960, 1515],
-      significance: [1370, 1080], honouring: [1370, 1150], bioethical: [1370, 1220],
-      accuracy: [1370, 1290], infamy: [1370, 1360], misattrib: [1370, 1430], cognitive: [1370, 1500],
-      male: [1370, 1580], diversity: [1370, 1650], western: [1370, 1720],
-      unified: [960, 1720], standards: [960, 1905],
-      schmitt: [1370, 1760], sfn: [1370, 1830], synthesis: [1370, 1900],
-      terminologia: [1370, 1980], neuronames: [1370, 2050], informatics: [1370, 2120]
+      root: [190, 1120],
+      technology: [610, 320], terminology: [610, 930], eponyms: [610, 1540], institution: [610, 2150],
+      historical: [1070, 110], communications: [1070, 360], computing: [1070, 610],
+      vesalius: [1530, 35], harvey: [1530, 120], descartes: [1530, 205],
+      encoding: [1530, 320], networks: [1530, 405], encryption: [1530, 490],
+      reprogramming: [1530, 610], erasing: [1530, 695], viruses: [1530, 780],
+      classical: [1070, 900], thalamus: [1070, 1235],
+      greeklatin: [1530, 860], metaphoric: [1530, 945], hippocampus: [1530, 1030], amygdala: [1530, 1115],
+      galen: [1530, 1250], arabic: [1530, 1335], willis: [1530, 1420],
+      support: [1070, 1510], opposition: [1070, 1815], inclusivity: [1070, 2105],
+      significance: [1530, 1470], honouring: [1530, 1555], bioethical: [1530, 1640],
+      accuracy: [1530, 1775], infamy: [1530, 1860], misattrib: [1530, 1945], cognitive: [1530, 2030],
+      male: [1530, 2170], diversity: [1530, 2255], western: [1530, 2340],
+      unified: [1070, 2440], standards: [1070, 2725],
+      schmitt: [1530, 2400], sfn: [1530, 2485], synthesis: [1530, 2570],
+      terminologia: [1530, 2700], neuronames: [1530, 2785], informatics: [1530, 2870]
     };
 
     const all = new Map();
@@ -682,7 +672,7 @@
     const expanded = new Set(["root"]);
     let selected = "root";
     let focusMode = false;
-    let scale = 0.58;
+    let scale = 0.44;
     let tx = 110;
     let ty = 70;
     let dragging = false;
@@ -743,9 +733,9 @@
     function curve(a, b) {
       const [x1, y1] = coords[a];
       const [x2, y2] = coords[b];
-      const pad1 = depth(a) === 0 ? 190 : 150;
-      const pad2 = depth(b) >= 3 ? 150 : 160;
-      const bend = Math.max(120, (x2 - x1) * 0.55);
+      const pad1 = depth(a) === 0 ? 200 : 160;
+      const pad2 = depth(b) >= 3 ? 165 : 170;
+      const bend = Math.max(145, (x2 - x1) * 0.55);
       return `M ${x1 + pad1} ${y1} C ${x1 + bend} ${y1}, ${x2 - bend} ${y2}, ${x2 - pad2} ${y2}`;
     }
 
@@ -850,17 +840,23 @@
       return pathTo(id).map(x => `<span class="crumb">${all.get(x).title}</span>`).join("");
     }
 
+    function listItems(items) {
+      return `<ul>${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
     function updateSide(id) {
       const n = all.get(id);
       sideTop.innerHTML = `<span class="tag">${n.type}</span><h2>${n.title}</h2><div class="crumbs">${crumbs(id)}</div>`;
       sideBody.innerHTML = `
         <p>${n.text}</p>
-        <div class="sectionTitle">Why it matters</div>
-        <div class="eduCard"><strong>Educational value</strong><span>${n.learn}</span></div>
+        <div class="sectionTitle">Naming rule</div>
+        <div class="infoCard"><strong>Pattern to notice</strong><span>${n.rule}</span></div>
+        <div class="sectionTitle">Where else this appears</div>
+        <div class="infoCard"><strong>Related terms</strong>${listItems(n.examples || [])}</div>
+        <div class="sectionTitle">Interesting detail</div>
+        <div class="infoCard"><strong>Useful fact</strong><span>${n.fact}</span></div>
         <div class="sectionTitle">Thinking prompt</div>
         <div class="quiz"><div class="q">Question</div><p>${n.question}</p></div>
-        <div class="sectionTitle">How to use this node</div>
-        <div class="eduCard"><strong>${kids.get(id).length ? "Expand the branch" : "Trace the pathway"}</strong><span>${kids.get(id).length ? "Open this node to compare its linked examples. Use Focus mode to remove visual noise while keeping the conceptual pathway visible." : "Follow the breadcrumb trail above to connect this detail back to the larger argument."}</span></div>
       `;
     }
 
@@ -883,9 +879,11 @@
 
     function fit() {
       const box = document.querySelector(".stage").getBoundingClientRect();
-      scale = Math.max(0.36, Math.min(0.66, (box.height - 150) / 2200));
-      tx = 95;
-      ty = 100;
+      const xScale = (box.width - 160) / 1900;
+      const yScale = (box.height - 160) / 2960;
+      scale = Math.max(0.25, Math.min(0.58, Math.min(xScale, yScale)));
+      tx = 85;
+      ty = 90;
       applyTransform();
     }
 
@@ -900,7 +898,8 @@
       if (!q) { render(); return; }
       let found = null;
       for (const [id, n] of all.entries()) {
-        if (n.title.toLowerCase().includes(q) || n.text.toLowerCase().includes(q) || n.learn.toLowerCase().includes(q)) {
+        const haystack = [n.title, n.text, n.rule, n.fact, ...(n.examples || [])].join(" ").toLowerCase();
+        if (haystack.includes(q)) {
           found ||= id;
           expandParents(id);
         }
@@ -915,8 +914,8 @@
       }
     }
 
-    document.getElementById("zoomIn").onclick = () => { scale = Math.min(1.22, scale + 0.08); applyTransform(); };
-    document.getElementById("zoomOut").onclick = () => { scale = Math.max(0.30, scale - 0.08); applyTransform(); };
+    document.getElementById("zoomIn").onclick = () => { scale = Math.min(1.10, scale + 0.07); applyTransform(); };
+    document.getElementById("zoomOut").onclick = () => { scale = Math.max(0.22, scale - 0.07); applyTransform(); };
     document.getElementById("fit").onclick = fit;
     document.getElementById("focus").onclick = () => { focusMode = !focusMode; focusBtn.classList.toggle("active", focusMode); renderHot(); };
     document.getElementById("expandAll").onclick = () => { for (const [id] of all) if (kids.get(id).length) expanded.add(id); render(); };
@@ -946,7 +945,7 @@
       e.preventDefault();
       const old = scale;
       const delta = e.deltaY > 0 ? -0.045 : 0.045;
-      scale = Math.max(0.30, Math.min(1.22, scale + delta));
+      scale = Math.max(0.22, Math.min(1.10, scale + delta));
       const rect = viewport.getBoundingClientRect();
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
