@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curse Bingo — Richard III</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #130608;
+      color: #f0e0c0;
+      min-height: 100vh;
+      padding: 28px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      color: #c8960c;
+      letter-spacing: 0.06em;
+      line-height: 1.1;
+    }
+
+    .crown { font-size: 2.8rem; vertical-align: middle; }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: #a07830;
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+    /* ── Instructions ── */
+    .instructions {
+      background: rgba(200, 150, 12, 0.07);
+      border: 1px solid rgba(200, 150, 12, 0.4);
+      border-radius: 10px;
+      padding: 16px 22px;
+      max-width: 740px;
+      width: 100%;
+      margin-bottom: 26px;
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: #e0cda0;
+    }
+
+    .instructions strong { color: #c8960c; }
+
+    /* ── Grid ── */
+    .grid-wrap {
+      max-width: 760px;
+      width: 100%;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .cell {
+      background: #25090f;
+      border: 2px solid #5a2020;
+      border-radius: 8px;
+      padding: 12px 9px;
+      min-height: 128px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.1s;
+      font-size: 1.05rem;
+      line-height: 1.45;
+      color: #f0e0c0;
+      position: relative;
+      user-select: none;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .cell:hover:not(.free) {
+      background: #361018;
+      border-color: #c8960c;
+      transform: scale(1.02);
+    }
+
+    /* Marked (ticked) */
+    .cell.marked:not(.free) {
+      background: #3d0808;
+      border-color: #cc2020;
+      color: #ffb0b0;
+    }
+
+    .cell.marked:not(.free)::after {
+      content: "✓";
+      position: absolute;
+      top: 5px;
+      right: 9px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: #cc2020;
+    }
+
+    /* FREE centre */
+    .cell.free {
+      background: #081f0c;
+      border-color: #2a6030;
+      color: #78c058;
+      cursor: default;
+      font-style: italic;
+    }
+
+    .cell.free:hover { transform: none; }
+
+    .free-label {
+      font-size: 1.4rem;
+      font-weight: bold;
+      font-style: normal;
+      display: block;
+      margin-bottom: 4px;
+      color: #90d870;
+    }
+
+    .free-sub {
+      font-size: 0.95rem;
+    }
+
+    /* Line win highlight */
+    .cell.line-win {
+      border-color: #9944ee;
+      background: #1a0830;
+    }
+
+    .cell.line-win.marked:not(.free) {
+      background: #28084a;
+      border-color: #bb66ff;
+      color: #ddaaff;
+    }
+
+    .cell.line-win.free {
+      border-color: #9944ee;
+    }
+
+    /* Full-card win */
+    .cell.full-win {
+      border-color: #c8960c !important;
+      animation: goldPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes goldPulse {
+      0%, 100% { box-shadow: 0 0 4px rgba(200,150,12,0.3); }
+      50%       { box-shadow: 0 0 18px rgba(200,150,12,0.85); }
+    }
+
+    /* ── Message banner ── */
+    .banner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 18px 0 10px;
+      width: 100%;
+      max-width: 740px;
+    }
+
+    .banner-inner {
+      display: none;
+      text-align: center;
+      font-size: 1.45rem;
+      font-style: italic;
+      padding: 14px 28px;
+      border-radius: 10px;
+      width: 100%;
+    }
+
+    .banner-inner.line {
+      color: #cc88ff;
+      border: 1px solid #8844ee;
+      background: rgba(136, 68, 238, 0.1);
+    }
+
+    .banner-inner.full {
+      color: #c8960c;
+      border: 1px solid #c8960c;
+      background: rgba(200, 150, 12, 0.09);
+      font-size: 1.6rem;
+      animation: glowBanner 1.8s ease-in-out infinite;
+    }
+
+    @keyframes glowBanner {
+      0%, 100% { box-shadow: 0 0 6px rgba(200,150,12,0.3); }
+      50%       { box-shadow: 0 0 24px rgba(200,150,12,0.75); }
+    }
+
+    /* ── Buttons ── */
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    button {
+      font-family: Georgia, serif;
+      font-size: 1.15rem;
+      padding: 12px 30px;
+      border-radius: 8px;
+      border: 2px solid #c8960c;
+      background: transparent;
+      color: #c8960c;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.18s, color 0.18s;
+    }
+
+    button:hover {
+      background: #c8960c;
+      color: #130608;
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      body { background: #fff; color: #000; padding: 10px; }
+      h1 { color: #000; }
+      .subtitle, .instructions { color: #333; }
+      .controls, .banner { display: none; }
+      .cell {
+        background: #fff !important;
+        border-color: #333 !important;
+        color: #000 !important;
+        animation: none !important;
+        box-shadow: none !important;
+      }
+      .cell.free { background: #eee !important; color: #000 !important; }
+      .cell::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1><span class="crown">⚔</span> Curse Bingo <span class="crown">⚔</span></h1>
+    <p class="subtitle">Richard III &mdash; Margaret's Prophecies</p>
+  </div>
+
+  <div class="instructions">
+    <strong>How to play:</strong> As the class reads through <em>Richard III</em>, tick off each square
+    when Margaret's curse is fulfilled in that scene. The teacher pauses at curse moments and the class
+    identifies them together. <strong>First to complete a full line</strong> wins a small prize.
+    <strong>Complete the full card</strong> and you earn the right to deliver any curse from memory to the room.
+  </div>
+
+  <div class="grid-wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="banner" id="bannerWrap">
+    <div class="banner-inner line" id="lineMsg">
+      🎭 Line complete &mdash; the prophecy advances!
+    </div>
+    <div class="banner-inner full" id="fullMsg">
+      👑 Full card! Margaret's vengeance is complete. Now recite a curse from memory! 👑
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onclick="newCard()">🔀 New Card</button>
+    <button onclick="resetCard()">↺ Reset</button>
+    <button onclick="window.print()">🖨 Print</button>
+  </div>
+
+  <script>
+    // ── 24 curse-fulfilment squares (position 12 is always the FREE centre) ──
+    const ALL_SQUARES = [
+      "Death of Edward IV",
+      "Clarence is murdered\nin the Tower",
+      "Rivers is executed\nat Pomfret",
+      "Grey is executed\nat Pomfret",
+      "Vaughan is executed\nat Pomfret",
+      "Hastings condemned\nat the council",
+      "The Princes are\nimprisoned in the Tower",
+      "The Princes\nare murdered",
+      "Tyrrel confesses\nthe murder",
+      "Anne is made\nto marry Richard",
+      "Anne's mysterious death",
+      "Buckingham turns\nagainst Richard",
+      "Buckingham is captured\nand executed",
+      "Queen Elizabeth\noutlives all her children",
+      "The Duchess of York\ncurses Richard",
+      "Richard is\ncrowned King",
+      "Richmond raises\nan army",
+      "Dorset flees\nto join Richmond",
+      "Richard's nightmare\nbefore Bosworth",
+      "The ghosts visit Richard\non the eve of battle",
+      "Stanley defects\nat Bosworth",
+      "Richard: 'No creature\nloves me'",
+      "Richard is killed\nat Bosworth",
+      "Richmond is crowned\nHenry VII",
+    ];
+
+    // All winning lines on the 5×5 grid (rows, cols, diagonals)
+    const LINES = [
+      [0,1,2,3,4],
+      [5,6,7,8,9],
+      [10,11,12,13,14],
+      [15,16,17,18,19],
+      [20,21,22,23,24],
+      [0,5,10,15,20],
+      [1,6,11,16,21],
+      [2,7,12,17,22],
+      [3,8,13,18,23],
+      [4,9,14,19,24],
+      [0,6,12,18,24],
+      [4,8,12,16,20],
+    ];
+
+    let shuffled = [];   // the 24 squares in randomised order
+    let marked = new Set([12]); // grid indices that are ticked (12 = FREE, always on)
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function squareText(gridIndex) {
+      // Map grid 0-24 to shuffled 0-23 (skip centre 12)
+      const arrIdx = gridIndex < 12 ? gridIndex : gridIndex - 1;
+      return shuffled[arrIdx];
+    }
+
+    function toggle(gridIndex) {
+      if (gridIndex === 12) return;
+      if (marked.has(gridIndex)) {
+        marked.delete(gridIndex);
+      } else {
+        marked.add(gridIndex);
+      }
+      render();
+    }
+
+    function newCard() {
+      shuffled = shuffle(ALL_SQUARES);
+      marked = new Set([12]);
+      render();
+    }
+
+    function resetCard() {
+      marked = new Set([12]);
+      render();
+    }
+
+    function computeWins() {
+      const lineSet = new Set();
+      let hasLine = false;
+      for (const line of LINES) {
+        if (line.every(i => marked.has(i))) {
+          hasLine = true;
+          line.forEach(i => lineSet.add(i));
+        }
+      }
+      const fullCard = marked.size === 25;
+      return { lineSet, hasLine, fullCard };
+    }
+
+    function render() {
+      const { lineSet, hasLine, fullCard } = computeWins();
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+
+      for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+
+        if (i === 12) {
+          // FREE centre — always marked
+          cell.classList.add('free', 'marked');
+          cell.innerHTML = `<span class="free-label">FREE</span><span class="free-sub">Margaret curses the court</span>`;
+        } else {
+          // Break \n into <br> for display
+          const raw = squareText(i);
+          cell.innerHTML = raw.replace(/\n/g, '<br>');
+
+          if (marked.has(i))  cell.classList.add('marked');
+          if (lineSet.has(i)) cell.classList.add('line-win');
+          if (fullCard)        cell.classList.add('full-win');
+
+          cell.addEventListener('click', () => toggle(i));
+        }
+
+        // FREE square also gets line / full-win highlighting
+        if (i === 12) {
+          if (lineSet.has(12)) cell.classList.add('line-win');
+          if (fullCard)        cell.classList.add('full-win');
+        }
+
+        grid.appendChild(cell);
+      }
+
+      // Banners
+      const lineMsg = document.getElementById('lineMsg');
+      const fullMsg = document.getElementById('fullMsg');
+
+      if (fullCard) {
+        lineMsg.style.display = 'none';
+        fullMsg.style.display = 'block';
+      } else if (hasLine) {
+        lineMsg.style.display = 'block';
+        fullMsg.style.display = 'none';
+      } else {
+        lineMsg.style.display = 'none';
+        fullMsg.style.display = 'none';
+      }
+    }
+
+    // Kick off
+    newCard();
+  </script>
+</body>
+</html>
