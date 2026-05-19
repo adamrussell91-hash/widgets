@@ -133,6 +133,48 @@
       transition: transform 0.15s ease, background 0.15s ease;
     }
 
+    .button-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .secondary-button {
+      background: #4f46e5;
+    }
+
+    .secondary-button:hover {
+      background: #4338ca;
+    }
+
+    .answer-box {
+      display: none;
+      margin-top: 24px;
+      background: #f8fafc;
+      border: 2px solid #d1d5db;
+      border-radius: 18px;
+      padding: 20px;
+      text-align: left;
+    }
+
+    .answer-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #374151;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      font-size: 18px;
+    }
+
     button:hover {
       background: #374151;
       transform: translateY(-2px);
@@ -218,7 +260,20 @@
       <div id="resultWord">hyponeurosensoryitis</div>
     </section>
 
-    <button onclick="spinWords()">Spin Neuro Word</button>
+    <div class="button-row">
+      <button onclick="spinWords()">Spin Neuro Word</button>
+      <button class="secondary-button" onclick="revealAnswers()">Reveal Answers</button>
+    </div>
+
+    <section class="answer-box" id="answerBox">
+      <div class="answer-title">Word Part Meanings</div>
+      <div class="answer-grid">
+        <div><strong>Prefix:</strong> <span id="prefixMeaning">under, below</span></div>
+        <div><strong>Root:</strong> <span id="rootMeaning">nerve</span></div>
+        <div><strong>Middle:</strong> <span id="middleMeaning">relating to the senses</span></div>
+        <div><strong>Suffix:</strong> <span id="suffixMeaning">inflammation</span></div>
+      </div>
+    </section>
 
     <div class="challenge" id="challengeText">
       Challenge: What could this word mean in plain English?
@@ -232,11 +287,47 @@
       "syn", "anti", "dys", "neo", "sub"
     ];
 
+    const prefixMeanings = {
+      hypo: "under, below, too little",
+      hyper: "above, excessive, too much",
+      micro: "small",
+      macro: "large",
+      poly: "many",
+      mono: "one, single",
+      hemi: "half",
+      peri: "around",
+      epi: "upon, above, outer",
+      auto: "self",
+      syn: "together, with",
+      anti: "against",
+      dys: "difficult, abnormal, impaired",
+      neo: "new",
+      sub: "under, below"
+    };
+
     const roots = [
       "neuro", "encephal", "soma", "therm", "vaso",
       "dendro", "cardio", "cortex", "gluco", "psych",
       "cranio", "sensory", "motor", "astro", "myelo"
     ];
+
+    const rootMeanings = {
+      neuro: "nerve or nervous system",
+      encephal: "brain, inside the head",
+      soma: "body",
+      therm: "heat or temperature",
+      vaso: "blood vessel",
+      dendro: "tree or branching structure",
+      cardio: "heart",
+      cortex: "outer layer, bark",
+      gluco: "sugar or glucose",
+      psych: "mind",
+      cranio: "skull",
+      sensory: "relating to the senses",
+      motor: "relating to movement",
+      astro: "star shaped",
+      myelo: "spinal cord or marrow"
+    };
 
     const middles = [
       "sensory", "motor", "visual", "auditory", "memory",
@@ -244,11 +335,47 @@
       "synaptic", "limbic", "plastic", "chemical", "signal"
     ];
 
+    const middleMeanings = {
+      sensory: "relating to the senses",
+      motor: "relating to movement",
+      visual: "relating to sight",
+      auditory: "relating to hearing",
+      memory: "relating to remembering",
+      cognitive: "relating to thinking",
+      emotional: "relating to feelings",
+      spinal: "relating to the spinal cord",
+      cranial: "relating to the skull",
+      cortical: "relating to the cortex",
+      synaptic: "relating to synapses or neural connections",
+      limbic: "relating to emotion and memory systems",
+      plastic: "changeable or mouldable",
+      chemical: "relating to chemicals or neurotransmitters",
+      signal: "message or transmission"
+    };
+
     const suffixes = [
       "itis", "ectomy", "logy", "oma", "plasty",
       "graphy", "pathy", "genesis", "osis", "ia",
       "al", "ic", "tion", "scope", "meter"
     ];
+
+    const suffixMeanings = {
+      itis: "inflammation",
+      ectomy: "surgical removal",
+      logy: "study of",
+      oma: "mass, growth, tumour",
+      plasty: "repair or reshaping",
+      graphy: "recording or writing",
+      pathy: "disease or disorder",
+      genesis: "creation or origin",
+      osis: "condition or process",
+      ia: "condition",
+      al: "relating to",
+      ic: "relating to",
+      tion: "process or action",
+      scope: "instrument for viewing",
+      meter: "instrument for measuring"
+    };
 
     const challenges = [
       "Challenge: Define this word in plain English.",
@@ -282,6 +409,7 @@
       middleSlot.classList.add("spin");
       suffixSlot.classList.add("spin");
       resultWord.textContent = "Spinning...";
+      document.getElementById("answerBox").style.display = "none";
 
       let spinCount = 0;
 
@@ -320,6 +448,19 @@
           suffixSlot.classList.remove("spin");
         }
       }, 80);
+    }
+
+    function revealAnswers() {
+      const prefix = document.getElementById("prefixSlot").textContent;
+      const root = document.getElementById("rootSlot").textContent;
+      const middle = document.getElementById("middleSlot").textContent;
+      const suffix = document.getElementById("suffixSlot").textContent;
+
+      document.getElementById("prefixMeaning").textContent = prefixMeanings[prefix];
+      document.getElementById("rootMeaning").textContent = rootMeanings[root];
+      document.getElementById("middleMeaning").textContent = middleMeanings[middle];
+      document.getElementById("suffixMeaning").textContent = suffixMeanings[suffix];
+      document.getElementById("answerBox").style.display = "block";
     }
   </script>
 </body>
