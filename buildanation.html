@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build a Nation: The Founding</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
+  :root {
+    --ink:     #0d1320;
+    --ink2:    #111827;
+    --border:  #3b5c8a;
+    --border2: #2a4060;
+    --gold:    #c8a84b;
+    --gold2:   #e8c96a;
+    --silver:  #a8b8cc;
+    --text:    #d4e4f4;
+    --muted:   #6a88aa;
+    --accent:  #4a7ab0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--ink);
+    background-image:
+      radial-gradient(ellipse 120% 60% at 50% -10%, #1a2d4a 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='38' fill='none' stroke='%23ffffff' stroke-width='0.3' stroke-opacity='0.04'/%3E%3Cline x1='40' y1='2' x2='40' y2='78' stroke='%23ffffff' stroke-width='0.3' stroke-opacity='0.04'/%3E%3Cline x1='2' y1='40' x2='78' y2='40' stroke='%23ffffff' stroke-width='0.3' stroke-opacity='0.04'/%3E%3C/svg%3E");
+    min-height: 100vh;
+    font-family: 'EB Garamond', Georgia, serif;
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ══ PAGE BORDER ══ */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 10px;
+    border: 1px solid rgba(59,92,138,0.35);
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 999;
+    box-shadow: inset 0 0 80px rgba(0,0,0,0.4);
+  }
+
+  /* ══ HEADER ══ */
+  header {
+    text-align: center;
+    padding: 52px 20px 24px;
+    position: relative;
+  }
+
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  .header-ornament .rule {
+    flex: 1;
+    max-width: 160px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .header-ornament svg { color: var(--gold); opacity: 0.7; }
+
+  header h1 {
+    font-family: 'Cinzel Decorative', 'Cinzel', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold2);
+    text-shadow: 0 0 40px rgba(200,168,75,0.3), 0 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 0.06em;
+    line-height: 1.25;
+  }
+  header .subtitle {
+    margin-top: 12px;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .header-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 20px auto 0;
+    max-width: 560px;
+  }
+  .header-divider .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border));
+  }
+  .header-divider .line.r {
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .header-divider .diamond {
+    width: 7px; height: 7px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    opacity: 0.7;
+  }
+
+  /* ══ TABS ══ */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    margin: 32px auto 0;
+    max-width: 560px;
+    border-bottom: 1px solid var(--border2);
+    position: relative;
+  }
+  .tabs::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 12px 44px;
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.25s, border-color 0.25s;
+  }
+  .tab-btn:hover { color: var(--silver); }
+  .tab-btn.active {
+    color: var(--gold2);
+    border-bottom-color: var(--gold);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ══ FOUNDING TAB ══ */
+  #founding {
+    padding: 44px 20px 70px;
+    text-align: center;
+  }
+
+  .deal-btn {
+    position: relative;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-block;
+  }
+  .deal-btn-inner {
+    position: relative;
+    background: linear-gradient(180deg, #1e3558 0%, #0f1e35 100%);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--gold2);
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 14px 56px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px rgba(59,92,138,0.3);
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  .deal-btn:hover .deal-btn-inner {
+    background: linear-gradient(180deg, #264270 0%, #142540 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .deal-btn:active .deal-btn-inner { transform: translateY(1px); }
+  /* corner ornaments */
+  .deal-btn-inner::before, .deal-btn-inner::after {
+    content: '✦';
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    color: var(--gold);
+    opacity: 0.5;
+    font-size: 0.65rem;
+  }
+  .deal-btn-inner::before { left: 18px; }
+  .deal-btn-inner::after  { right: 18px; }
+
+  /* ── Card layout ── */
+  .hand {
+    margin-top: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .hand-row {
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .card-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .group-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .group-label::before, .group-label::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--border2);
+  }
+
+  /* ── Card flip ── */
+  .card-slot {
+    width: 190px;
+    height: 269px;
+    perspective: 1000px;
+    opacity: 0;
+    transform: translateY(50px) scale(0.88) rotateX(8deg);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .card-slot.dealt {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0deg);
+  }
+
+  .card-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  }
+  .card-inner.flipped { transform: rotateY(180deg); }
+
+  .card-face, .card-back {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .card-face { transform: rotateY(180deg); }
+  .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
+
+  .card-back {
+    background: radial-gradient(ellipse at 50% 40%, #1a2d4a 0%, #0a1520 100%);
+    border: 2px solid #2a4060;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-back-frame {
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(59,92,138,0.4);
+    border-radius: 3px;
+  }
+  .card-back-frame::before, .card-back-frame::after {
+    content: '◆';
+    position: absolute;
+    color: var(--gold);
+    opacity: 0.35;
+    font-size: 0.5rem;
+  }
+  .card-back-frame::before { top: 4px; left: 50%; transform: translateX(-50%); }
+  .card-back-frame::after  { bottom: 4px; left: 50%; transform: translateX(-50%); }
+
+  .card-back-center {
+    width: 56%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid rgba(59,92,138,0.5);
+    background: radial-gradient(circle, #1e3558 0%, #0a1520 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .card-back-center::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 1px solid rgba(59,92,138,0.3);
+  }
+  .card-back-center svg { width: 44px; height: 44px; }
+
+  /* fortune row */
+  .fortune-row {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+  }
+  .fortune-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 480px;
+  }
+  .fortune-divider .fline {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  }
+  .fortune-divider span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fortune-divider span::before, .fortune-divider span::after {
+    content: '◆';
+    font-size: 0.45rem;
+    opacity: 0.5;
+    color: var(--gold);
+  }
+
+  /* ══ MARKETPLACE ══ */
+  #marketplace {
+    padding: 44px 24px 70px;
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .market-header {
+    margin-bottom: 36px;
+  }
+  .market-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.35rem;
+    color: var(--gold2);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .market-header p {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 1rem;
+  }
+
+  .swap-form {
+    background: linear-gradient(180deg, rgba(20,35,60,0.6) 0%, rgba(10,18,30,0.8) 100%);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 36px 40px;
+    margin-bottom: 48px;
+    position: relative;
+    box-shadow: inset 0 1px 0 rgba(59,92,138,0.2), 0 8px 32px rgba(0,0,0,0.3);
+  }
+  /* corner brackets */
+  .swap-form::before, .swap-form::after,
+  .swap-form > .corner-tl, .swap-form > .corner-br {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.4;
+  }
+  .swap-form::before { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+  .swap-form::after  { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .form-row label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    min-width: 50px;
+    text-align: right;
+  }
+  .form-row select {
+    background: #0a1520;
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    padding: 10px 40px 10px 16px;
+    border-radius: 3px;
+    min-width: 240px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23c8a84b' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    transition: border-color 0.2s;
+  }
+  .form-row select:focus { outline: none; border-color: var(--accent); }
+
+  .swap-btn {
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    color: var(--silver);
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 13px 44px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.12s;
+    box-shadow: 0 0 20px rgba(74,122,176,0.1);
+  }
+  .swap-btn:hover {
+    background: rgba(74,122,176,0.15);
+    color: var(--text);
+    transform: translateY(-2px);
+  }
+  .swap-btn:active { transform: translateY(1px); }
+
+  .swap-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    min-height: 300px;
+  }
+  .swap-card-wrap { text-align: center; }
+  .swap-card-wrap .swap-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .swap-arrow {
+    font-size: 1.8rem;
+    color: var(--border);
+    margin-top: 40px;
+    opacity: 0.6;
+  }
+
+  .swap-slot {
+    width: 210px;
+    height: 297px;
+    perspective: 1000px;
+  }
+  .swap-slot .card-inner {
+    transition: transform 1.2s cubic-bezier(0.45,0.05,0.55,0.95);
+  }
+  .swap-slot .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
+  .swap-outgoing img { filter: grayscale(70%) brightness(0.5); }
+
+  /* ══ TOAST ══ */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: #0d1828;
+    border: 1px solid var(--border2);
+    color: var(--gold);
+    padding: 12px 28px;
+    border-radius: 4px;
+    font-style: italic;
+    font-size: 0.95rem;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 1000;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 620px) {
+    header h1 { font-size: 1.5rem; }
+    .card-slot { width: 145px; height: 205px; }
+    .swap-slot { width: 160px; height: 226px; }
+    .hand-row { gap: 16px; }
+    .swap-form { padding: 24px 18px; }
+    .tab-btn { padding: 12px 24px; font-size: 0.74rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="header-ornament">
+    <div class="rule"></div>
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor">
+      <path d="M11 1 L12.8 8.2 L20 9 L12.8 9.8 L11 17 L9.2 9.8 L2 9 L9.2 8.2 Z"/>
+      <circle cx="11" cy="11" r="2.5" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+    </svg>
+    <div class="rule"></div>
+  </div>
+  <h1>Build a Nation</h1>
+  <p class="subtitle">The Founding</p>
+  <div class="header-divider">
+    <div class="line"></div>
+    <div class="diamond"></div>
+    <div class="line r"></div>
+  </div>
+</header>
+
+<!-- ══ TABS ══ -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('founding', this)">The Founding</button>
+  <button class="tab-btn" onclick="switchTab('marketplace', this)">The Marketplace</button>
+</div>
+
+<!-- ══════════ FOUNDING ══════════ -->
+<div id="founding" class="tab-panel active">
+  <div id="founding" style="padding:44px 20px 70px; text-align:center;">
+    <button class="deal-btn" onclick="dealHand()" id="dealBtn">
+      <div class="deal-btn-inner" id="dealBtnText">Draw Your Hand</div>
+    </button>
+
+    <div class="hand" id="hand">
+
+      <!-- Row 1: Terrain + Resource side by side -->
+      <div class="hand-row">
+        <div class="card-group">
+          <div class="group-label">Terrain</div>
+          <div style="display:flex; gap:20px;">
+            <div class="card-slot" id="slot-t1">
+              <div class="card-inner">
+                <div class="card-back"><div class="card-back-frame"></div><div class="card-back-center"><svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="19" stroke="#3b5c8a" stroke-width="1"/><path d="M22 5 L26 17 L39 17 L29 25 L33 37 L22 29 L11 37 L15 25 L5 17 L18 17 Z" stroke="#c8a84b" stroke-width="1" fill="rgba(200,168,75,0.08)"/></svg></div></div>
+                <div class="card-face"><img src="" alt=""></div>
+              </div>
+            </div>
+            <div class="card-slot" id="slot-t2">
+              <div class="card-inner">
+                <div class="card-back"><div class="card-back-frame"></div><div class="card-back-center"><svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="19" stroke="#3b5c8a" stroke-width="1"/><path d="M22 5 L26 17 L39 17 L29 25 L33 37 L22 29 L11 37 L15 25 L5 17 L18 17 Z" stroke="#c8a84b" stroke-width="1" fill="rgba(200,168,75,0.08)"/></svg></div></div>
+                <div class="card-face"><img src="" alt=""></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-group">
+          <div class="group-label">Resource</div>
+          <div style="display:flex; gap:20px;">
+            <div class="card-slot" id="slot-r1">
+              <div class="card-inner">
+                <div class="card-back"><div class="card-back-frame"></div><div class="card-back-center"><svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="19" stroke="#3b5c8a" stroke-width="1"/><path d="M22 5 L26 17 L39 17 L29 25 L33 37 L22 29 L11 37 L15 25 L5 17 L18 17 Z" stroke="#c8a84b" stroke-width="1" fill="rgba(200,168,75,0.08)"/></svg></div></div>
+                <div class="card-face"><img src="" alt=""></div>
+              </div>
+            </div>
+            <div class="card-slot" id="slot-r2">
+              <div class="card-inner">
+                <div class="card-back"><div class="card-back-frame"></div><div class="card-back-center"><svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="19" stroke="#3b5c8a" stroke-width="1"/><path d="M22 5 L26 17 L39 17 L29 25 L33 37 L22 29 L11 37 L15 25 L5 17 L18 17 Z" stroke="#c8a84b" stroke-width="1" fill="rgba(200,168,75,0.08)"/></svg></div></div>
+                <div class="card-face"><img src="" alt=""></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Fortune alone -->
+      <div class="fortune-row">
+        <div class="fortune-divider">
+          <div class="fline"></div>
+          <span>Fortune</span>
+          <div class="fline"></div>
+        </div>
+        <div class="card-slot" id="slot-f1">
+          <div class="card-inner">
+            <div class="card-back"><div class="card-back-frame"></div><div class="card-back-center"><svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="19" stroke="#3b5c8a" stroke-width="1"/><path d="M22 5 L26 17 L39 17 L29 25 L33 37 L22 29 L11 37 L15 25 L5 17 L18 17 Z" stroke="#c8a84b" stroke-width="1" fill="rgba(200,168,75,0.08)"/></svg></div></div>
+            <div class="card-face"><img src="" alt=""></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MARKETPLACE ══════════ -->
+<div id="marketplace" class="tab-panel">
+  <div style="padding:44px 24px 70px; max-width:720px; margin:0 auto; text-align:center;">
+    <div class="market-header">
+      <h2>The Founders' Market</h2>
+      <p>One swap. Choose the card you wish to return — the Market deals its replacement.</p>
+    </div>
+
+    <div class="swap-form">
+      <div class="form-row">
+        <label for="swapCategory">Deck</label>
+        <select id="swapCategory" onchange="populateSwapCard()">
+          <option value="">— choose —</option>
+          <option value="terrain">Terrain</option>
+          <option value="resource">Resource</option>
+          <option value="fortune">Fortune</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="swapCard">Card</label>
+        <select id="swapCard">
+          <option value="">— choose —</option>
+        </select>
+      </div>
+      <button class="swap-btn" onclick="doSwap()">Make the Swap</button>
+    </div>
+
+    <div class="swap-result" id="swapResult"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DECKS = {
+  terrain: [
+    { name: "Long Coastline",   file: "long coastline.png" },
+    { name: "Landlocked",       file: "landlocked.png" },
+    { name: "Mountain Wall",    file: "mountain wall.png" },
+    { name: "Great River",      file: "great river.png" },
+    { name: "Fertile Plain",    file: "fertile plain.png" },
+    { name: "Island",           file: "island.png" },
+    { name: "Desert Heart",     file: "desert heart.png" },
+    { name: "Narrow Strait",    file: "narrow strait.png" },
+    { name: "Highland Plateau", file: "highland plateau.png" },
+    { name: "Dense Forest",     file: "dense forest.png" },
+  ],
+  resource: [
+    { name: "Oilfield",           file: "oilfield.png" },
+    { name: "Rare Earths",        file: "rare earths.png" },
+    { name: "Farmland",           file: "farmland.png" },
+    { name: "Fishery",            file: "fishery.png" },
+    { name: "Timber",             file: "timber.png" },
+    { name: "Freshwater Reserve", file: "freshwater reserve.png" },
+    { name: "Goldfield",          file: "goldfield.png" },
+    { name: "Barren",             file: "barren.png" },
+  ],
+  fortune: [
+    { name: "Mighty Neighbour", file: "mighty neighbour.png" },
+    { name: "Drought Prone",    file: "drought prone.png" },
+    { name: "Trade Crossroads", file: "crossroads.png" },
+    { name: "Tiny Population",  file: "tiny population.png" },
+    { name: "Boomtown",         file: "boomtown.png" },
+    { name: "Quake Zone",       file: "quake zone.png" },
+    { name: "Old Alliance",     file: "old alliance.png" },
+    { name: "Proud History",    file: "proud history.png" },
+  ],
+};
+
+function pick(arr, n) {
+  const pool = [...arr], chosen = [];
+  for (let i = 0; i < n; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    chosen.push(pool.splice(idx, 1)[0]);
+  }
+  return chosen;
+}
+
+function dealHand() {
+  const btn = document.getElementById('dealBtn');
+  const btnText = document.getElementById('dealBtnText');
+  btn.disabled = true;
+  btnText.textContent = 'Dealing…';
+
+  const terrain  = pick(DECKS.terrain, 2);
+  const resource = pick(DECKS.resource, 2);
+  const fortune  = pick(DECKS.fortune, 1);
+
+  const slots = [
+    { id: 'slot-t1', card: terrain[0] },
+    { id: 'slot-t2', card: terrain[1] },
+    { id: 'slot-r1', card: resource[0] },
+    { id: 'slot-r2', card: resource[1] },
+    { id: 'slot-f1', card: fortune[0] },
+  ];
+
+  slots.forEach(({ id }) => {
+    const slot = document.getElementById(id);
+    slot.classList.remove('dealt');
+    slot.querySelector('.card-inner').classList.remove('flipped');
+  });
+
+  slots.forEach(({ id, card }, i) => {
+    const slot = document.getElementById(id);
+    const inner = slot.querySelector('.card-inner');
+    const img = slot.querySelector('.card-face img');
+    img.src = card.file;
+    img.alt = card.name;
+
+    setTimeout(() => slot.classList.add('dealt'), 200 + i * 260);
+    setTimeout(() => inner.classList.add('flipped'), 200 + i * 260 + 1000);
+  });
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btnText.textContent = 'Draw Again';
+  }, 200 + slots.length * 260 + 1800);
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function populateSwapCard() {
+  const cat = document.getElementById('swapCategory').value;
+  const sel = document.getElementById('swapCard');
+  sel.innerHTML = '<option value="">— choose —</option>';
+  if (!cat) return;
+  DECKS[cat].forEach(card => {
+    const opt = document.createElement('option');
+    opt.value = card.file;
+    opt.textContent = card.name;
+    sel.appendChild(opt);
+  });
+}
+
+const CARD_BACK_SVG = `
+  <div class="card-back">
+    <div class="card-back-frame"></div>
+    <div class="card-back-center">
+      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="19" stroke="#3b5c8a" stroke-width="1"/>
+        <path d="M22 5 L26 17 L39 17 L29 25 L33 37 L22 29 L11 37 L15 25 L5 17 L18 17 Z"
+              stroke="#c8a84b" stroke-width="1" fill="rgba(200,168,75,0.08)"/>
+      </svg>
+    </div>
+  </div>`;
+
+function doSwap() {
+  const cat      = document.getElementById('swapCategory').value;
+  const cardFile = document.getElementById('swapCard').value;
+  if (!cat || !cardFile) { showToast('Choose a deck and a card first.'); return; }
+
+  const deck = DECKS[cat];
+  const outCard  = deck.find(c => c.file === cardFile);
+  const remaining = deck.filter(c => c.file !== cardFile);
+  if (!remaining.length) { showToast('No other cards in that deck!'); return; }
+  const newCard = pick(remaining, 1)[0];
+
+  document.getElementById('swapResult').innerHTML = `
+    <div class="swap-card-wrap">
+      <div class="swap-label">Returning</div>
+      <div class="swap-slot" id="outSlot">
+        <div class="card-inner">
+          ${CARD_BACK_SVG}
+          <div class="card-face swap-outgoing"><img src="${outCard.file}" alt="${outCard.name}"></div>
+        </div>
+      </div>
+    </div>
+    <div class="swap-arrow">&#10230;</div>
+    <div class="swap-card-wrap">
+      <div class="swap-label">Replacement</div>
+      <div class="swap-slot" id="inSlot" style="opacity:0;transform:translateY(28px);transition:opacity 0.5s ease,transform 0.5s ease;">
+        <div class="card-inner">
+          ${CARD_BACK_SVG}
+          <div class="card-face"><img src="${newCard.file}" alt="${newCard.name}"></div>
+        </div>
+      </div>
+    </div>`;
+
+  setTimeout(() => {
+    document.getElementById('outSlot').querySelector('.card-inner').classList.add('flipped');
+  }, 150);
+
+  setTimeout(() => {
+    const inSlot = document.getElementById('inSlot');
+    inSlot.style.opacity = '1';
+    inSlot.style.transform = 'translateY(0)';
+  }, 900);
+
+  setTimeout(() => {
+    document.getElementById('inSlot').querySelector('.card-inner').classList.add('flipped');
+  }, 1700);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
