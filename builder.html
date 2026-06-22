@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindWorks Map Builder</title>
+  <link rel="stylesheet" href="builder.css">
+</head>
+<body>
+  <div id="toolbar">
+    <div id="toolbar-left">
+      <input id="map-title" type="text" aria-label="Map title" value="MindWorks 2026" autocomplete="off">
+      <div id="zoom-controls">
+        <button id="btn-zoom-out">−</button>
+        <button id="btn-zoom-reset">Reset</button>
+        <button id="btn-zoom-in">+</button>
+      </div>
+    </div>
+    <div id="toolbar-centre">
+      <button id="btn-add-line">+ Line</button>
+      <button id="btn-add-program">+ Program</button>
+      <button id="btn-add-competition">+ Competition</button>
+    </div>
+    <div id="toolbar-right">
+      <button id="btn-load-json">Load JSON</button>
+      <button id="btn-save-json">Save JSON</button>
+      <button id="btn-export-html">Export HTML</button>
+      <input id="input-load-json" type="file" accept=".json" style="display:none">
+    </div>
+  </div>
+
+  <div id="canvas-wrapper">
+    <div id="canvas"></div>
+  </div>
+
+  <div id="drawer-backdrop"></div>
+  <div id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div id="drawer-header">
+      <span id="drawer-title">Edit</span>
+      <button id="drawer-close">✕</button>
+    </div>
+    <div id="drawer-body"></div>
+    <div id="drawer-footer">
+      <button id="drawer-cancel">Cancel</button>
+      <button id="drawer-save">Save</button>
+    </div>
+  </div>
+
+  <div id="context-menu">
+    <button type="button" class="ctx-edit">Edit</button>
+    <button type="button" class="ctx-delete">Delete</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Competition card modal -->
+  <div class="comp-card-backdrop" id="compCardBackdrop"></div>
+  <div class="comp-card" id="compCard">
+    <div class="comp-card-header" id="compCardHeader">
+      <div class="comp-card-badge" id="compCardBadge"></div>
+      <div>
+        <div class="comp-card-type" id="compCardType"></div>
+        <div class="comp-card-title" id="compCardTitle"></div>
+      </div>
+      <button type="button" class="comp-card-close" id="compCardClose">✕</button>
+    </div>
+    <div class="comp-card-routebar" id="compCardRoutebar"></div>
+    <div class="comp-card-body">
+      <div id="compCardRows"></div>
+      <p class="comp-card-desc" id="compCardDesc"></p>
+    </div>
+    <a class="comp-card-footer" id="compCardFooter" href="#" target="_blank" rel="noopener">Learn More →</a>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/drawer.js"></script>
+  <script src="js/exporter.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
