@@ -1285,7 +1285,7 @@
   <div class="modal" id="rsvpModal" aria-hidden="true">
     <div class="modal-panel">
       <button class="modal-close" id="closeRsvp" aria-label="Close RSVP form">✕</button>
-      <iframe src="https://mrrussellteaching.notion.site/ebd//f8d31efbc71d4d6290259b5ba3e774a7" allowfullscreen></iframe>
+      <iframe id="rsvpFrame" data-src="https://mrrussellteaching.notion.site/ebd//f8d31efbc71d4d6290259b5ba3e774a7" allowfullscreen loading="lazy"></iframe>
     </div>
   </div>
   <script>
@@ -1293,6 +1293,7 @@
     var openRsvp    = document.getElementById('openRsvp');
     var closeRsvp   = document.getElementById('closeRsvp');
     var rsvpModal   = document.getElementById('rsvpModal');
+    var rsvpFrame   = document.getElementById('rsvpFrame');
 
     enterButton.addEventListener('click', function () {
       document.body.classList.add('entering');
@@ -1302,6 +1303,12 @@
     });
 
     openRsvp.addEventListener('click', function () {
+      // Load the Notion RSVP embed only when the user opens the modal.
+      // Loading it on page load pulls an entire web app into memory on
+      // every visit — enough to crash low-memory mobile browsers.
+      if (!rsvpFrame.src) {
+        rsvpFrame.src = rsvpFrame.getAttribute('data-src');
+      }
       rsvpModal.classList.add('open');
       rsvpModal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -1311,6 +1318,8 @@
       rsvpModal.classList.remove('open');
       rsvpModal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      // Tear the embed back down so it isn't holding memory after use.
+      rsvpFrame.removeAttribute('src');
     }
 
     closeRsvp.addEventListener('click', closeModal);
