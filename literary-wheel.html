@@ -124,7 +124,7 @@ body{
 #labels{position:absolute;inset:0;z-index:1;pointer-events:none}
 
 .fam-band{
-  position:absolute;min-height:50px;display:flex;align-items:center;gap:11px;padding:9px 16px;
+  position:absolute;min-height:50px;display:flex;align-items:center;justify-content:center;gap:11px;padding:9px 16px;
   border-radius:13px;border:1px solid var(--line);
   background:rgba(255,255,255,.62);
   font-size:15px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;line-height:1.12;
@@ -157,6 +157,7 @@ body{
   border:1px solid color-mix(in srgb,var(--c) 38%,#dfe1ec);
   box-shadow:0 1px 2px rgba(20,22,45,.05),inset 0 1px 0 rgba(255,255,255,.7);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding-top:18px;
   color:var(--ink);
   transition:left .6s var(--ease),top .6s var(--ease),width .55s var(--ease),height .55s var(--ease),border-radius .55s var(--ease),transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s var(--ease),opacity .4s var(--ease);
   will-change:left,top,transform;overflow:hidden;
@@ -666,7 +667,106 @@ const ETYMOLOGIES = {
   "Euphony":"Greek euphōnía: eu- (good) + phōnḗ (sound) — 'good sound'; pleasing to the ear",
   "Cacophony":"Greek kakophōnía: kakos (bad) + phōnḗ (sound) — harsh, discordant sound",
   "Motif":"Latin motivus (moving) via French — a recurring element that 'moves' through a work",
-  "Periphrasis":"Greek períphrasis: peri- (around) + phrazein — 'speaking around'; deliberate circumlocution"
+  "Periphrasis":"Greek períphrasis: peri- (around) + phrazein — 'speaking around'; deliberate circumlocution",
+  "Auxesis":"From Greek auxesis, meaning 'growth' or 'increase'.",
+"Hypotyposis":"From Greek hypotyposis, meaning 'sketch', 'outline' or 'vivid impression'.",
+"Distinctio":"From Latin distinctio, meaning 'separation' or 'distinction'.",
+"Sigmatism":"From Greek sigma (the name of the letter S) + -ismos (suffix denoting practice or condition).",
+"Brachylogy":"From Greek brachylogia, meaning 'brief speech'.",
+"Idiolect":"Modelled on 'dialect'; from Greek idios (one's own, personal) + lektos (chosen, spoken) from legein (to speak).",
+"Congeries":"From Latin congeries, meaning 'a heap' or 'a pile'.",
+"Polysemy":"From Greek polysemos, meaning 'having many meanings'.",
+"Parabasis":"From Greek parabasis, meaning 'a stepping aside' or 'a going beside'.",
+"Enallage":"From Greek enallage, meaning 'interchange' or 'exchange'.",
+"Epanorthosis":"From Greek epanorthosis, meaning 'setting upright again'.",
+"Dialogism":"From Greek dialogos (dialogue, conversation) + -ismos; the concept was theorised and named by Mikhail Bakhtin in the 1930s.",
+"Enargia":"From Greek enargeia, meaning 'vividness' or 'brilliance'.",
+"Diegesis":"From Greek diegesis, meaning 'narration' or 'recounting'.",
+"Hypophora":"From Greek hypophora, meaning 'a carrying under' or 'objection answered'.",
+"Anacoluthon":"From Greek anakolouthon, meaning 'not following'.",
+"Hysteron Proteron":"From Greek, literally 'the later earlier'.",
+"Antimetabole":"From Greek anti (against, opposite) + metabole (change, turning).",
+"Merism":"From Greek merismos, meaning 'division' or 'partition'.",
+"Adynaton":"From Greek adynaton, meaning 'impossible'.",
+"Epic Theatre":"Calque of German 'episches Theater'; 'epic' from Greek 'epos' (word, song), 'theatre' from Greek 'theatron'.",
+"Alienation Effect (Verfremdungseffekt)":"German 'Verfremdungseffekt', from 'verfremden' (to make strange) + 'Effekt' (effect).",
+"Play within a Play":"English descriptive phrase; 'play' from Old English 'plega' (game, sport, performance).",
+"Metatheatre":"Greek 'meta' (beyond, about) + 'theatron' (place for viewing), from 'theasthai' (to behold).",
+"Dramatic Question":"'dramatic' from Greek 'drama' (action) + 'question' from Latin 'quaestio' (a seeking).",
+"Mimesis":"Greek 'mimesis' (imitation), from 'mimeisthai' (to imitate), from 'mimos' (mime).",
+"Subtext":"'sub' (Latin, under) + 'text' from Latin 'textus' (something woven).",
+"Subplot":"English compound of 'sub' (Latin, under) + 'plot' (a plan or ground plan, of obscure origin).",
+"Exposition":"Latin 'expositio' (a setting forth), from 'exponere' (to put out, explain).",
+"Nemesis":"Greek 'nemesis' (retribution, indignation), from 'nemein' (to deal out, dispense).",
+"Hubris":"Greek 'hybris' (insolence, outrage, wanton violence).",
+"Catharsis":"Greek 'katharsis' (cleansing, purgation), from 'kathairein' (to purify).",
+"Comic Relief":"'comic' from Greek 'komikos' (of comedy) + 'relief' from Old French 'relever' (to raise).",
+"Catastrophe":"Greek 'katastrophe' (an overturning), from 'kata' (down) + 'strephein' (to turn).",
+"Problem Play":"English compound; 'problem' from Greek 'problema' (something put forward) + 'play' from Old English 'plega'.",
+"Well-Made Play":"Calque of French 'pièce bien faite' (well-made piece).",
+"Closet Drama":"'closet' from Old French 'closet' (small private room), diminutive of 'clos' (enclosed), from Latin 'clausum'.",
+"Mystery Play":"From Latin 'ministerium' (service, craft) and 'mysterium' (religious truth), the two senses converging.",
+"Morality Play":"Latin 'moralis' (relating to manners or character), from 'mos, moris' (custom).",
+"Masque":"French 'masque' (mask), from Italian 'maschera', of uncertain earlier origin.",
+"Melodrama":"Greek 'melos' (song, music) + 'drama' (action), via French 'mélodrame'.",
+"Farce":"French 'farce' (stuffing), from Latin 'farcire' (to stuff); comic interludes were \"stuffed\" into plays.",
+"Tragicomedy":"Latin 'tragicocomoedia', a blend coined by Plautus from tragedy and comedy.",
+"Dumb Show":"English compound of 'dumb' (Old English 'dumb', mute) + 'show' (Old English 'sceawian', to look at).",
+"Tragedy":"Greek 'tragoidia', perhaps from 'tragos' (goat) + 'oide' (song).",
+"Comedy":"Greek 'komoidia', from 'komos' (revel) + 'oide' (song).",
+"Tableau":"French 'tableau' (picture), diminutive of Old French 'table', from Latin 'tabula' (board).",
+"Dramatis Personae":"Latin 'dramatis' (of the drama) + 'personae' (masks, characters), from 'persona' (mask).",
+"Stage Directions":"English compound; 'stage' from Old French 'estage' + 'direction' from Latin 'directio'.",
+"Five Act Structure":"Latin 'actus' (a doing, performance), from 'agere' (to do, drive).",
+"Three Unities":"Latin 'unitas' (oneness), from 'unus' (one); the doctrine was derived from readings of Aristotle's Poetics.",
+"Exodos":"Greek 'exodos' (a going out), from 'ex' (out) + 'hodos' (way).",
+"Episode":"Greek 'epeisodion' (an addition), from 'epi' (upon) + 'eisodos' (entrance).",
+"Stasimon":"Greek 'stasimon (melos)' (stationary song), from 'stasis' (standing).",
+"Parodos":"Greek 'par(a)' (beside) + 'hodos' (way, path) -> 'parodos', both the side entrance and the song sung on it.",
+"Epilogue":"Greek 'epi' (upon, in addition) + 'logos' (word) -> 'epilogos'.",
+"Prologue":"Greek 'pro' (before) + 'logos' (word, speech) -> 'prologos'.",
+"Chorus":"Greek 'khoros' (dance, band of dancers) -> Latin 'chorus'.",
+"Stichomythia":"Greek 'stikhos' (line, row) + 'mythos' (speech) -> 'stikhomythia'.",
+"Soliloquy":"Latin 'solus' (alone) + 'loqui' (to speak) -> Late Latin 'soliloquium', a term coined by Augustine.",
+"Set Speech":"English compound of 'set' (fixed, prepared) + 'speech' (Old English 'spaec').",
+"Aside":"From the phrase 'on side' -> Middle English 'asyde'; the theatrical sense is recorded from the early 18th century.",
+"Bildungsroman":"From German Bildung, meaning formation, plus Roman, meaning novel.",
+"Epiphany":"From Greek epiphaneia, meaning a manifestation or appearance.",
+"Portmanteau":"From French portemanteau, a coat-carrier, repurposed by Lewis Carroll.",
+"Spoonerism":"Named after the Reverend William Spooner, noted for such slips.",
+"Malapropism":"From French mal a propos, meaning inappropriate, via Sheridan's character Mrs Malaprop.",
+"Double Entendre":"From French, meaning double meaning, in an archaic construction.",
+"Pun":"Origin uncertain, perhaps from Italian puntiglio, meaning a fine point.",
+"Tautology":"From Greek tautologia, meaning saying the same thing.",
+"Pleonasm":"From Greek pleonasmos, meaning excess.",
+"Aphorism":"From Greek aphorismos, meaning a definition or distinction.",
+"Epigram":"From Greek epigramma, meaning an inscription.",
+"Organic Imagery":"organic from Greek organikos, relating to an organ or instrument.",
+"Metalepsis":"From Greek metalepsis, meaning a sharing or substitution.",
+"Antonomasia":"From Greek antonomazein, meaning to name differently.",
+"Epithet":"From Greek epitheton, meaning something added.",
+"Cadence":"From Latin cadere, meaning to fall, via Italian cadenza.",
+"Kenning":"From Old Norse kenning, from kenna, meaning to know or name.",
+"Periphrasis":"From Greek periphrasis, meaning a roundabout speaking.",
+"Cross Rhyme":"cross from Latin crux, plus rhyme.",
+"Half-Rhyme":"half from Old English healf, plus rhyme.",
+"Feminine Rhyme":"feminine via French from Latin femininus.",
+"Masculine Rhyme":"masculine via French from Latin masculinus.",
+"End Rhyme":"From Old French rime, meaning verse or rhyme.",
+"Rhyme Scheme":"rhyme from Old French rime; scheme from Greek skhema.",
+"Syllabic Verse":"syllabic from Greek syllabe, meaning a syllable.",
+"Accentual Verse":"accentual from Latin accentus, meaning a tone added to speech.",
+"Sprung Rhythm":"Coined by Gerard Manley Hopkins from sprung plus rhythm.",
+"Anacrusis":"From Greek anakrousis, meaning a pushing back.",
+"Catalexis":"From Greek katalexis, meaning a stopping.",
+"Tetrameter":"From Greek tetra, four, plus metron, measure.",
+"Trimeter":"From Greek tri, three, plus metron, measure.",
+"Scansion":"From Latin scandere, meaning to climb.",
+"Hexameter (Alexandrine)":"From Greek hex, six, plus metron; alexandrine from Old French poems on Alexander the Great.",
+"Pyrrhic":"From Greek pyrrhikhe, a war dance.",
+"Anapaest":"From Greek anapaistos, meaning struck back.",
+"Dactyl":"From Greek daktylos, meaning finger.",
+"Spondee":"From Greek spondeios, a metre used at libations.",
 };
 
 /* etymological lineage chains for the etymology view */
@@ -710,6 +810,9 @@ const taxonomyRoot = {
         T("Pathetic Fallacy","Attributing human emotions to nature or objects","Reflects character's inner state through external world","The grey sky wept as she left",["Personification","Visual Imagery"]),
         T("Ekphrasis","Detailed, vivid description of a visual artwork or scene","Creates intensity and draws reader into moment","The marble statue's eyes seemed to follow her",["Visual Imagery","Metaphor"]),
         T("Sensory Accumulation","Layering multiple sensory details in close proximity","Overwhelms reader with immersive sensory experience","The hot sand, sharp cry of gulls, salt spray, blinding sun",["Visual Imagery","Auditory Imagery"])
+        T("Hypotyposis","A strikingly vivid description of a scene or event, designed to create the impression that it is occurring before the reader's eyes in real time.","Generates immediate, visceral engagement; collapses narrative distance so that the reader witnesses rather than reads, producing emotional and sensory immediacy.","Homer's battle descriptions in the Iliad, where violence is rendered with such physical precision it seems to unfold in the present moment.",["Enargia","Ekphrasis","Visual Imagery","Sensory Accumulation","Pathetic Fallacy"]),
+        T("Enargia","Vivid, detailed description that renders a scene or object so clearly it seems to exist before the reader's eyes.","Creates sensory immediacy and immersion; collapses the distance between reader and text so that description functions almost as presence.","Keats's 'To Autumn' describing the season's sights and textures with near-tactile vividness across every stanza.",["Ekphrasis","Sensory Accumulation","Visual Imagery","Hypotyposis","Pathetic Fallacy"]),
+        T("Organic Imagery","Imagery that conveys internal physical sensations such as hunger, fatigue, fear or nausea.","Grounds emotion in visceral bodily experience.","a hollow ache spread through her chest",["A type of imagery for inner bodily states","alongside kinaesthetic and tactile imagery."]),
       ]},
       {name:"Diction",type:"subgroup",info:{definition:"Choice and arrangement of words in writing"},techniques:[
         T("Connotation","Implied or associated meaning beyond literal definition","Adds layers of meaning and emotional resonance","Home (warmth, safety) vs. house (neutral)",["Denotation","Loaded Language"]),
@@ -729,6 +832,8 @@ const taxonomyRoot = {
         T("Loaded Language","Words chosen for emotional impact beyond denotation","Manipulates reader's emotions and attitudes","Freedom fighter vs. terrorist; slender vs. skeletal",["Connotation","Dysphemism"]),
         T("Nominalization","Converting a verb or adjective into a noun","Creates abstraction or formality","Destroy → destruction; happy → happiness",["Abstract Diction","Verbing"]),
         T("Verbing","Using a noun as a verb (verbifying)","Creates energy and directness","Google it, text me, access the database",["Nominalization","Neologism"])
+        T("Idiolect","The unique, individually distinctive vocabulary, grammar and speech patterns belonging to a specific character or speaker.","Individualises character through language alone; can signal class, education, culture or psychology without authorial commentary.","Holden Caulfield's repetitive colloquialisms in The Catcher in the Rye, or Shakespeare's gravediggers whose malapropisms mark them as working-class outsiders.",["Register Shift","Colloquialism","Anglo-Saxon Diction","Jargon","Slang"]),
+        T("Polysemy","The property of a single word or phrase carrying multiple related or distinct meanings simultaneously within a text.","Generates deliberate ambiguity and semantic richness; invites multiple readings and rewards the close reader with layered interpretive possibilities.","The word 'heart' operating as organ, seat of emotion and moral courage simultaneously within a single poetic line.",["Ambivalence","Double Entendre","Connotation","Denotation","Pun"]),
       ]},
       {name:"Tone & Mood",type:"subgroup",info:{definition:"The emotional attitude of the narrator and atmosphere of the text"},techniques:[
         T("Irony","Expression of meaning using language that signifies the opposite","Creates humor, social commentary, or reveals contradiction","Saying 'Oh, great!' when something is terrible",["Sarcasm","Verbal Irony"]),
@@ -766,6 +871,27 @@ const taxonomyRoot = {
         T("Free Verse","Poetry without regular meter or rhyme scheme","Allows natural speech rhythms and flexibility","Much modern and contemporary poetry",["Rhythm","Enjambment"]),
         T("Plosive Sounds","Hard consonants that stop the airflow","Creates percussive, emphatic effect","Pick and pack the packed picnic basket",["Fricative Sounds","Consonance"]),
         T("Fricative Sounds","Consonants produced by friction","Creates hissing, sizzling, or flowing effect","Soft and soothing; fierce and hissing",["Plosive Sounds","Sibilance"])
+        T("Sigmatism","The deliberate or excessive repetition of the 's' sound, often distinguished from general sibilance by its concentration and sustained sinuous quality.","Creates a hissing, serpentine or whispering acoustic texture; associated with menace, seduction, secrecy or the insidious.","\"The slow, sinuous, soundless serpent slid silently across the stones.\"",["Sibilance","Consonance","Alliteration","Cacophony","Euphony"]),
+        T("Cadence","The rhythmic rise and fall and modulation of the voice across a line or phrase.","Shapes the musical contour and emotional pacing of speech.","The falling cadence at the close of a sentence",["The modulation of rhythm and pitch; closely tied to rhythm and metre."]),
+        T("Cross Rhyme","Rhyme between the end of one line and a word within another line.","Weaves sound across lines for subtle cohesion.","An end word chiming with a mid-line word in the following line",["A cross-positioned rhyme linking line ends to internal words."]),
+        T("Half-Rhyme","An approximate rhyme in which sounds are similar but not identical, also called para-rhyme.","Creates dissonance or unease against the resolution of full rhyme.","Wilfred Owen's escaped and scooped",["An imperfect rhyme close to slant rhyme","drawing on consonance."]),
+        T("Feminine Rhyme","A rhyme on a stressed syllable followed by one or more unstressed syllables.","Softens the close with a falling, gentler echo.","motion and ocean",["A falling rhyme of two or more syllables","the gentler counterpart of masculine rhyme."]),
+        T("Masculine Rhyme","A rhyme on a single stressed final syllable.","Produces a firm, decisive chime.","delight and night",["A single-stress rhyme","the firm counterpart of feminine rhyme."]),
+        T("End Rhyme","Rhyme occurring at the ends of lines.","Marks line boundaries and binds the stanza musically.","cat and hat falling at line ends",["The most common rhyme position","contrasted with internal rhyme and defined by the rhyme scheme."]),
+        T("Rhyme Scheme","The ordered pattern of rhymes at the ends of lines, conventionally noted with letters.","Structures the poem's sound and signals its form.","ABAB CDCD in a ballad stanza",["The notation of end rhymes that defines fixed forms such as the sonnet and villanelle."]),
+        T("Syllabic Verse","Verse whose metre counts the number of syllables per line regardless of stress.","Imposes shape through count rather than rhythm.","The syllabic poems of Marianne Moore",["A count-based metre; the principle behind the haiku and tanka."]),
+        T("Accentual Verse","Verse whose metre counts only the number of stressed syllables per line.","Roots rhythm in stress rather than syllable count, as in Old English verse.","The four-stress lines of Beowulf",["A stress-counting metre","the basis of Old English verse and a model for sprung rhythm."]),
+        T("Sprung Rhythm","A metre based on counting stressed syllables, with a variable number of unstressed syllables per foot.","Mimics natural speech with energetic, irregular force.","Gerard Manley Hopkins, The Windhover",["A stress-based metre akin to accentual verse; Hopkins' alternative to regular feet."]),
+        T("Anacrusis","One or more unstressed syllables at the start of a line before the regular metre begins.","Provides a rhythmic upbeat into the line.","An introductory unstressed syllable before a trochaic line",["An introductory upbeat; the metrical opposite of catalexis."]),
+        T("Catalexis","The omission of one or more unstressed syllables at the end of a line.","Truncates the metre for abruptness or emphasis.","A catalectic trochaic line dropping its final unstressed beat",["A clipping of the line's final foot; the metrical opposite of anacrusis."]),
+        T("Tetrameter","A line of four metrical feet.","Offers a brisk, song-like measure shorter than the pentameter.","The tetrameter of much hymn and ballad verse",["A line length of four feet; common in ballad metre alongside trimeter."]),
+        T("Trimeter","A line of three metrical feet.","Creates a short, light or clipped measure.","The three-foot lines alternating in ballad metre",["A line of three feet; alternates with tetrameter in common ballad metre."]),
+        T("Scansion","The analysis of a line's metrical pattern of stresses and feet.","Reveals the rhythmic structure underlying the verse.","Marking x / x / across a line to show its iambs",["The method of mapping feet and stresses; the analytic counterpart of metre."]),
+        T("Hexameter (Alexandrine)","A line of six metrical feet; the iambic hexameter in English is called an alexandrine.","Lengthens and slows the line for grandeur or closure.","The final line of a Spenserian stanza",["A six-foot line; in English the alexandrine closes the Spenserian stanza."]),
+        T("Pyrrhic","A metrical foot of two unstressed syllables.","Lightens the line and quickens its movement.","The unstressed pair in to a",["A light two-syllable foot often paired with a following spondee to vary metre."]),
+        T("Anapaest","A metrical foot of two unstressed syllables followed by one stressed syllable.","Produces a brisk, rolling, often comic rhythm.","in-ter-VENE",["A rising triple foot; the engine of the limerick and reverse of the dactyl."]),
+        T("Dactyl","A metrical foot of one stressed syllable followed by two unstressed syllables.","Gives a galloping, tumbling momentum.","MER-ri-ly",["A falling triple foot; the metre of classical epic hexameter","mirror of the anapaest."]),
+        T("Spondee","A metrical foot of two stressed syllables.","Slows the line and adds weight or emphasis.","HEART-BREAK",["A heavy two-stress foot used to vary and slow the prevailing metre."]),
       ]},
       {name:"Lexical",type:"subgroup",info:{definition:"Repetition of words, phrases, and word patterns"},techniques:[
         T("Anaphora","Repetition of words at the beginning of successive clauses","Creates emphasis, rhythm, and emotional power","We shall fight, we shall prevail, we shall endure",["Epistrophe","Symploce"]),
@@ -780,6 +906,7 @@ const taxonomyRoot = {
         T("Anadiplosis","End of one clause repeated at the beginning of the next","Creates flowing connection between ideas","Strong leaders lead; leaders lead nations",["Epanalepsis","Diacope"]),
         T("Epanalepsis","Repetition of word(s) at the beginning and end of a clause","Creates circular structure and emphasis","Rage against the dying of the light; I came, I saw, I conquered",["Anadiplosis","Conduplicatio"]),
         T("Conduplicatio","Repetition of words in close succession for emphasis","Creates intense emotional and rhythmic power","Cowards die many times before their deaths",["Polyptoton","Epanalepsis"])
+        T("Antimetabole","The repetition of words or phrases in reverse order, often to create a paradoxical or rhetorically forceful structure.","Produces memorability and rhetorical punch; can reverse, complicate or deepen the logic of a statement.","\"Ask not what your country can do for you — ask what you can do for your country.\" (JFK)",["Chiasmus","Anaphora","Parallelism"]),
       ]},
       {name:"Structural",type:"subgroup",info:{definition:"Repetition of grammatical structures and syntactic patterns"},techniques:[
         T("Parallelism","Repetition of grammatical structures in successive phrases","Creates balance, emphasis, and satisfying rhythm","I came, I saw, I conquered",["Tricolon","Antithesis (Structural)"]),
@@ -792,6 +919,8 @@ const taxonomyRoot = {
         T("Incremental Repetition","Repeating a phrase with added elements each time","Creates building intensity and expansion","I love her, I love her deeply, I love her with all my soul",["Accumulation","Amplification"]),
         T("Amplification","Expanding on an idea with additional details","Creates emphasis through elaboration","He was tall—six foot two, broad-shouldered, imposing",["Incremental Repetition","Accumulation"]),
         T("Gradatio","Series of words arranged in ascending order of intensity","Creates building emotional or logical force","From good to great, from great to magnificent",["Accumulation","Incremental Repetition"])
+        T("Auxesis","The arrangement of words, phrases or clauses in order of increasing importance, intensity or weight, so that each term exceeds the last.","Builds momentum and rhetorical climax through progressive elevation; the final term carries the greatest emotional and argumentative weight.","\"I came with sorrow, with shame, with despair.\" / \"He was a soldier, a leader, a legend.\"",["Gradatio","Accumulation","Tricolon","Amplification","Climax"]),
+        T("Congeries","The heaping up of synonymous or closely related words, phrases or clauses to create cumulative rhetorical force.","Overwhelms the reader with weight and mass; creates intensity through sheer accumulation rather than through precision or contrast.","\"A bloody, barbarous, merciless, inhuman, savage, unrelenting act.\"",["Accumulation","Amplification","Cataloguing","Enumeratio","Polysyndeton"]),
       ]}
     ]},
     {name:"Comparative",type:"family",children:[
@@ -812,6 +941,12 @@ const taxonomyRoot = {
         T("Mixed Metaphor","Combining two or more incompatible metaphors","Usually considered a flaw; creates confusion","The ball is in your court and the chips are down",["Metaphor","Oxymoron"]),
         T("Vehicle & Tenor","Tenor is what's being compared; vehicle is what it's compared to","Understanding this distinction clarifies metaphor mechanics","In 'love is a rose': love is tenor, rose is vehicle",["Metaphor","Simile"]),
         T("Hypocatastasis","A metaphor that is hinted at rather than directly stated","Creates subtlety and requires reader interpretation","He's such a snake suggests treachery without stating it",["Metaphor","Implied Meaning"])
+        T("Merism","A figure in which a whole is referred to by naming two contrasting or complementary parts.","Creates a sense of totality or universality through economical paired opposites; rhetorically satisfying and inclusive.","\"Searched high and low.\" / \"Young and old gathered.\" / \"The good and the wicked shall face the same end.\"",["Synecdoche","Antithesis","Binary Opposition"]),
+        T("Adynaton","A form of hyperbole that asserts an impossibility to emphasise a point.","Creates comic or emphatic force by anchoring an idea to something that could never occur, amplifying the speaker's conviction through the absurd.","\"I'll believe it when pigs fly.\" / \"Sooner would the sea give up her dead.\"",["Hyperbole","Irony","Figurative Language"]),
+        T("Antonomasia","The substitution of an epithet or title for a proper name, or a proper name for a general idea.","Compresses character or reputation into a label.","the Bard for Shakespeare",["A naming substitution related to metonymy and the epithet."]),
+        T("Epithet","A descriptive word or phrase regularly attached to a name to characterise it.","Fixes a defining quality, often formulaic in epic.","Homer's rosy-fingered dawn",["A characterising tag","formulaic in epic; related to the transferred epithet."]),
+        T("Kenning","A compound metaphorical phrase substituted for a noun, as in Old Norse and Old English verse.","Renames the familiar in vivid, riddling figurative terms.","whale-road for the sea",["A compressed metaphor used as a periphrastic name","central to Old English epic."]),
+        T("Periphrasis","The use of an elaborate roundabout phrase instead of a direct word.","Heightens, dignifies or evades through indirection.","the briny deep for the sea",["Circumlocution akin to the kenning and to euphemism."]),
       ]},
       {name:"Symbolic",type:"subgroup",info:{definition:"Use of symbols and symbolic patterns to create layers of meaning"},techniques:[
         T("Symbol","Object, person, or action representing something abstract","Creates layers of meaning beyond literal reference","The ring in LOTR symbolizes power, corruption, and desire",["Motif","Metaphor"]),
@@ -864,6 +999,20 @@ const taxonomyRoot = {
         T("Ellipsis (Narrative)","Omission of events or time periods","Allows focus on important moments","Skipping over uneventful weeks in a narrative",["Fragmentation","Non-Linear Narrative"]),
         T("Subplot","Secondary plot running parallel to main plot","Creates complexity and thematic resonance","Love story subplot in an adventure narrative",["Plot Development","Narrative Structure"]),
         T("Parallel Narrative","Two or more narratives progressing simultaneously","Creates connection and comparison between stories","Two characters' stories told side by side",["Frame Narrative","Non-Linear Narrative"])
+        T("Dialogism","The coexistence of multiple competing voices, perspectives or ideologies within a single text, none fully privileged over the others (theorised by Mikhail Bakhtin).","Creates ideological complexity and resists a single authoritative reading; the text becomes a site of ongoing debate rather than resolved meaning.","The competing voices of characters, narrator and implied author in a polyphonic novel such as Dostoevsky's The Brothers Karamazov.",["Free Indirect Discourse","Intertextuality (Implicit)","Narrative Self-Consciousness","Unreliable Narrator"]),
+        T("Diegesis","The mode of narration in which events are told or summarised by a narrator, rather than enacted or shown in scene.","Creates narrative distance; positions the reader as recipient of reported experience rather than direct witness, shaping how much interpretive authority the narrator holds.","\"He spent three years at sea, barely surviving.\" (summary-telling vs. a dramatised scene of those years)",["Mimesis","Ellipsis (Narrative)","Exposition","Frame Narrative"]),
+        T("Dramatic Question","The central question of suspense that a play raises and the audience waits to see resolved.","Sustains engagement by focusing anticipation on a single outcome.","\"Will Hamlet avenge his father?\" is the dramatic question driving the play.",["A suspense device sustained by exposition and rising action; resolved at the catastrophe or denouement."]),
+        T("Mimesis","The representation or imitation of the real world in art, central to classical theories of drama.","Grounds dramatic illusion in recognisable reality, enabling audience belief and emotion.","Aristotle's Poetics defines tragedy as the mimesis of an action that is serious and complete.",["The foundational principle behind the three unities and verisimilitude; opposed by the alienation effect."]),
+        T("Subtext","The implicit meaning beneath the literal dialogue, conveying unspoken thought or feeling.","Creates depth and tension by letting characters mean more than they say.","The strained politeness of Chekhov's characters carries grief and longing as subtext.",["Implicit meaning related to dramatic irony and innuendo; it thrives in the problem play."]),
+        T("Subplot","A secondary plot that runs alongside and often comments on the main action.","Enriches theme and structure, offering parallel or contrasting perspectives.","The Gloucester subplot mirrors Lear's filial betrayal in Shakespeare's King Lear.",["A structural parallel that often works by analogy with the main plot; a vehicle for the foil."]),
+        T("Exposition","The conveying of background information necessary to understand the dramatic situation.","Orients the audience by establishing setting, character and prior events.","The opening dialogue of many plays delivers exposition about who and where the characters are.",["The opening phase of the five act structure; a tool of the prologue and the well-made play."]),
+        T("Nemesis","The agent or force of retribution that punishes hubris and restores moral balance.","Delivers inevitable comeuppance, satisfying the audience's sense of justice.","In Greek tragedy, the downfall that follows overweening pride enacts nemesis.",["The retributive counterweight to hubris; allied to catastrophe and poetic justice."]),
+        T("Hubris","Excessive pride or self-confidence that leads a tragic protagonist to defy the gods or moral order.","Marks the overreach that precipitates downfall, inviting both awe and warning.","Creon's hubris in Sophocles' Antigone brings ruin upon his house.",["The flaw closely tied to hamartia and nemesis; an engine of tragic peripeteia."]),
+        T("Catharsis","The purging or purification of the emotions of pity and fear through tragic drama.","Leaves the audience emotionally cleansed and renewed after vicarious suffering.","Aristotle cites the audience's response to tragedies like Oedipus Rex as cathartic.",["The emotional aim of tragedy","produced through peripeteia and anagnorisis."]),
+        T("Comic Relief","A humorous scene or character introduced into a serious work to ease tension.","Provides momentary release, heightening the surrounding gravity by contrast.","The drunken Porter in Macbeth offers comic relief after Duncan's murder.",["A tonal release drawn from comedy and set against tragedy; works through contrast."]),
+        T("Catastrophe","The final tragic resolution in which the protagonist's fortunes collapse.","Completes the tragic arc, releasing accumulated tension into downfall and closure.","The deaths that conclude Hamlet form the play's catastrophe.",["The tragic close within the five act structure; an outcome of peripeteia and nemesis","near to the denouement."]),
+        T("Bildungsroman","A novel tracing the psychological and moral growth of its protagonist from youth to maturity.","Frames narrative as a process of formation and coming of age.","Charles Dickens, Great Expectations",["A coming-of-age narrative genre","often built around a defining epiphany."]),
+        T("Epiphany","A sudden moment of insight or revelation experienced by a character.","Crystallises meaning and marks a turning point.","The closing realisation in Joyce's The Dead",["A moment of revelation","related to anagnorisis and to the denouement."]),
       ]},
       {name:"Syntactic",type:"subgroup",info:{definition:"Techniques involving sentence structure and grammatical ordering"},techniques:[
         T("Syndeton","Joining phrases or clauses with conjunctions","Creates connection and accumulation","And we were hungry and tired and afraid",["Asyndeton","Polysyndeton"]),
@@ -883,6 +1032,12 @@ const taxonomyRoot = {
         T("Caesura","Pause or break in metrical line","Creates rhythm and allows emphasis in poetry","The day breaks || silence grows",["Enjambment","Line Break"]),
         T("Enjambment","Line breaks that continue grammatical phrase to next line","Creates flow across line breaks","The day breaks / silently",["End-Stopping","Line Break"]),
         T("End-Stopping","Grammatical pause coinciding with line ending","Creates completion and allows rest","The day breaks. / Silence grows.",["Enjambment","Caesura"])
+        T("Brachylogy","Extreme compression of expression, deliberately omitting words that the reader must infer to complete the meaning.","Creates intensity, speed and tautness; demands active interpretive participation from the reader and can produce an effect of controlled urgency.","\"If possible, come.\" / \"Gone.\" / \"Ready?\" / \"Three men dead, the rest in flight.\"",["Ellipsis (Grammatical)","Asyndeton","Sentence Fragment","Aposiopesis"]),
+        T("Enallage","The deliberate substitution of one grammatical form for another — tense, number, person or case — for rhetorical or characterisation effect.","Can signal dialect, psychological state or defamiliarisation; draws conscious attention to the act of speaking and the social encoding of grammar.","\"I seen what you done.\" (past tense substitution for characterisation) / The royal 'we' substituted for 'I'.",["Idiolect","Colloquialism","Register Shift","Anthimeria","Verbing"]),
+        T("Anacoluthon","A grammatical construction in which the expected syntactic sequence is abandoned mid-sentence, leaving it technically incomplete.","Mimics psychological disruption, emotional overwhelm or a fractured mind; creates authenticity in characterisation.","\"If you — but never mind.\" / \"The king — he was very angry.\"",["Aposiopesis","Ellipsis (Grammatical)","Stream of Consciousness"]),
+        T("Hysteron Proteron","A figure in which the natural or temporal order of events or ideas is deliberately inverted.","Creates urgency, disorientation or dark comedy by presenting result before cause; can suggest emotional priority over logical sequence.","\"Put on your shoes and socks.\" / \"I die! I faint! I fail!\" (Shelley, Prometheus Unbound)",["Anastrophe","In Medias Res","Flash-Forward (Prolepsis)"]),
+        T("Tautology","The needless repetition of an idea in different words.","Reinforces a point or exposes empty redundancy.","a free gift",["Redundant restatement","the conceptual partner of pleonasm."]),
+        T("Pleonasm","The use of more words than necessary to express a meaning.","Adds emphasis or, unintentionally, redundancy.","I saw it with my own eyes",["Grammatical redundancy closely related to tautology."]),
       ]},
       {name:"Point of View",type:"subgroup",info:{definition:"Techniques involving narrator's perspective and narrative distance"},techniques:[
         T("First-Person Narrator","Story told from perspective of 'I'","Creates intimacy and direct reader connection","I walked through the door and found the truth",["Second-Person Address","Interior Monologue"]),
@@ -916,6 +1071,51 @@ const taxonomyRoot = {
         T("Hyperbaton","Inversion of normal word order for rhetorical effect","Creates emphasis and unusual phrasing","Angry was he; strong the opposition grew",["Anastrophe","Word Order"]),
         T("Zeugma","Word used in two different senses within one phrase","Creates wit and surprising connection","Lost both her patience and her keys",["Syllepsis","Wordplay"]),
         T("Syllepsis","Word understood in different ways in successive clauses","Creates wordplay and surprising connections","Wore an old coat and a smile",["Zeugma","Pun"])
+        T("Distinctio","The explicit clarification or distinguishing between multiple possible meanings of a term just used, to prevent ambiguity.","Controls semantic slippage; signals precision and intellectual rigour in the speaker while anticipating counterargument or misreading.","\"I speak of love — not infatuation, not desire, but love in its most deliberate and reasoned form.\"",["Polysemy","Connotation","Denotation","Apophasis","Apposition"]),
+        T("Epanorthosis","The immediate correction, retraction or sharpening of a word or phrase just used, often to intensify or reframe its meaning.","Creates an impression of spontaneous rigour and precision; can amplify, qualify or complicate the original statement.","\"He was brave — no, reckless.\" / \"A good man, nay, a great one.\" / \"I loved her — I worshipped her.\"",["Amplification","Antithesis","Aposiopesis","Correctio"]),
+        T("Hypophora","A figure in which a speaker raises a question and immediately provides the answer, rather than leaving it open.","Controls the direction of argument; creates a sense of dialogue and guided reasoning while keeping the speaker in command of meaning.","\"What should we do? We should act now.\" / \"Was Caesar ambitious? He was.\" (Shakespeare, Julius Caesar)",["Rhetorical Question","Procatalepsis","Ethos","Logos"]),
+        T("Aphorism","A concise statement of a general truth or principle.","Distils wisdom into quotable, authoritative form.","The unexamined life is not worth living",["A pithy general truth","close kin to the epigram."]),
+        T("Epigram","A brief, pointed and often witty statement.","Lands a memorable thought with concision and bite.","Oscar Wilde: I can resist everything except temptation",["A terse","witty saying close to the aphorism and often turning on paradox."]),
+      ]},
+      {name:"Dramatic",type:"subgroup",info:{definition:"Theatrical and dramatic conventions of performance and stage craft"},techniques:[
+        T("Parabasis","A moment in which the chorus or a character steps fully out of the dramatic fiction to address the audience directly, often on behalf of the playwright.","Shatters theatrical illusion and implicates the audience in the drama's concerns; creates a meta-theatrical commentary on the events or issues being staged.","In Greek Old Comedy, the parabasis saw the chorus abandon their dramatic role to address Athenian citizens on political and social matters.",["Breaking the Fourth Wall","Aside","Metatheatre","Alienation Effect (Verfremdungseffekt)","Chorus"]),
+        T("Dumb Show","A passage of mimed action without speech, used to represent or foreshadow events.","Conveys narrative visually and can foreshadow the main plot in symbolic form.","The dumb show before the play within Hamlet mimes the murder of the king.",["A mimetic device close to the tableau; often embedded as a play within a play."]),
+        T("Tableau","A moment in which actors freeze in a striking arrangement, presenting a silent picture on stage.","Arrests the action to emphasise a dramatic image or emotional climax.","Nineteenth century melodrama often ended acts on a tableau, holding a frozen pose as the curtain fell.",["A visual freeze related to the dumb show and to melodrama; pictorial like ekphrasis."]),
+        T("Dramatis Personae","The list of characters in a play, conventionally placed at the start of the text.","Orients the reader and signals relationships, status and roles before the action begins.","The dramatis personae of Hamlet identifies Claudius as \"King of Denmark\".",["Prefatory apparatus paired with stage directions; the sense of 'persona' links to point of view."]),
+        T("Stage Directions","Instructions in a play's text specifying setting, movement, action or delivery.","Guides staging and shapes the reader's mental performance, sometimes carrying authorial voice.","The famous direction \"Exit, pursued by a bear\" in Shakespeare's The Winter's Tale.",["Textual apparatus alongside the dramatis personae; can shade into author intrusion."]),
+        T("Five Act Structure","A dramatic structure dividing a play into five acts: exposition, rising action, climax, falling action and catastrophe or resolution.","Shapes pacing and the rise and fall of tension across a recognisable arc.","Shakespeare's tragedies, such as Macbeth, follow the five act pattern later codified by Freytag.",["Houses exposition","rising action","falling action and catastrophe; shaped by the three unities."]),
+        T("Three Unities","The neoclassical principles of unity of action, time and place that govern dramatic structure.","Concentrates the drama for intensity and verisimilitude by limiting its scope and duration.","Racine's Phèdre observes the unities, unfolding in one place within a single day.",["A structural doctrine shaping the five act structure and exposition","rooted in Aristotelian mimesis."]),
+        T("Exodos","The final scene or departure song after the last stasimon, concluding a Greek tragedy.","Resolves the action and marks the chorus's exit, delivering closing reflection.","The exodos of Oedipus Rex shows the blinded Oedipus led away from Thebes.",["The closing structural unit paired with the parodos; akin to the denouement and catastrophe."]),
+        T("Episode","A section of spoken dramatic action between choral odes in Greek tragedy.","Advances the plot and develops character between the chorus's lyric interludes.","The episodes of Euripides' Medea stage Medea's encounters with Creon, Jason and Aegeus.",["The plot-bearing unit set among the parodos","stasimon and exodos."]),
+        T("Stasimon","A choral ode performed while the chorus stands in the orchestra, between the episodes of a Greek tragedy.","Reflects on the action, voicing communal judgement and lyric meditation.","The famous \"Ode to Man\" stasimon in Sophocles' Antigone.",["A choral unit grouped with the parodos","episode and exodos; structured by strophe and antistrophe."]),
+        T("Parodos","The first ode sung by the chorus as it enters, in Greek tragedy.","Introduces the chorus and its perspective, establishing communal mood and context.","The parodos of Aeschylus' Agamemnon recalls the omens at Aulis.",["A choral unit grouped with the stasimon","episode and exodos","and tied to the chorus."]),
+        T("Epilogue","A concluding section spoken after the main action, offering closure, comment or address to the audience.","Rounds off the drama, draws a moral or appeals for applause and goodwill.","Prospero's epilogue in Shakespeare's The Tempest asks the audience to set him free with their applause.",["The structural counterpart to the prologue; relates to the denouement as a closing device."]),
+        T("Prologue","An introductory section spoken before the main action, setting context or framing the play.","Orients the audience, establishes tone and may foreshadow events.","The Chorus's prologue in Shakespeare's Romeo and Juliet announces the \"star-crossed lovers\".",["A structural bookend paired with the epilogue; akin to exposition in function."]),
+        T("Chorus","A group of performers who comment collectively on the dramatic action, often representing the voice of the community.","Provides exposition, moral framing and emotional amplification, mediating between stage and audience.","In Sophocles' Antigone, the Theban elders form a chorus that reflects on fate and the limits of human power.",["Tied to the strophe and antistrophe of its odes","and to the parodos and stasimon; a collective counterpart to the single set speech."]),
+        T("Stichomythia","Rapid dialogue in which characters exchange single alternating lines, often in heated argument.","Heightens tension and pace, dramatising conflict through verbal duelling.","The clipped line-by-line exchanges between Oedipus and Tiresias in Sophocles' Oedipus Rex.",["A dialogic intensifier that contrasts with the set speech and works through balanced antithesis."]),
+        T("Soliloquy","An extended speech in which a character, alone on stage, voices their inner thoughts aloud for the audience.","Grants direct access to a character's psychology and moral struggle, building intimacy and dramatic irony.","Hamlet's \"To be, or not to be\" soliloquy lays bare his contemplation of mortality and inaction.",["A solitary cousin of the aside and the dramatic monologue; central to staged interiority."]),
+        T("Set Speech","A formal, self-contained speech of some length delivered by a single character within a play.","Allows sustained rhetoric, argument or emotion, often marking a dramatic high point.","Mark Antony's \"Friends, Romans, countrymen\" oration in Shakespeare's Julius Caesar.",["A monologic form adjacent to soliloquy and the dramatic monologue; contrasts with stichomythia."]),
+        T("Aside","A short remark spoken by a character to the audience or to themselves, conventionally unheard by the other characters on stage.","Creates intimacy and dramatic irony by giving the audience access to a character's private thoughts while others remain unaware.","In Shakespeare's Hamlet, Hamlet's \"A little more than kin, and less than kind\" is delivered aside, signalling his contempt for Claudius.",["Functions like a spoken footnote; closely allied to soliloquy and direct address","and a key vehicle for dramatic irony."]),
+      ]},
+      {name:"Form",type:"subgroup",info:{definition:"Theatrical forms and genres"},techniques:[
+        T("Problem Play","A drama that stages a contemporary social problem for debate, often without tidy resolution.","Provokes reflection and discomfort, using the stage as a forum for argument.","Ibsen's A Doll's House confronts marriage and gender roles, leaving its questions open.",["A discursive genre adjacent to tragicomedy in tonal openness; a vehicle for subtext and social mimesis."]),
+        T("Well-Made Play","A tightly plotted genre built on careful exposition, causal logic and a climactic obligatory scene.","Delivers satisfying mechanical suspense through neat construction and reversal.","The plays of Eugène Scribe epitomise the well-made play's clockwork plotting.",["A plotting genre dependent on exposition and Chekhov's gun; tightened by the three unities."]),
+        T("Closet Drama","A play written to be read rather than performed on stage.","Foregrounds language and idea over spectacle, inviting private, reflective reading.","Milton's Samson Agonistes was conceived as a closet drama.",["A read-only dramatic form contrasting with staged genres; akin to the dramatic monologue as literary reading."]),
+        T("Mystery Play","A medieval religious drama dramatising biblical episodes, often staged in cycles by craft guilds.","Communicates scripture vividly to a lay audience through communal performance.","The York Mystery Plays dramatise events from Creation to the Last Judgement.",["A religious cycle drama paired with the morality play; it draws on biblical allusion."]),
+        T("Morality Play","A late medieval allegorical drama in which personified virtues and vices contend for the human soul.","Instructs morally, dramatising spiritual choice through allegory.","Everyman stages the title figure's reckoning as abstractions like Good Deeds accompany him.",["An allegorical genre kin to the mystery play; built on allegory and personification."]),
+        T("Masque","A courtly dramatic entertainment combining poetry, music, dance and elaborate spectacle.","Celebrates and flatters its noble audience through allegory and visual splendour.","Ben Jonson's masques, designed with Inigo Jones, staged allegories for the Jacobean court.",["A spectacle genre allied to allegory; it often embeds a play within a play."]),
+        T("Melodrama","A sensational dramatic genre with heightened emotion, clear moral oppositions and musical underscoring.","Amplifies feeling and suspense, polarising virtue and villainy for strong audience response.","Nineteenth century stage melodramas pit pure heroines against scheming villains.",["Emotionally heightened like farce; its acts often close on a tableau."]),
+        T("Farce","A broad comic genre relying on improbable situations, physical humour and exaggerated character.","Provokes laughter through absurdity, mistaken identity and rapid action.","The mistaken identities of Oscar Wilde's The Importance of Being Earnest verge on farce.",["An extreme of comedy that shares its exaggeration with melodrama."]),
+        T("Tragicomedy","A genre blending tragic and comic elements, often with a grave threat that resolves happily.","Complicates tone, mixing pathos with humour to mirror life's ambivalence.","Shakespeare's The Winter's Tale moves from near-tragedy to comic reconciliation.",["A hybrid of tragedy and comedy; akin to the problem play in its tonal mixture."]),
+        T("Tragedy","A dramatic genre depicting the downfall of a protagonist through fate, flaw or circumstance.","Evokes pity and fear, moving the audience toward catharsis.","Sophocles' Oedipus Rex traces the king's ruin through his own investigation.",["The genre that frames hamartia","catharsis","catastrophe and peripeteia; opposed to comedy."]),
+        T("Comedy","A dramatic genre with a light or satirical tone that typically ends happily, often in marriage or reconciliation.","Amuses and reassures, resolving conflict and affirming social order.","Shakespeare's A Midsummer Night's Dream ends with multiple marriages and harmony restored.",["The counterpart to tragedy; parent of farce and an ingredient of tragicomedy."]),
+      ]},
+      {name:"Wordplay",type:"subgroup",info:{definition:"Techniques involving manipulation of words for comic or rhetorical effect"},techniques:[
+        T("Portmanteau","A word blending the sounds and meanings of two others.","Coins compact, inventive new terms.","brunch from breakfast and lunch",["A blended coinage and a form of neologism."]),
+        T("Spoonerism","The transposition of initial sounds between two or more words.","Creates accidental or deliberate comic slips.","a blushing crow for a crushing blow",["A sound-swapping wordplay","related to the malapropism."]),
+        T("Malapropism","The mistaken use of a word in place of a similar-sounding one, to comic effect.","Produces unintended humour and characterises the speaker.","Mrs Malaprop: a allegory on the banks of the Nile",["A sound-based verbal blunder","kin to the spoonerism."]),
+        T("Double Entendre","A phrase open to two interpretations, one of which is often risque.","Smuggles a second, usually suggestive, meaning beneath the surface.","A line that reads innocently and bawdily at once",["A two-meaning wordplay close to the pun and to innuendo."]),
+        T("Pun","A play on words exploiting multiple meanings or similar sounds, also called paronomasia.","Generates humour, wit or layered meaning.","Time flies like an arrow; fruit flies like a banana",["The core wordplay device","related to antanaclasis and syllepsis."]),
       ]}
     ]},
     {name:"Intertextual & Metafictional",type:"family",children:[
@@ -931,7 +1131,7 @@ const taxonomyRoot = {
         T("Intertextuality (Explicit)","Clear, named references to other texts","Deliberately invokes connection reader can identify","Title borrowed from another work",["Intertextuality (Implicit)","Allusion"]),
         T("Intertextuality (Implicit)","Subtle echoes and parallels without explicit naming","Requires reader recognition; creates discovery","Plot structure echoing earlier work without acknowledgment",["Intertextuality (Explicit)","Literary Echo"]),
         T("Hypotext / Hypertext","Hypotext is source text; hypertext is derived text","Hypotext influences or is transformed by hypertext","Odyssey (hypotext) → Joyce's Ulysses (hypertext)",["Intertextuality","Literary Genealogy"])
-      ]},
+    ]},
       {name:"Metafictional",type:"subgroup",info:{definition:"Techniques involving self-awareness and self-referentiality of narrative"},techniques:[
         T("Breaking the Fourth Wall","Character or narrator acknowledges audience or fictional nature","Creates direct connection with reader; disrupts illusion","Character looks at camera; narrator addresses reader directly",["Metafiction","Self-Referentiality"]),
         T("Self-Referentiality","Work referring to itself, its creation, or its status as fiction","Creates philosophical paradox and self-awareness","Novel discussing its own genre and conventions",["Metafiction","Self-Consciousness"]),
@@ -941,6 +1141,11 @@ const taxonomyRoot = {
         T("Mise en Abyme","Text containing representation of itself; story within story","Creates infinite regression and philosophical reflection","A painting depicting the painter painting the painting",["Frame Narrative","Recursive Structure"]),
         T("Author Intrusion","Author's voice breaking into narrative explicitly","Disrupts fiction and creates author presence","Author commenting on character or plot directly",["Narrative Intrusion","Metafiction"]),
         T("Narrative Self-Consciousness","Narrator aware of being in narrative and commenting on it","Creates philosophical reflection on storytelling","Narrator discussing their own narrative strategies",["Self-Referentiality","Metafiction"])
+        T("Epic Theatre","Brecht's theory of theatre that favours episodic narrative and critical distance over emotional illusion.","Engages the audience's reason rather than empathy, framing drama as social analysis.","Brecht's The Caucasian Chalk Circle uses a narrator and episodic structure characteristic of epic theatre.",["The movement that deploys the alienation effect; it counters mimesis and the well-made play."]),
+        T("Alienation Effect (Verfremdungseffekt)","Brecht's technique of distancing the audience to prevent emotional immersion and prompt critical thought.","Keeps spectators aware they are watching a constructed argument, encouraging political reflection.","Brecht's Mother Courage uses placards, songs and direct address to alienate the audience.",["The core device of epic theatre; it opposes mimesis and catharsis and is allied to breaking the fourth wall."]),
+        T("Play within a Play","A dramatic performance staged inside the main play, watched by its characters.","Mirrors or comments on the framing action, layering reality and illusion.","\"The Mousetrap\" staged in Hamlet is a play within a play that traps Claudius's conscience.",["An embedded structure central to metatheatre; a dramatic form of mise en abyme","related to the dumb show."]),
+        T("Metatheatre","Drama that draws attention to its own theatricality, acknowledging that it is a play.","Breaks illusion to provoke reflection on art, role-playing and reality.","The players and the staged murder in Hamlet make the play self-consciously theatrical.",["Self-referential drama encompassing the play within a play and breaking the fourth wall; kin to metafiction and mise en abyme."]),
+        T("Metalepsis","The transgression of narrative levels, as when a narrator enters the story or addresses its making.","Ruptures the fictional frame to unsettle or amuse.","A character who knows they are being written",["A breach of narrative levels akin to breaking the fourth wall and metafiction."]),
       ]}
     ]}
   ]
