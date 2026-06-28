@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HSC Short Answer Practice</title>
+  <style>
+    :root {
+      --font-body: Verdana, Arial, Helvetica, sans-serif;
+      --font-size-body: 17px;
+      --line-height: 1.5;
+      --measure: 66ch;
+      --color-bg: #FAF7F0;
+      --color-text: #1F2421;
+      --color-accent: #2F6B5E;
+      --color-accent-light: #E8F2F0;
+      --color-muted: #5C655F;
+      --color-border: #C8D0C9;
+      --color-done: #2F6B5E;
+      --color-undone: #8B1A1A;
+      --color-unsure: #8B6914;
+      --radius: 10px;
+      --space: 24px;
+      --space-sm: 12px;
+      --space-lg: 48px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: var(--font-size-body);
+      line-height: var(--line-height);
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      padding: var(--space-lg) var(--space);
+    }
+
+    .app {
+      max-width: var(--measure);
+      margin: 0 auto;
+    }
+
+    section { display: none; }
+    section.active { display: block; }
+
+    h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: var(--space); }
+    h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: var(--space-sm); }
+
+    .coach {
+      color: var(--color-muted);
+      font-style: italic;
+      margin-bottom: var(--space);
+      font-size: 0.95rem;
+    }
+
+    .source-text {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space);
+      margin-bottom: var(--space);
+      line-height: 1.7;
+    }
+
+    .question-stem {
+      font-weight: 600;
+      margin-bottom: var(--space);
+      padding: var(--space-sm) var(--space);
+      border-left: 3px solid var(--color-accent);
+      background: var(--color-accent-light);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    button {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--color-accent);
+      color: white;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-accent);
+      border: 1px solid var(--color-accent);
+    }
+    .btn-secondary:hover { background: var(--color-accent-light); }
+
+    .btn-row {
+      display: flex;
+      gap: var(--space-sm);
+      margin-top: var(--space);
+      flex-wrap: wrap;
+    }
+
+    .timer {
+      font-size: 2rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-muted);
+      margin: var(--space) 0;
+    }
+    .timer.overrun { color: var(--color-undone); }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .checklist-item:last-child { border-bottom: none; }
+
+    .checklist-text { flex: 1; }
+
+    .verdict-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .verdict-yes { background: #D4EDDA; color: #155724; }
+    .verdict-no { background: #F8D7DA; color: #721C24; }
+    .verdict-not-quite { background: #FFF3CD; color: #856404; }
+    .verdict-cannot-judge { background: #E2E3E5; color: #383D41; }
+
+    .nesa-sample {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space);
+      margin: var(--space) 0;
+    }
+    .nesa-sample blockquote { border-left: 3px solid var(--color-accent); padding-left: var(--space-sm); }
+
+    .calibration-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+      margin: var(--space) 0;
+    }
+
+    .coverage-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: var(--space-sm) 0;
+    }
+    .coverage-pill {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      border: 1px solid var(--color-border);
+    }
+    .coverage-pill.done { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+    .coverage-pill.not-done { background: transparent; color: var(--color-muted); }
+
+    .level-btn.active {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+
+    .settings-toggle {
+      position: fixed;
+      top: var(--space-sm);
+      right: var(--space-sm);
+      font-size: 0.85rem;
+      color: var(--color-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    #settings-panel {
+      display: none;
+      position: fixed;
+      top: 40px;
+      right: var(--space-sm);
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space);
+      width: 260px;
+      z-index: 100;
+      font-size: 0.9rem;
+    }
+    #settings-panel.open { display: block; }
+
+    .spinner {
+      display: none;
+      color: var(--color-muted);
+      font-style: italic;
+      margin: var(--space) 0;
+    }
+    .spinner.active { display: block; }
+
+    .error-msg {
+      display: none;
+      color: var(--color-undone);
+      margin: var(--space) 0;
+      padding: var(--space-sm) var(--space);
+      background: #FFF0F0;
+      border-radius: var(--radius);
+    }
+    .error-msg.active { display: block; }
+
+    @media print {
+      .settings-toggle, .btn-row, #settings-panel { display: none !important; }
+      section.active { display: block; }
+    }
+  </style>
+</head>
+<body>
+<button class="settings-toggle" id="settings-btn" aria-label="Settings">⚙ Settings</button>
+<div id="settings-panel">
+  <h2 style="font-size:1rem;margin-bottom:var(--space-sm);">Override levers</h2>
+  <p style="font-size:0.8rem;color:var(--color-muted);margin-bottom:var(--space-sm);">These override your level for this session only.</p>
+
+  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.9rem;">
+    CUBE
+    <select id="override-cube" style="font-family:var(--font-body);padding:4px;">
+      <option value="">Level default</option>
+      <option value="on">Always on</option>
+      <option value="off">Always off</option>
+    </select>
+  </label>
+
+  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.9rem;">
+    Timer pausing
+    <select id="override-pause" style="font-family:var(--font-body);padding:4px;">
+      <option value="">Level default</option>
+      <option value="on">Allowed</option>
+      <option value="off">Not allowed</option>
+    </select>
+  </label>
+
+  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.9rem;">
+    Checklist while writing
+    <select id="override-checklist" style="font-family:var(--font-body);padding:4px;">
+      <option value="">Level default</option>
+      <option value="visible">Visible</option>
+      <option value="collapsed">Collapsed</option>
+      <option value="hidden">Hidden</option>
+    </select>
+  </label>
+
+  <label style="display:flex;justify-content:space-between;align-items:center;font-size:0.9rem;">
+    Writing assistance
+    <select id="override-assistance" style="font-family:var(--font-body);padding:4px;">
+      <option value="">Level default</option>
+      <option value="full">Full</option>
+      <option value="light">Light</option>
+      <option value="none">None</option>
+    </select>
+  </label>
+</div>
+
+<div class="app">
+  <!-- Screen: Setup -->
+  <section id="screen-setup" class="active">
+    <h1>HSC Short Answer Practice</h1>
+    <p class="coach">Choose your level, then generate a question. You will read the text, write your answer by hand, and self-mark your work.</p>
+
+    <div style="margin: var(--space) 0;">
+      <h2>Level</h2>
+      <div class="btn-row" id="level-btns">
+        <button class="btn-secondary level-btn active" data-level="1">1 · Foundation</button>
+        <button class="btn-secondary level-btn" data-level="2">2 · Consolidation</button>
+        <button class="btn-secondary level-btn" data-level="3">3 · Exam</button>
+      </div>
+      <p style="margin-top:8px; font-size:0.9rem; color:var(--color-muted);" id="level-desc">
+        Full scaffolding — CUBE annotation, visible checklist, pausing allowed.
+      </p>
+    </div>
+
+    <div class="spinner">Loading materials…</div>
+    <div class="error-msg"></div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="generate-btn">Generate Question</button>
+    </div>
+  </section>
+
+  <!-- Screen: Reading -->
+  <section id="screen-reading">
+    <h2 id="reading-title"></h2>
+    <p class="coach" id="reading-coach">Read the text carefully. Your writing time will begin when reading time ends.</p>
+    <div class="source-text" id="reading-source-text"></div>
+    <div class="timer" id="reading-timer">0:30</div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="reading-skip-btn">Skip reading time →</button>
+    </div>
+  </section>
+
+  <!-- Screen: CUBE -->
+  <section id="screen-cube">
+    <h2>Unpack the question</h2>
+    <p class="coach">Work through each step before you start writing.</p>
+    <div class="question-stem" id="cube-stem"></div>
+    <div id="cube-steps">
+      <div class="cube-step" data-step="0">
+        <strong>C — Circle the command words.</strong>
+        <p>Which directive verb tells you what to do? (e.g. explain, analyse, evaluate)</p>
+        <input type="text" id="cube-c" placeholder="e.g. analyse" style="width:100%;padding:8px;margin-top:8px;font-family:var(--font-body);font-size:1rem;border:1px solid var(--color-border);border-radius:var(--radius);">
+      </div>
+      <div class="cube-step" data-step="1" style="display:none">
+        <strong>U — Underline the key terms.</strong>
+        <p>What content words define the topic and scope?</p>
+        <input type="text" id="cube-u" placeholder="e.g. human experience, language" style="width:100%;padding:8px;margin-top:8px;font-family:var(--font-body);font-size:1rem;border:1px solid var(--color-border);border-radius:var(--radius);">
+      </div>
+      <div class="cube-step" data-step="2" style="display:none">
+        <strong>B — Box the specifiers.</strong>
+        <p>What qualifiers, scope limiters, or named texts bound the response?</p>
+        <input type="text" id="cube-b" placeholder="e.g. in the poem, Kooser" style="width:100%;padding:8px;margin-top:8px;font-family:var(--font-body);font-size:1rem;border:1px solid var(--color-border);border-radius:var(--radius);">
+      </div>
+      <div class="cube-step" data-step="3" style="display:none">
+        <strong>E — Explain the question in your own words.</strong>
+        <p>Before you write, what is this question actually asking you to do?</p>
+        <textarea id="cube-e" rows="3" placeholder="In my own words, this question is asking me to…" style="width:100%;padding:8px;margin-top:8px;font-family:var(--font-body);font-size:1rem;border:1px solid var(--color-border);border-radius:var(--radius);resize:vertical;"></textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="cube-next-btn">Next →</button>
+    </div>
+  </section>
+
+  <!-- Screen: Predict -->
+  <section id="screen-predict">
+    <h2>Before you write — predict</h2>
+    <p class="coach">Be honest. There are no marks for your prediction — it is only for you.</p>
+    <div class="question-stem" id="predict-stem"></div>
+    <div id="predict-checklist"></div>
+    <div class="error-msg"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="predict-continue-btn">Start writing →</button>
+    </div>
+  </section>
+
+  <!-- Screen: Write -->
+  <section id="screen-write">
+    <h2>Write your answer by hand</h2>
+    <p class="coach" id="write-coach"></p>
+    <div class="question-stem" id="write-stem"></div>
+
+    <div id="write-assistance" style="display:none">
+      <div style="background:var(--color-accent-light);border-radius:var(--radius);padding:var(--space-sm) var(--space);margin-bottom:var(--space);font-size:0.9rem;">
+        <strong>Structure guide:</strong>
+        <ol style="margin:8px 0 0 20px;">
+          <li>State your main idea and link it to the concept.</li>
+          <li>Name a technique and quote briefly from the text.</li>
+          <li>Explain the effect of that technique.</li>
+          <li>Link back to the question's concept in your own words.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="write-checklist-container" style="display:none">
+      <details id="write-checklist-details">
+        <summary style="cursor:pointer;color:var(--color-muted);font-size:0.9rem;margin-bottom:var(--space-sm);">Checklist (tap to expand)</summary>
+        <div id="write-checklist-items"></div>
+      </details>
+    </div>
+
+    <div class="timer" id="write-timer">0:00</div>
+    <p id="write-overrun-msg" style="display:none;color:var(--color-undone);font-size:0.9rem;">Time is up — keep writing if you need to.</p>
+    <p style="color:var(--color-muted);font-size:0.85rem;">Aim for roughly <span id="write-line-guide"></span> lines.</p>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="write-pause-btn" style="display:none">Pause</button>
+      <button class="btn-secondary" id="write-reset-btn" style="display:none">Reset timer</button>
+      <button class="btn-secondary" id="write-hide-btn">Hide timer</button>
+      <button class="btn-primary" id="write-done-btn">I have finished writing →</button>
+    </div>
+  </section>
+
+  <!-- Screen: Self-mark -->
+  <section id="screen-selfmark">
+    <h2>Self-mark</h2>
+    <p class="coach">Work through each item. This is your judgement — mark what you honestly think you did.</p>
+    <div class="question-stem" id="selfmark-stem"></div>
+    <div id="selfmark-checklist"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="selfmark-continue-btn">See how your predictions matched →</button>
+    </div>
+  </section>
+
+  <!-- Screen: Calibration -->
+  <section id="screen-calibration">
+    <h2>How did your predictions match your self-marks?</h2>
+    <p class="coach" id="calibration-summary"></p>
+    <div class="calibration-grid" id="calibration-grid"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="calibration-continue-btn">Compare to a real NESA sample →</button>
+    </div>
+  </section>
+
+  <!-- Screen: NESA comparison -->
+  <section id="screen-nesa">
+    <h2>Compare to a real NESA sample</h2>
+    <p class="coach">Here is a real NESA question of the same type. Read the sample response and look for the moves you practised — how does yours compare?</p>
+    <div style="margin-bottom:var(--space);">
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:4px;">Real NESA question</p>
+      <div class="question-stem" id="nesa-stem"></div>
+    </div>
+    <div class="nesa-sample">
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space-sm);">Sample response (published by NESA, shown exactly as written)</p>
+      <div id="nesa-sample-text"></div>
+    </div>
+    <div style="margin-top:var(--space);">
+      <h2>How the sample satisfies the checklist</h2>
+      <div id="nesa-checklist-mapping"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="nesa-continue-btn">Reflect →</button>
+    </div>
+  </section>
+
+  <!-- Screen: Reflection -->
+  <section id="screen-reflection">
+    <h2>Reflect</h2>
+    <p class="coach">What is one thing you want to focus on next time? Write it in your own words.</p>
+    <div id="reflection-list" style="margin-bottom:var(--space);"></div>
+    <div style="display:flex;gap:var(--space-sm);align-items:flex-start;">
+      <input type="text" id="reflection-input"
+        placeholder="e.g. tie my evidence more directly to the concept"
+        style="flex:1;padding:10px;font-family:var(--font-body);font-size:1rem;border:1px solid var(--color-border);border-radius:var(--radius);">
+      <button class="btn-secondary" id="reflection-add-btn">Add</button>
+    </div>
+    <div class="btn-row" style="margin-top:var(--space);">
+      <button class="btn-primary" id="reflection-report-btn">See session report →</button>
+      <button class="btn-secondary" id="reflection-again-btn">Practice another question</button>
+    </div>
+  </section>
+
+  <!-- Screen: Session Report -->
+  <section id="screen-report">
+    <h2>Session Report</h2>
+    <p class="coach">Take a screenshot to keep this. The tool stores nothing.</p>
+
+    <div style="display:grid;gap:var(--space);">
+      <div style="background:white;border:1px solid var(--color-border);border-radius:var(--radius);padding:var(--space);">
+        <h2>Next time I want to focus on</h2>
+        <ul id="report-focus" style="padding-left:20px;margin-top:var(--space-sm);"></ul>
+      </div>
+      <div style="background:white;border:1px solid var(--color-border);border-radius:var(--radius);padding:var(--space);">
+        <h2>What you practised this session</h2>
+        <div id="report-practised" style="margin-top:var(--space-sm);font-size:0.9rem;"></div>
+      </div>
+      <div style="background:white;border:1px solid var(--color-border);border-radius:var(--radius);padding:var(--space);">
+        <h2>Calibration snapshot</h2>
+        <div id="report-calibration" style="margin-top:var(--space-sm);font-size:0.9rem;"></div>
+      </div>
+      <div style="background:white;border:1px solid var(--color-border);border-radius:var(--radius);padding:var(--space);">
+        <h2>Coverage map</h2>
+        <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space-sm);">Directive verbs</p>
+        <div class="coverage-grid" id="report-coverage-verbs"></div>
+        <p style="font-size:0.85rem;color:var(--color-muted);margin:var(--space-sm) 0 var(--space-sm);">Text types</p>
+        <div class="coverage-grid" id="report-coverage-types"></div>
+        <p style="font-size:0.85rem;color:var(--color-muted);margin:var(--space-sm) 0 var(--space-sm);">Concepts</p>
+        <div class="coverage-grid" id="report-coverage-concepts"></div>
+      </div>
+    </div>
+
+    <p style="margin-top:var(--space);font-size:0.9rem;color:var(--color-muted);">Keep your handwritten responses and the NESA samples alongside them — these are the only record of your work across sessions.</p>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="report-again-btn">Practice another question</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const CONFIG = {
+  functionUrl: 'https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai',
+  readingSecondsSingle: 30,
+  writingSecondsPerMark: 120,
+  retryLimit: 3,
+  cube: { level1: 'on-locked', level2: 'on-default', level3: 'off' },
+  defaultLevel: 1
+};
+
+// ── CONSTANTS ────────────────────────────────────────────────────────────────
+const SCREENS = {
+  SETUP: 'setup', READING: 'reading', CUBE: 'cube',
+  PREDICT: 'predict', WRITE: 'write', SELF_MARK: 'selfmark',
+  CALIBRATION: 'calibration', NESA: 'nesa',
+  REFLECTION: 'reflection', REPORT: 'report'
+};
+
+const VERB_LADDER = {
+  'identify':        { min: 1, max: 3 },
+  'explain':         { min: 1, max: 4 },
+  'how does':        { min: 1, max: 4 },
+  'analyse':         { min: 2, max: 5 },
+  'explain how':     { min: 2, max: 5 },
+  'evaluate':        { min: 4, max: 7 },
+  'assess':          { min: 4, max: 7 },
+  'justify':         { min: 4, max: 7 },
+  'compare':         { min: 4, max: 7 },
+  'to what extent':  { min: 4, max: 7 }
+};
+
+const ALL_VERBS = Object.keys(VERB_LADDER);
+
+const LEVEL_PROFILES = {
+  1: {
+    textTypes: ['prose fiction','nonfiction','memoir','feature article','opinion'],
+    questionElements: 'single',
+    cubeDefault: true, cubeLocked: true,
+    timerPauseAllowed: true, timerStrict: false,
+    checklistDuringWrite: 'visible',
+    assistanceDuringWrite: 'full'
+  },
+  2: {
+    textTypes: ['prose fiction','nonfiction','memoir','feature article','opinion','poetry'],
+    questionElements: 'one-two-parts',
+    cubeDefault: false, cubeLocked: false,
+    timerPauseAllowed: true, timerStrict: false,
+    checklistDuringWrite: 'collapsed',
+    assistanceDuringWrite: 'light'
+  },
+  3: {
+    textTypes: ['prose fiction','nonfiction','memoir','feature article','opinion','poetry','visual'],
+    questionElements: 'multi-part',
+    cubeDefault: false, cubeLocked: true,
+    timerPauseAllowed: false, timerStrict: true,
+    checklistDuringWrite: 'hidden',
+    assistanceDuringWrite: 'none'
+  }
+};
+
+// ── APP STATE ────────────────────────────────────────────────────────────────
+let app = {
+  screen: SCREENS.SETUP,
+  level: CONFIG.defaultLevel,
+  overrides: {},
+  data: { sources: [], nesaQuestions: [], pairingRule: {} },
+  dataLoaded: false,
+  session: { attempted: [], reflections: [] },
+  current: {
+    source: null,
+    questionItem: null,
+    predictions: {},
+    selfMarks: {},
+    evidenceResults: {}
+  },
+  timer: { id: null, seconds: 0, running: false }
+};
+
+// ── SCREEN TRANSITIONS ───────────────────────────────────────────────────────
+function goTo(screen) {
+  document.querySelectorAll('.app section').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(`screen-${screen}`);
+  if (el) {
+    el.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  app.screen = screen;
+}
+
+// ── DATA LOADING ─────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const [sources, nesaQuestions, pairingRule] = await Promise.all([
+      fetch('hsc-short-answer/data/sources.json').then(r => r.json()),
+      fetch('hsc-short-answer/data/nesaQuestions.json').then(r => r.json()),
+      fetch('hsc-short-answer/data/pairingRule.json').then(r => r.json())
+    ]);
+    app.data.sources = sources;
+    app.data.nesaQuestions = nesaQuestions;
+    app.data.pairingRule = pairingRule;
+    app.dataLoaded = true;
+  } catch (err) {
+    showError('setup', 'Could not load practice materials. Please refresh the page.');
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function showError(screenId, msg) {
+  const el = document.querySelector(`#screen-${screenId} .error-msg`);
+  if (el) { el.textContent = msg; el.classList.add('active'); }
+}
+
+function hideError(screenId) {
+  const el = document.querySelector(`#screen-${screenId} .error-msg`);
+  if (el) el.classList.remove('active');
+}
+
+function showSpinner(screenId, msg) {
+  const el = document.querySelector(`#screen-${screenId} .spinner`);
+  if (el) { el.textContent = msg || 'Generating your question…'; el.classList.add('active'); }
+}
+
+function hideSpinner(screenId) {
+  const el = document.querySelector(`#screen-${screenId} .spinner`);
+  if (el) el.classList.remove('active');
+}
+
+function getProfile() {
+  const base = LEVEL_PROFILES[app.level];
+  return { ...base, ...app.overrides };
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── QUOTE VERIFICATION ────────────────────────────────────────────────────────
+function normalizeForQuoteCheck(str) {
+  return str
+    .replace(/[''‚‛]/g, "'")   // curly single quotes → straight
+    .replace(/[""„‟]/g, '"')   // curly double quotes → straight
+    .replace(/\s+/g, ' ')                            // collapse whitespace
+    .trim();
+}
+
+function verifyQuotes(quotesUsed, source) {
+  const rawText = source.isVisual ? source.visualDescription : source.fullText;
+  if (!rawText) return false;
+  const text = normalizeForQuoteCheck(rawText);
+  return quotesUsed.every(q => {
+    const normalized = normalizeForQuoteCheck(q);
+    return normalized.length > 0 && text.includes(normalized);
+  });
+}
+
+// ── VALIDATION GATES ─────────────────────────────────────────────────────────
+function isVerbValidForMarks(verb, marks) {
+  const range = VERB_LADDER[verb.toLowerCase()];
+  if (!range) return false;
+  return marks >= range.min && marks <= range.max;
+}
+
+function topBandUsesVerb(markingBands, verb) {
+  if (!markingBands || !markingBands.length) return false;
+  const topBand = markingBands.reduce((a, b) => b.band > a.band ? b : a);
+  const desc = topBand.descriptor.toLowerCase();
+  const v = verb.toLowerCase();
+  // Direct match
+  if (desc.includes(v)) return true;
+  // For multi-word verbs, check the core action word
+  const coreWords = {
+    'to what extent': ['extent', 'evaluate', 'assess', 'argue'],
+    'how does': ['how', 'explores', 'represents', 'conveys', 'uses'],
+    'explain how': ['explain', 'explores', 'demonstrates'],
+    'explain': ['explain', 'explores', 'demonstrates']
+  };
+  const fallbacks = coreWords[v];
+  if (fallbacks) return fallbacks.some(w => desc.includes(w));
+  // For single-word verbs not matched above, also accept close synonyms
+  const synonyms = {
+    'analyse': ['analys', 'examine', 'explore'],
+    'evaluate': ['evaluat', 'assess', 'judge', 'weigh'],
+    'assess': ['assess', 'evaluat', 'judge'],
+    'justify': ['justif', 'support', 'argue'],
+    'compare': ['compar', 'contrast', 'both'],
+    'identify': ['identif', 'names', 'recognis'],
+  };
+  const syns = synonyms[v];
+  if (syns) return syns.some(s => desc.includes(s));
+  return false;
+}
+
+function sourceCanCarryVerb(sourceId, verb) {
+  const rule = app.data.pairingRule[sourceId];
+  if (!rule) return false;
+  return rule.verbs.some(v => v.toLowerCase() === verb.toLowerCase());
+}
+
+function findComparison(verb, marks) {
+  const exact = app.data.nesaQuestions.filter(
+    q => q.verb.toLowerCase() === verb.toLowerCase() && q.marks === marks
+  );
+  if (exact.length) return exact[Math.floor(Math.random() * exact.length)];
+  const verbOnly = app.data.nesaQuestions.filter(
+    q => q.verb.toLowerCase() === verb.toLowerCase()
+  );
+  if (verbOnly.length) return verbOnly[Math.floor(Math.random() * verbOnly.length)];
+  // Broad fallback: any question with marks within ±2
+  const markFallback = app.data.nesaQuestions.filter(
+    q => Math.abs(q.marks - marks) <= 2
+  );
+  return markFallback.length ? markFallback[Math.floor(Math.random() * markFallback.length)] : null;
+}
+
+function validateGates(item, source) {
+  const gates = {
+    verbMatchesMarks: isVerbValidForMarks(item.verb, item.marks),
+    verbInTopBand: topBandUsesVerb(item.markingBands, item.verb),
+    bandCountEqualsMarks: item.markingBands && item.markingBands.length === item.marks,
+    sourceCanCarryVerb: sourceCanCarryVerb(item.sourceId, item.verb),
+    selfAnswerExists: !!(item.selfAnswer && item.selfAnswer.trim().length > 20),
+    quotesVerified: item.quotesUsed && item.quotesUsed.length > 0
+      ? verifyQuotes(item.quotesUsed, source)
+      : true
+  };
+  const passed = Object.values(gates).every(Boolean);
+  return { passed, gates };
+}
+
+// ── QUESTION GENERATION PIPELINE ─────────────────────────────────────────────
+function pickSource(level) {
+  const usedIds = new Set(app.session.attempted.map(a => a.questionItem.sourceId));
+  const eligible = app.data.sources.filter(s => {
+    const rule = app.data.pairingRule[s.id];
+    if (!rule) return false;
+    if (level < 3 && s.textType === 'visual') return false;
+    if (level === 1 && s.textType === 'poetry') return false;
+    return true;
+  });
+  const unused = eligible.filter(s => !usedIds.has(s.id));
+  const pool = unused.length ? unused : eligible;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function pickVerbAndMarks(sourceId, level) {
+  const rule = app.data.pairingRule[sourceId];
+  if (!rule) return null;
+  const usedVerbs = app.session.attempted.slice(-3).map(a => a.questionItem.verb);
+  let verbs = rule.verbs.filter(v => !usedVerbs.includes(v));
+  if (!verbs.length) verbs = rule.verbs;
+  const verb = verbs[Math.floor(Math.random() * verbs.length)];
+  const ladder = VERB_LADDER[verb.toLowerCase()];
+  if (!ladder) return null;
+  const range = rule.markRange;
+  const min = Math.max(ladder.min, range[0]);
+  const max = Math.min(ladder.max, range[1]);
+  if (min > max) return null;
+  const marks = min + Math.floor(Math.random() * (max - min + 1));
+  return { verb, marks };
+}
+
+const CONCEPTS = [
+  'human experience', 'memory', 'place', 'identity', 'creativity',
+  'change', 'connection', 'belonging', 'language', 'nature', 'time', 'paradox'
+];
+
+function pickConcept(source) {
+  const tags = source.conceptTags || [];
+  const usedConcepts = app.session.attempted.slice(-3).map(a => a.questionItem.concept);
+  const fresh = tags.filter(t => !usedConcepts.includes(t));
+  const pool = fresh.length ? fresh : (tags.length ? tags : CONCEPTS);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+async function callAI(system, userContent) {
+  const res = await fetch(CONFIG.functionUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ system, messages: [{ role: 'user', content: userContent }] })
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const text = data.content || '';
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+async function generateAndValidate(source, verb, marks, concept, level) {
+  const sourceText = source.isVisual ? source.visualDescription : source.fullText;
+  const item = await callAI(
+    `You are an HSC English marking expert. Generate a Section I short answer question. Return strict JSON only — no prose outside the JSON. Use the directive verb exactly as given in the top marking band. Every quote in quotesUsed must appear verbatim in the source text.`,
+    `Source text (id: ${source.id}, type: ${source.textType}):\n"""${sourceText.slice(0, 900)}"""\n\nGenerate a question using:\n- directive verb: ${verb}\n- marks: ${marks}\n- concept: ${concept}\n- level: ${level}\n\nReturn JSON:\n{"sourceId":"${source.id}","textType":"${source.textType}","verb":"${verb}","marks":${marks},"concept":"${concept}","questionStem":"question in NESA phrasing, ${marks} marks","lineGuide":${marks * 2},"selfAnswer":"brief model answer using only this source","quotesUsed":["exact quote from source"],"markingBands":[{"band":${marks},"descriptor":"top band uses ${verb} plus quality adverb"},{"band":1,"descriptor":"provides some relevant information"}],"checklist":[{"id":"c1","category":"analysis","text":"names a technique and explains its effect on the reader"},{"id":"c2","category":"concept","text":"links evidence explicitly to ${concept}"},{"id":"c3","category":"structure","text":"sustains the analysis across the whole response"}],"comparison":null}`
+  );
+
+  const nesaItem = findComparison(verb, marks);
+  if (nesaItem) {
+    item.comparison = {
+      nesaQuestionId: nesaItem.id,
+      nesaStem: nesaItem.stemText,
+      nesaVerb: nesaItem.verb,
+      nesaMarks: nesaItem.marks,
+      sameSource: nesaItem.sourceId === source.id,
+      sampleAnswer: nesaItem.sampleAnswer,
+      sampleAnnotations: nesaItem.sampleAnnotations || '',
+      checklistMapping: (item.checklist || []).map(c => ({
+        checklistId: c.id,
+        satisfiedBy: '(see sample)'
+      }))
+    };
+  }
+
+  return item;
+}
+
+async function generateQuestion() {
+  const level = app.level;
+  let lastError = null;
+
+  for (let attempt = 0; attempt < CONFIG.retryLimit; attempt++) {
+    try {
+      const source = pickSource(level);
+      if (!source) throw new Error('No eligible source found.');
+
+      const verbMarks = pickVerbAndMarks(source.id, level);
+      if (!verbMarks) continue;
+      const { verb, marks } = verbMarks;
+
+      const concept = pickConcept(source);
+
+      const item = await generateAndValidate(source, verb, marks, concept, level);
+
+      const { passed, gates } = validateGates(item, source);
+      if (!passed) {
+        console.warn('Gate failure on attempt', attempt + 1, gates);
+        lastError = 'Validation failed: ' + JSON.stringify(gates);
+        continue;
+      }
+
+      app.current.source = source;
+      app.current.questionItem = item;
+      app.current.predictions = {};
+      app.current.selfMarks = {};
+      app.current.evidenceResults = {};
+      return true;
+
+    } catch (err) {
+      lastError = err.message;
+      console.warn('Generation attempt', attempt + 1, 'failed:', err.message);
+    }
+  }
+
+  throw new Error(lastError || 'Could not generate a valid question after multiple attempts.');
+}
+
+// ── SETUP SCREEN ──────────────────────────────────────────────────────────────
+const LEVEL_DESCS = {
+  1: 'Full scaffolding — CUBE annotation, visible checklist, pausing allowed.',
+  2: 'Moderate support — CUBE optional, checklist collapsed, standard timer.',
+  3: 'Exam conditions — no CUBE, checklist hidden until self-mark, strict timer.'
+};
+
+function initSetupScreen() {
+  document.querySelectorAll('.level-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      app.level = parseInt(btn.dataset.level);
+      document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('level-desc').textContent = LEVEL_DESCS[app.level];
+    });
+  });
+
+  document.getElementById('generate-btn').addEventListener('click', async () => {
+    if (!app.dataLoaded) {
+      showError('setup', 'Still loading materials — please wait a moment.');
+      return;
+    }
+    hideError('setup');
+    showSpinner('setup', 'Generating your question…');
+    document.getElementById('generate-btn').disabled = true;
+
+    try {
+      await generateQuestion();
+      hideSpinner('setup');
+      document.getElementById('generate-btn').disabled = false;
+      startReadingScreen();
+    } catch (err) {
+      hideSpinner('setup');
+      document.getElementById('generate-btn').disabled = false;
+      showError('setup', 'Could not generate a question. Please try again. (' + err.message + ')');
+    }
+  });
+}
+
+// ── READING SCREEN ────────────────────────────────────────────────────────────
+let readingTimerInterval = null;
+
+function startReadingScreen() {
+  const source = app.current.source;
+  document.getElementById('reading-title').textContent = source.title + ' — ' + source.author;
+  const textEl = document.getElementById('reading-source-text');
+  if (source.isVisual) {
+    textEl.innerHTML = '<em>[Visual text — use the description below to visualise the image]</em><br><br>' +
+      escapeHtml(source.visualDescription);
+  } else {
+    textEl.textContent = source.fullText;
+  }
+
+  let seconds = CONFIG.readingSecondsSingle;
+  updateReadingTimer(seconds);
+
+  clearInterval(readingTimerInterval);
+  readingTimerInterval = setInterval(() => {
+    seconds--;
+    updateReadingTimer(seconds);
+    if (seconds <= 0) {
+      clearInterval(readingTimerInterval);
+      afterReadingTime();
+    }
+  }, 1000);
+
+  goTo(SCREENS.READING);
+}
+
+function updateReadingTimer(s) {
+  const m = Math.floor(Math.max(0, s) / 60);
+  const sec = Math.max(0, s) % 60;
+  document.getElementById('reading-timer').textContent = `${m}:${String(sec).padStart(2,'0')}`;
+}
+
+function afterReadingTime() {
+  const profile = getProfile();
+  const cubeOn = profile.cubeLocked
+    ? (app.level === 1)
+    : (app.overrides.cubeOn !== undefined ? app.overrides.cubeOn : profile.cubeDefault);
+  if (cubeOn) {
+    startCubeScreen();
+  } else {
+    startPredictScreen();
+  }
+}
+
+// ── CUBE SCREEN ───────────────────────────────────────────────────────────────
+let cubeStep = 0;
+
+function startCubeScreen() {
+  cubeStep = 0;
+  document.getElementById('cube-stem').textContent = app.current.questionItem.questionStem;
+  document.querySelectorAll('.cube-step').forEach((el, i) => {
+    el.style.display = i === 0 ? 'block' : 'none';
+  });
+  ['cube-c','cube-u','cube-b','cube-e'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('cube-next-btn').textContent = 'Next →';
+  goTo(SCREENS.CUBE);
+}
+
+// ── PREDICT SCREEN ────────────────────────────────────────────────────────────
+function startPredictScreen() {
+  const item = app.current.questionItem;
+  document.getElementById('predict-stem').textContent = item.questionStem;
+  app.current.predictions = {};
+
+  const container = document.getElementById('predict-checklist');
+  container.innerHTML = item.checklist.map(c => `
+    <div class="checklist-item">
+      <div class="checklist-text">${escapeHtml(c.text)}</div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        ${['yes','unsure','no'].map(opt => `
+          <button class="predict-btn btn-secondary" data-id="${c.id}" data-val="${opt}"
+            style="padding:4px 10px;font-size:0.85rem;">${opt === 'yes' ? '✓ Yes' : opt === 'unsure' ? '? Unsure' : '✗ No'}</button>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.predict-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const val = btn.dataset.val;
+      app.current.predictions[id] = val;
+      container.querySelectorAll(`.predict-btn[data-id="${id}"]`).forEach(b => {
+        b.style.background = '';
+        b.style.color = '';
+        b.style.borderColor = '';
+      });
+      btn.style.background = 'var(--color-accent)';
+      btn.style.color = 'white';
+      btn.style.borderColor = 'var(--color-accent)';
+    });
+  });
+
+  goTo(SCREENS.PREDICT);
+}
+
+// ── WRITE SCREEN ──────────────────────────────────────────────────────────────
+let writeInterval = null;
+let writeSeconds = 0;
+let writePaused = false;
+let writeOverrun = false;
+
+function startWriteScreen() {
+  const item = app.current.questionItem;
+  const profile = getProfile();
+
+  const coaches = {
+    1: 'Write on paper. Aim for one clear analysed point per mark.',
+    2: 'Write on paper. Sustain the analysis — name the technique, explain its effect, link to the concept.',
+    3: 'Write on paper. Exam conditions. No prompts.'
+  };
+  document.getElementById('write-coach').textContent = coaches[app.level];
+  document.getElementById('write-stem').textContent = item.questionStem;
+  document.getElementById('write-line-guide').textContent = item.lineGuide || (item.marks * 2);
+
+  const assistEl = document.getElementById('write-assistance');
+  assistEl.style.display = profile.assistanceDuringWrite === 'full' ? 'block' : 'none';
+
+  const clContainer = document.getElementById('write-checklist-container');
+  const clItems = document.getElementById('write-checklist-items');
+  if (profile.checklistDuringWrite === 'visible') {
+    clContainer.style.display = 'block';
+    document.getElementById('write-checklist-details').open = true;
+    clItems.innerHTML = item.checklist.map(c => `<p style="padding:6px 0;border-bottom:1px solid var(--color-border);font-size:0.9rem;">${escapeHtml(c.text)}</p>`).join('');
+  } else if (profile.checklistDuringWrite === 'collapsed') {
+    clContainer.style.display = 'block';
+    document.getElementById('write-checklist-details').open = false;
+    clItems.innerHTML = item.checklist.map(c => `<p style="padding:6px 0;border-bottom:1px solid var(--color-border);font-size:0.9rem;">${escapeHtml(c.text)}</p>`).join('');
+  } else {
+    clContainer.style.display = 'none';
+  }
+
+  const pauseBtn = document.getElementById('write-pause-btn');
+  const resetBtn = document.getElementById('write-reset-btn');
+  pauseBtn.style.display = profile.timerPauseAllowed ? 'inline-block' : 'none';
+  resetBtn.style.display = profile.timerPauseAllowed ? 'inline-block' : 'none';
+
+  writeSeconds = item.marks * CONFIG.writingSecondsPerMark;
+  writePaused = false;
+  writeOverrun = false;
+  document.getElementById('write-overrun-msg').style.display = 'none';
+  document.getElementById('write-timer').classList.remove('overrun');
+  updateWriteTimer();
+
+  clearInterval(writeInterval);
+  writeInterval = setInterval(() => {
+    if (!writePaused) {
+      writeSeconds--;
+      updateWriteTimer();
+      if (writeSeconds === 0) {
+        if (!profile.timerStrict) {
+          writeOverrun = true;
+          document.getElementById('write-overrun-msg').style.display = 'block';
+          document.getElementById('write-timer').classList.add('overrun');
+        }
+      }
+      if (writeSeconds < 0 && profile.timerStrict) {
+        clearInterval(writeInterval);
+        startSelfMarkScreen();
+      }
+    }
+  }, 1000);
+
+  goTo(SCREENS.WRITE);
+}
+
+function updateWriteTimer() {
+  const s = Math.abs(writeSeconds);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  const prefix = writeOverrun ? '+' : '';
+  document.getElementById('write-timer').textContent = `${prefix}${m}:${String(sec).padStart(2,'0')}`;
+}
+
+// ── SELF-MARK SCREEN ──────────────────────────────────────────────────────────
+function startSelfMarkScreen() {
+  const item = app.current.questionItem;
+  document.getElementById('selfmark-stem').textContent = item.questionStem;
+  app.current.selfMarks = {};
+  app.current.evidenceResults = {};
+
+  const container = document.getElementById('selfmark-checklist');
+  container.innerHTML = item.checklist.map(c => `
+    <div class="checklist-item" id="selfmark-item-${c.id}">
+      <div class="checklist-text">
+        <p>${escapeHtml(c.text)}</p>
+        <div class="evidence-area" id="evidence-area-${c.id}" style="display:none;margin-top:8px;">
+          <textarea id="evidence-input-${c.id}" rows="2"
+            placeholder="Paste the words from your answer that satisfy this item (optional)…"
+            style="width:100%;padding:8px;font-family:var(--font-body);font-size:0.9rem;border:1px solid var(--color-border);border-radius:var(--radius);resize:vertical;"></textarea>
+          <button class="btn-secondary evidence-check-btn" data-id="${c.id}"
+            style="margin-top:4px;font-size:0.85rem;padding:4px 12px;">Check →</button>
+          <span class="evidence-verdict" id="evidence-verdict-${c.id}" style="display:none;margin-left:8px;"></span>
+          <p class="evidence-pointer" id="evidence-pointer-${c.id}" style="display:none;font-size:0.85rem;color:var(--color-muted);margin-top:4px;"></p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;min-width:90px;">
+        ${[['done','✓ Done'],['unsure','? Unsure'],['undone','✗ Not done']].map(([val,label]) => `
+          <button class="selfmark-btn btn-secondary" data-id="${c.id}" data-val="${val}"
+            style="padding:4px 10px;font-size:0.8rem;">${label}</button>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.selfmark-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const val = btn.dataset.val;
+      app.current.selfMarks[id] = val;
+      container.querySelectorAll(`.selfmark-btn[data-id="${id}"]`).forEach(b => {
+        b.style.background = '';
+        b.style.color = '';
+      });
+      btn.style.background = val === 'done' ? 'var(--color-done)' : val === 'undone' ? 'var(--color-undone)' : 'var(--color-unsure)';
+      btn.style.color = 'white';
+      const evidenceArea = document.getElementById(`evidence-area-${id}`);
+      if (val === 'done' && evidenceArea) evidenceArea.style.display = 'block';
+      else if (evidenceArea) evidenceArea.style.display = 'none';
+    });
+  });
+
+  container.querySelectorAll('.evidence-check-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const pastedText = document.getElementById(`evidence-input-${id}`).value.trim();
+      if (!pastedText) return;
+      const checklistItem = app.current.questionItem.checklist.find(c => c.id === id);
+      if (!checklistItem) return;
+
+      btn.disabled = true;
+      btn.textContent = '…';
+
+      try {
+        const result = await callAI(
+          `You check whether a student's writing satisfies a checklist item. Return strict JSON only: {"verdict":"yes"|"no"|"not quite"|"cannot judge","pointer":"one concrete next step"}. Set a high bar for "yes". Never give a mark or grade.`,
+          `Checklist item: "${checklistItem.text}"\nStudent text: "${pastedText}"`
+        );
+        app.current.evidenceResults[id] = result;
+
+        const verdictEl = document.getElementById(`evidence-verdict-${id}`);
+        const pointerEl = document.getElementById(`evidence-pointer-${id}`);
+        const verdictClass = {
+          yes: 'verdict-yes', no: 'verdict-no',
+          'not quite': 'verdict-not-quite', 'cannot judge': 'verdict-cannot-judge'
+        }[result.verdict] || 'verdict-cannot-judge';
+
+        verdictEl.innerHTML = `<span class="verdict-badge ${verdictClass}">${result.verdict}</span>`;
+        verdictEl.style.display = 'inline';
+        pointerEl.textContent = result.pointer;
+        pointerEl.style.display = 'block';
+      } catch (err) {
+        const verdictEl = document.getElementById(`evidence-verdict-${id}`);
+        verdictEl.textContent = 'Could not check — please try again.';
+        verdictEl.style.display = 'inline';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Check →';
+    });
+  });
+
+  goTo(SCREENS.SELF_MARK);
+}
+
+// ── CALIBRATION SCREEN ────────────────────────────────────────────────────────
+function startCalibrationScreen() {
+  const item = app.current.questionItem;
+  const predictions = app.current.predictions;
+  const selfMarks = app.current.selfMarks;
+
+  const rows = item.checklist.map(c => {
+    const pred = predictions[c.id] || '—';
+    const mark = selfMarks[c.id] || '—';
+    const match = (pred === 'yes' && mark === 'done') ||
+                  (pred === 'no'  && mark === 'undone') ||
+                  (pred === 'unsure');
+    return { text: c.text, pred, mark, match };
+  });
+
+  const matches = rows.filter(r => r.match).length;
+  const blindSpots = rows.filter(r => r.pred === 'yes' && r.mark === 'undone');
+  const surprises = rows.filter(r => r.pred === 'no' && r.mark === 'done');
+
+  let summary = `You predicted ${matches} of ${rows.length} items correctly.`;
+  if (blindSpots.length) summary += ` Worth noting: you expected to hit ${blindSpots.map(r => '"' + r.text.substring(0,40) + '…"').join(', ')} but self-marked it missing.`;
+  if (surprises.length) summary += ` You were stronger than expected on: ${surprises.map(r => '"' + r.text.substring(0,40) + '…"').join(', ')}.`;
+  document.getElementById('calibration-summary').textContent = summary;
+
+  app.session.attempted.push({
+    questionItem: item,
+    predictions: { ...predictions },
+    selfMarks: { ...selfMarks },
+    calibrationRows: rows
+  });
+
+  const grid = document.getElementById('calibration-grid');
+  grid.innerHTML = rows.map(r => `
+    <div style="background:white;border:1px solid var(--color-border);border-radius:var(--radius);padding:var(--space-sm);">
+      <p style="font-size:0.85rem;margin-bottom:6px;">${escapeHtml(r.text.substring(0,80))}…</p>
+      <div style="display:flex;gap:8px;font-size:0.8rem;">
+        <span style="color:var(--color-muted);">Predicted: <strong>${r.pred}</strong></span>
+        <span style="color:var(--color-muted);">Self-marked: <strong>${r.mark}</strong></span>
+        ${r.match ? '<span style="color:var(--color-done);">✓</span>' : '<span style="color:var(--color-undone);">gap</span>'}
+      </div>
+    </div>
+  `).join('');
+
+  goTo(SCREENS.CALIBRATION);
+}
+
+// ── NESA COMPARISON SCREEN ────────────────────────────────────────────────────
+function startNesaScreen() {
+  const comp = app.current.questionItem.comparison;
+  if (!comp) {
+    startReflectionScreen();
+    return;
+  }
+
+  document.getElementById('nesa-stem').textContent = comp.nesaStem;
+  document.getElementById('nesa-sample-text').innerHTML =
+    '<blockquote>' + escapeHtml(comp.sampleAnswer).replace(/\n/g, '<br>') + '</blockquote>';
+
+  const mappingEl = document.getElementById('nesa-checklist-mapping');
+  const checklist = app.current.questionItem.checklist;
+  const selfMarks = app.current.selfMarks;
+
+  mappingEl.innerHTML = checklist.map(c => {
+    const mapping = comp.checklistMapping
+      ? comp.checklistMapping.find(m => m.checklistId === c.id)
+      : null;
+    const satisfiedBy = mapping ? mapping.satisfiedBy : '(see sample)';
+    const mark = selfMarks[c.id] || 'unsure';
+    const markColor = mark === 'done' ? 'var(--color-done)' : mark === 'undone' ? 'var(--color-undone)' : 'var(--color-unsure)';
+
+    return `
+      <div class="checklist-item">
+        <div class="checklist-text">
+          <p style="font-size:0.9rem;">${escapeHtml(c.text)}</p>
+          ${satisfiedBy !== 'not present' && satisfiedBy !== '(see sample)'
+            ? `<p style="font-size:0.85rem;color:var(--color-muted);margin-top:4px;font-style:italic;">In the sample: "${escapeHtml(satisfiedBy)}"</p>`
+            : ''
+          }
+        </div>
+        <span style="font-size:0.8rem;color:${markColor};flex-shrink:0;">Your mark: ${mark}</span>
+      </div>
+    `;
+  }).join('');
+
+  goTo(SCREENS.NESA);
+}
+
+// ── REFLECTION SCREEN ─────────────────────────────────────────────────────────
+function startReflectionScreen() {
+  renderReflectionList();
+  goTo(SCREENS.REFLECTION);
+}
+
+function renderReflectionList() {
+  const el = document.getElementById('reflection-list');
+  if (!app.session.reflections.length) {
+    el.innerHTML = '';
+    return;
+  }
+  el.innerHTML = '<ul style="padding-left:20px;">' +
+    app.session.reflections.map((r,i) =>
+      `<li style="margin-bottom:6px;">${escapeHtml(r)}
+        <button onclick="removeReflection(${i})" style="background:none;border:none;cursor:pointer;color:var(--color-muted);font-size:0.8rem;margin-left:6px;">✕</button>
+      </li>`
+    ).join('') + '</ul>';
+}
+
+function removeReflection(i) {
+  app.session.reflections.splice(i, 1);
+  renderReflectionList();
+}
+
+// ── SESSION REPORT SCREEN ─────────────────────────────────────────────────────
+function startReportScreen() {
+  const attempted = app.session.attempted;
+
+  const focusEl = document.getElementById('report-focus');
+  focusEl.innerHTML = app.session.reflections.length
+    ? app.session.reflections.map(r => `<li style="margin-bottom:4px;">${escapeHtml(r)}</li>`).join('')
+    : '<li style="color:var(--color-muted);">Nothing added yet.</li>';
+
+  const verbCounts = {};
+  const typeCounts = {};
+  const markCounts = {};
+  attempted.forEach(a => {
+    const v = a.questionItem.verb;
+    const t = a.questionItem.textType;
+    const m = a.questionItem.marks + ' mark' + (a.questionItem.marks !== 1 ? 's' : '');
+    verbCounts[v] = (verbCounts[v] || 0) + 1;
+    typeCounts[t] = (typeCounts[t] || 0) + 1;
+    markCounts[m] = (markCounts[m] || 0) + 1;
+  });
+
+  const practisedEl = document.getElementById('report-practised');
+  if (!attempted.length) {
+    practisedEl.textContent = 'No questions attempted this session.';
+  } else {
+    practisedEl.innerHTML =
+      '<p><strong>Verbs:</strong> ' + Object.entries(verbCounts).map(([k,v]) => `${k} ×${v}`).join(', ') + '</p>' +
+      '<p style="margin-top:4px;"><strong>Text types:</strong> ' + Object.entries(typeCounts).map(([k,v]) => `${k} ×${v}`).join(', ') + '</p>' +
+      '<p style="margin-top:4px;"><strong>Mark allocations:</strong> ' + Object.entries(markCounts).map(([k,v]) => `${k} ×${v}`).join(', ') + '</p>';
+  }
+
+  const calEl = document.getElementById('report-calibration');
+  const allRows = attempted.flatMap(a => a.calibrationRows || []);
+  const blindSpots = allRows.filter(r => r.pred === 'yes' && r.mark === 'undone');
+  const surprises = allRows.filter(r => r.pred === 'no' && r.mark === 'done');
+  if (!allRows.length) {
+    calEl.textContent = 'No calibration data yet.';
+  } else {
+    let html = '';
+    if (blindSpots.length) {
+      html += '<p><strong>Consistent blind spots</strong> (predicted yes, marked missing):</p>';
+      const counts = {};
+      blindSpots.forEach(r => { const k = r.text.substring(0,60); counts[k] = (counts[k]||0)+1; });
+      html += '<ul style="padding-left:20px;margin:4px 0;">' +
+        Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v]) => `<li>${escapeHtml(k)}… (${v} time${v>1?'s':''})</li>`).join('') + '</ul>';
+    }
+    if (surprises.length) {
+      html += '<p style="margin-top:8px;"><strong>Positive surprises</strong> (predicted no, actually done):</p>';
+      const counts = {};
+      surprises.forEach(r => { const k = r.text.substring(0,60); counts[k] = (counts[k]||0)+1; });
+      html += '<ul style="padding-left:20px;margin:4px 0;">' +
+        Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v]) => `<li>${escapeHtml(k)}… (${v} time${v>1?'s':''})</li>`).join('') + '</ul>';
+    }
+    if (!blindSpots.length && !surprises.length) html = '<p>Your predictions matched your self-marks well this session.</p>';
+    calEl.innerHTML = html;
+  }
+
+  const coveredVerbs = new Set(attempted.map(a => a.questionItem.verb));
+  const coveredTypes = new Set(attempted.map(a => a.questionItem.textType));
+  const coveredConcepts = new Set(attempted.map(a => a.questionItem.concept));
+
+  const allTypes = ['prose fiction','nonfiction','memoir','feature article','opinion','poetry','visual'];
+  const allConcepts = ['human experience','memory','place','identity','creativity','change','connection','belonging','language','nature','time','paradox'];
+
+  document.getElementById('report-coverage-verbs').innerHTML =
+    ALL_VERBS.map(v => `<span class="coverage-pill ${coveredVerbs.has(v)?'done':'not-done'}">${escapeHtml(v)}</span>`).join('');
+  document.getElementById('report-coverage-types').innerHTML =
+    allTypes.map(t => `<span class="coverage-pill ${coveredTypes.has(t)?'done':'not-done'}">${escapeHtml(t)}</span>`).join('');
+  document.getElementById('report-coverage-concepts').innerHTML =
+    allConcepts.map(c => `<span class="coverage-pill ${coveredConcepts.has(c)?'done':'not-done'}">${escapeHtml(c)}</span>`).join('');
+
+  goTo(SCREENS.REPORT);
+}
+
+// ── BOOT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
+
+  document.getElementById('settings-btn').addEventListener('click', () => {
+    document.getElementById('settings-panel').classList.toggle('open');
+  });
+
+  ['cube','pause','checklist','assistance'].forEach(key => {
+    document.getElementById(`override-${key}`).addEventListener('change', e => {
+      const val = e.target.value;
+      if (key === 'cube') app.overrides.cubeOn = val === 'on' ? true : val === 'off' ? false : undefined;
+      if (key === 'pause') app.overrides.timerPauseAllowed = val === 'on' ? true : val === 'off' ? false : undefined;
+      if (key === 'checklist') app.overrides.checklistDuringWrite = val || undefined;
+      if (key === 'assistance') app.overrides.assistanceDuringWrite = val || undefined;
+      Object.keys(app.overrides).forEach(k => app.overrides[k] === undefined && delete app.overrides[k]);
+    });
+  });
+
+  initSetupScreen();
+
+  document.getElementById('reading-skip-btn').addEventListener('click', () => {
+    clearInterval(readingTimerInterval);
+    afterReadingTime();
+  });
+
+  document.getElementById('cube-next-btn').addEventListener('click', () => {
+    cubeStep++;
+    const steps = document.querySelectorAll('.cube-step');
+    if (cubeStep < steps.length) {
+      steps.forEach((el, i) => { el.style.display = i === cubeStep ? 'block' : 'none'; });
+      if (cubeStep === steps.length - 1) {
+        document.getElementById('cube-next-btn').textContent = 'Start predicting →';
+      }
+    } else {
+      startPredictScreen();
+    }
+  });
+
+  document.getElementById('predict-continue-btn').addEventListener('click', () => {
+    startWriteScreen();
+  });
+
+  document.getElementById('write-pause-btn').addEventListener('click', () => {
+    writePaused = !writePaused;
+    document.getElementById('write-pause-btn').textContent = writePaused ? 'Resume' : 'Pause';
+  });
+
+  document.getElementById('write-reset-btn').addEventListener('click', () => {
+    const item = app.current.questionItem;
+    writeSeconds = item.marks * CONFIG.writingSecondsPerMark;
+    writePaused = false;
+    writeOverrun = false;
+    document.getElementById('write-overrun-msg').style.display = 'none';
+    document.getElementById('write-timer').classList.remove('overrun');
+    document.getElementById('write-pause-btn').textContent = 'Pause';
+    updateWriteTimer();
+  });
+
+  let timerHidden = false;
+  document.getElementById('write-hide-btn').addEventListener('click', () => {
+    timerHidden = !timerHidden;
+    document.getElementById('write-timer').style.visibility = timerHidden ? 'hidden' : 'visible';
+    document.getElementById('write-hide-btn').textContent = timerHidden ? 'Show timer' : 'Hide timer';
+  });
+
+  document.getElementById('write-done-btn').addEventListener('click', () => {
+    clearInterval(writeInterval);
+    startSelfMarkScreen();
+  });
+
+  document.getElementById('selfmark-continue-btn').addEventListener('click', () => {
+    startCalibrationScreen();
+  });
+
+  document.getElementById('calibration-continue-btn').addEventListener('click', startNesaScreen);
+
+  document.getElementById('nesa-continue-btn').addEventListener('click', startReflectionScreen);
+
+  document.getElementById('reflection-add-btn').addEventListener('click', () => {
+    const val = document.getElementById('reflection-input').value.trim();
+    if (val) {
+      app.session.reflections.push(val);
+      document.getElementById('reflection-input').value = '';
+      renderReflectionList();
+    }
+  });
+
+  document.getElementById('reflection-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('reflection-add-btn').click();
+  });
+
+  document.getElementById('reflection-report-btn').addEventListener('click', startReportScreen);
+
+  document.getElementById('reflection-again-btn').addEventListener('click', () => {
+    goTo(SCREENS.SETUP);
+  });
+
+  document.getElementById('report-again-btn').addEventListener('click', () => {
+    goTo(SCREENS.SETUP);
+  });
+});
+</script>
+</body>
+</html>
