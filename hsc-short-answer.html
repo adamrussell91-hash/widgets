@@ -483,7 +483,7 @@
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 const CONFIG = {
-  functionUrl: 'https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/generate',
+  functionUrl: 'https://jade-melomakarona-ea20fe.netlify.app/.netlify/functions/ai',
   readingSecondsSingle: 30,
   writingSecondsPerMark: 120,
   retryLimit: 3,
@@ -756,27 +756,25 @@ function pickConcept(source) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-async function callFunction(task, payload) {
+async function callAI(system, userContent) {
   const res = await fetch(CONFIG.functionUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ task, payload })
+    body: JSON.stringify({ system, messages: [{ role: 'user', content: userContent }] })
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `HTTP ${res.status}`);
-  }
-  return res.json();
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const text = data.content || '';
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
 }
 
 async function generateAndValidate(source, verb, marks, concept, level) {
-  const payload = {
-    sourceId: source.id,
-    textType: source.textType,
-    sourceText: source.isVisual ? source.visualDescription : source.fullText,
-    verb, marks, concept, level
-  };
-  const item = await callFunction('question', payload);
+  const sourceText = source.isVisual ? source.visualDescription : source.fullText;
+  const item = await callAI(
+    `You are an HSC English marking expert. Generate a Section I short answer question. Return strict JSON only — no prose outside the JSON. Use the directive verb exactly as given in the top marking band. Every quote in quotesUsed must appear verbatim in the source text.`,
+    `Source text (id: ${source.id}, type: ${source.textType}):\n"""${sourceText.slice(0, 900)}"""\n\nGenerate a question using:\n- directive verb: ${verb}\n- marks: ${marks}\n- concept: ${concept}\n- level: ${level}\n\nReturn JSON:\n{"sourceId":"${source.id}","textType":"${source.textType}","verb":"${verb}","marks":${marks},"concept":"${concept}","questionStem":"question in NESA phrasing, ${marks} marks","lineGuide":${marks * 2},"selfAnswer":"brief model answer using only this source","quotesUsed":["exact quote from source"],"markingBands":[{"band":${marks},"descriptor":"top band uses ${verb} plus quality adverb"},{"band":1,"descriptor":"provides some relevant information"}],"checklist":[{"id":"c1","category":"analysis","text":"names a technique and explains its effect on the reader"},{"id":"c2","category":"concept","text":"links evidence explicitly to ${concept}"},{"id":"c3","category":"structure","text":"sustains the analysis across the whole response"}],"comparison":null}`
+  );
 
   const nesaItem = findComparison(verb, marks);
   if (nesaItem) {
@@ -1118,10 +1116,10 @@ function startSelfMarkScreen() {
       btn.textContent = '…';
 
       try {
-        const result = await callFunction('evidenceCheck', {
-          checklistItem: checklistItem.text,
-          pastedText
-        });
+        const result = await callAI(
+          `You check whether a student's writing satisfies a checklist item. Return strict JSON only: {"verdict":"yes"|"no"|"not quite"|"cannot judge","pointer":"one concrete next step"}. Set a high bar for "yes". Never give a mark or grade.`,
+          `Checklist item: "${checklistItem.text}"\nStudent text: "${pastedText}"`
+        );
         app.current.evidenceResults[id] = result;
 
         const verdictEl = document.getElementById(`evidence-verdict-${id}`);
