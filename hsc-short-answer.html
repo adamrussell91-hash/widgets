@@ -574,9 +574,9 @@ function goTo(screen) {
 async function loadData() {
   try {
     const [sources, nesaQuestions, pairingRule] = await Promise.all([
-      fetch('data/sources.json').then(r => r.json()),
-      fetch('data/nesaQuestions.json').then(r => r.json()),
-      fetch('data/pairingRule.json').then(r => r.json())
+      fetch('hsc-short-answer/data/sources.json').then(r => r.json()),
+      fetch('hsc-short-answer/data/nesaQuestions.json').then(r => r.json()),
+      fetch('hsc-short-answer/data/pairingRule.json').then(r => r.json())
     ]);
     app.data.sources = sources;
     app.data.nesaQuestions = nesaQuestions;
