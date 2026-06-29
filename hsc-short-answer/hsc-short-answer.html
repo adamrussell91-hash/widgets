@@ -779,6 +779,28 @@ async function generateQuestion() {
         continue;
       }
 
+      // Normalize markingBands to exactly item.marks entries — AI often gets the count wrong
+      if (!Array.isArray(item.markingBands) || item.markingBands.length === 0) {
+        item.markingBands = [];
+      }
+      if (item.markingBands.length !== item.marks) {
+        const existing = item.markingBands.slice();
+        const normalized = [];
+        for (let b = item.marks; b >= 1; b--) {
+          const found = existing.find(x => x.band === b);
+          if (found) {
+            normalized.push(found);
+          } else if (b === item.marks) {
+            normalized.push({ band: b, descriptor: `Accurately and perceptively ${item.verb}s the ${item.concept} using specific textual evidence and clear analysis of effect.` });
+          } else if (b === 1) {
+            normalized.push({ band: 1, descriptor: 'Provides some relevant information about the text.' });
+          } else {
+            normalized.push({ band: b, descriptor: `Competently ${item.verb}s with relevant evidence and some analysis of effect.` });
+          }
+        }
+        item.markingBands = normalized;
+      }
+
       app.current.source = source;
       app.current.questionItem = item;
       app.current.predictions = {};
