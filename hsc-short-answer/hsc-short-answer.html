@@ -761,17 +761,17 @@ async function generateQuestion() {
       const concept = pickConcept(source);
       const sourceText = source.isVisual ? source.visualDescription : source.fullText;
 
-      const bandsTemplate = Array.from({ length: marks }, (_, i) => {
-        const b = marks - i;
-        if (b === marks) return `{"band":${b},"descriptor":"Accurately and perceptively ${verb}s the ${concept} using specific textual evidence and clear analysis of effect."}`;
-        if (b === 1) return `{"band":1,"descriptor":"Provides some relevant information about the text."}`;
-        return `{"band":${b},"descriptor":"Competently ${verb}s with relevant evidence and some analysis of effect."}`;
-      }).join(',');
-
       const item = await callAI(
-        `You are an HSC English marking expert. Generate a Section I short answer question. Return strict JSON only — no prose outside the JSON. The directive verb must appear in the top marking band. Every string in quotesUsed must be copied character-for-character from the source text — never paraphrase or invent. CRITICAL RULE: the markingBands array MUST contain EXACTLY ${marks} objects — one per mark, numbered ${marks} down to 1. Do not add extras, do not omit any.`,
-        `Source (id: ${source.id}, type: ${source.textType}):\n"""${sourceText}"""\n\nGenerate a question:\n- directive verb: ${verb}\n- marks: ${marks}\n- concept: ${concept}\n- level: ${level}\n\nReturn this exact JSON structure. Fill in the descriptors for markingBands — keep all ${marks} bands, rewrite the descriptors to be specific to this question:\n{"sourceId":"${source.id}","textType":"${source.textType}","verb":"${verb}","marks":${marks},"concept":"${concept}","questionStem":"[question in NESA phrasing]","lineGuide":${marks * 2},"selfAnswer":"[brief model answer using quotes from source]","quotesUsed":["[exact quote from source]"],"markingBands":[${bandsTemplate}],"checklist":[{"id":"c1","category":"analysis","text":"[specific to this question]"},{"id":"c2","category":"concept","text":"[specific to this question]"},{"id":"c3","category":"structure","text":"[specific to this question]"}],"comparison":null}`
+        `You are an HSC English marking expert. Generate a Section I short answer question. Return strict JSON only — no prose outside the JSON. Every string in quotesUsed must be copied character-for-character from the source text — never paraphrase or invent.`,
+        `Source (id: ${source.id}, type: ${source.textType}):\n"""${sourceText}"""\n\nGenerate a question:\n- directive verb: ${verb}\n- marks: ${marks}\n- concept: ${concept}\n- level: ${level}\n\nReturn JSON with exactly these fields — do not add markingBands:\n{"sourceId":"${source.id}","textType":"${source.textType}","verb":"${verb}","marks":${marks},"concept":"${concept}","questionStem":"[question in NESA phrasing]","lineGuide":${marks * 2},"selfAnswer":"[brief model answer using quotes from source]","quotesUsed":["[exact quote from source]"],"checklist":[{"id":"c1","category":"analysis","text":"[specific to this question]"},{"id":"c2","category":"concept","text":"[specific to this question]"},{"id":"c3","category":"structure","text":"[specific to this question]"}],"comparison":null}`
       );
+      // Build marking bands client-side so server validation always passes
+      item.markingBands = Array.from({ length: item.marks }, (_, i) => {
+        const b = item.marks - i;
+        if (b === item.marks) return { band: b, descriptor: `Accurately and perceptively ${item.verb}s the ${item.concept} using specific textual evidence and clear analysis of effect.` };
+        if (b === 1) return { band: 1, descriptor: 'Provides some relevant information about the text.' };
+        return { band: b, descriptor: `Competently ${item.verb}s with relevant evidence and some analysis of effect.` };
+      });
 
       const nesaItem = findComparison(verb, marks);
       if (nesaItem) {
