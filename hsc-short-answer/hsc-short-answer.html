@@ -298,7 +298,7 @@
     </div>
   </section>
 
-  <!-- READING (split: text+question left, CUBE+predict right) -->
+  <!-- READING (split: question+marks+checklist+text left | CUBE+predict right) -->
   <section id="screen-reading">
     <div class="screen-bar">
       <div class="screen-bar-left">
@@ -311,7 +311,7 @@
       </div>
     </div>
     <div class="split-screen">
-      <!-- Left: question + marks + checklist + source text -->
+      <!-- Left: marks badge + question + checklist preview + source text -->
       <div>
         <div class="marks-badge" id="reading-marks-badge"></div>
         <div class="question-stem" id="reading-stem"></div>
@@ -322,7 +322,7 @@
         <div class="panel-label">Source text</div>
         <div class="source-text" id="reading-source-text"></div>
       </div>
-      <!-- Right: CUBE then predict -->
+      <!-- Right: CUBE steps then predict -->
       <div class="panel" id="reading-right-panel">
         <!-- CUBE section -->
         <div id="rp-cube-section">
@@ -335,7 +335,7 @@
             <button class="btn-primary" id="rp-cube-next-btn">Next →</button>
           </div>
         </div>
-        <!-- Predict section (hidden until CUBE done) -->
+        <!-- Predict section (hidden until CUBE done or CUBE off) -->
         <div id="rp-predict-section" style="display:none;">
           <div class="panel-label">Predict how you'll go</div>
           <div style="background:#F0F4FF;border-radius:var(--radius);padding:var(--space-sm);margin-bottom:var(--space-sm);font-size:0.88rem;line-height:1.5;">
@@ -354,7 +354,7 @@
     </div>
   </section>
 
-  <!-- WRITE (split: text left, question+tools right) -->
+  <!-- WRITE (split: source text left | CUBE+marks+question+tools right) -->
   <section id="screen-write">
     <div class="screen-bar">
       <div class="screen-bar-left">
@@ -370,14 +370,14 @@
     </div>
     <p id="write-overrun-msg" style="display:none;color:var(--color-undone);font-size:0.9rem;margin-bottom:var(--space-sm);">Time is up — keep writing if you need to finish your point.</p>
     <div class="split-screen">
-      <!-- Left: source text -->
+      <!-- Left: full source text -->
       <div>
         <div class="panel-label">Source text</div>
         <div class="source-text scrollable" id="write-source-text"></div>
       </div>
-      <!-- Right: question + tools -->
+      <!-- Right: CUBE (top, always) + marks badge + question + tools -->
       <div class="panel">
-        <!-- CUBE annotation — always at top so it's never missed -->
+        <!-- CUBE annotation always at top so it's never missed -->
         <div class="cube-annotation-box" id="write-cube-annotation" style="display:none;">
           <div class="panel-label">Your CUBE annotation (keep visible while writing)</div>
           <div class="cube-row"><span class="cube-key">C</span><span id="wc-c"></span></div>
@@ -630,7 +630,7 @@ function getProfile() {
 
 function isCubeOn() {
   const p = getProfile();
-  if (p.cubeLocked) return app.level === 1; // level 1 locked ON, level 3 locked OFF
+  if (p.cubeLocked) return app.level === 1;
   return p.cubeDefault;
 }
 
@@ -710,7 +710,7 @@ function pickVerbMarks(sourceId, level) {
   let verbs = rule.verbs.filter(v => !usedVerbs.includes(v));
   if (!verbs.length) verbs = rule.verbs;
 
-  // Level 3 exam: only use verbs that can reach at least 3 marks
+  // Level 3 exam: only use verbs that can reach at least 4 marks max
   if (level === 3) {
     const hardVerbs = verbs.filter(v => (VERB_LADDER[v.toLowerCase()] || {}).max >= 4);
     if (hardVerbs.length) verbs = hardVerbs;
@@ -949,7 +949,7 @@ function buildPredictSection() {
   const item = app.current.questionItem;
   const verb = (item.verb || '').toLowerCase();
   const verbBase = PREDICT_VERB_TEXT[verb] || ('For this ' + verb + ' question: think about exactly what the directive verb requires before you commit your hand to paper.');
-  // Make prompt question-specific
+  // Question-specific: include concept and text type
   const verbText = verbBase + ' This question is about "' + (item.concept || '') + '" in a ' + (item.textType || 'text') + '. Re-read the question stem on the left before you predict.';
   document.getElementById('rp-predict-verb-prompt').textContent = verbText;
 
@@ -1016,16 +1016,16 @@ function startWriteScreen() {
     writeSrcEl.textContent = source.fullText;
   }
 
-  // Question + marks on right
+  // Marks badge and question on right
   document.getElementById('write-marks-badge').textContent = marksText(item.marks);
   document.getElementById('write-stem').textContent = item.questionStem;
   document.getElementById('write-line-guide').textContent = (item.lineGuide || item.marks * 2);
 
-  // Subtitle (includes marks so it's visible in header)
+  // Subtitle includes marks so it's always visible
   const subtitleBase = { 1:'Write on paper. One clear analysed point per mark.', 2:'Write on paper. Sustain the analysis — technique → effect → concept.', 3:'Exam conditions. No prompts.' };
   document.getElementById('write-subtitle').textContent = marksText(item.marks) + ' — ' + subtitleBase[app.level];
 
-  // CUBE annotation for level 1
+  // CUBE annotation at top of right panel (Foundation: always on)
   const cubeBox = document.getElementById('write-cube-annotation');
   if (isCubeOn()) {
     const ca = app.current.cubeAnswers;
@@ -1410,7 +1410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Override levers — apply immediately to the current write screen if it's showing
+  // Override levers — apply immediately to current write screen if showing
   function applyOverridesToWriteScreen() {
     const writeSection = document.getElementById('screen-write');
     if (!writeSection.classList.contains('active')) return;
