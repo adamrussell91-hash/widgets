@@ -68,8 +68,9 @@
       border-radius: var(--radius);
       padding: var(--space);
       line-height: 1.75;
+      white-space: pre-wrap;
     }
-    .source-text.scrollable { max-height: 52vh; overflow-y: auto; }
+    .source-text.scrollable { /* no max-height — full text always visible */ }
 
     /* Split layout */
     .split-screen {
@@ -306,22 +307,20 @@
       </div>
       <div class="screen-bar-right">
         <div class="timer" id="reading-timer">2:00</div>
-        <button class="btn-primary" id="reading-ready-btn">I'm ready to write →</button>
+        <button class="btn-primary" id="reading-ready-btn" disabled style="opacity:0.5;cursor:not-allowed;">Complete prediction first</button>
       </div>
     </div>
     <div class="split-screen">
-      <!-- Left: source + question + checklist preview -->
+      <!-- Left: question + marks + checklist + source text -->
       <div>
-        <div class="panel-label">Source text</div>
-        <div class="source-text scrollable" id="reading-source-text"></div>
-        <div style="margin-top:var(--space-sm);">
-          <div class="marks-badge" id="reading-marks-badge"></div>
-          <div class="question-stem" id="reading-stem"></div>
-          <div style="margin-top:var(--space-sm);">
-            <p style="font-size:0.85rem;font-weight:700;color:var(--color-muted);margin-bottom:6px;">In your response you will need to:</p>
-            <div id="reading-checklist-preview"></div>
-          </div>
+        <div class="marks-badge" id="reading-marks-badge"></div>
+        <div class="question-stem" id="reading-stem"></div>
+        <div style="margin:var(--space-sm) 0 var(--space) 0;">
+          <p style="font-size:0.85rem;font-weight:700;color:var(--color-muted);margin-bottom:6px;">In your response you will need to:</p>
+          <div id="reading-checklist-preview"></div>
         </div>
+        <div class="panel-label">Source text</div>
+        <div class="source-text" id="reading-source-text"></div>
       </div>
       <!-- Right: CUBE then predict -->
       <div class="panel" id="reading-right-panel">
@@ -341,12 +340,15 @@
           <div class="panel-label">Predict how you'll go</div>
           <div style="background:#F0F4FF;border-radius:var(--radius);padding:var(--space-sm);margin-bottom:var(--space-sm);font-size:0.88rem;line-height:1.5;">
             <strong>Why are you doing this?</strong><br>
-            Predicting your own performance before you write is a technique called <em>metacognitive calibration</em>. Students who do this accurately improve faster — not because prediction is magic, but because the gap between what you thought you'd do and what you actually did tells you exactly where to focus your practice. A student who always thinks they nailed it but consistently misses key moves never improves. A student who can see the gap can close it.<br><br>
-            <strong>Be brutally honest.</strong> No one sees this. The point isn't to feel good — it's to find out where you're overconfident or underselling yourself.
+            Research on how students actually improve shows one thing clearly: the students who get better fastest are not the ones who write the most answers — they're the ones who <em>know what they don't know</em>. Predicting your performance before you write forces you to confront that honestly.<br><br>
+            After you self-mark, you'll see exactly where your prediction matched reality and where it didn't. That gap — between what you thought you'd do and what you actually did — is the most precise signal possible about where to direct your practice. Without this step, you can spend hours practising the wrong things and never know it.<br><br>
+            <strong>So: be brutally honest.</strong> No one sees this. "Yes" means you're genuinely confident you'll hit this. "No" means you know you won't. "Unsure" means you genuinely don't know. Saying yes to everything defeats the purpose entirely.
           </div>
           <p id="rp-predict-verb-prompt" style="font-size:0.88rem;color:var(--color-muted);margin-bottom:var(--space-sm);font-style:italic;"></p>
           <div id="rp-predict-items"></div>
-          <p style="font-size:0.8rem;color:var(--color-muted);margin-top:var(--space-sm);">Once you've predicted, click <strong>"I'm ready to write →"</strong> at the top.</p>
+          <div id="rp-predict-done-msg" style="display:none;margin-top:var(--space-sm);padding:var(--space-sm);background:#E8F2F0;border-radius:var(--radius);font-size:0.88rem;font-weight:600;color:var(--color-accent);">
+            Predictions saved. Click "I'm ready to write" at the top.
+          </div>
         </div>
       </div>
     </div>
@@ -375,18 +377,17 @@
       </div>
       <!-- Right: question + tools -->
       <div class="panel">
-        <div class="marks-badge" id="write-marks-badge"></div>
-        <div class="question-stem" id="write-stem"></div>
-        <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space);">Aim for roughly <strong id="write-line-guide"></strong> lines.</p>
-
-        <!-- CUBE annotation (level 1 always visible) -->
+        <!-- CUBE annotation — always at top so it's never missed -->
         <div class="cube-annotation-box" id="write-cube-annotation" style="display:none;">
-          <div class="panel-label">Your CUBE notes</div>
+          <div class="panel-label">Your CUBE annotation (keep visible while writing)</div>
           <div class="cube-row"><span class="cube-key">C</span><span id="wc-c"></span></div>
           <div class="cube-row"><span class="cube-key">U</span><span id="wc-u"></span></div>
           <div class="cube-row"><span class="cube-key">B</span><span id="wc-b"></span></div>
           <div class="cube-row"><span class="cube-key">E</span><span id="wc-e"></span></div>
         </div>
+        <div class="marks-badge" id="write-marks-badge"></div>
+        <div class="question-stem" id="write-stem"></div>
+        <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space);">Aim for roughly <strong id="write-line-guide"></strong> lines.</p>
 
         <!-- Writing assistance (level 1 full) -->
         <div id="write-assistance" style="display:none;margin-bottom:var(--space);">
@@ -441,6 +442,7 @@
   <!-- NESA -->
   <section id="screen-nesa">
     <h2>Compare to a real NESA sample</h2>
+    <div class="marks-badge" id="nesa-marks-badge"></div>
     <p class="coach">Here is a real NESA question of the same type. Read the sample and find the moves you practised — how does yours compare?</p>
     <div style="margin-bottom:var(--space);">
       <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:4px;">Real NESA question</p>
@@ -707,10 +709,18 @@ function pickVerbMarks(sourceId, level) {
   const usedVerbs = app.session.attempted.slice(-3).map(a => a.questionItem.verb);
   let verbs = rule.verbs.filter(v => !usedVerbs.includes(v));
   if (!verbs.length) verbs = rule.verbs;
+
+  // Level 3 exam: only use verbs that can reach at least 3 marks
+  if (level === 3) {
+    const hardVerbs = verbs.filter(v => (VERB_LADDER[v.toLowerCase()] || {}).max >= 4);
+    if (hardVerbs.length) verbs = hardVerbs;
+  }
+
   const verb = verbs[Math.floor(Math.random() * verbs.length)];
   const ladder = VERB_LADDER[verb.toLowerCase()];
   if (!ladder) return null;
-  const min = Math.max(ladder.min, rule.markRange[0]);
+  let min = Math.max(ladder.min, rule.markRange[0]);
+  if (level === 3) min = Math.max(min, 3); // exam: at least 3 marks per question
   const max = Math.min(ladder.max, rule.markRange[1]);
   if (min > max) return null;
   const marks = min + Math.floor(Math.random() * (max - min + 1));
@@ -799,6 +809,8 @@ function initSetup() {
   document.getElementById('generate-btn').addEventListener('click', async () => {
     if (!app.dataLoaded) { setError('setup-error', 'Still loading materials — please wait.'); return; }
     setError('setup-error', null);
+    // Reset session for a fresh start
+    app.session = { attempted: [], reflections: [], totalMarks: 0 };
     const btn = document.getElementById('generate-btn');
     btn.disabled = true;
     const label = app.level === 3 ? 'Generating exam question…' : 'Generating your question…';
@@ -829,6 +841,15 @@ const RP_CUBE_STEPS = [
 function startReadingScreen() {
   const source = app.current.source;
   const item = app.current.questionItem;
+
+  // Reset the write button — disabled until predictions complete
+  const readyBtn = document.getElementById('reading-ready-btn');
+  readyBtn.disabled = true;
+  readyBtn.style.opacity = '0.5';
+  readyBtn.style.cursor = 'not-allowed';
+  readyBtn.textContent = 'Complete prediction first';
+  const doneMsg = document.getElementById('rp-predict-done-msg');
+  if (doneMsg) doneMsg.style.display = 'none';
 
   document.getElementById('reading-title').textContent = source.title + ' — ' + source.author;
   const textEl = document.getElementById('reading-source-text');
@@ -927,11 +948,14 @@ function advanceCubeStep() {
 function buildPredictSection() {
   const item = app.current.questionItem;
   const verb = (item.verb || '').toLowerCase();
-  const verbText = PREDICT_VERB_TEXT[verb] || ('For this ' + verb + ' question: think about exactly what the directive verb requires before you commit your hand to paper.');
+  const verbBase = PREDICT_VERB_TEXT[verb] || ('For this ' + verb + ' question: think about exactly what the directive verb requires before you commit your hand to paper.');
+  // Make prompt question-specific
+  const verbText = verbBase + ' This question is about "' + (item.concept || '') + '" in a ' + (item.textType || 'text') + '. Re-read the question stem on the left before you predict.';
   document.getElementById('rp-predict-verb-prompt').textContent = verbText;
 
+  const checklist = item.checklist || [];
   const container = document.getElementById('rp-predict-items');
-  container.innerHTML = (item.checklist || []).map(c => `
+  container.innerHTML = checklist.map(c => `
     <div class="checklist-item" style="flex-direction:column;align-items:stretch;">
       <div class="checklist-text" style="margin-bottom:6px;">• ${esc(c.text)}</div>
       <div class="predict-btn-row">
@@ -944,6 +968,19 @@ function buildPredictSection() {
     </div>
   `).join('');
 
+  function checkAllPredicted() {
+    const allIds = checklist.map(c => c.id);
+    const done = allIds.every(id => app.current.predictions[id] !== undefined);
+    const readyBtn = document.getElementById('reading-ready-btn');
+    if (done) {
+      readyBtn.disabled = false;
+      readyBtn.style.opacity = '';
+      readyBtn.style.cursor = '';
+      readyBtn.textContent = "I'm ready to write";
+      document.getElementById('rp-predict-done-msg').style.display = 'block';
+    }
+  }
+
   container.querySelectorAll('.predict-opt').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
@@ -953,6 +990,7 @@ function buildPredictSection() {
         b.className = 'predict-opt';
       });
       btn.classList.add('selected-' + val);
+      checkAllPredicted();
     });
   });
 }
@@ -983,9 +1021,9 @@ function startWriteScreen() {
   document.getElementById('write-stem').textContent = item.questionStem;
   document.getElementById('write-line-guide').textContent = (item.lineGuide || item.marks * 2);
 
-  // Subtitle
-  const subtitles = { 1:'Write on paper. One clear analysed point per mark.', 2:'Write on paper. Sustain the analysis — technique → effect → concept.', 3:'Exam conditions. No prompts.' };
-  document.getElementById('write-subtitle').textContent = subtitles[app.level];
+  // Subtitle (includes marks so it's visible in header)
+  const subtitleBase = { 1:'Write on paper. One clear analysed point per mark.', 2:'Write on paper. Sustain the analysis — technique → effect → concept.', 3:'Exam conditions. No prompts.' };
+  document.getElementById('write-subtitle').textContent = marksText(item.marks) + ' — ' + subtitleBase[app.level];
 
   // CUBE annotation for level 1
   const cubeBox = document.getElementById('write-cube-annotation');
@@ -1123,8 +1161,8 @@ function startSelfMarkScreen() {
       btn.disabled = true; btn.textContent = 'Checking…';
       try {
         const result = await callAI(
-          `You check whether a student's writing satisfies a specific checklist item FOR A SPECIFIC TEXT. Be strict and accurate. Only judge what is objectively detectable: is a technique named, does it appear in the source text, is there a link to the stated concept. If the student names a technique or device that does NOT appear in the source text, verdict is "no". Set a high bar for "yes". Return strict JSON only: {"verdict":"yes"|"not quite"|"no","pointer":"one specific, concrete suggestion based on the actual source text"}`,
-          `Source text:\n"""${sourceText.slice(0, 1200)}"""\n\nChecklist item: "${checklistItem.text}"\n\nStudent's text: "${pastedText}"`
+          `You are a strict HSC English marker checking whether a student's writing satisfies ONE checklist item against a specific source text. Rules:\n1. If the student names ANY literary technique or device (e.g. metaphor, irony, double entendre, alliteration) that does NOT actually appear in the source text provided — verdict is "no", no exceptions.\n2. If the student's response is vague, generic, or does not specifically address the checklist item — verdict is "no".\n3. "not quite" means the attempt is on the right track but missing something specific and identifiable.\n4. "yes" means the checklist item is clearly and specifically satisfied with evidence from the text.\nReturn strict JSON only: {"verdict":"yes"|"not quite"|"no","pointer":"one concrete, specific sentence about what is missing or wrong, referencing the actual source text"}`,
+          `Source text:\n"""${sourceText.slice(0, 1800)}"""\n\nChecklist item: "${checklistItem.text}"\n\nStudent's text: "${pastedText}"\n\nFirst check: does any technique the student named actually appear in the source text above? If not, verdict must be "no".`
         );
         app.current.evidenceResults[id] = result;
         const vcEl = document.getElementById('ev-verdict-' + id);
@@ -1195,8 +1233,10 @@ function startCalibrationScreen() {
 
 // ── NESA SCREEN ───────────────────────────────────────────────────────────────
 function startNesaScreen() {
-  const comp = app.current.questionItem.comparison;
-  if (!comp) { showPostQuestionButtons(); return; }
+  const item = app.current.questionItem;
+  document.getElementById('nesa-marks-badge').textContent = marksText(item.marks);
+  const comp = item.comparison;
+  if (!comp) { showPostQuestionButtons(); goTo('nesa'); return; }
 
   document.getElementById('nesa-stem').textContent = comp.nesaStem || '';
   document.getElementById('nesa-sample-text').innerHTML =
@@ -1370,28 +1410,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Override levers
+  // Override levers — apply immediately to the current write screen if it's showing
+  function applyOverridesToWriteScreen() {
+    const writeSection = document.getElementById('screen-write');
+    if (!writeSection.classList.contains('active')) return;
+    const profile = getProfile();
+    // CUBE visibility
+    const cubeBox = document.getElementById('write-cube-annotation');
+    if (isCubeOn()) {
+      cubeBox.style.display = 'block';
+    } else {
+      cubeBox.style.display = 'none';
+    }
+    // Pause button
+    const pauseBtn = document.getElementById('write-pause-btn');
+    pauseBtn.style.display = profile.timerPauseAllowed ? 'inline-block' : 'none';
+    // Checklist
+    const clContainer = document.getElementById('write-checklist-container');
+    const clDetails = document.getElementById('write-checklist-details');
+    if (profile.checklistDuringWrite === 'hidden') {
+      clContainer.style.display = 'none';
+    } else {
+      clContainer.style.display = 'block';
+      clDetails.open = profile.checklistDuringWrite === 'visible';
+    }
+    // Assistance
+    document.getElementById('write-assistance').style.display =
+      profile.assistanceDuringWrite === 'full' ? 'block' : 'none';
+  }
+
   document.getElementById('override-cube').addEventListener('change', e => {
     const v = e.target.value;
     if (v === 'on') app.overrides.cubeOn = true;
     else if (v === 'off') app.overrides.cubeOn = false;
     else delete app.overrides.cubeOn;
+    applyOverridesToWriteScreen();
   });
   document.getElementById('override-pause').addEventListener('change', e => {
     const v = e.target.value;
     if (v === 'on') app.overrides.timerPauseAllowed = true;
     else if (v === 'off') app.overrides.timerPauseAllowed = false;
     else delete app.overrides.timerPauseAllowed;
+    applyOverridesToWriteScreen();
   });
   document.getElementById('override-checklist').addEventListener('change', e => {
     const v = e.target.value;
     if (v) app.overrides.checklistDuringWrite = v;
     else delete app.overrides.checklistDuringWrite;
+    applyOverridesToWriteScreen();
   });
   document.getElementById('override-assistance').addEventListener('change', e => {
     const v = e.target.value;
     if (v) app.overrides.assistanceDuringWrite = v;
     else delete app.overrides.assistanceDuringWrite;
+    applyOverridesToWriteScreen();
   });
 
   // Reading screen
