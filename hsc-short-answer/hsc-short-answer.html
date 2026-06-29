@@ -677,8 +677,11 @@ async function callAI(system, userContent) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ system, messages: [{ role: 'user', content: userContent }] })
   });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const data = await res.json();
+  const rawText = await res.text();
+  if (!res.ok) throw new Error(rawText || 'HTTP ' + res.status);
+  let data;
+  try { data = JSON.parse(rawText); } catch { throw new Error('Bad response from server'); }
+  if (data.error) throw new Error(data.error);
   const text = data.content || '';
   const clean = text.replace(/```json|```/g, '').trim();
   return JSON.parse(clean);
@@ -758,9 +761,16 @@ async function generateQuestion() {
       const concept = pickConcept(source);
       const sourceText = source.isVisual ? source.visualDescription : source.fullText;
 
+      const bandsTemplate = Array.from({ length: marks }, (_, i) => {
+        const b = marks - i;
+        if (b === marks) return `{"band":${b},"descriptor":"Accurately and perceptively ${verb}s the ${concept} using specific textual evidence and clear analysis of effect."}`;
+        if (b === 1) return `{"band":1,"descriptor":"Provides some relevant information about the text."}`;
+        return `{"band":${b},"descriptor":"Competently ${verb}s with relevant evidence and some analysis of effect."}`;
+      }).join(',');
+
       const item = await callAI(
-        `You are an HSC English marking expert. Generate a Section I short answer question. Return strict JSON only — no prose outside the JSON. The directive verb must appear in the top marking band. Every string in quotesUsed must be copied character-for-character from the source text — never paraphrase or invent.`,
-        `Source (id: ${source.id}, type: ${source.textType}):\n"""${sourceText}"""\n\nGenerate a question:\n- directive verb: ${verb}\n- marks: ${marks}\n- concept: ${concept}\n- level: ${level}\n\nReturn JSON with EXACTLY ${marks} markingBands objects:\n{"sourceId":"${source.id}","textType":"${source.textType}","verb":"${verb}","marks":${marks},"concept":"${concept}","questionStem":"question in NESA phrasing, ${marks} marks","lineGuide":${marks * 2},"selfAnswer":"brief model answer","quotesUsed":["exact characters from source"],"markingBands":[{"band":${marks},"descriptor":"accurately and perceptively ${verb}s..."},{"band":1,"descriptor":"provides some relevant information"}],"checklist":[{"id":"c1","category":"analysis","text":"..."},{"id":"c2","category":"concept","text":"..."},{"id":"c3","category":"structure","text":"..."}],"comparison":null}`
+        `You are an HSC English marking expert. Generate a Section I short answer question. Return strict JSON only — no prose outside the JSON. The directive verb must appear in the top marking band. Every string in quotesUsed must be copied character-for-character from the source text — never paraphrase or invent. CRITICAL RULE: the markingBands array MUST contain EXACTLY ${marks} objects — one per mark, numbered ${marks} down to 1. Do not add extras, do not omit any.`,
+        `Source (id: ${source.id}, type: ${source.textType}):\n"""${sourceText}"""\n\nGenerate a question:\n- directive verb: ${verb}\n- marks: ${marks}\n- concept: ${concept}\n- level: ${level}\n\nReturn this exact JSON structure. Fill in the descriptors for markingBands — keep all ${marks} bands, rewrite the descriptors to be specific to this question:\n{"sourceId":"${source.id}","textType":"${source.textType}","verb":"${verb}","marks":${marks},"concept":"${concept}","questionStem":"[question in NESA phrasing]","lineGuide":${marks * 2},"selfAnswer":"[brief model answer using quotes from source]","quotesUsed":["[exact quote from source]"],"markingBands":[${bandsTemplate}],"checklist":[{"id":"c1","category":"analysis","text":"[specific to this question]"},{"id":"c2","category":"concept","text":"[specific to this question]"},{"id":"c3","category":"structure","text":"[specific to this question]"}],"comparison":null}`
       );
 
       const nesaItem = findComparison(verb, marks);
