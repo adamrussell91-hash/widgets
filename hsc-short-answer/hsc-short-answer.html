@@ -179,6 +179,11 @@
     }
     .checklist-item:last-child { border-bottom: none; }
     .checklist-text { flex: 1; font-size: 0.9rem; }
+    .sm-action {
+      font-size: 0.85rem; color: var(--color-accent);
+      margin-top: 5px; line-height: 1.5;
+    }
+    .sm-action strong { color: var(--color-accent); }
     .checklist-preview-item {
       font-size: 0.9rem; padding: 5px 0;
       border-bottom: 1px solid var(--color-border);
@@ -482,20 +487,48 @@
     <p class="coach">Work through each item honestly. Mark what you actually did — not what you intended to do. This is your judgement to make.</p>
     <div class="marks-badge" id="selfmark-marks-badge"></div>
     <div class="question-stem" id="selfmark-stem"></div>
+    <p style="font-size:0.9rem;color:var(--color-muted);margin-bottom:var(--space);">Pick up your pen. Each item tells you a concrete move to make on your handwritten answer — underline, circle or number — then mark it honestly.</p>
     <div id="selfmark-checklist" style="margin-bottom:var(--space);"></div>
-    <!-- Evidence checker notice -->
-    <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space);">For any ticked item, you can paste the words from your handwritten answer to check they appear in the source text.</p>
     <div class="btn-row">
       <button class="btn-primary" id="selfmark-continue-btn">Rate how well I did →</button>
     </div>
   </section>
 
-  <!-- ── PERFORMANCE RATING (shown alongside confidence slider) ─────────────── -->
+  <!-- ── COMPARE & RATE (NESA sample shown alongside self-rating) ───────────── -->
   <section id="screen-rating">
-    <h2>How well do you think you did?</h2>
-    <p class="coach">Rate your performance now that you have self-marked. Then see the gap between your confidence before writing and your judgement afterwards.</p>
+    <h2>Compare your answer, then rate how well you did</h2>
+    <p class="coach">Here is a real NESA question of the same verb and mark allocation, with its published sample response and the marker's feedback. Read it against your own handwritten answer — the content will differ, what matters is whether you made the same moves: technique to effect, the concept link, the judgement. Then rate how well you think you did.</p>
     <div class="marks-badge" id="rating-marks-badge"></div>
-    <div class="question-stem" id="rating-stem"></div>
+
+    <!-- The question the student answered -->
+    <div style="margin-bottom:var(--space);">
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:4px;">The question you answered</p>
+      <div class="question-stem" id="rating-stem"></div>
+    </div>
+
+    <!-- Real NESA question + sample + marker notes for self-comparison -->
+    <div style="margin-bottom:var(--space);">
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:4px;">Real NESA question (same verb and marks)</p>
+      <div class="question-stem" id="nesa-stem"></div>
+    </div>
+    <div class="nesa-sample">
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space-sm);">Sample response (published by NESA)</p>
+      <div id="nesa-sample-text"></div>
+    </div>
+    <div style="margin-top:var(--space);">
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space-sm);">Marker feedback from NESA — what better responses did</p>
+      <div id="nesa-marker-notes" style="font-size:0.9rem;line-height:1.6;color:var(--color-text);"></div>
+    </div>
+    <div style="margin-top:var(--space);">
+      <h2>How the sample meets each checklist item</h2>
+      <div id="nesa-checklist-mapping"></div>
+    </div>
+    <div style="margin-top:var(--space);">
+      <h2>Marking bands for this question</h2>
+      <div id="nesa-marking-bands" style="margin-top:var(--space-sm);"></div>
+    </div>
+
+    <!-- Self-rating, having compared -->
     <div class="confidence-block" style="margin-top:var(--space);">
       <div class="panel-label">How well did you do?</div>
       <p class="confidence-question" id="performance-question-text"></p>
@@ -526,41 +559,11 @@
         </div>
       </div>
       <div class="cal-gap" id="cal-gap-text"></div>
-      <div class="btn-row">
-        <button class="btn-primary" id="rating-continue-btn">Compare to a NESA sample →</button>
+      <div class="btn-row" id="nesa-btn-row">
+        <button class="btn-primary" id="nesa-next-q-btn" style="display:none;">Next question →</button>
+        <button class="btn-primary" id="nesa-finish-btn" style="display:none;">Finish session →</button>
+        <button class="btn-secondary" id="nesa-another-btn" style="display:none;">Another question →</button>
       </div>
-    </div>
-  </section>
-
-  <!-- ── NESA COMPARISON ───────────────────────────────────────────────────── -->
-  <section id="screen-nesa">
-    <h2>Compare to a real NESA sample</h2>
-    <div class="marks-badge" id="nesa-marks-badge"></div>
-    <p class="coach">Here is a real NESA question of the same verb and mark allocation. Read the sample and find the moves you practised — how does yours compare? The content will differ; the transferable moves are what to look for.</p>
-    <div style="margin-bottom:var(--space);">
-      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:4px;">Real NESA question</p>
-      <div class="question-stem" id="nesa-stem"></div>
-    </div>
-    <div class="nesa-sample">
-      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space-sm);">Sample response (published by NESA)</p>
-      <div id="nesa-sample-text"></div>
-    </div>
-    <div style="margin-top:var(--space);">
-      <h2>Marking bands for this question</h2>
-      <div id="nesa-marking-bands" style="margin-top:var(--space-sm);"></div>
-    </div>
-    <div style="margin-top:var(--space);">
-      <h2>Checklist — how the sample satisfies each item</h2>
-      <div id="nesa-checklist-mapping"></div>
-    </div>
-    <div style="margin-top:var(--space);">
-      <p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:var(--space-sm);">Marker feedback from NESA</p>
-      <div id="nesa-marker-notes" style="font-size:0.9rem;line-height:1.6;color:var(--color-text);"></div>
-    </div>
-    <div class="btn-row" id="nesa-btn-row" style="margin-top:var(--space);">
-      <button class="btn-primary" id="nesa-next-q-btn" style="display:none;">Next question →</button>
-      <button class="btn-primary" id="nesa-finish-btn" style="display:none;">Finish session →</button>
-      <button class="btn-secondary" id="nesa-another-btn" style="display:none;">Another question →</button>
     </div>
   </section>
 
@@ -838,38 +841,85 @@ function findNesaComparison(verb, marks) {
 }
 
 // ── CHECKLIST BUILDER ─────────────────────────────────────────────────────────
-function buildChecklist(verb, concept, marks, sourceTitle, textType) {
-  // Base items always present
-  const items = [
-    {
-      id: 'c1', category: 'analysis',
-      text: `Have I analysed (not just described) how language shapes meaning in ${sourceTitle || 'the text'}, rather than retelling what happens?`
-    },
-    {
-      id: 'c2', category: 'evidence',
-      text: `Is my quotation short, precise, and clearly tied to the concept of ${concept}?`
-    },
-    {
-      id: 'c3', category: 'concept',
-      text: `Have I connected my point explicitly to "${concept}" throughout, not just in general?`
-    }
-  ];
+// Every item is keyed to the actual directive verb, concept, text and marks of
+// the selected question, and is traceable to the marker "rewarded patterns" and
+// "flagged faults" in the build brief. Each item carries an `action` — a concrete
+// thing the student does on their handwritten paper (underline, circle, number),
+// which replaces the old paste-and-search evidence checker.
 
-  // Verb-specific item
-  if (['evaluate','assess','justify','to what extent'].includes(verb)) {
+// The analytic phrase the marker uses for this verb, e.g. "explained how",
+// "analysed how", "evaluated the extent to which".
+function verbAnalysisPhrase(verb) {
+  switch (verb) {
+    case 'analyse': return 'analysed how';
+    case 'explain':
+    case 'explain how':
+    case 'how does':
+    case 'how do':
+    case 'how is': return 'explained how';
+    case 'evaluate': return 'evaluated how';
+    case 'assess': return 'assessed how';
+    case 'justify': return 'justified how';
+    case 'compare': return 'compared how';
+    case 'to what extent': return 'shown the extent to which';
+    default: return 'shown how';
+  }
+}
+
+function buildChecklist(verb, concept, marks, sourceTitle, textType) {
+  const text = sourceTitle || 'the text';
+  const did = verbAnalysisPhrase(verb);
+  const isJudgement = ['evaluate','assess','justify','to what extent'].includes(verb);
+  const isComparison = verb === 'compare';
+
+  const items = [];
+
+  // 1. Analysis, not recount — the single most-rewarded marker pattern.
+  items.push({
+    id: 'c1', category: 'analysis',
+    text: `Have I ${did} meaning is made in ${text} — not retold, described or paraphrased what happens?`,
+    action: `Re-read your opening sentence. If it summarises the plot, rewrite it so it makes a point about ${concept}.`
+  });
+
+  // 2. Technique → effect — markers reward naming a technique then explaining its effect.
+  items.push({
+    id: 'c2', category: 'analysis',
+    text: `Have I named a specific technique and explained its effect on the reader — not just listed techniques or relied on the example alone?`,
+    action: `Underline every technique word in your answer. Check that an explanation of its effect follows each one.`
+  });
+
+  // 3. Evidence — short, precise, woven-in quotations.
+  items.push({
+    id: 'c3', category: 'evidence',
+    text: `Is each quotation short, precise, and woven into my point — clearly tied to ${concept}?`,
+    action: `Circle every quotation. If one runs longer than a few words, trim it to the exact phrase that carries the meaning.`
+  });
+
+  // 4. Concept link — explicit and sustained throughout.
+  items.push({
+    id: 'c4', category: 'concept',
+    text: `Have I linked my point explicitly to "${concept}" throughout, not just in general or only at the end?`,
+    action: `Underline every place you name "${concept}". If it appears only once, add the link to your other points.`
+  });
+
+  // 5. Verb-specific demand.
+  if (isJudgement) {
     items.push({
-      id: 'c4', category: 'judgement',
-      text: `Have I made a clear judgement and sustained it — not just described, but argued a position?`
+      id: 'c5', category: 'analysis',
+      text: `Have I reached a clear judgement about ${concept} and sustained it — argued a position, not just described?`,
+      action: `Highlight your judgement sentence. Check it states a position and that the rest of the answer supports it.`
     });
-  } else if (verb === 'compare') {
+  } else if (isComparison) {
     items.push({
-      id: 'c4', category: 'comparison',
-      text: `Have I moved between both texts using comparative language (similarly, by contrast, whereas), not treated each text separately?`
+      id: 'c5', category: 'analysis',
+      text: `Have I compared ideas across both texts using comparative language (similarly, by contrast, whereas) — not handled each text separately?`,
+      action: `Underline your comparative connectives. If there are none, add a sentence that holds both texts together.`
     });
   } else if (marks >= 4) {
     items.push({
-      id: 'c4', category: 'structure',
-      text: `Have I addressed every part of the question and every key term — not missing an element?`
+      id: 'c5', category: 'concept',
+      text: `Have I addressed every part of the question and every key term — not covered one element and neglected another?`,
+      action: `Number each part of the question, then tick each number where you answer it in your response.`
     });
   }
 
@@ -904,21 +954,24 @@ function buildMarkingBands(verb, concept, marks) {
   return bands;
 }
 
-// ── CONFIDENCE SLIDER TEXT ────────────────────────────────────────────────────
-function buildConfidenceQuestion(verb, concept, textType) {
-  const verbPhrase = verb === 'how does' ? 'explain how' :
-                     verb === 'explain how' ? 'explain how' :
-                     verb === 'to what extent' ? 'evaluate the extent to which' :
-                     verb;
-  return `How confident are you that you can ${verbPhrase} this ${textType || 'text'} explores ${concept}?`;
+// ── CONFIDENCE / PERFORMANCE SLIDER TEXT ──────────────────────────────────────
+// Both are built from the real question stem so they are always grammatical and
+// specific to the exact task — never a generic or stitched-together line.
+function stemAsTask(stem) {
+  // Lower-case the leading directive verb and drop the trailing full stop so the
+  // stem can sit inside a sentence: "Explain how X." -> "explain how X"
+  let s = (stem || '').trim().replace(/\s+/g, ' ').replace(/[.\s]+$/, '');
+  if (!s) return 'answer this question well';
+  return s.charAt(0).toLowerCase() + s.slice(1);
 }
 
-function buildPerformanceQuestion(verb, concept) {
-  const verbPhrase = verb === 'how does' ? 'explaining how' :
-                     verb === 'explain how' ? 'explaining how' :
-                     verb === 'to what extent' ? 'evaluating the extent to which' :
-                     verb + 'ing';
-  return `How well do you think you did at ${verbPhrase} the text explores ${concept}?`;
+function buildConfidenceQuestion(stem) {
+  return `How confident are you that you can ${stemAsTask(stem)}?`;
+}
+
+function buildPerformanceQuestion(stem) {
+  const task = stemAsTask(stem);
+  return `Having written your answer, how well do you think you did at being able to ${task}?`;
 }
 
 // ── SELECT QUESTION ───────────────────────────────────────────────────────────
@@ -1104,7 +1157,7 @@ function advanceCubeStep() {
 
 function buildConfidenceSection() {
   const { question } = app.current;
-  const qText = buildConfidenceQuestion(question.verb, question.concept, app.current.source.textType);
+  const qText = buildConfidenceQuestion(question.stemText);
   document.getElementById('confidence-question-text').textContent = qText;
   document.getElementById('confidence-value').textContent = '—';
   document.getElementById('rp-confidence-set-msg').style.display = 'none';
@@ -1253,6 +1306,7 @@ function startSelfMarkScreen() {
       <div style="display:flex;gap:var(--space-sm);align-items:flex-start;">
         <div class="checklist-text">
           <p style="font-size:0.95rem;">${esc(c.text)}</p>
+          ${c.action ? `<p class="sm-action"><strong>Do this:</strong> ${esc(c.action)}</p>` : ''}
         </div>
         <div class="sm-btn-group">
           ${[['done','✓ Done'],['unsure','? Unsure'],['undone','✗ Not done']].map(([val,label]) => `
@@ -1260,15 +1314,6 @@ function startSelfMarkScreen() {
               style="padding:5px 10px;font-size:0.82rem;">${label}</button>
           `).join('')}
         </div>
-      </div>
-      <div class="evidence-checker" id="ev-checker-${c.id}" style="display:none;">
-        <p style="font-size:0.8rem;color:var(--color-muted);margin-bottom:4px;">Paste the words from your answer you think satisfy this item:</p>
-        <div style="display:flex;gap:6px;">
-          <input type="text" id="ev-input-${c.id}" placeholder="paste your words here…"
-            style="flex:1;padding:6px;font-family:var(--font-body);font-size:0.85rem;border:1px solid var(--color-border);border-radius:6px;">
-          <button class="btn-ghost" style="font-size:0.8rem;padding:6px 12px;" data-ev="${c.id}">Check</button>
-        </div>
-        <div class="evidence-result" id="ev-result-${c.id}"></div>
       </div>
     </div>
   `).join('');
@@ -1283,40 +1328,57 @@ function startSelfMarkScreen() {
       });
       const colours = { done:'var(--color-done)', undone:'var(--color-undone)', unsure:'var(--color-unsure)' };
       btn.style.background = colours[val]; btn.style.color = 'white'; btn.style.borderColor = colours[val];
-      // Show evidence checker for done/unsure items
-      const checker = document.getElementById('ev-checker-' + id);
-      if (checker) checker.style.display = (val === 'done' || val === 'unsure') ? 'block' : 'none';
-    });
-  });
-
-  // Evidence check buttons
-  container.querySelectorAll('[data-ev]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.ev;
-      const input = document.getElementById('ev-input-' + id);
-      const pasted = (input ? input.value.trim() : '');
-      if (!pasted) return;
-      const srcText = (source.fullText || source.visualDescription || '').toLowerCase();
-      const found = srcText.includes(pasted.toLowerCase());
-      const resultEl = document.getElementById('ev-result-' + id);
-      app.current.evidenceResults[id] = { pasted, found };
-      if (resultEl) {
-        resultEl.textContent = found ? '✓ Found in the source text' : '✗ Not found in the source text';
-        resultEl.className = 'evidence-result ' + (found ? 'found' : 'not-found');
-      }
     });
   });
 
   goTo('selfmark');
 }
 
-// ── PERFORMANCE RATING SCREEN ─────────────────────────────────────────────────
+// ── COMPARE & RATE SCREEN ─────────────────────────────────────────────────────
+// Shows the matched NESA question, sample and marker notes for self-comparison,
+// then the "how well did you do" rating and the calibration gap.
 function startRatingScreen() {
-  const { question } = app.current;
+  const { question, nesaItem, checklist, selfMarks, markingBands } = app.current;
   document.getElementById('rating-marks-badge').textContent = marksText(question.marks);
   document.getElementById('rating-stem').textContent = question.stemText;
 
-  const pText = buildPerformanceQuestion(question.verb, question.concept);
+  // NESA comparison content
+  if (!nesaItem) {
+    document.getElementById('nesa-stem').textContent = '(No matching NESA sample available for this verb and mark allocation.)';
+    document.getElementById('nesa-sample-text').innerHTML = '';
+    document.getElementById('nesa-marker-notes').textContent = '';
+  } else {
+    document.getElementById('nesa-stem').textContent = nesaItem.stemText || '';
+    document.getElementById('nesa-sample-text').innerHTML =
+      '<blockquote>' + esc(nesaItem.sampleAnswer || '(No sample text available)').replace(/\n/g,'<br>') + '</blockquote>';
+    document.getElementById('nesa-marker-notes').innerHTML =
+      esc(nesaItem.markerNotes || '').replace(/\n/g,'<br>') || '<em>(No marker notes available for this question.)</em>';
+  }
+
+  // Marking bands
+  document.getElementById('nesa-marking-bands').innerHTML = markingBands.map(b => `
+    <div style="display:flex;gap:var(--space-sm);padding:6px 0;border-bottom:1px solid var(--color-border);font-size:0.9rem;">
+      <span style="font-weight:700;color:var(--color-accent);min-width:60px;">Band ${b.band}</span>
+      <span>${esc(b.descriptor)}</span>
+    </div>
+  `).join('');
+
+  // Checklist mapping — the same checklist the student just used, shown against the sample
+  document.getElementById('nesa-checklist-mapping').innerHTML = checklist.map(c => {
+    const mark = selfMarks[c.id] || 'unsure';
+    const col = mark === 'done' ? 'var(--color-done)' : mark === 'undone' ? 'var(--color-undone)' : 'var(--color-unsure)';
+    return `
+      <div class="checklist-item">
+        <div class="checklist-text">
+          <p style="font-size:0.9rem;">${esc(c.text)}</p>
+          ${nesaItem ? `<p style="font-size:0.85rem;color:var(--color-muted);margin-top:4px;font-style:italic;">Find where the sample above makes this move — then check your own answer.</p>` : ''}
+        </div>
+        <span style="font-size:0.82rem;color:${col};flex-shrink:0;font-weight:600;">Your mark: ${mark}</span>
+      </div>
+    `;
+  }).join('');
+
+  const pText = buildPerformanceQuestion(question.stemText);
   document.getElementById('performance-question-text').textContent = pText;
 
   document.getElementById('calibration-reveal').style.display = 'none';
@@ -1370,6 +1432,8 @@ function showCalibrationReveal() {
   }
   document.getElementById('cal-gap-text').textContent = gapText;
   document.getElementById('calibration-reveal').style.display = 'block';
+  // Reveal the onward navigation (next / finish / another) now the gap is shown.
+  showPostQuestionButtons();
 }
 
 function recordAttempt() {
@@ -1386,50 +1450,6 @@ function recordAttempt() {
     gap: confidenceRating - performanceRating
   });
   app.session.totalMarks += question.marks;
-}
-
-// ── NESA SCREEN ───────────────────────────────────────────────────────────────
-function startNesaScreen() {
-  const { question, nesaItem, checklist, selfMarks, markingBands } = app.current;
-  document.getElementById('nesa-marks-badge').textContent = marksText(question.marks);
-
-  if (!nesaItem) {
-    document.getElementById('nesa-stem').textContent = '(No matching NESA sample available for this verb and mark allocation.)';
-    document.getElementById('nesa-sample-text').innerHTML = '';
-    document.getElementById('nesa-marker-notes').textContent = '';
-  } else {
-    document.getElementById('nesa-stem').textContent = nesaItem.stemText || '';
-    document.getElementById('nesa-sample-text').innerHTML =
-      '<blockquote>' + esc(nesaItem.sampleAnswer || '(No sample text available)').replace(/\n/g,'<br>') + '</blockquote>';
-    document.getElementById('nesa-marker-notes').innerHTML =
-      esc(nesaItem.markerNotes || '').replace(/\n/g,'<br>') || '<em>(No marker notes available for this question.)</em>';
-  }
-
-  // Marking bands
-  document.getElementById('nesa-marking-bands').innerHTML = markingBands.map(b => `
-    <div style="display:flex;gap:var(--space-sm);padding:6px 0;border-bottom:1px solid var(--color-border);font-size:0.9rem;">
-      <span style="font-weight:700;color:var(--color-accent);min-width:60px;">Band ${b.band}</span>
-      <span>${esc(b.descriptor)}</span>
-    </div>
-  `).join('');
-
-  // Checklist mapping
-  document.getElementById('nesa-checklist-mapping').innerHTML = checklist.map(c => {
-    const mark = selfMarks[c.id] || 'unsure';
-    const col = mark === 'done' ? 'var(--color-done)' : mark === 'undone' ? 'var(--color-undone)' : 'var(--color-unsure)';
-    return `
-      <div class="checklist-item">
-        <div class="checklist-text">
-          <p style="font-size:0.9rem;">${esc(c.text)}</p>
-          ${nesaItem ? `<p style="font-size:0.85rem;color:var(--color-muted);margin-top:4px;font-style:italic;">Look for this in the sample above.</p>` : ''}
-        </div>
-        <span style="font-size:0.82rem;color:${col};flex-shrink:0;font-weight:600;">Your mark: ${mark}</span>
-      </div>
-    `;
-  }).join('');
-
-  showPostQuestionButtons();
-  goTo('nesa');
 }
 
 function showPostQuestionButtons() {
@@ -1646,9 +1666,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-pv]').forEach(btn => {
     btn.addEventListener('click', () => setPerformanceRating(parseInt(btn.dataset.pv)));
   });
-  document.getElementById('rating-continue-btn').addEventListener('click', startNesaScreen);
 
-  // NESA
+  // Onward navigation (lives in the calibration reveal on the compare & rate screen)
   document.getElementById('nesa-next-q-btn').addEventListener('click', generateNextExamQuestion);
   document.getElementById('nesa-finish-btn').addEventListener('click', startReflectionScreen);
   document.getElementById('nesa-another-btn').addEventListener('click', () => {
