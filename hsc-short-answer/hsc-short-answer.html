@@ -72,6 +72,15 @@
       white-space: pre-wrap;
       /* no max-height — full text always visible */
     }
+    .source-text.prose-source {
+      white-space: normal;
+    }
+    .source-text.prose-source p {
+      margin: 0 0 0.9em;
+    }
+    .source-text.prose-source p:last-child {
+      margin-bottom: 0;
+    }
 
     /* Split layout */
     .split-screen {
@@ -698,6 +707,28 @@ function esc(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// Render a source into an element. Poetry and visual descriptions keep their
+// line breaks (white-space: pre-wrap); prose/nonfiction flow and wrap as
+// paragraphs, so stored single newlines don't break sentences mid-line.
+function renderSource(el, source) {
+  el.classList.remove('prose-source');
+  if (!source) { el.textContent = '[Text not yet loaded]'; return; }
+  if (source.isVisual) {
+    el.innerHTML = '<em>[Visual text — ' + esc(source.title) + ']</em><br><br>' +
+      esc(source.visualDescription || source.fullText || '');
+    return;
+  }
+  const txt = source.fullText || '[Text not yet loaded]';
+  const isPoetry = (source.textType || '').toLowerCase().indexOf('poetry') !== -1;
+  if (isPoetry) {
+    el.textContent = txt; // pre-wrap keeps the verse lines
+  } else {
+    el.classList.add('prose-source');
+    const paras = txt.split(/\n[ \t]*\n/).map(p => p.replace(/[ \t]*\n[ \t]*/g, ' ').trim()).filter(Boolean);
+    el.innerHTML = paras.map(p => '<p>' + esc(p) + '</p>').join('');
+  }
+}
+
 function marksText(n) { return n + ' mark' + (n !== 1 ? 's' : ''); }
 function setError(id, msg) {
   const e = document.getElementById(id);
@@ -973,11 +1004,7 @@ function startReadingScreen() {
 
   // Source text
   const textEl = document.getElementById('reading-source-text');
-  if (source.isVisual) {
-    textEl.innerHTML = '<em>[Visual text — ' + esc(source.title) + ']</em><br><br>' + esc(source.visualDescription || source.fullText || '');
-  } else {
-    textEl.textContent = source.fullText || '[Text not yet loaded]';
-  }
+  renderSource(textEl, source);
 
   // If comparison, append second source below
   if (secondSource) {
@@ -987,11 +1014,7 @@ function startReadingScreen() {
     const sec = document.createElement('div');
     sec.className = 'source-text';
     sec.style.marginTop = 'var(--space-sm)';
-    if (secondSource.isVisual) {
-      sec.innerHTML = '<em>[Visual text — ' + esc(secondSource.title) + ']</em><br><br>' + esc(secondSource.visualDescription || secondSource.fullText || '');
-    } else {
-      sec.textContent = secondSource.fullText || '[Text not yet loaded]';
-    }
+    renderSource(sec, secondSource);
     textEl.parentNode.insertBefore(sec, divider.nextSibling);
   }
 
@@ -1131,20 +1154,12 @@ function startWriteScreen() {
 
   // Source text (left panel) — clear any extra elements from reading screen
   const writeSrc = document.getElementById('write-source-text');
-  if (source.isVisual) {
-    writeSrc.innerHTML = '<em>[Visual text — ' + esc(source.title) + ']</em><br><br>' + esc(source.visualDescription || source.fullText || '');
-  } else {
-    writeSrc.textContent = source.fullText || '[Text not yet loaded]';
-  }
+  renderSource(writeSrc, source);
   if (secondSource) {
     const div2 = document.createElement('div');
     div2.className = 'source-text';
     div2.style.marginTop = 'var(--space-sm)';
-    if (secondSource.isVisual) {
-      div2.innerHTML = '<em>[Visual text — ' + esc(secondSource.title) + ']</em><br><br>' + esc(secondSource.visualDescription || secondSource.fullText || '');
-    } else {
-      div2.textContent = secondSource.fullText || '[Text not yet loaded]';
-    }
+    renderSource(div2, secondSource);
     writeSrc.after(div2);
   }
 
