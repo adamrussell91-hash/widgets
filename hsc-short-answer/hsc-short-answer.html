@@ -81,6 +81,32 @@
     .source-text.prose-source p:last-child {
       margin-bottom: 0;
     }
+    .source-head {
+      white-space: normal;
+      margin: 0 0 var(--space-sm);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .source-head-title {
+      font-weight: 700;
+      font-size: 1.02rem;
+      line-height: 1.3;
+      color: var(--color-text);
+    }
+    .source-head-meta {
+      margin-top: 3px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-accent);
+    }
+    .source-head-meta .source-head-author {
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 500;
+      color: var(--color-muted);
+    }
 
     /* Split layout */
     .split-screen {
@@ -349,13 +375,52 @@
       text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;
       padding-bottom: 4px; border-bottom: 1px solid var(--color-border);
     }
-    .obj-item { font-size: 0.9rem; padding: 5px 0; display: flex; gap: 8px; }
+    .obj-item { font-size: 0.9rem; padding: 5px 0; display: flex; gap: 10px; align-items: flex-start; }
     .obj-item .src-tag {
-      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-      padding: 1px 6px; border-radius: 10px; flex-shrink: 0; height: fit-content;
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      padding: 2px 0; border-radius: 10px; flex: 0 0 92px; text-align: center;
+      margin-top: 1px;
     }
     .src-tag.reward { background: var(--color-accent-light); color: var(--color-accent); }
     .src-tag.improvement { background: #FFF3D6; color: #8B6914; }
+    .rt-legend {
+      font-size: 0.82rem; color: var(--color-muted); line-height: 1.5;
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius); padding: 8px var(--space-sm); margin-bottom: var(--space-sm);
+    }
+    .rt-legend .src-tag { display: inline-block; flex: none; padding: 1px 6px; margin: 0 2px; }
+
+    /* Section II level / mode buttons fill when active */
+    .s2-level-btn.active, .s2-mode-btn.active {
+      background: var(--color-accent); color: white; border-color: var(--color-accent);
+    }
+
+    /* Persistent Section II nav bar (Home + Skip), on every screen */
+    #s2-navbar {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: var(--space-sm); margin-bottom: var(--space);
+      padding-bottom: var(--space-sm); border-bottom: 1px solid var(--color-border);
+    }
+
+    /* Criterion definition + live descriptor under each calibration slider */
+    .crit-def { font-size: 0.82rem; color: var(--color-muted); margin-bottom: 4px; }
+    .crit-desc { font-size: 0.82rem; color: var(--color-accent); margin-top: 4px; min-height: 2.4em; }
+
+    /* Evidence-chain symbols — drawn with CSS so all three are the same size */
+    .mp-shape { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; flex: none; }
+    .mp-sq { border: 2px solid var(--color-text); }
+    .mp-ci { border: 2px solid var(--color-text); border-radius: 50%; }
+    .mp-tri {
+      width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent;
+      border-bottom: 16px solid transparent; border-bottom-color: currentColor;
+      position: relative;
+    }
+    .mp-tri::before {
+      content: ''; position: absolute; left: -6px; top: 3px;
+      width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
+      border-bottom: 10px solid var(--color-bg);
+    }
+    .margin-sym .mp-shape { color: var(--color-text); }
 
     /* ── Per-criterion calibration sliders ─────────────────────────────────── */
     .crit-slider-row { margin-bottom: var(--space-sm); }
@@ -482,7 +547,7 @@
 <!-- ── TOP-LEVEL SECTION TABS ─────────────────────────────────────────────── -->
 <div class="section-tabbar" id="section-tabbar">
   <button class="section-tab active" data-section="1">Section I<span class="section-tab-sub">Short answer</span></button>
-  <button class="section-tab" data-section="2">Section II<span class="section-tab-sub">Extended response · Q6</span></button>
+  <button class="section-tab" data-section="2">Section II<span class="section-tab-sub">Extended response</span></button>
 </div>
 
 <div class="app" id="main-app">
@@ -819,6 +884,10 @@
   </div>
 
   <div id="s2-main">
+    <div id="s2-navbar">
+      <button class="btn-ghost" id="s2-nav-home">⌂ Home</button>
+      <button class="btn-ghost" id="s2-nav-skip">Skip to next step →</button>
+    </div>
     <!-- ── S0 SETUP ──────────────────────────────────────────────────────── -->
     <section id="s2-screen-setup" class="active">
       <h1>Section II — The Common Module Essay</h1>
@@ -968,11 +1037,11 @@
       <div class="report-card" style="margin-top:var(--space);">
         <h2>1 · Annotate the evidence chains in the margin</h2>
         <div class="margin-symbols">
-          <div class="margin-sym"><span class="sym">△</span> Triangle — a piece of evidence (a quotation)</div>
-          <div class="margin-sym"><span class="sym">□</span> Square — you state its effect</div>
-          <div class="margin-sym"><span class="sym">○</span> Circle — you link it to your topic sentence and the question</div>
+          <div class="margin-sym"><span class="mp-shape mp-tri"></span> Triangle — a piece of evidence (a quotation)</div>
+          <div class="margin-sym"><span class="mp-shape mp-sq"></span> Square — you state its effect</div>
+          <div class="margin-sym"><span class="mp-shape mp-ci"></span> Circle — you link it to your topic sentence and the question</div>
         </div>
-        <p style="font-size:0.88rem;color:var(--color-muted);">A healthy paragraph repeats △ □ ○. A triangle with no square is evidence with no effect — quoting without analysing. The tool cannot see your essay; you must actually annotate it.</p>
+        <p style="font-size:0.88rem;color:var(--color-muted);">A healthy paragraph repeats <span class="mp-shape mp-tri"></span> <span class="mp-shape mp-sq"></span> <span class="mp-shape mp-ci"></span>. A triangle with no square is evidence with no effect — quoting without analysing. The tool cannot see your essay; you must actually annotate it.</p>
         <div style="margin-top:var(--space-sm);display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm);">
           <div class="plan-slot"><div class="plan-slot-label">How many chains are complete (△□○)?</div><input id="s2-chain-complete" type="text" placeholder="e.g. 5 of 7"></div>
           <div class="plan-slot"><div class="plan-slot-label">Which paragraphs break the chain, and how?</div><input id="s2-chain-broken" type="text" placeholder="e.g. para 2 — quotes with no effect"></div>
@@ -1051,13 +1120,16 @@
       <h2 style="margin-top:var(--space);">The five-band rubric — where do you locate yourself?</h2>
       <div id="s2-cmp-bands" style="margin-top:var(--space-sm);"></div>
 
-      <div class="split-screen" style="margin-top:var(--space);">
+      <div class="rt-legend" style="margin-top:var(--space);">
+        These two lists are the <strong>general marker feedback on Question&nbsp;6 across 2019–2025</strong> — what stronger responses across past HSC cohorts tended to do, and what students were most often told to improve. This is a <strong>self-comparison to previous cohorts, not a mark on your essay</strong>. In a practice run you will not hit every point, and that is completely expected — tick what you managed, and note what to work on next time.
+      </div>
+      <div class="split-screen">
         <div>
-          <div class="panel-label">What better responses did — tick what you managed</div>
+          <div class="panel-label">What better responses did (past cohorts) — tick what you managed</div>
           <div id="s2-cmp-rewards"></div>
         </div>
         <div>
-          <div class="panel-label">Areas to improve — tick any you fell into</div>
+          <div class="panel-label">Areas students were told to improve — tick any you fell into</div>
           <div id="s2-cmp-improvements"></div>
         </div>
       </div>
@@ -1114,7 +1186,7 @@
       <div class="screen-bar">
         <div class="screen-bar-left">
           <span class="screen-title">Micro-skill drill gym</span>
-          <span class="screen-subtitle">Short, low-stakes drills on a real question. No mark, ever.</span>
+          <span class="screen-subtitle">Short, low-stakes drills on one real question — isolate a single skill in a few minutes.</span>
         </div>
         <div class="screen-bar-right">
           <div class="marks-badge" style="margin-bottom:0;">20 marks</div>
@@ -1287,22 +1359,54 @@ function esc(str) {
 // Render a source into an element. Poetry and visual descriptions keep their
 // line breaks (white-space: pre-wrap); prose/nonfiction flow and wrap as
 // paragraphs, so stored single newlines don't break sentences mid-line.
+// Human-readable text-type label. Always shown, every level.
+const TEXT_TYPE_LABELS = {
+  'poetry': 'Poem',
+  'prose fiction': 'Prose fiction',
+  'prose non-fiction': 'Prose non-fiction',
+  'nonfiction': 'Non-fiction prose',
+  'non-fiction': 'Non-fiction prose',
+  'feature article': 'Feature article',
+  'opinion': 'Opinion piece',
+  'memoir': 'Memoir',
+  'speech': 'Speech',
+  'drama': 'Drama extract',
+  'visual': 'Visual text',
+  'image': 'Visual text'
+};
+function formatTextType(source) {
+  const raw = (source && source.textType ? source.textType : '').trim();
+  if (!raw) return source && source.isVisual ? 'Visual text' : 'Text';
+  const key = raw.toLowerCase();
+  return TEXT_TYPE_LABELS[key] || (raw.charAt(0).toUpperCase() + raw.slice(1));
+}
+function sourceHeadHtml(source) {
+  const meta = ['<span class="source-head-type">' + esc(formatTextType(source)) + '</span>'];
+  if (source.author) meta.push('<span class="source-head-author"> — ' + esc(source.author) + '</span>');
+  return '<div class="source-head">' +
+    (source.title ? '<div class="source-head-title">' + esc(source.title) + '</div>' : '') +
+    '<div class="source-head-meta">' + meta.join('') + '</div>' +
+  '</div>';
+}
 function renderSource(el, source) {
   el.classList.remove('prose-source');
   if (!source) { el.textContent = '[Text not yet loaded]'; return; }
+  const head = sourceHeadHtml(source);
   if (source.isVisual) {
-    el.innerHTML = '<em>[Visual text — ' + esc(source.title) + ']</em><br><br>' +
-      esc(source.visualDescription || source.fullText || '');
+    el.classList.add('prose-source');
+    el.innerHTML = head + '<p><em>[Visual text]</em></p><p>' +
+      esc(source.visualDescription || source.fullText || '') + '</p>';
     return;
   }
   const txt = source.fullText || '[Text not yet loaded]';
   const isPoetry = (source.textType || '').toLowerCase().indexOf('poetry') !== -1;
   if (isPoetry) {
-    el.textContent = txt; // pre-wrap keeps the verse lines
+    // pre-wrap keeps the verse lines; header is block-level so it sits above cleanly.
+    el.innerHTML = head + esc(txt);
   } else {
     el.classList.add('prose-source');
     const paras = txt.split(/\n[ \t]*\n/).map(p => p.replace(/[ \t]*\n[ \t]*/g, ' ').trim()).filter(Boolean);
-    el.innerHTML = paras.map(p => '<p>' + esc(p) + '</p>').join('');
+    el.innerHTML = head + paras.map(p => '<p>' + esc(p) + '</p>').join('');
   }
 }
 
@@ -2544,6 +2648,70 @@ document.addEventListener('DOMContentLoaded', () => {
     3: { cast: 'off', planning: 'none', pacing: false, checklist: 'hidden', planningTimed: true }
   };
 
+  // Plain-English, student-facing meaning of each calibration criterion.
+  const CRIT_DEF = {
+    argument: 'Your thesis: one clear, personal claim that answers the whole question and runs through every paragraph.',
+    analysis: 'Showing HOW Shakespeare makes meaning — naming a dramatic technique and its effect — not just retelling what happens.',
+    evidence: 'Short, well-chosen quotations from across the whole play, tied to the point you are making.',
+    judgement: "Reaching and defending a clear position that matches the question's verb — not just describing.",
+    expression: 'Clear, controlled writing in your own voice, avoiding wordy or convoluted sentences.'
+  };
+  // What a confidence value actually MEANS for each criterion, in five bands
+  // (0-20, 21-40, 41-60, 61-80, 81-100). This makes "60/100 on evidence" concrete.
+  const CRIT_CONF_BANDS = {
+    argument: [
+      "You're not sure you can form a clear argument about this concept yet.",
+      'You could attempt a thesis, but it might just restate the question or drift off it.',
+      "You think you can state a claim, but you're unsure it answers every part or holds across the whole essay.",
+      "You're fairly sure you can sustain one clear argument that answers the question.",
+      "You're confident you can build a perceptive, personal argument and carry it through every paragraph."
+    ],
+    analysis: [
+      "You're unsure of the difference between analysing and retelling the plot.",
+      'You can say what happens, but explaining HOW the play creates meaning is hard.',
+      'You can sometimes name a technique, but linking it to a clear effect is hit and miss.',
+      "You're fairly sure you can name techniques and explain their effect on the audience.",
+      "You're confident you can analyse how dramatic techniques shape meaning throughout."
+    ],
+    evidence: [
+      "You're not confident you can recall accurate quotations.",
+      'You know a couple of quotes, but they may be long or all from one scene.',
+      "You have some quotes, but you're unsure they're the best-chosen or spread across the play.",
+      "You're fairly sure you can use a range of well-chosen quotes tied to your point.",
+      "You're confident you can integrate purposeful evidence from across the whole play."
+    ],
+    judgement: [
+      "You're not sure what 'a judgement' means for this question yet.",
+      "You'd probably describe the play rather than argue a position.",
+      "You can take a position, but you're unsure you can defend it or match it to the verb.",
+      "You're fairly sure you can reach a clear judgement and back it up.",
+      "You're confident you can argue and defend a judgement that matches the question's verb."
+    ],
+    expression: [
+      "You're worried your writing will be unclear or hard to follow.",
+      'You can get ideas down, but sentences may become wordy or tangled.',
+      'Your expression is sometimes clear and sometimes slips.',
+      "You're fairly sure you can write clearly and stay in control.",
+      "You're confident you can write clearly and concisely in your own voice throughout."
+    ]
+  };
+  const RESULT_BANDS = [
+    "Looking back, you don't think you managed this.",
+    'You managed only a little of this.',
+    'You partly managed this.',
+    'You mostly managed this.',
+    "You're confident you did this well."
+  ];
+  function bandIndex(v) { return v <= 20 ? 0 : v <= 40 ? 1 : v <= 60 ? 2 : v <= 80 ? 3 : 4; }
+
+  // The authentic full Common Module rubric, verbatim from the unit page. Never reworded.
+  const FULL_RUBRIC = [
+    'In this common module students deepen their understanding of how texts represent individual and collective human experiences. They examine how texts represent human qualities and emotions associated with, or arising from, these experiences. Students appreciate, explore, interpret, analyse and evaluate the ways language is used to shape these representations in a range of texts in a variety of forms, modes and media.',
+    'Students explore how texts may give insight into the anomalies, paradoxes and inconsistencies in human behaviour and motivations, inviting the responder to see the world differently, to challenge assumptions, ignite new ideas or reflect personally. They may also consider the role of storytelling throughout time to express and reflect particular lives and cultures. By responding to a range of texts they further develop skills and confidence using various literary devices, language concepts, modes and media to formulate a considered response to texts.',
+    'Students study one prescribed text and a range of short texts that provide rich opportunities to further explore representations of human experiences illuminated in texts. They make increasingly informed judgements about how aspects of these texts, for example context, purpose, structure, stylistic and grammatical features, and form shape meaning. In addition, students select one related text and draw from personal experience to make connections between themselves, the world of the text and their wider world.',
+    'By responding and composing throughout the module students further develop a repertoire of skills in comprehending, interpreting and analysing complex texts. They examine how different modes and media use visual, verbal and/or digital language elements. They communicate ideas using figurative language to express universal themes and evaluative language to make informed judgements about texts. Students further develop skills in using metalanguage, correct grammar and syntax to analyse language and express a personal perspective about a text.'
+  ];
+
   // ── Rubric translation dictionary (brief starter, extended by hand). Every
   //    phrase the UI highlights maps to exactly one entry here. ────────────────
   const DICT = [
@@ -2578,7 +2746,28 @@ document.addEventListener('DOMContentLoaded', () => {
     { phrase: 'limited understanding', plain: 'Only a surface grasp of the idea. Push into how and why the play represents it.' },
     { phrase: 'purposefully select', plain: 'You chose that quote for a reason and it does a job in your argument.' },
     { phrase: 'holistic understanding', plain: 'You show you know the whole play, not just one famous scene.' },
-    { phrase: 'restating the question', plain: 'Repeating the question words without answering. Avoid this.' }
+    { phrase: 'restating the question', plain: 'Repeating the question words without answering. Avoid this.' },
+    // Checklist / question jargon
+    { phrase: 'analysed, not just explained', plain: 'Analysing = showing HOW and WHY the play makes meaning (name a technique, then its effect). Explaining or retelling just says what happens. Markers reward the first.' },
+    { phrase: 'analyse, not just explain', plain: 'Analysing = showing HOW and WHY the play makes meaning (name a technique, then its effect). Explaining or retelling just says what happens. Markers reward the first.' },
+    { phrase: 'paraphrasing', plain: 'Putting a quote or scene into your own words without analysing it. Say what it DOES, not just what it means.' },
+    { phrase: 'topic sentences', plain: 'The first sentence of each paragraph. It should make a claim that answers the question — not describe a plot point.' },
+    { phrase: 'topic sentence', plain: 'The first sentence of a paragraph. It should make a claim that answers the question — not describe a plot point.' },
+    { phrase: 'structural features', plain: 'How the play is built — scene order, contrasts, the trial scene, the sub-plots — and how that structure shapes meaning.' },
+    { phrase: 'dramatic forms', plain: 'The tools of a play written to be performed — soliloquy, aside, stage directions, dramatic irony — and their effect.' },
+    { phrase: 'controlled voice', plain: 'Your writing stays clear, steady and in your own words from start to finish.' },
+    { phrase: 'well chosen', plain: 'Picked on purpose because it proves your point — not just any quote you happened to remember.' },
+    { phrase: 'integrated', plain: 'Woven smoothly into your own sentence, not dropped in on its own line.' },
+    { phrase: 'cohesive', plain: 'Everything joins up — each paragraph connects back to one clear argument.' },
+    // Syllabus jargon (we never change the wording; we only add a plain-English hover)
+    { phrase: 'individual and collective human experiences', plain: 'Experiences personal to one person AND experiences shared by groups or communities.' },
+    { phrase: 'human qualities and emotions', plain: 'The traits (e.g. loyalty, greed, mercy) and feelings (e.g. love, hatred, grief) that experiences bring out in people.' },
+    { phrase: 'anomalies, paradoxes and inconsistencies', plain: 'The odd, contradictory or surprising things in how people behave — where actions do not match what you would expect.' },
+    { phrase: 'storytelling', plain: 'How stories are told, and why humans tell them, to express and reflect particular lives and cultures.' },
+    { phrase: 'forms, modes and media', plain: 'The type of text (form), whether it is written / spoken / visual (mode), and how it is delivered (medium).' },
+    { phrase: 'stylistic and grammatical features', plain: 'The style choices and grammar of a text — word choice, sentence shape, imagery — and how they shape meaning.' },
+    { phrase: 'representations', plain: 'How a text shows or portrays something — the choices a writer makes to present an idea, not the raw idea itself.' },
+    { phrase: 'shape these representations', plain: 'How language choices control the way an idea is presented to the audience.' }
   ];
 
   function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -2863,25 +3052,29 @@ document.addEventListener('DOMContentLoaded', () => {
     s2GoTo('question');
   }
 
+  const RT_LEGEND = '<div class="rt-legend"><span class="src-tag reward">reward</span> a move markers <strong>rewarded</strong> in stronger Question&nbsp;6 responses across past HSC cohorts. ' +
+    '<span class="src-tag improvement">improvement</span> something markers repeatedly said students needed to <strong>work on</strong>. ' +
+    'Hover any <span class="rubric-hl" style="cursor:help;">underlined phrase<span class="rubric-card"><strong>Plain English:</strong> Hover a dotted-underlined phrase anywhere in this tool and a plain-English explanation appears.</span></span> for a plain-English explanation.</div>';
+
   function renderQuestionChecklist(containerId, q, asSelfMark) {
     const byObj = {};
     OBJECTIVES.forEach(o => byObj[o] = []);
     q.checklist.forEach(it => byObj[it.objective].push(it));
     const objLabels = { understanding: 'Understanding', representation: 'Representation', expression: 'Expression' };
-    $(containerId).innerHTML = OBJECTIVES.map(o => {
+    $(containerId).innerHTML = RT_LEGEND + OBJECTIVES.map(o => {
       if (!byObj[o].length) return '';
       return '<div class="objective-group"><div class="objective-head">' + objLabels[o] + '</div>' +
         byObj[o].map(it => {
           const tag = '<span class="src-tag ' + it.source + '">' + it.source + '</span>';
           if (asSelfMark) {
             return '<div class="obj-item" style="flex-direction:column;align-items:stretch;">' +
-              '<div style="display:flex;gap:8px;">' + tag + '<span style="flex:1;">' + esc(it.text) + '</span></div>' +
+              '<div style="display:flex;gap:10px;">' + tag + '<span style="flex:1;">' + renderRubric(it.text) + '</span></div>' +
               '<div class="sm-btn-group" style="flex-direction:row;margin-top:6px;">' +
               [['done', '✓ Yes'], ['unsure', '? Partly'], ['undone', '✗ No']].map(([v, l]) =>
                 '<button class="btn-secondary s2-sm-btn" data-cid="' + it.id + '" data-val="' + v + '" style="padding:4px 10px;font-size:0.8rem;">' + l + '</button>').join('') +
               '</div></div>';
           }
-          return '<div class="obj-item">' + tag + '<span>' + esc(it.text) + '</span></div>';
+          return '<div class="obj-item">' + tag + '<span>' + renderRubric(it.text) + '</span></div>';
         }).join('') + '</div>';
     }).join('');
   }
@@ -2925,12 +3118,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function descFor(prefix, cat, val) {
+    if (val == null) return 'Drag the slider — a plain-English description of what your rating means will appear here.';
+    return prefix === 'conf' ? CRIT_CONF_BANDS[cat][bandIndex(val)] : RESULT_BANDS[bandIndex(val)];
+  }
   function sliderSet(prefix, store) {
     return S2_CATS.map(cat =>
       '<div class="crit-slider-row"><div class="crit-label">' + cat + '</div>' +
+      '<div class="crit-def">' + esc(CRIT_DEF[cat]) + '</div>' +
       '<div class="slider-row">' +
       '<input type="range" id="s2-' + prefix + '-' + cat + '" min="' + CFG.slider.min + '" max="' + CFG.slider.max + '" step="' + CFG.slider.step + '" value="50" data-cat="' + cat + '">' +
-      '<span class="slider-value" id="s2-' + prefix + '-' + cat + '-v">' + (store[cat] == null ? '—' : store[cat]) + '</span></div></div>'
+      '<span class="slider-value" id="s2-' + prefix + '-' + cat + '-v">' + (store[cat] == null ? '—' : store[cat]) + '</span></div>' +
+      '<div class="crit-desc" id="s2-' + prefix + '-' + cat + '-d">' + esc(descFor(prefix, cat, store[cat])) + '</div></div>'
     ).join('');
   }
   function wireSliders(prefix, store, onChange) {
@@ -2939,6 +3138,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el.addEventListener('input', () => {
         store[cat] = parseInt(el.value);
         $('s2-' + prefix + '-' + cat + '-v').textContent = store[cat];
+        $('s2-' + prefix + '-' + cat + '-d').textContent = descFor(prefix, cat, store[cat]);
         onChange();
       });
     });
@@ -3071,7 +3271,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function checklistPlain(q) {
-    return q.checklist.map(it => '<p style="padding:5px 0;border-bottom:1px solid var(--color-border);font-size:0.88rem;">' + esc(it.text) + '</p>').join('');
+    return '<p style="font-size:0.8rem;color:var(--color-muted);margin-bottom:6px;">Hover any dotted-underlined phrase for a plain-English explanation.</p>' +
+      q.checklist.map(it => '<p style="padding:6px 0;border-bottom:1px solid var(--color-border);font-size:0.88rem;">' + renderRubric(it.text) + '</p>').join('');
   }
   function tickWrite() {
     writeSecs--;
@@ -3196,12 +3397,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── S9 Syllabus audit ───────────────────────────────────────────────────────
   function startSyllabus() {
     s2State.syllabus = {};
-    $('s2-syllabus-list').innerHTML = data.syllabus.map(pt =>
-      '<div class="report-card" data-syl="' + pt.id + '"><p style="font-weight:600;margin-bottom:6px;">' + esc(pt.point) + '</p>' +
+    $('s2-syllabus-list').innerHTML =
+      '<p style="font-size:0.82rem;color:var(--color-muted);margin-bottom:var(--space-sm);">This is the exact Common Module syllabus wording — we never change it. Hover any dotted-underlined phrase for a plain-English explanation of what it means.</p>' +
+      data.syllabus.map(pt =>
+      '<div class="report-card" data-syl="' + pt.id + '"><p style="font-weight:600;margin-bottom:6px;">' + renderRubric(pt.point) + '</p>' +
       '<div style="display:flex;gap:var(--space-sm);align-items:flex-start;">' +
       '<input class="s2-syl-note" data-syl="' + pt.id + '" type="text" placeholder="Which paragraph? What move?" style="flex:1;padding:6px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:6px;">' +
       '<button class="btn-ghost s2-syl-na" data-syl="' + pt.id + '">Not addressed</button></div></div>').join('');
-    $('s2-syllabus-full').innerHTML = data.syllabus.map(pt => '<p>• ' + esc(pt.point) + '</p>').join('');
+    $('s2-syllabus-full').innerHTML =
+      '<p style="font-weight:700;margin-bottom:6px;">Texts and Human Experiences</p>' +
+      '<p style="font-size:0.82rem;color:var(--color-muted);margin-bottom:var(--space-sm);">The full Common Module rubric, exactly as published. Hover any dotted-underlined phrase for a plain-English explanation.</p>' +
+      FULL_RUBRIC.map(p => '<p style="margin-bottom:0.8em;">' + renderRubric(p) + '</p>').join('');
     const check = () => { $('s2-syllabus-continue').disabled = !data.syllabus.every(pt => { const s = s2State.syllabus[pt.id]; return s && (s.status === 'not' || (s.note && s.note.trim())); }); };
     $('s2-syllabus-list').querySelectorAll('.s2-syl-note').forEach(inp => {
       inp.addEventListener('input', () => {
@@ -3348,12 +3554,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Micro-skill drill gym ───────────────────────────────────────────────────
   const DRILLS = [
-    { id: 'thesis', title: 'Thesis in a few minutes', prompt: q => 'Write a thesis that answers this question in your own words.', check: q => 'Self-check against the argument checklist: does it stake one clear claim about ' + q.concept + ' and answer the whole question, not restate it?' },
-    { id: 'topic', title: 'Topic sentence', prompt: q => 'Write a topic sentence that names the concept and stakes a claim — not a plot point.', check: q => 'Does your sentence make an argument about ' + q.concept + ', rather than say what happens next in the play?' },
-    { id: 'recount', title: 'Recount to analysis', prompt: q => 'Take one plot sentence about the play and turn it into an analytical sentence that names a dramatic technique and its effect.', check: q => 'Does it name a technique (soliloquy, aside, dramatic irony, stage direction…) AND its effect, instead of retelling events?' },
-    { id: 'evidence', title: 'Evidence to effect', prompt: q => 'Pick a quotation from the quote bank. Name the technique, explain the effect, then link it to the question.', check: q => 'Chain check: technique → effect → link to ' + q.concept + '. Are all three present?' },
-    { id: 'judgement', title: 'Land the judgement', prompt: q => 'Write a closing judgement sentence that matches the directive verb "' + q.verb + '".', check: q => 'Does it reach a defended verdict (not description) matched to "' + q.verb + '"?' },
-    { id: 'clutter', title: 'Cut the clutter', prompt: q => 'Compress a wordy sentence from your writing without losing the point.', check: q => 'Is it shorter and clearer, with no lost meaning? Markers caution against verbose, convoluted expression.' }
+    { id: 'thesis', cat: 'argument', title: 'Thesis in a few minutes', prompt: q => 'Write a thesis that answers this question in your own words.', check: q => 'Does it stake one clear claim about ' + q.concept + ' and answer the whole question, rather than restate it?' },
+    { id: 'topic', cat: 'argument', title: 'Topic sentence', prompt: q => 'Write a topic sentence that names the concept and stakes a claim — not a plot point.', check: q => 'Does your sentence make an argument about ' + q.concept + ', rather than say what happens next in the play?' },
+    { id: 'recount', cat: 'analysis', title: 'Recount to analysis', prompt: q => 'Take one plot sentence about the play and turn it into an analytical sentence that names a dramatic technique and its effect.', check: q => 'Does it name a technique (soliloquy, aside, dramatic irony, stage direction…) AND its effect, instead of retelling events?' },
+    { id: 'evidence', cat: 'evidence', title: 'Evidence to effect', prompt: q => 'Pick a quotation from the quote bank. Name the technique, explain the effect, then link it to the question.', check: q => 'Chain check: technique → effect → link to ' + q.concept + '. Are all three present?' },
+    { id: 'judgement', cat: 'judgement', title: 'Land the judgement', prompt: q => 'Write a closing judgement sentence that matches the directive verb "' + q.verb + '".', check: q => 'Does it reach a defended verdict (not description) matched to "' + q.verb + '"?' },
+    { id: 'clutter', cat: 'expression', title: 'Cut the clutter', prompt: q => 'Compress a wordy sentence from your writing without losing the point.', check: q => 'Is it shorter and clearer, with no lost meaning? Markers caution against verbose, convoluted expression.' }
   ];
   let drillTimerId = null;
   function startDrillGym() {
@@ -3379,12 +3585,38 @@ document.addEventListener('DOMContentLoaded', () => {
     $('s2-drill-prompt').textContent = d.prompt(q);
     $('s2-drill-box').value = '';
     $('s2-drill-check').style.display = 'none';
-    $('s2-drill-check').innerHTML = '<strong>Self-check:</strong> ' + esc(d.check(q));
+    const items = q.checklist.filter(it => it.category === d.cat);
+    $('s2-drill-check').innerHTML =
+      "<strong>Self-check</strong> — hold your attempt against this question's <em>" + esc(d.cat) + "</em> checklist item" + (items.length > 1 ? 's' : '') + ':' +
+      '<div style="margin-top:6px;">' + items.map(it => '<p style="padding:5px 0;border-bottom:1px solid var(--color-border);font-size:0.9rem;">' + renderRubric(it.text) + '</p>').join('') + '</div>' +
+      '<p style="margin-top:8px;color:var(--color-muted);">' + esc(d.check(q)) + '</p>';
     let secs = CFG.drillSeconds;
     const el = $('s2-drill-timer');
     const draw = () => { el.textContent = fmt(secs); el.className = 'timer' + (secs <= 20 && secs > 0 ? ' warning' : secs <= 0 ? ' overrun' : ''); };
     draw(); clearInterval(drillTimerId);
     drillTimerId = setInterval(() => { secs--; if (secs < 0) { el.textContent = 'time'; clearInterval(drillTimerId); return; } draw(); }, CFG.tickMs);
+  }
+
+  // ── Persistent Home + Skip (visible on every Section II screen) ─────────────
+  function currentScreen() {
+    const a = [...$('s2-main').querySelectorAll('section')].find(s => s.classList.contains('active'));
+    return a ? a.id.replace('s2-screen-', '') : 'setup';
+  }
+  function skipToNext() {
+    const map = {
+      setup: () => (s2State.mode === 'drill' ? startDrillGym() : nextQuestion()),
+      question: () => startPlanScreen(),
+      plan: () => { capturePlan(); startWriteScreen(); },
+      write: () => startSelfMark(),
+      selfmark: () => startCalibration(),
+      calibration: () => startSyllabus(),
+      syllabus: () => startCompare(),
+      compare: () => { recordAttempt(); startReflection(); },
+      reflection: () => startReport(),
+      report: () => nextQuestion(),
+      drill: () => s2GoTo('setup')
+    };
+    (map[currentScreen()] || (() => s2GoTo('setup')))();
   }
 
   // ── Boot / wiring ───────────────────────────────────────────────────────────
@@ -3413,6 +3645,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.section-tab').forEach(t =>
       t.addEventListener('click', () => showSection(parseInt(t.dataset.section))));
     window.addEventListener('resize', applyDesktopGate);
+
+    // Persistent Home + Skip (every Section II screen)
+    $('s2-nav-home').addEventListener('click', () => s2GoTo('setup'));
+    $('s2-nav-skip').addEventListener('click', skipToNext);
 
     // Question screen
     $('s2-cast-next').addEventListener('click', advanceCast);
