@@ -118,6 +118,30 @@
     .timer.warning { color: var(--color-unsure); }
     .timer.overrun { color: var(--color-undone); }
 
+    /* Exam paper tabs */
+    .exam-tabs {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: var(--space) 0;
+      border-bottom: 2px solid var(--color-border);
+      padding-bottom: var(--space-sm);
+    }
+    .exam-tab {
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
+      padding: 8px 14px; border: 1px solid var(--color-border);
+      border-radius: var(--radius); background: white; color: var(--color-muted);
+      cursor: pointer; line-height: 1.2;
+    }
+    .exam-tab .exam-tab-marks { font-weight: 400; font-size: 0.8rem; display: block; }
+    .exam-tab.active {
+      background: var(--color-accent); color: white; border-color: var(--color-accent);
+    }
+    .exam-tab.answered::after { content: ' ✓'; color: var(--color-done); }
+    .exam-tab.active.answered::after { color: white; }
+    .exam-review-card {
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      padding: var(--space); margin-bottom: var(--space); background: white;
+    }
+
     /* Buttons */
     button {
       font-family: var(--font-body); font-size: 1rem;
@@ -343,7 +367,7 @@
       <div class="btn-row" id="level-btns" style="margin-top:0;">
         <button class="btn-secondary level-btn active" data-level="1">1 · Foundation</button>
         <button class="btn-secondary level-btn" data-level="2">2 · Consolidation</button>
-        <button class="btn-secondary level-btn" data-level="3">3 · Exam</button>
+        <button class="btn-secondary level-btn" data-level="3">3 · Extension</button>
       </div>
       <p style="margin-top:8px;font-size:0.9rem;color:var(--color-muted);" id="level-desc">Full scaffolding — CUBE annotation always on, checklist open while writing, pausing allowed.</p>
     </div>
@@ -351,6 +375,15 @@
     <div class="error-msg" id="setup-error"></div>
     <div class="btn-row">
       <button class="btn-primary" id="generate-btn">Get a question</button>
+    </div>
+
+    <div style="margin-top:var(--space);padding-top:var(--space);border-top:1px solid var(--color-border);">
+      <h2>Or sit a full exam paper</h2>
+      <p class="coach" style="margin-top:4px;">A complete 20-mark paper — a mix of shorter and longer questions across several texts, just like Paper 1 Section I. You get 5 minutes reading time, then 45 minutes writing time. Move between questions using the tabs at any point.</p>
+      <div class="error-msg" id="exam-error"></div>
+      <div class="btn-row">
+        <button class="btn-primary" id="exam-btn">Start full exam paper (20 marks · 50 min) →</button>
+      </div>
     </div>
   </section>
 
@@ -400,14 +433,15 @@
               <strong>Why rate confidence?</strong> Rating before you write builds metacognitive calibration — the ability to know what you know. After you mark your own answer, you'll set a "how well did you do" rating and see the gap between the two. That gap is the most precise signal about where to focus practice next. Without it, you can spend hours practising the wrong things.
             </div>
             <div class="slider-row">
-              <input type="range" id="confidence-slider" min="1" max="5" step="1" value="0"
-                style="flex:1;opacity:0.4;" disabled>
+              <input type="range" id="confidence-slider" min="1" max="5" step="1" value="3"
+                style="flex:1;cursor:pointer;">
               <span class="slider-value" id="confidence-value">—</span>
             </div>
             <div class="slider-labels">
               <span>Not at all confident</span>
               <span>Very confident</span>
             </div>
+            <p style="margin-top:6px;font-size:0.82rem;color:var(--color-muted);">Drag the slider, or tap a number, to set your confidence.</p>
             <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;" id="confidence-opts">
               <button class="btn-ghost" style="font-size:0.9rem;padding:6px 14px;" data-cv="1">1</button>
               <button class="btn-ghost" style="font-size:0.9rem;padding:6px 14px;" data-cv="2">2</button>
@@ -567,6 +601,35 @@
     </div>
   </section>
 
+  <!-- ── EXAM PAPER (tabbed, timed) ────────────────────────────────────────── -->
+  <section id="screen-exam">
+    <div class="screen-bar">
+      <div class="screen-bar-left">
+        <span class="screen-title" id="exam-phase-title">Reading time</span>
+        <p style="font-size:0.85rem;color:var(--color-muted);margin-top:2px;" id="exam-phase-sub">Read every question and its text. You cannot start writing yet.</p>
+      </div>
+      <div class="screen-bar-right">
+        <div class="timer" id="exam-timer">5:00</div>
+        <button class="btn-primary" id="exam-start-writing-btn">Start writing now →</button>
+        <button class="btn-primary" id="exam-finish-btn" style="display:none;">Finish exam →</button>
+        <button class="btn-ghost" id="exam-hide-btn" style="display:none;">Hide timer</button>
+      </div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--color-muted);">Total paper: <strong>20 marks</strong>. Move between questions with the tabs. Write every answer by hand on paper, labelling each with its question number.</p>
+    <div class="exam-tabs" id="exam-tabs"></div>
+    <div id="exam-tab-content"></div>
+  </section>
+
+  <!-- ── EXAM REVIEW (self-mark & compare, per question) ───────────────────── -->
+  <section id="screen-exam-review">
+    <h2>Exam complete — review each answer</h2>
+    <p class="coach">Time's up. For each question, mark your handwritten answer against the checklist, then open the NESA sample and marker notes to see how yours compares. The content will differ — look for the same moves.</p>
+    <div id="exam-review-list" style="margin-top:var(--space);"></div>
+    <div class="btn-row" style="margin-top:var(--space);">
+      <button class="btn-primary" id="exam-review-finish-btn">Finish → session report</button>
+    </div>
+  </section>
+
   <!-- ── REFLECTION ────────────────────────────────────────────────────────── -->
   <section id="screen-reflection">
     <h2>Reflect before you go</h2>
@@ -621,9 +684,9 @@
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 const CONFIG = {
   dataPath: 'data/',
-  readingSecondsSingle: 30,
+  readingSecondsSingle: 60,
   writingSecondsPerMark: 120,
-  paper: { totalMarks: 20, readingSeconds: 600, writingSeconds: 2700 },
+  paper: { totalMarks: 20, readingSeconds: 300, writingSeconds: 2700 },
   cube: { level1: 'on-locked', level2: 'on-default', level3: 'off' },
   defaultLevel: 1
 };
@@ -666,7 +729,7 @@ const LEVEL_PROFILES = {
 const LEVEL_DESCS = {
   1: 'Full scaffolding — CUBE annotation always on, checklist open while writing, pausing allowed.',
   2: 'Moderate support — CUBE on by default, checklist collapsed, standard timer.',
-  3: 'Exam conditions — no CUBE, checklist hidden until self-mark, strict timer.'
+  3: 'Extension — harder verbs only (evaluate, assess, justify, compare), no CUBE, checklist hidden until self-mark, strict timer.'
 };
 
 const CONFIDENCE_LABELS = { 1:'Not at all', 2:'Slightly', 3:'Somewhat', 4:'Quite', 5:'Very' };
@@ -701,7 +764,7 @@ function goTo(screen) {
   document.querySelectorAll('.app section').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('screen-' + screen);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
-  const wideScreens = ['reading','write'];
+  const wideScreens = ['reading','write','exam','exam-review'];
   document.getElementById('main-app').classList.toggle('wide', wideScreens.includes(screen));
 }
 
@@ -974,9 +1037,10 @@ function buildPerformanceQuestion(stem) {
   return `Having written your answer, how well do you think you did at being able to ${task}?`;
 }
 
-// ── SELECT QUESTION ───────────────────────────────────────────────────────────
-function selectQuestion() {
-  const q = pickQuestion(app.level);
+// ── ASSEMBLE A QUESTION ───────────────────────────────────────────────────────
+// Resolves a bank entry into a full working object (sources, checklist, bands,
+// NESA match). Shared by single-question practice and the exam paper.
+function assembleQuestion(q) {
   const srcMap = {};
   app.data.sources.forEach(s => { srcMap[s.id] = s; });
   const source = srcMap[q.sourceId];
@@ -984,8 +1048,7 @@ function selectQuestion() {
   const nesaItem = findNesaComparison(q.verb, q.marks);
   const checklist = buildChecklist(q.verb, q.concept, q.marks, source.title, source.textType);
   const markingBands = buildMarkingBands(q.verb, q.concept, q.marks);
-
-  app.current = {
+  return {
     source, secondSource,
     question: q,
     nesaItem,
@@ -997,7 +1060,215 @@ function selectQuestion() {
     confidenceRating: 0,
     performanceRating: 0
   };
+}
+
+// ── SELECT QUESTION ───────────────────────────────────────────────────────────
+function selectQuestion() {
+  const q = pickQuestion(app.level);
+  app.current = assembleQuestion(q);
   return q;
+}
+
+// ── EXAM PAPER ────────────────────────────────────────────────────────────────
+// A full 20-mark paper: a mix of shorter and longer questions across texts, sat
+// under a 5-minute reading phase then a 45-minute writing phase, navigated by tabs.
+const EXAM_COMPOSITIONS = [
+  [3, 3, 4, 4, 6],
+  [3, 4, 4, 4, 5],
+  [3, 3, 4, 5, 5],
+  [3, 3, 3, 5, 6],
+  [3, 4, 4, 3, 6],
+  [4, 4, 3, 3, 6]
+];
+let examState = { questions: [], activeIndex: 0, phase: 'reading' };
+let examInterval = null;
+let examSeconds = 0;
+let examTimerHidden = false;
+
+function buildExamPaper() {
+  const bank = app.data.questionBank;
+  const srcMap = {};
+  app.data.sources.forEach(s => { srcMap[s.id] = s; });
+  const showable = q => srcMap[q.sourceId] && (!q.isComparison || !q.secondSourceId || srcMap[q.secondSourceId]);
+
+  const comp = EXAM_COMPOSITIONS[Math.floor(Math.random() * EXAM_COMPOSITIONS.length)];
+  const picked = [];
+  const usedIds = new Set();
+  const usedSources = new Set();
+  const usedVerbs = [];
+
+  comp.forEach(marks => {
+    let pool = bank.filter(q => q.marks === marks && showable(q) && !usedIds.has(q.id));
+    if (!pool.length) return;
+    // Prefer a fresh source and a verb we haven't used yet, for variety.
+    let pref = pool.filter(q => !usedSources.has(q.sourceId) && !usedVerbs.includes(q.verb));
+    if (!pref.length) pref = pool.filter(q => !usedSources.has(q.sourceId));
+    if (!pref.length) pref = pool;
+    const q = pref[Math.floor(Math.random() * pref.length)];
+    usedIds.add(q.id); usedSources.add(q.sourceId); usedVerbs.push(q.verb);
+    picked.push(q);
+  });
+
+  // Top up to 20 marks if any mark value had no available question.
+  let total = picked.reduce((s, q) => s + q.marks, 0);
+  let guard = 0;
+  while (total < 20 && guard++ < 40) {
+    const need = 20 - total;
+    let pool = bank.filter(q => q.marks <= need && showable(q) && !usedIds.has(q.id));
+    if (!pool.length) break;
+    const q = pool[Math.floor(Math.random() * pool.length)];
+    usedIds.add(q.id); picked.push(q); total += q.marks;
+  }
+  if (!picked.length) throw new Error('Could not assemble an exam paper.');
+
+  // Order easiest-to-hardest, like a real paper.
+  picked.sort((a, b) => a.marks - b.marks);
+  return picked.map(assembleQuestion);
+}
+
+function startExamPaper() {
+  const paper = buildExamPaper();
+  app.session = { attempted: [], reflections: [], totalMarks: 0, examMode: true };
+  examState = { questions: paper, activeIndex: 0, phase: 'reading' };
+  examTimerHidden = false;
+  renderExamTabs();
+  renderExamTab(0);
+  startExamPhase('reading');
+  goTo('exam');
+}
+
+function startExamPhase(phase) {
+  examState.phase = phase;
+  clearInterval(examInterval);
+  const title = document.getElementById('exam-phase-title');
+  const sub = document.getElementById('exam-phase-sub');
+  const startBtn = document.getElementById('exam-start-writing-btn');
+  const finishBtn = document.getElementById('exam-finish-btn');
+  const hideBtn = document.getElementById('exam-hide-btn');
+
+  if (phase === 'reading') {
+    examSeconds = CONFIG.paper.readingSeconds; // 5 min
+    title.textContent = 'Reading time';
+    sub.textContent = 'Read every question and its text. You cannot start writing yet.';
+    startBtn.style.display = 'inline-block';
+    finishBtn.style.display = 'none';
+    hideBtn.style.display = 'none';
+  } else {
+    examSeconds = CONFIG.paper.writingSeconds; // 45 min
+    title.textContent = 'Writing time';
+    sub.textContent = 'Write every answer by hand on paper. Move between questions with the tabs.';
+    startBtn.style.display = 'none';
+    finishBtn.style.display = 'inline-block';
+    hideBtn.style.display = 'inline-block';
+  }
+  updateExamTimer();
+  examInterval = setInterval(() => {
+    examSeconds--;
+    updateExamTimer();
+    if (examSeconds <= 0) {
+      clearInterval(examInterval);
+      if (examState.phase === 'reading') startExamPhase('writing');
+      else finishExam();
+    }
+  }, 1000);
+}
+
+function updateExamTimer() {
+  const el = document.getElementById('exam-timer');
+  if (examTimerHidden) { el.textContent = '•••'; el.className = 'timer'; return; }
+  const s = Math.max(0, examSeconds);
+  const m = Math.floor(s / 60);
+  el.textContent = m + ':' + String(s % 60).padStart(2, '0');
+  el.className = 'timer' + (s <= 30 && s > 0 ? ' warning' : s <= 0 ? ' overrun' : '');
+}
+
+function renderExamTabs() {
+  const bar = document.getElementById('exam-tabs');
+  bar.innerHTML = examState.questions.map((item, i) => `
+    <button class="exam-tab ${i === examState.activeIndex ? 'active' : ''}" data-exam-tab="${i}">
+      Q${i + 1}<span class="exam-tab-marks">${item.question.marks} mark${item.question.marks !== 1 ? 's' : ''}</span>
+    </button>
+  `).join('');
+  bar.querySelectorAll('[data-exam-tab]').forEach(btn => {
+    btn.addEventListener('click', () => renderExamTab(parseInt(btn.dataset.examTab)));
+  });
+}
+
+function renderExamTab(i) {
+  examState.activeIndex = i;
+  document.querySelectorAll('#exam-tabs .exam-tab').forEach((b, idx) => {
+    b.classList.toggle('active', idx === i);
+  });
+  const item = examState.questions[i];
+  const q = item.question;
+  const parts = [];
+  parts.push(`<div class="marks-badge">${marksText(q.marks)}</div>`);
+  parts.push(`<div class="question-stem" style="margin-bottom:var(--space);">Question ${i + 1}. ${esc(q.stemText)}</div>`);
+  parts.push(`<div class="panel-label">Source text${item.secondSource ? 's' : ''}</div>`);
+  parts.push(`<div class="source-text" id="exam-src-${i}"></div>`);
+  document.getElementById('exam-tab-content').innerHTML = parts.join('');
+  const el = document.getElementById('exam-src-' + i);
+  renderSource(el, item.source);
+  if (item.secondSource) {
+    const divider = document.createElement('hr');
+    divider.style.cssText = 'margin:16px 0;border:none;border-top:2px solid var(--color-border);';
+    el.after(divider);
+    const sec = document.createElement('div');
+    sec.className = 'source-text';
+    sec.style.marginTop = 'var(--space-sm)';
+    renderSource(sec, item.secondSource);
+    divider.after(sec);
+  }
+  window.scrollTo(0, 0);
+}
+
+function finishExam() {
+  clearInterval(examInterval);
+  // Record each question for the session report (no per-question calibration in an exam).
+  examState.questions.forEach(item => {
+    const q = item.question;
+    app.session.attempted.push({
+      questionId: q.id, verb: q.verb, marks: q.marks, concept: q.concept,
+      textType: item.source.textType, selfMarks: {},
+      confidenceRating: null, performanceRating: null, gap: null
+    });
+    app.session.totalMarks += q.marks;
+  });
+  renderExamReview();
+  goTo('exam-review');
+}
+
+function renderExamReview() {
+  const list = document.getElementById('exam-review-list');
+  list.innerHTML = examState.questions.map((item, i) => {
+    const q = item.question;
+    const checklistHtml = item.checklist.map(c => `
+      <li style="margin-bottom:8px;">
+        ${esc(c.text)}
+        ${c.action ? `<div class="sm-action"><strong>Do this:</strong> ${esc(c.action)}</div>` : ''}
+      </li>
+    `).join('');
+    const nesa = item.nesaItem;
+    const nesaHtml = nesa ? `
+      <p style="font-size:0.85rem;color:var(--color-muted);margin:4px 0;">Real NESA question (same verb and marks): <em>${esc(nesa.stemText || '')}</em></p>
+      <div class="nesa-sample"><p style="font-size:0.85rem;color:var(--color-muted);margin-bottom:6px;">Sample response (published by NESA)</p>
+        <div><blockquote>${esc(nesa.sampleAnswer || '').replace(/\n/g, '<br>')}</blockquote></div></div>
+      <p style="font-size:0.85rem;color:var(--color-muted);margin:var(--space-sm) 0 4px;">Marker feedback — what better responses did</p>
+      <div style="font-size:0.9rem;line-height:1.6;">${esc(nesa.markerNotes || '').replace(/\n/g, '<br>') || '<em>(none)</em>'}</div>
+    ` : '<p style="color:var(--color-muted);">No matching NESA sample for this verb and mark allocation.</p>';
+    return `
+      <div class="exam-review-card">
+        <div class="marks-badge">${marksText(q.marks)}</div>
+        <div class="question-stem" style="margin-bottom:var(--space-sm);">Question ${i + 1}. ${esc(q.stemText)}</div>
+        <p style="font-weight:700;font-size:0.9rem;margin-bottom:6px;">Mark your answer against these:</p>
+        <ul style="padding-left:20px;font-size:0.9rem;line-height:1.5;">${checklistHtml}</ul>
+        <details style="margin-top:var(--space-sm);">
+          <summary style="cursor:pointer;font-weight:600;color:var(--color-accent);">Show NESA sample &amp; marker notes</summary>
+          <div style="margin-top:var(--space-sm);">${nesaHtml}</div>
+        </details>
+      </div>
+    `;
+  }).join('');
 }
 
 // ── SETUP SCREEN ──────────────────────────────────────────────────────────────
@@ -1014,7 +1285,7 @@ function initSetup() {
   document.getElementById('generate-btn').addEventListener('click', async () => {
     if (!app.dataLoaded) { setError('setup-error', 'Still loading materials — please wait a moment.'); return; }
     setError('setup-error', null);
-    app.session = { attempted: [], reflections: [], totalMarks: 0, examMode: app.level === 3 };
+    app.session = { attempted: [], reflections: [], totalMarks: 0, examMode: false };
     const btn = document.getElementById('generate-btn');
     btn.disabled = true;
     showSpinner('setup-spinner', 'Selecting your question…');
@@ -1029,6 +1300,25 @@ function initSetup() {
       setError('setup-error', 'Could not find a suitable question. Please try again. (' + err.message + ')');
     }
   });
+
+  // Full exam paper
+  document.getElementById('exam-btn').addEventListener('click', () => {
+    if (!app.dataLoaded) { setError('exam-error', 'Still loading materials — please wait a moment.'); return; }
+    setError('exam-error', null);
+    try {
+      startExamPaper();
+    } catch (err) {
+      setError('exam-error', 'Could not assemble an exam paper. Please try again. (' + err.message + ')');
+    }
+  });
+  document.getElementById('exam-start-writing-btn').addEventListener('click', () => startExamPhase('writing'));
+  document.getElementById('exam-finish-btn').addEventListener('click', finishExam);
+  document.getElementById('exam-hide-btn').addEventListener('click', () => {
+    examTimerHidden = !examTimerHidden;
+    document.getElementById('exam-hide-btn').textContent = examTimerHidden ? 'Show timer' : 'Hide timer';
+    updateExamTimer();
+  });
+  document.getElementById('exam-review-finish-btn').addEventListener('click', startReflectionScreen);
 }
 
 // ── READING SCREEN ────────────────────────────────────────────────────────────
@@ -1161,6 +1451,9 @@ function buildConfidenceSection() {
   document.getElementById('confidence-question-text').textContent = qText;
   document.getElementById('confidence-value').textContent = '—';
   document.getElementById('rp-confidence-set-msg').style.display = 'none';
+  // Reset the slider to its neutral midpoint, untouched.
+  const slider = document.getElementById('confidence-slider');
+  slider.value = 3;
 
   // Reset button styles
   document.querySelectorAll('[data-cv]').forEach(b => {
@@ -1172,6 +1465,8 @@ function buildConfidenceSection() {
 function setConfidenceRating(val) {
   app.current.confidenceRating = val;
   document.getElementById('confidence-value').textContent = val;
+  // Keep the slider position in sync (whether set by slider or by button).
+  document.getElementById('confidence-slider').value = val;
 
   // Highlight selected button
   document.querySelectorAll('[data-cv]').forEach(b => {
@@ -1234,7 +1529,7 @@ function startWriteScreen() {
   document.getElementById('write-line-guide').textContent = question.lineGuide || (question.marks * 3);
   document.getElementById('write-subtitle').textContent =
     marksText(question.marks) + ' — ' +
-    { 1:'Write on paper. One clear analysed point per mark.', 2:'Write on paper. Sustain analysis — technique → effect → concept.', 3:'Exam conditions. No prompts.' }[app.level];
+    { 1:'Write on paper. One clear analysed point per mark.', 2:'Write on paper. Sustain analysis — technique → effect → concept.', 3:'Extension. Harder questions, no prompts.' }[app.level];
 
   // Writing assistance
   document.getElementById('write-assistance').style.display =
@@ -1522,8 +1817,11 @@ function startReportScreen() {
 
   // Calibration snapshot
   const calEl = document.getElementById('report-calibration');
+  const hasCalibration = attempted.some(a => a.confidenceRating != null && a.performanceRating != null);
   if (!attempted.length) {
     calEl.textContent = 'No calibration data this session.';
+  } else if (!hasCalibration) {
+    calEl.textContent = 'Exam paper — confidence and performance are rated in single-question practice, not under exam conditions.';
   } else {
     const gaps = attempted.map(a => ({ gap: a.gap, conf: a.confidenceRating, perf: a.performanceRating, verb: a.verb }));
     const overconfident = gaps.filter(g => g.gap > 1);
@@ -1640,6 +1938,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('rp-cube-next-btn').addEventListener('click', advanceCubeStep);
 
   // Confidence rating buttons
+  document.getElementById('confidence-slider').addEventListener('input', e => {
+    setConfidenceRating(parseInt(e.target.value));
+  });
   document.querySelectorAll('[data-cv]').forEach(btn => {
     btn.addEventListener('click', () => setConfidenceRating(parseInt(btn.dataset.cv)));
   });
