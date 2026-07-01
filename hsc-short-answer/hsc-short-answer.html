@@ -308,8 +308,131 @@
       border-radius: var(--radius); padding: var(--space); margin-bottom: var(--space);
     }
 
+    /* ── Top-level section tab bar (Section I / Section II) ─────────────────── */
+    .section-tabbar {
+      max-width: 1200px; margin: 0 auto var(--space); display: flex; gap: 8px;
+      border-bottom: 2px solid var(--color-border); padding-bottom: 0;
+    }
+    .section-tab {
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+      padding: 10px 20px; border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: var(--radius) var(--radius) 0 0; background: transparent;
+      color: var(--color-muted); cursor: pointer; margin-bottom: -2px;
+    }
+    .section-tab.active {
+      background: white; color: var(--color-accent);
+      border-color: var(--color-border); border-bottom: 2px solid white;
+    }
+    .section-tab .section-tab-sub { display: block; font-weight: 400; font-size: 0.75rem; }
+
+    /* ── Desktop gate (Section II is desktop/laptop only) ───────────────────── */
+    #s2-desktop-gate {
+      display: none; text-align: center; padding: var(--space-lg) var(--space);
+      color: var(--color-muted);
+    }
+    #s2-desktop-gate.show { display: block; }
+
+    /* ── CAST annotation stepper (reuses cube styles) ──────────────────────── */
+    .cast-annotation-box {
+      background: #FFFBEB; border: 1px solid #F0D060;
+      border-radius: var(--radius); padding: var(--space-sm) var(--space);
+      margin-bottom: var(--space); font-size: 0.88rem;
+    }
+    .cast-annotation-box .panel-label { color: #8B6914; }
+    .cast-row { margin-bottom: 5px; line-height: 1.4; }
+    .cast-key { font-weight: 700; color: #8B6914; display: inline-block; width: 22px; }
+
+    /* ── Objectives + grouped checklist ────────────────────────────────────── */
+    .objective-group { margin-bottom: var(--space); }
+    .objective-head {
+      font-size: 0.8rem; font-weight: 700; color: var(--color-accent);
+      text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;
+      padding-bottom: 4px; border-bottom: 1px solid var(--color-border);
+    }
+    .obj-item { font-size: 0.9rem; padding: 5px 0; display: flex; gap: 8px; }
+    .obj-item .src-tag {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      padding: 1px 6px; border-radius: 10px; flex-shrink: 0; height: fit-content;
+    }
+    .src-tag.reward { background: var(--color-accent-light); color: var(--color-accent); }
+    .src-tag.improvement { background: #FFF3D6; color: #8B6914; }
+
+    /* ── Per-criterion calibration sliders ─────────────────────────────────── */
+    .crit-slider-row { margin-bottom: var(--space-sm); }
+    .crit-slider-row .crit-label { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; text-transform: capitalize; }
+    .crit-slider-row .slider-row { margin-bottom: 0; }
+    .crit-gap-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin: var(--space-sm) 0; }
+    .crit-gap-card {
+      display: grid; grid-template-columns: 1fr auto auto auto; gap: var(--space-sm);
+      align-items: center; background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius); padding: 8px var(--space-sm); font-size: 0.88rem;
+    }
+    .crit-gap-card .cg-val { font-weight: 700; color: var(--color-accent); min-width: 34px; text-align: center; }
+    .crit-gap-card .cg-gap { font-weight: 700; min-width: 44px; text-align: center; }
+    .obj-rollup { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--space-sm); margin-top: var(--space); }
+
+    /* ── Planning scaffold slots ───────────────────────────────────────────── */
+    .plan-slot {
+      border: 1px dashed var(--color-border); border-radius: var(--radius);
+      padding: var(--space-sm); margin-bottom: var(--space-sm); background: white;
+    }
+    .plan-slot .plan-slot-label { font-size: 0.8rem; font-weight: 700; color: var(--color-muted); margin-bottom: 4px; }
+    .plan-slot textarea, .plan-slot input {
+      width: 100%; font-family: var(--font-body); font-size: 0.92rem;
+      border: 1px solid var(--color-border); border-radius: 6px; padding: 6px; resize: vertical;
+    }
+    .plan-stem { font-size: 0.85rem; color: var(--color-muted); font-style: italic; }
+    .arg-block { border-left: 3px solid var(--color-accent-light); padding-left: var(--space-sm); margin-bottom: var(--space); }
+
+    /* ── Margin protocol symbols ───────────────────────────────────────────── */
+    .margin-symbols { display: flex; gap: var(--space); margin: var(--space-sm) 0; flex-wrap: wrap; }
+    .margin-sym { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+    .margin-sym .sym { font-size: 1.4rem; line-height: 1; }
+
+    /* ── Rubric translation highlight + card ───────────────────────────────── */
+    .rubric-hl {
+      border-bottom: 2px dotted var(--color-accent); cursor: help; position: relative;
+    }
+    .rubric-hl:hover, .rubric-hl.open { background: var(--color-accent-light); }
+    .rubric-hl .rubric-card {
+      display: none; position: absolute; left: 0; top: 100%; z-index: 50;
+      width: 280px; background: white; border: 1px solid var(--color-accent);
+      border-radius: var(--radius); padding: var(--space-sm); margin-top: 4px;
+      font-size: 0.85rem; font-style: normal; font-weight: 400; color: var(--color-text);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.14); line-height: 1.5;
+    }
+    .rubric-hl:hover .rubric-card, .rubric-hl.open .rubric-card { display: block; }
+    .band-ladder-row {
+      display: flex; gap: var(--space-sm); padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--color-border); font-size: 0.9rem; cursor: pointer;
+    }
+    .band-ladder-row:hover { background: var(--color-bg); }
+    .band-ladder-row.selected { background: var(--color-accent-light); }
+    .band-ladder-row .band-no { font-weight: 700; color: var(--color-accent); min-width: 90px; }
+    .climb-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin: var(--space) 0; }
+    .climb-card { border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-sm); }
+    .climb-card.above { border-color: var(--color-accent); background: var(--color-accent-light); }
+
+    /* ── Drill gym ─────────────────────────────────────────────────────────── */
+    .drill-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: var(--space-sm); margin: var(--space) 0; }
+    .drill-card {
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      padding: var(--space); cursor: pointer; background: white;
+    }
+    .drill-card:hover { border-color: var(--color-accent); background: var(--color-accent-light); }
+    .drill-card h3 { font-size: 0.95rem; color: var(--color-accent); margin-bottom: 4px; }
+    .drill-card p { font-size: 0.85rem; color: var(--color-muted); }
+
+    /* ── Pacing nudge ──────────────────────────────────────────────────────── */
+    #s2-pacing-nudge {
+      display: none; background: var(--color-accent-light); color: var(--color-accent);
+      border-radius: var(--radius); padding: var(--space-sm) var(--space);
+      font-size: 0.9rem; margin-bottom: var(--space-sm);
+    }
+    #s2-pacing-nudge.show { display: block; }
+
     @media print {
-      .settings-toggle, .btn-row, #settings-panel { display: none !important; }
+      .settings-toggle, .btn-row, #settings-panel, .section-tabbar { display: none !important; }
       section.active { display: block; }
     }
   </style>
@@ -354,6 +477,12 @@
       <option value="none">None</option>
     </select>
   </div>
+</div>
+
+<!-- ── TOP-LEVEL SECTION TABS ─────────────────────────────────────────────── -->
+<div class="section-tabbar" id="section-tabbar">
+  <button class="section-tab active" data-section="1">Section I<span class="section-tab-sub">Short answer</span></button>
+  <button class="section-tab" data-section="2">Section II<span class="section-tab-sub">Extended response · Q6</span></button>
 </div>
 
 <div class="app" id="main-app">
@@ -680,6 +809,340 @@
 
 </div><!-- .app -->
 
+<!-- ══ SECTION II — Extended Response (Q6) ══════════════════════════════════ -->
+<div class="app" id="app-s2" style="display:none;">
+
+  <!-- Desktop gate -->
+  <div id="s2-desktop-gate">
+    <h2>This tool is built for a laptop or desktop</h2>
+    <p style="margin-top:var(--space-sm);">The Section II extended response practice needs a wider screen. Please switch to a laptop or desktop.</p>
+  </div>
+
+  <div id="s2-main">
+    <!-- ── S0 SETUP ──────────────────────────────────────────────────────── -->
+    <section id="s2-screen-setup" class="active">
+      <h1>Section II — The Common Module Essay</h1>
+      <p class="coach">One 20-mark extended response on <strong>The Merchant of Venice</strong>. You read a real Question 6 essay question, plan and write it by hand, then self-mark against the authentic marking rubric and marker feedback. The tool never gives you a mark — it holds up the yardstick.</p>
+
+      <div style="margin:var(--space) 0;">
+        <h2>Mode</h2>
+        <div class="btn-row" id="s2-mode-btns" style="margin-top:6px;">
+          <button class="btn-secondary s2-mode-btn active" data-mode="essay">Practice a single essay</button>
+          <button class="btn-secondary s2-mode-btn" data-mode="timedEssay">Timed exam essay</button>
+          <button class="btn-secondary s2-mode-btn" data-mode="drill">Micro-skill drill gym</button>
+        </div>
+      </div>
+
+      <div style="margin:var(--space) 0;">
+        <h2>Level</h2>
+        <div class="btn-row" id="s2-level-btns" style="margin-top:6px;">
+          <button class="btn-secondary s2-level-btn active" data-level="1">1 · Foundation</button>
+          <button class="btn-secondary s2-level-btn" data-level="2">2 · Consolidation</button>
+          <button class="btn-secondary s2-level-btn" data-level="3">3 · Exam</button>
+        </div>
+        <p id="s2-level-desc" style="margin-top:8px;font-size:0.9rem;color:var(--color-muted);"></p>
+      </div>
+
+      <details id="s2-overrides" style="margin:var(--space) 0;">
+        <summary style="cursor:pointer;font-weight:600;color:var(--color-muted);">Optional overrides — mix levers independently</summary>
+        <div id="s2-override-body" style="margin-top:var(--space-sm);display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm);"></div>
+      </details>
+
+      <div class="error-msg" id="s2-setup-error"></div>
+      <div class="spinner" id="s2-setup-spinner">Loading materials…</div>
+      <div class="btn-row">
+        <button class="btn-primary" id="s2-start-btn">Start</button>
+      </div>
+    </section>
+
+    <!-- ── S1/S2/S3 QUESTION (read → CAST → per-criterion confidence) ─────── -->
+    <section id="s2-screen-question">
+      <div class="screen-bar">
+        <div class="screen-bar-left">
+          <span class="screen-title">Read and unpack the question</span>
+          <span class="screen-subtitle" id="s2-q-sub"></span>
+        </div>
+        <div class="screen-bar-right">
+          <button class="btn-primary" id="s2-q-continue" disabled>Ready to plan →</button>
+        </div>
+      </div>
+      <div class="split-screen">
+        <div>
+          <div class="marks-badge" id="s2-q-marks"></div>
+          <div class="question-stem" id="s2-q-stem" style="white-space:pre-wrap;"></div>
+          <div style="margin:var(--space) 0;">
+            <p style="font-size:0.85rem;font-weight:700;color:var(--color-muted);margin-bottom:6px;">Your answer will be assessed on how well you:</p>
+            <div id="s2-q-objectives"></div>
+          </div>
+          <div class="panel-label">Question checklist — what markers reward for this question</div>
+          <div id="s2-q-checklist"></div>
+        </div>
+        <div class="panel" id="s2-q-right">
+          <!-- CAST stepper -->
+          <div id="s2-cast-section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-sm);">
+              <div class="panel-label" style="margin-bottom:0;">CAST the question</div>
+              <div class="step-dots" id="s2-cast-dots"></div>
+            </div>
+            <div id="s2-cast-steps"></div>
+            <div class="btn-row" style="margin-top:var(--space-sm);">
+              <button class="btn-primary" id="s2-cast-next">Next →</button>
+            </div>
+          </div>
+          <!-- Per-criterion confidence -->
+          <div id="s2-confidence-section" style="display:none;">
+            <div class="confidence-block">
+              <div class="panel-label">Rate your confidence — one per criterion</div>
+              <p class="confidence-question" id="s2-conf-frame"></p>
+              <div class="confidence-why">
+                <strong>Why rate confidence?</strong> The point is to expose the gap between how confident you feel before writing and how you judge each criterion afterwards. Rating per criterion — not one blurred number — shows exactly which skill to work on next.
+              </div>
+              <div id="s2-conf-sliders"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── S4 PLAN ───────────────────────────────────────────────────────── -->
+    <section id="s2-screen-plan">
+      <div class="screen-bar">
+        <div class="screen-bar-left">
+          <span class="screen-title">Plan your essay</span>
+          <span class="screen-subtitle" id="s2-plan-sub"></span>
+        </div>
+        <div class="screen-bar-right">
+          <div class="timer" id="s2-plan-timer" style="display:none;">5:00</div>
+          <button class="btn-primary" id="s2-plan-continue">Ready to write →</button>
+        </div>
+      </div>
+      <div class="marks-badge" id="s2-plan-marks"></div>
+      <div class="question-stem" id="s2-plan-stem" style="white-space:pre-wrap;"></div>
+      <p class="coach" id="s2-plan-coach"></p>
+      <div id="s2-plan-body"></div>
+    </section>
+
+    <!-- ── S5 WRITE ──────────────────────────────────────────────────────── -->
+    <section id="s2-screen-write">
+      <div class="screen-bar">
+        <div class="screen-bar-left">
+          <span class="screen-title">Write your essay — by hand on paper</span>
+          <span class="screen-subtitle" id="s2-write-sub"></span>
+        </div>
+        <div class="screen-bar-right">
+          <button class="btn-ghost" id="s2-write-hide">Hide timer</button>
+          <div class="timer" id="s2-write-timer">45:00</div>
+          <button class="btn-primary" id="s2-write-done">Finished writing →</button>
+        </div>
+      </div>
+      <div id="s2-pacing-nudge"></div>
+      <div class="split-screen">
+        <div>
+          <div class="marks-badge" id="s2-write-marks"></div>
+          <div class="question-stem" id="s2-write-stem" style="white-space:pre-wrap;"></div>
+          <div id="s2-write-plan"></div>
+        </div>
+        <div class="panel">
+          <div id="s2-write-cast" class="cast-annotation-box" style="display:none;">
+            <div class="panel-label">Your CAST annotation</div>
+            <div class="cast-row"><span class="cast-key">C</span><span id="s2-wc-c"></span></div>
+            <div class="cast-row"><span class="cast-key">A</span><span id="s2-wc-a"></span></div>
+            <div class="cast-row"><span class="cast-key">S</span><span id="s2-wc-s"></span></div>
+            <div class="cast-row"><span class="cast-key">T</span><span id="s2-wc-t"></span></div>
+          </div>
+          <div id="s2-write-checklist-wrap">
+            <div class="panel-label">Checklist</div>
+            <div id="s2-write-checklist"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── S6 SELF-MARK (margin protocol + evidence check) ───────────────── -->
+    <section id="s2-screen-selfmark">
+      <h2>Self-mark with the margin protocol</h2>
+      <p class="coach">This is your judgement, not the tool's. First annotate your handwritten essay, then report what the chains show and locate yourself against each checklist item.</p>
+      <div class="marks-badge" id="s2-sm-marks"></div>
+      <div class="question-stem" id="s2-sm-stem" style="white-space:pre-wrap;"></div>
+
+      <div class="report-card" style="margin-top:var(--space);">
+        <h2>1 · Annotate the evidence chains in the margin</h2>
+        <div class="margin-symbols">
+          <div class="margin-sym"><span class="sym">△</span> Triangle — a piece of evidence (a quotation)</div>
+          <div class="margin-sym"><span class="sym">□</span> Square — you state its effect</div>
+          <div class="margin-sym"><span class="sym">○</span> Circle — you link it to your topic sentence and the question</div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--color-muted);">A healthy paragraph repeats △ □ ○. A triangle with no square is evidence with no effect — quoting without analysing. The tool cannot see your essay; you must actually annotate it.</p>
+        <div style="margin-top:var(--space-sm);display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm);">
+          <div class="plan-slot"><div class="plan-slot-label">How many chains are complete (△□○)?</div><input id="s2-chain-complete" type="text" placeholder="e.g. 5 of 7"></div>
+          <div class="plan-slot"><div class="plan-slot-label">Which paragraphs break the chain, and how?</div><input id="s2-chain-broken" type="text" placeholder="e.g. para 2 — quotes with no effect"></div>
+        </div>
+      </div>
+
+      <div class="report-card">
+        <h2>2 · Locate yourself against each checklist item</h2>
+        <div id="s2-sm-checklist"></div>
+      </div>
+
+      <div class="report-card">
+        <h2>3 · Optional — confirm a quotation you used</h2>
+        <p style="font-size:0.88rem;color:var(--color-muted);margin-bottom:var(--space-sm);">You wrote from memory. Paste a quotation to confirm it against the verified bank. The bank is a sample of key quotations, not the whole play — <em>not found</em> does not mean your quote is wrong. Ticking your checklist is always enough.</p>
+        <div style="display:flex;gap:var(--space-sm);align-items:flex-start;">
+          <input id="s2-evidence-input" type="text" placeholder="Paste a quotation you used…" style="flex:1;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);">
+          <button class="btn-secondary" id="s2-evidence-btn">Check</button>
+        </div>
+        <div class="evidence-result" id="s2-evidence-result"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="s2-sm-continue" disabled>Rate how well I did →</button>
+      </div>
+    </section>
+
+    <!-- ── S8 CALIBRATION (per-criterion result + attribution) ───────────── -->
+    <section id="s2-screen-calibration">
+      <h2>How well did you do — criterion by criterion?</h2>
+      <p class="coach">Set a rating for each criterion. You'll see it beside the confidence you set before writing, so the gap is visible criterion by criterion.</p>
+      <div class="marks-badge" id="s2-cal-marks"></div>
+      <div id="s2-result-sliders" style="margin-top:var(--space);"></div>
+
+      <div id="s2-attribution-block" style="display:none;margin-top:var(--space);">
+        <div class="confidence-block">
+          <div class="panel-label">What most shaped this result?</div>
+          <div class="btn-row" id="s2-attribution-opts" style="margin-top:6px;"></div>
+          <textarea id="s2-attribution-note" rows="2" maxlength="200" placeholder="Optional note (max 200 characters)…" style="width:100%;margin-top:var(--space-sm);padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);"></textarea>
+        </div>
+      </div>
+
+      <div id="s2-cal-reveal" style="display:none;">
+        <h2 style="margin-top:var(--space);">Your calibration gaps</h2>
+        <div class="crit-gap-grid" id="s2-cal-gaps"></div>
+        <h2 style="margin-top:var(--space);">Rolled up to the three objectives the exam assesses</h2>
+        <div class="obj-rollup" id="s2-cal-rollup"></div>
+        <div class="btn-row">
+          <button class="btn-primary" id="s2-cal-continue">Continue to syllabus audit →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── S9 SYLLABUS AUDIT ─────────────────────────────────────────────── -->
+    <section id="s2-screen-syllabus">
+      <h2>When did you address the syllabus? How? Be explicit.</h2>
+      <p class="coach">For each Common Module rubric point, name the paragraph and the move — or mark it not addressed. The tool never judges your answer; it records what you report.</p>
+      <div id="s2-syllabus-list" style="margin-top:var(--space);"></div>
+      <details style="margin-top:var(--space);">
+        <summary style="cursor:pointer;font-weight:600;color:var(--color-accent);">Show the full Common Module rubric in one place</summary>
+        <div id="s2-syllabus-full" style="margin-top:var(--space-sm);font-size:0.9rem;line-height:1.7;"></div>
+      </details>
+      <div class="btn-row">
+        <button class="btn-primary" id="s2-syllabus-continue" disabled>Compare and climb one band →</button>
+      </div>
+    </section>
+
+    <!-- ── S10 COMPARE & CLIMB ───────────────────────────────────────────── -->
+    <section id="s2-screen-compare">
+      <h2>Compare to the real marking guidance, then climb one band</h2>
+      <p class="coach">Here is the real NESA marking guidance for a Question 6 of this kind. There is no model essay to copy — NESA does not publish one. Tick the moves you made; the yardstick is the rubric and the marker feedback. Hover any highlighted phrase to see it in plain student voice.</p>
+      <div class="btn-row" style="margin-bottom:var(--space);">
+        <button class="btn-ghost" id="s2-rubric-toggle">Show in student voice</button>
+      </div>
+      <div class="marks-badge" id="s2-cmp-marks"></div>
+
+      <h2 style="margin-top:var(--space);">The five-band rubric — where do you locate yourself?</h2>
+      <div id="s2-cmp-bands" style="margin-top:var(--space-sm);"></div>
+
+      <div class="split-screen" style="margin-top:var(--space);">
+        <div>
+          <div class="panel-label">What better responses did — tick what you managed</div>
+          <div id="s2-cmp-rewards"></div>
+        </div>
+        <div>
+          <div class="panel-label">Areas to improve — tick any you fell into</div>
+          <div id="s2-cmp-improvements"></div>
+        </div>
+      </div>
+
+      <div id="s2-climb" style="display:none;margin-top:var(--space);">
+        <h2>Climb one band</h2>
+        <div class="climb-pair" id="s2-climb-pair"></div>
+        <div class="report-card" id="s2-climb-move"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="s2-cmp-continue">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ── S11 REFLECTION ────────────────────────────────────────────────── -->
+    <section id="s2-screen-reflection">
+      <h2>Reflect before you go</h2>
+      <p class="coach">Build a short "next time I want to focus on" list in your own words. You can skip it.</p>
+      <div id="s2-reflection-list" style="margin-bottom:var(--space);"></div>
+      <div style="display:flex;gap:var(--space-sm);align-items:flex-start;">
+        <input type="text" id="s2-reflection-input" placeholder="e.g. name a dramatic technique then its effect in every paragraph" style="flex:1;padding:10px;font-family:var(--font-body);font-size:1rem;border:1px solid var(--color-border);border-radius:var(--radius);">
+        <button class="btn-secondary" id="s2-reflection-add">Add</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="s2-reflection-report">See session report →</button>
+        <button class="btn-ghost" id="s2-reflection-skip">Skip, go to report →</button>
+      </div>
+    </section>
+
+    <!-- ── S12 SESSION REPORT ────────────────────────────────────────────── -->
+    <section id="s2-screen-report">
+      <h2>Session Report</h2>
+      <p class="coach">Take a screenshot to keep this — the tool stores nothing. Keep your handwritten essay and the marking guidance so you can build your own record of growth across sessions.</p>
+      <div class="report-card"><h2>Focus for next time</h2><ul id="s2-report-focus" style="padding-left:20px;margin-top:var(--space-sm);line-height:1.8;"></ul></div>
+      <div class="report-card"><h2>What you practised</h2><div id="s2-report-practised" style="margin-top:var(--space-sm);font-size:0.9rem;line-height:1.8;"></div></div>
+      <div class="report-card"><h2>Calibration snapshot</h2><div id="s2-report-calibration" style="margin-top:var(--space-sm);font-size:0.9rem;line-height:1.7;"></div></div>
+      <div class="report-card"><h2>Syllabus coverage</h2><div class="coverage-grid" id="s2-report-syllabus" style="margin-top:var(--space-sm);"></div></div>
+      <div class="report-card">
+        <h2>Coverage map</h2>
+        <p style="font-size:0.85rem;color:var(--color-muted);margin:var(--space-sm) 0 6px;">Directive verbs practised this session</p>
+        <div class="coverage-grid" id="s2-report-verbs"></div>
+        <p style="font-size:0.85rem;color:var(--color-muted);margin:var(--space-sm) 0 6px;">Concepts practised</p>
+        <div class="coverage-grid" id="s2-report-concepts"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="s2-report-again">Practise another question</button>
+        <button class="btn-ghost" id="s2-report-home">Back to setup</button>
+      </div>
+    </section>
+
+    <!-- ── DRILL GYM ─────────────────────────────────────────────────────── -->
+    <section id="s2-screen-drill">
+      <div class="screen-bar">
+        <div class="screen-bar-left">
+          <span class="screen-title">Micro-skill drill gym</span>
+          <span class="screen-subtitle">Short, low-stakes drills on a real question. No mark, ever.</span>
+        </div>
+        <div class="screen-bar-right">
+          <div class="marks-badge" style="margin-bottom:0;">20 marks</div>
+        </div>
+      </div>
+      <div id="s2-drill-pick">
+        <p class="coach" id="s2-drill-q"></p>
+        <div class="drill-grid" id="s2-drill-grid"></div>
+        <div class="btn-row"><button class="btn-ghost" id="s2-drill-newq">Different question</button><button class="btn-ghost" id="s2-drill-exit">← Back to setup</button></div>
+      </div>
+      <div id="s2-drill-run" style="display:none;">
+        <div class="screen-bar">
+          <div class="screen-bar-left"><span class="screen-title" id="s2-drill-title"></span></div>
+          <div class="screen-bar-right"><div class="timer" id="s2-drill-timer">4:00</div></div>
+        </div>
+        <div class="question-stem" id="s2-drill-stem" style="white-space:pre-wrap;"></div>
+        <p class="coach" id="s2-drill-prompt"></p>
+        <textarea id="s2-drill-box" rows="4" placeholder="Write your attempt here, or on paper…" style="width:100%;padding:10px;font-family:var(--font-body);font-size:1rem;border:1px solid var(--color-border);border-radius:var(--radius);"></textarea>
+        <div id="s2-drill-check" style="display:none;margin-top:var(--space);" class="report-card"></div>
+        <div class="btn-row">
+          <button class="btn-primary" id="s2-drill-selfcheck">Show self-check →</button>
+          <button class="btn-secondary" id="s2-drill-again">Another drill →</button>
+        </div>
+      </div>
+    </section>
+  </div><!-- #s2-main -->
+</div><!-- #app-s2 -->
+
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 const CONFIG = {
@@ -688,7 +1151,55 @@ const CONFIG = {
   writingSecondsPerMark: 120,
   paper: { totalMarks: 20, readingSeconds: 300, writingSeconds: 2700 },
   cube: { level1: 'on-locked', level2: 'on-default', level3: 'off' },
-  defaultLevel: 1
+  defaultLevel: 1,
+
+  // ── Section II, Common Module extended response (Q6) ──────────────────────
+  // The tool never calls a model and never generates: every question is selected
+  // from the fixed bank in data/essayQuestions.json. Data paths are relative to
+  // dataPath so the tool works from a project subpath (GitHub Pages / static host).
+  section2: {
+    prescribedText: 'The Merchant of Venice',
+    totalMarks: 20,
+    bandCount: 5,
+    checklistCategoryCount: 5,
+    syllabusPointCount: 7,
+    drillTypeCount: 6,
+
+    writingSecondsEssay: 2700,      // 45 minutes
+    planningSeconds: 300,           // 5 minute optional window, Levels 1 and 2
+    drillSeconds: 240,              // 4 minutes per drill
+    tickMs: 1000,                   // countdown redraw interval
+
+    // Levels 1 and 2 pacing segments, seconds, must sum to writingSecondsEssay
+    pacingSegments: [
+      { id: 'introThesis', label: 'Thesis and introduction', seconds: 300 },
+      { id: 'arg1', label: 'First argument', seconds: 600 },
+      { id: 'arg2', label: 'Second argument', seconds: 600 },
+      { id: 'arg3', label: 'Third argument', seconds: 600 },
+      { id: 'judgement', label: 'Judgement and conclusion', seconds: 300 },
+      { id: 'buffer', label: 'Checking time', seconds: 300 }
+    ],
+    segmentedPacing: { level1: true, level2: true, level3: false },
+    nudgeAtSegmentEnd: true,
+    nudgeRepeat: false,
+
+    slider: { min: 0, max: 100, step: 1, initial: null },
+    attributionOptions: ['preparation', 'the question', 'effort', 'stress', 'luck'],
+    attributionNoteMaxChars: 200,
+
+    selection: { varietyWindow: 4, maxPickAttempts: 20 },
+    evidence: { minNormalisedChars: 8 },
+
+    layout: { minViewportPx: 1024, leftPanelPercent: 60, rightPanelPercent: 40, gapPx: 24 },
+
+    cast: { level1: 'on-locked', level2: 'on-default', level3: 'off' },
+    defaultLevel: 1,
+    dataFiles: {
+      essayQuestions: 'essayQuestions.json',
+      quotes: 'merchantQuotes.json',
+      syllabus: 'syllabus.json'
+    }
+  }
 };
 
 const VERB_LADDER = {
@@ -1998,6 +2509,945 @@ document.addEventListener('DOMContentLoaded', () => {
   // Report
   document.getElementById('report-again-btn').addEventListener('click', () => goTo('setup'));
 });
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ══ SECTION II — Common Module extended response (Q6) ══════════════════════════
+// A fully independent flow: its own state, screens and navigation. No shared state
+// with Section I. Never calls a model, never generates, never gives a mark; every
+// question is selected from the fixed bank in data/essayQuestions.json.
+// ══════════════════════════════════════════════════════════════════════════════
+(function () {
+  const CFG = CONFIG.section2;
+  const $ = id => document.getElementById(id);
+  const S2_CATS = ['argument', 'analysis', 'evidence', 'judgement', 'expression'];
+  const OBJECTIVES = ['understanding', 'representation', 'expression'];
+  const VERB_FAMILIES = ['analyse', 'explain', 'evaluate', 'assess'];
+
+  // Verb -> quality word that must open the band-5 descriptor (brief §4).
+  const VERB_QUALITY = {
+    'analyse': 'Analyses', 'how does': 'Analyses',
+    'evaluate': 'Evaluates', 'to what extent': 'Evaluates',
+    'explain': 'Explains', 'in what ways': 'Explains', 'how effectively': 'Explains',
+    'assess': 'Assesses'
+  };
+  const ALLOWED_VERBS = Object.keys(VERB_QUALITY);
+
+  const LEVEL_DESCS = {
+    1: 'Foundation, Guided Build — CAST always on, full planning scaffold, quote bank browsable, segmented pacing, rubric visible.',
+    2: 'Consolidation, Supported Draft — CAST on by default, light thesis and skeleton planner, short planning window, segmented pacing.',
+    3: 'Exam — question only, no CAST, plan on paper, a single straight 45-minute timer. The after-answer structures never fade.'
+  };
+
+  const LEVEL_PROFILE = {
+    1: { cast: 'on', planning: 'full', pacing: true, checklist: 'visible', planningTimed: false },
+    2: { cast: 'on', planning: 'light', pacing: true, checklist: 'collapsed', planningTimed: true },
+    3: { cast: 'off', planning: 'none', pacing: false, checklist: 'hidden', planningTimed: true }
+  };
+
+  // ── Rubric translation dictionary (brief starter, extended by hand). Every
+  //    phrase the UI highlights maps to exactly one entry here. ────────────────
+  const DICT = [
+    { phrase: 'Analyses skilfully', plain: 'You pull the play apart and show exactly how Shakespeare builds meaning, with control and insight, all the way through.' },
+    { phrase: 'Evaluates skilfully', plain: 'You weigh it up with real judgement and show, with control and insight, how well the play does what the question asks.' },
+    { phrase: 'Explains skilfully', plain: 'You show clearly and insightfully how the play works, staying in control the whole way through.' },
+    { phrase: 'Assesses skilfully', plain: 'You judge how well the play does something and back that judgement with sharp, controlled analysis.' },
+    { phrase: 'perceptive response', plain: 'You notice things a normal reader would miss and say something genuinely thoughtful about them.' },
+    { phrase: 'insightful response', plain: 'You notice things a normal reader would miss and say something genuinely thoughtful about them.' },
+    { phrase: 'well chosen textual references', plain: 'Short, exact quotes picked on purpose because they prove your point, not just any quote you remembered.' },
+    { phrase: 'coherent and sustained', plain: 'Your argument holds together from start to finish and never loses the thread of the question.' },
+    { phrase: 'thoughtful response', plain: 'A considered response that does more than describe — it makes a point and supports it.' },
+    { phrase: 'relevant textual references', plain: 'Quotes that actually fit the point you are making, not dropped in at random.' },
+    { phrase: 'variable control of language', plain: 'Your expression is sometimes clear and sometimes slips — control it all the way through.' },
+    { phrase: 'sustain a line of argument', plain: 'Make one clear central claim and keep building on it in every paragraph, instead of starting a new unrelated point each time.' },
+    { phrase: 'line of argument', plain: 'One clear central claim carried and built on through every paragraph.' },
+    { phrase: 'interpretive sophistication', plain: 'Your reading is your own and goes past the obvious, showing more than one layer of meaning.' },
+    { phrase: 'conceptual', plain: 'You get to the big idea behind the play — why it matters — not just what happens.' },
+    { phrase: 'metalanguage', plain: 'Use the correct terms for how a play works — soliloquy, aside, stage directions, dramatic irony — and show how they create meaning.' },
+    { phrase: 'features of drama', plain: 'The tools of a play — soliloquy, aside, stage directions, dramatic irony — and how they create meaning.' },
+    { phrase: 'dramatic form', plain: 'The fact that this is a play written to be performed — and everything that follows from that.' },
+    { phrase: 'textual references', plain: 'Quotes and specific moments from the play used as evidence.' },
+    { phrase: 'shape meaning', plain: "How the writer's choices make the audience think or feel a certain way." },
+    { phrase: 'how the audience is positioned', plain: 'How the play makes the audience react — side with someone, judge someone, feel tension.' },
+    { phrase: 'audience is positioned', plain: 'How the play makes the audience react — side with someone, judge someone, feel tension.' },
+    { phrase: 'evaluate', plain: 'Weigh it up and reach a judgement about how well or how powerfully it does something, with reasons.' },
+    { phrase: 'to what extent', plain: 'Decide how much you agree — fully, partly or not really — and defend that stance.' },
+    { phrase: 'judgement', plain: 'A clear verdict you argue for, not just description.' },
+    { phrase: 'personal voice', plain: 'It sounds like you — a real person with a view, not a memorised template.' },
+    { phrase: 'personal and informed', plain: 'Your own view, backed by real knowledge of the text.' },
+    { phrase: 'Describes aspects', plain: 'Retelling or describing parts of the play. This scores low — analyse instead.' },
+    { phrase: 'limited understanding', plain: 'Only a surface grasp of the idea. Push into how and why the play represents it.' },
+    { phrase: 'purposefully select', plain: 'You chose that quote for a reason and it does a job in your argument.' },
+    { phrase: 'holistic understanding', plain: 'You show you know the whole play, not just one famous scene.' },
+    { phrase: 'restating the question', plain: 'Repeating the question words without answering. Avoid this.' }
+  ];
+
+  function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  // Highlight known rubric phrases with hover/click translation cards, OR (in
+  // student-voice mode) swap them for the plain version. Only dictionary phrases
+  // are ever highlighted, so every highlight maps to exactly one entry.
+  function renderRubric(text) {
+    let s = esc(text || '');
+    const dict = DICT.slice().sort((a, b) => b.phrase.length - a.phrase.length);
+    if (s2State.studentVoice) {
+      dict.forEach(e => {
+        s = s.replace(new RegExp(escapeRe(esc(e.phrase)), 'gi'), esc(e.plain));
+      });
+      return s;
+    }
+    const tokens = [];
+    dict.forEach(e => {
+      s = s.replace(new RegExp('(' + escapeRe(esc(e.phrase)) + ')', 'gi'), m => {
+        const i = tokens.length;
+        tokens.push('<span class="rubric-hl" data-dict="' + esc(e.phrase) + '">' + m +
+          '<span class="rubric-card"><strong>Plain English:</strong> ' + esc(e.plain) + '</span></span>');
+        return ' ' + i + '';
+      });
+    });
+    return s.replace(/ (\d+)/g, (_, i) => tokens[+i]);
+  }
+
+  // ── State (session + per-question). Nothing persisted anywhere. ─────────────
+  let data = { questions: [], quotes: [], syllabus: [] };
+  let loaded = false;
+  let s2State = null;
+
+  function freshSession() {
+    return {
+      started: false, mode: 'essay', level: CFG.defaultLevel,
+      overrides: {},
+      servedFamilies: [],     // variety window across the session
+      attempts: [],           // completed questions this session
+      reflections: [],
+      studentVoice: false,
+      // per-question, reset each question:
+      q: null, cast: { c: '', a: '', s: '', t: '' },
+      confidence: {}, result: {}, attribution: { choice: null, note: '' },
+      plan: {}, selfMarks: {}, chain: {},
+      syllabus: {}, bandLocated: null, rewardsTicked: {}, improvementsTicked: {},
+      // drill:
+      drill: { q: null, type: null }
+    };
+  }
+
+  function resetQuestionState() {
+    s2State.cast = { c: '', a: '', s: '', t: '' };
+    s2State.confidence = {}; s2State.result = {};
+    s2State.attribution = { choice: null, note: '' };
+    s2State.plan = {}; s2State.selfMarks = {}; s2State.chain = {};
+    s2State.syllabus = {}; s2State.bandLocated = null;
+    s2State.rewardsTicked = {}; s2State.improvementsTicked = {};
+  }
+
+  function profile() {
+    const p = Object.assign({}, LEVEL_PROFILE[s2State.level]);
+    const o = s2State.overrides;
+    if (o.cast) p.cast = o.cast === 'default' ? p.cast : o.cast;
+    if (o.planning) p.planning = o.planning === 'default' ? p.planning : o.planning;
+    if (o.pacing) p.pacing = o.pacing === 'default' ? p.pacing : (o.pacing === 'on');
+    if (o.checklist) p.checklist = o.checklist === 'default' ? p.checklist : o.checklist;
+    return p;
+  }
+  function castOn() {
+    if (s2State.level === 1) return true;         // on-locked
+    if (s2State.level === 3 && !s2State.overrides.cast) return false;
+    return profile().cast === 'on';
+  }
+
+  // ── Navigation ─────────────────────────────────────────────────────────────
+  function s2GoTo(screen) {
+    $('s2-main').querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    const el = $('s2-screen-' + screen);
+    if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+  }
+
+  // ── Data load + schema validation (brief §3, TC-01) ─────────────────────────
+  function validateEntry(e) {
+    try {
+      if (!e.id) return false;
+      if (ALLOWED_VERBS.indexOf(e.verb) === -1) return false;
+      if (e.marks !== 20) return false;
+      if (!e.concept || !e.stemText) return false;
+      if (!Array.isArray(e.assessmentCriteria) || e.assessmentCriteria.length !== 3) return false;
+      if (!Array.isArray(e.markingBands) || e.markingBands.length !== 5) return false;
+      const ranges = ['17 to 20', '13 to 16', '9 to 12', '5 to 8', '1 to 4'];
+      for (let i = 0; i < 5; i++) if (e.markingBands[i].range !== ranges[i]) return false;
+      if (!(e.markingBands[0].descriptor || '').indexOf) return false;
+      if (e.markingBands[0].descriptor.indexOf(VERB_QUALITY[e.verb] + ' skilfully') !== 0) return false;
+      if (!Array.isArray(e.markerRewards) || e.markerRewards.length < 3) return false;
+      if (!Array.isArray(e.markerImprovements) || e.markerImprovements.length < 3) return false;
+      if (!Array.isArray(e.checklist) || e.checklist.length < 5) return false;
+      const cats = new Set();
+      for (const it of e.checklist) {
+        if (S2_CATS.indexOf(it.category) === -1) return false;
+        if (OBJECTIVES.indexOf(it.objective) === -1) return false;
+        if (['reward', 'improvement'].indexOf(it.source) === -1) return false;
+        cats.add(it.category);
+      }
+      if (cats.size !== 5) return false;
+      if (!e.assessmentObjectiveMap) return false;
+      return true;
+    } catch (_) { return false; }
+  }
+
+  async function load() {
+    if (loaded) return true;
+    const base = CONFIG.dataPath;
+    const f = CFG.dataFiles;
+    const [q, quotes, syllabus] = await Promise.all([
+      fetch(base + f.essayQuestions).then(r => r.json()),
+      fetch(base + f.quotes).then(r => r.json()),
+      fetch(base + f.syllabus).then(r => r.json())
+    ]);
+
+    const valid = q.filter(e => {
+      const ok = validateEntry(e);
+      if (!ok) console.warn('[Section II] skipping malformed essay question:', e && e.id);
+      return ok;
+    });
+
+    // Aggregate minimums (brief §2 / TC-01) — halt with a named error on shortfall.
+    const shortfalls = [];
+    const published = valid.filter(e => e.isAuthenticPastQuestion);
+    if (valid.length < 39) shortfalls.push('essayQuestions has ' + valid.length + ', need >= 39');
+    if (published.length !== 7) shortfalls.push('published questions = ' + published.length + ', need exactly 7');
+    VERB_FAMILIES.forEach(fam => {
+      const n = valid.filter(e => familyOf(e.verb) === fam).length;
+      if (n < 8) shortfalls.push('verb family "' + fam + '" has ' + n + ', need >= 8');
+    });
+    if (quotes.length < 40) shortfalls.push('quotes has ' + quotes.length + ', need >= 40');
+    const perAct = {};
+    quotes.forEach(x => { perAct[x.act] = (perAct[x.act] || 0) + 1; });
+    ['1', '2', '3', '4', '5'].forEach(a => { if ((perAct[a] || 0) < 6) shortfalls.push('Act ' + a + ' has ' + (perAct[a] || 0) + ' quotes, need >= 6'); });
+    if (syllabus.length !== 7) shortfalls.push('syllabus has ' + syllabus.length + ', need exactly 7');
+
+    if (shortfalls.length) {
+      console.error('[Section II] data validation halted:\n - ' + shortfalls.join('\n - '));
+      throw new Error('Data validation failed: ' + shortfalls[0]);
+    }
+
+    data = { questions: valid, quotes: quotes, syllabus: syllabus };
+    loaded = true;
+    return true;
+  }
+
+  function familyOf(verb) {
+    if (verb === 'analyse' || verb === 'how does') return 'analyse';
+    if (verb === 'explain' || verb === 'in what ways') return 'explain';
+    if (verb === 'evaluate' || verb === 'to what extent') return 'evaluate';
+    return 'assess'; // how effectively, assess
+  }
+
+  // ── Selection (brief §5, TC-05 / TC-06) ─────────────────────────────────────
+  function selectQuestion() {
+    let pool = data.questions.slice();
+    const o = s2State.overrides;
+    if (o.verbFamily) pool = pool.filter(e => familyOf(e.verb) === o.verbFamily);
+    if (!pool.length) return null;
+
+    const distinctFamilies = new Set(pool.map(e => familyOf(e.verb))).size;
+    const window = Math.min(CFG.selection.varietyWindow, distinctFamilies);
+    const recent = s2State.servedFamilies.slice(-window);
+    let candidates = pool.filter(e => recent.indexOf(familyOf(e.verb)) === -1);
+    if (!candidates.length) candidates = pool;
+
+    for (let attempt = 0; attempt < CFG.selection.maxPickAttempts; attempt++) {
+      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      if (validateEntry(pick)) {
+        s2State.servedFamilies.push(familyOf(pick.verb));
+        return pick;
+      }
+    }
+    return null;
+  }
+
+  function catObjective(entry, cat) {
+    const it = entry.checklist.find(c => c.category === cat);
+    return it ? it.objective : 'representation';
+  }
+
+  // ── S0 Setup ────────────────────────────────────────────────────────────────
+  function initSetup() {
+    $('s2-level-desc').textContent = LEVEL_DESCS[s2State.level];
+    document.querySelectorAll('.s2-mode-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        s2State.mode = b.dataset.mode;
+        document.querySelectorAll('.s2-mode-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+      });
+    });
+    document.querySelectorAll('.s2-level-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        s2State.level = parseInt(b.dataset.level);
+        document.querySelectorAll('.s2-level-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        $('s2-level-desc').textContent = LEVEL_DESCS[s2State.level];
+      });
+    });
+    // Override levers
+    $('s2-override-body').innerHTML = [
+      overrideSelect('CAST deconstruction', 'cast', [['default', 'Level default'], ['on', 'On'], ['off', 'Off']]),
+      overrideSelect('Planning scaffold', 'planning', [['default', 'Level default'], ['full', 'Full'], ['light', 'Light'], ['none', 'None']]),
+      overrideSelect('Pacing', 'pacing', [['default', 'Level default'], ['on', 'Segmented'], ['off', 'Straight 45 min']]),
+      overrideSelect('Checklist while writing', 'checklist', [['default', 'Level default'], ['visible', 'Visible'], ['collapsed', 'Collapsed'], ['hidden', 'Hidden']]),
+      overrideSelect('Question verb', 'verbFamily', [['', 'Any verb'], ['analyse', 'Analyse'], ['explain', 'Explain / in what ways'], ['evaluate', 'Evaluate / to what extent'], ['assess', 'How effectively / assess']])
+    ].join('');
+    $('s2-override-body').querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', () => {
+        const key = sel.dataset.key, v = sel.value;
+        if (v === '' && key === 'verbFamily') delete s2State.overrides[key];
+        else if (v === 'default') delete s2State.overrides[key];
+        else s2State.overrides[key] = v;
+      });
+    });
+    $('s2-start-btn').addEventListener('click', startFlow);
+  }
+
+  function overrideSelect(label, key, opts) {
+    return '<label style="display:flex;flex-direction:column;font-size:0.85rem;gap:4px;">' + esc(label) +
+      '<select data-key="' + key + '" style="font-family:var(--font-body);padding:5px;border:1px solid var(--color-border);border-radius:6px;">' +
+      opts.map(([v, t]) => '<option value="' + v + '">' + esc(t) + '</option>').join('') + '</select></label>';
+  }
+
+  async function startFlow() {
+    setError('s2-setup-error', null);
+    if (!loaded) {
+      showSpinner('s2-setup-spinner', 'Loading materials…');
+      try { await load(); } catch (err) {
+        hideSpinner('s2-setup-spinner');
+        setError('s2-setup-error', 'Could not load the Section II materials. ' + err.message);
+        return;
+      }
+      hideSpinner('s2-setup-spinner');
+    }
+    if (s2State.mode === 'drill') { startDrillGym(); return; }
+    nextQuestion();
+  }
+
+  function nextQuestion() {
+    const q = selectQuestion();
+    if (!q) { setError('s2-setup-error', 'No questions match that setting right now. Try a different verb, or choose Any verb.'); s2GoTo('setup'); return; }
+    resetQuestionState();
+    s2State.q = q;
+    startQuestionScreen();
+  }
+
+  // ── S1/S2/S3 Question screen ────────────────────────────────────────────────
+  const CAST_STEPS = [
+    { key: 'c', label: 'C — Command', help: 'Circle the directive verb. What does it demand of your response?', ph: 'e.g. analyse — show HOW meaning is made, not retell' },
+    { key: 'a', label: 'A — Anchor idea', help: 'Underline the human experience or concept at the centre of the question.', ph: 'e.g. the endurance of the human spirit' },
+    { key: 's', label: 'S — Scope', help: 'Box the qualifiers and limiters, plus the text and the Common Module frame.', ph: 'e.g. particular lives; The Merchant of Venice' },
+    { key: 't', label: 'T — Thesis', help: 'State your line of argument in your own words as a comprehension check.', ph: 'In my own words, my argument is…' }
+  ];
+  let castStep = 0;
+
+  function startQuestionScreen() {
+    const q = s2State.q;
+    $('s2-q-sub').textContent = (q.isAuthenticPastQuestion ? 'Authentic NESA Question 6, ' + q.year : 'Practice question') + ' · ' + q.verb;
+    $('s2-q-marks').textContent = '20 marks';
+    $('s2-q-stem').textContent = q.stemText;
+    $('s2-q-objectives').innerHTML = q.assessmentCriteria.map(c =>
+      '<div class="obj-item">• ' + esc(c) + '</div>').join('');
+    renderQuestionChecklist('s2-q-checklist', q, false);
+    $('s2-q-continue').disabled = true;
+
+    if (castOn()) {
+      $('s2-cast-section').style.display = 'block';
+      $('s2-confidence-section').style.display = 'none';
+      castStep = 0; renderCastStep(); renderCastDots();
+    } else {
+      $('s2-cast-section').style.display = 'none';
+      $('s2-confidence-section').style.display = 'block';
+      renderConfidenceSliders();
+    }
+    s2GoTo('question');
+  }
+
+  function renderQuestionChecklist(containerId, q, asSelfMark) {
+    const byObj = {};
+    OBJECTIVES.forEach(o => byObj[o] = []);
+    q.checklist.forEach(it => byObj[it.objective].push(it));
+    const objLabels = { understanding: 'Understanding', representation: 'Representation', expression: 'Expression' };
+    $(containerId).innerHTML = OBJECTIVES.map(o => {
+      if (!byObj[o].length) return '';
+      return '<div class="objective-group"><div class="objective-head">' + objLabels[o] + '</div>' +
+        byObj[o].map(it => {
+          const tag = '<span class="src-tag ' + it.source + '">' + it.source + '</span>';
+          if (asSelfMark) {
+            return '<div class="obj-item" style="flex-direction:column;align-items:stretch;">' +
+              '<div style="display:flex;gap:8px;">' + tag + '<span style="flex:1;">' + esc(it.text) + '</span></div>' +
+              '<div class="sm-btn-group" style="flex-direction:row;margin-top:6px;">' +
+              [['done', '✓ Yes'], ['unsure', '? Partly'], ['undone', '✗ No']].map(([v, l]) =>
+                '<button class="btn-secondary s2-sm-btn" data-cid="' + it.id + '" data-val="' + v + '" style="padding:4px 10px;font-size:0.8rem;">' + l + '</button>').join('') +
+              '</div></div>';
+          }
+          return '<div class="obj-item">' + tag + '<span>' + esc(it.text) + '</span></div>';
+        }).join('') + '</div>';
+    }).join('');
+  }
+
+  function renderCastDots() {
+    $('s2-cast-dots').innerHTML = CAST_STEPS.map((_, i) =>
+      '<div class="step-dot ' + (i < castStep ? 'done' : i === castStep ? 'active' : '') + '"></div>').join('');
+  }
+  function renderCastStep() {
+    const st = CAST_STEPS[castStep];
+    const last = castStep === CAST_STEPS.length - 1;
+    $('s2-cast-steps').innerHTML =
+      '<p style="font-size:0.8rem;color:var(--color-muted);margin-bottom:6px;">Step ' + (castStep + 1) + ' of 4</p>' +
+      '<strong>' + st.label + '</strong>' +
+      '<p style="font-size:0.88rem;color:var(--color-muted);margin:6px 0;">' + st.help + '</p>' +
+      (st.key === 't'
+        ? '<textarea id="s2-cast-input" rows="3" placeholder="' + st.ph + '" style="width:100%;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);resize:vertical;"></textarea>'
+        : '<input id="s2-cast-input" type="text" placeholder="' + st.ph + '" style="width:100%;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);">');
+    const inp = $('s2-cast-input');
+    if (inp) inp.value = s2State.cast[st.key] || '';
+    $('s2-cast-next').textContent = last ? 'Rate confidence →' : 'Next →';
+  }
+  function advanceCast() {
+    const inp = $('s2-cast-input');
+    s2State.cast[CAST_STEPS[castStep].key] = inp ? inp.value.trim() : '';
+    castStep++;
+    if (castStep < CAST_STEPS.length) { renderCastStep(); renderCastDots(); }
+    else {
+      $('s2-cast-section').style.display = 'none';
+      $('s2-confidence-section').style.display = 'block';
+      renderConfidenceSliders();
+    }
+  }
+
+  function renderConfidenceSliders() {
+    const q = s2State.q;
+    $('s2-conf-frame').textContent = 'For this ' + q.verb + ' question on ' + q.concept + ', how confident are you on each criterion?';
+    $('s2-conf-sliders').innerHTML = sliderSet('conf', s2State.confidence);
+    wireSliders('conf', s2State.confidence, () => {
+      $('s2-q-continue').disabled = !allSet(s2State.confidence);
+    });
+  }
+
+  function sliderSet(prefix, store) {
+    return S2_CATS.map(cat =>
+      '<div class="crit-slider-row"><div class="crit-label">' + cat + '</div>' +
+      '<div class="slider-row">' +
+      '<input type="range" id="s2-' + prefix + '-' + cat + '" min="' + CFG.slider.min + '" max="' + CFG.slider.max + '" step="' + CFG.slider.step + '" value="50" data-cat="' + cat + '">' +
+      '<span class="slider-value" id="s2-' + prefix + '-' + cat + '-v">' + (store[cat] == null ? '—' : store[cat]) + '</span></div></div>'
+    ).join('');
+  }
+  function wireSliders(prefix, store, onChange) {
+    S2_CATS.forEach(cat => {
+      const el = $('s2-' + prefix + '-' + cat);
+      el.addEventListener('input', () => {
+        store[cat] = parseInt(el.value);
+        $('s2-' + prefix + '-' + cat + '-v').textContent = store[cat];
+        onChange();
+      });
+    });
+  }
+  function allSet(store) { return S2_CATS.every(c => store[c] != null); }
+
+  // ── S4 Plan ─────────────────────────────────────────────────────────────────
+  let planTimerId = null;
+  function startPlanScreen() {
+    const q = s2State.q, p = profile();
+    $('s2-plan-marks').textContent = '20 marks';
+    $('s2-plan-stem').textContent = q.stemText;
+    $('s2-plan-sub').textContent = 'Level ' + s2State.level + ' · ' + p.planning + ' scaffold';
+    $('s2-plan-coach').textContent = 'The plan is yours to build — the scaffold only holds the shape. Nothing here is your essay; you write that by hand.';
+    $('s2-plan-body').innerHTML = buildPlanBody(q, p.planning);
+
+    clearInterval(planTimerId);
+    const timerEl = $('s2-plan-timer');
+    if (p.planningTimed) {
+      timerEl.style.display = 'block';
+      let secs = CFG.planningSeconds;
+      const draw = () => { timerEl.textContent = fmt(secs); timerEl.className = 'timer' + (secs <= 30 && secs > 0 ? ' warning' : secs <= 0 ? ' overrun' : ''); };
+      draw();
+      planTimerId = setInterval(() => { secs--; if (secs < 0) { timerEl.textContent = 'plan done'; clearInterval(planTimerId); return; } draw(); }, CFG.tickMs);
+    } else {
+      timerEl.style.display = 'none';
+    }
+    s2GoTo('plan');
+  }
+
+  function buildPlanBody(q, mode) {
+    if (mode === 'none') {
+      return '<div class="report-card"><p>Plan on paper. Deconstruct the question, build your thesis, sketch your topic sentences tied to the question, and map evidence from across the play — then write. No on-screen scaffold at this level.</p></div>';
+    }
+    const stems = thesisStems(q);
+    let html = '<div class="plan-slot"><div class="plan-slot-label">Thesis — answer the question in your own words</div>';
+    if (mode === 'full') html += '<p class="plan-stem">Sentence stems: ' + stems.map(esc).join(' · ') + '</p>';
+    html += '<textarea rows="2" class="s2-plan-field" data-k="thesis" placeholder="Your thesis…"></textarea></div>';
+
+    if (mode === 'full') {
+      for (let i = 1; i <= 3; i++) {
+        html += '<div class="arg-block"><div class="plan-slot"><div class="plan-slot-label">Argument ' + i + ' — topic sentence tied to the question</div><input class="s2-plan-field" data-k="arg' + i + 'ts" placeholder="Topic sentence…"></div>' +
+          '<div class="plan-slot"><div class="plan-slot-label">Evidence (from across the play)</div><input class="s2-plan-field" data-k="arg' + i + 'ev" placeholder="Quotation / moment…"></div>' +
+          '<div class="plan-slot"><div class="plan-slot-label">How this shapes meaning</div><input class="s2-plan-field" data-k="arg' + i + 'an" placeholder="The dramatic feature and its effect…"></div></div>';
+      }
+      html += '<div class="plan-slot"><div class="plan-slot-label">Judgement — matched to the verb "' + esc(q.verb) + '"</div><textarea rows="2" class="s2-plan-field" data-k="judgement" placeholder="Your judgement…"></textarea></div>';
+      html += quoteBankHtml(false);
+    } else { // light
+      html += '<div class="plan-slot"><div class="plan-slot-label">Argument headings (no stems) — one line each</div><textarea rows="3" class="s2-plan-field" data-k="headings" placeholder="Argument 1…&#10;Argument 2…&#10;Argument 3…"></textarea></div>';
+      html += quoteBankHtml(true);
+    }
+    return html;
+  }
+
+  function thesisStems(q) {
+    const c = q.concept;
+    switch (familyOf(q.verb)) {
+      case 'analyse': return ['Shakespeare represents ' + c + ' through…', 'By… the play analyses…'];
+      case 'explain': return ['My study of the play reveals ' + c + ' by…', 'The play shows ' + c + ' when…'];
+      case 'evaluate': return ['To a great / limited extent, the play…', 'The play powerfully / partially explores ' + c + ' because…'];
+      default: return ['The play effectively represents ' + c + ' by…', 'Through its dramatic form, the play…'];
+    }
+  }
+
+  function quoteBankHtml(collapsed) {
+    const rows = data.quotes.map(x =>
+      '<div style="padding:5px 0;border-bottom:1px solid var(--color-border);font-size:0.85rem;"><strong>' + esc(x.act) + '.' + esc(x.scene) + ' ' + esc(x.speaker) + ':</strong> ' + esc(x.quote) + '</div>').join('');
+    if (collapsed) return '<details style="margin-top:var(--space-sm);"><summary style="cursor:pointer;color:var(--color-muted);font-weight:600;">Quote bank (collapsed)</summary><div style="max-height:240px;overflow:auto;margin-top:6px;">' + rows + '</div></details>';
+    return '<div class="report-card" style="margin-top:var(--space);"><div class="panel-label">Quote bank — browse while planning</div><div style="max-height:260px;overflow:auto;">' + rows + '</div></div>';
+  }
+
+  function capturePlan() {
+    document.querySelectorAll('.s2-plan-field').forEach(f => { s2State.plan[f.dataset.k] = f.value; });
+  }
+
+  // ── S5 Write ────────────────────────────────────────────────────────────────
+  let writeTimerId = null, writeSecs = 0, writeOverrun = false, writeHidden = false;
+  let pacingBoundaries = [], pacingFired = [];
+  function startWriteScreen() {
+    const q = s2State.q, p = profile();
+    $('s2-write-marks').textContent = '20 marks';
+    $('s2-write-stem').textContent = q.stemText;
+    $('s2-write-sub').textContent = 'Level ' + s2State.level + (p.pacing ? ' · segmented pacing' : ' · straight 45 minutes');
+
+    // Plan recap (Level 1 shows the plan the student built)
+    const planWrap = $('s2-write-plan');
+    if (p.planning === 'full' && Object.keys(s2State.plan).length) {
+      planWrap.innerHTML = '<div class="report-card" style="margin-top:var(--space);"><div class="panel-label">Your plan</div>' +
+        Object.keys(s2State.plan).filter(k => s2State.plan[k]).map(k =>
+          '<p style="font-size:0.85rem;margin:3px 0;"><strong>' + esc(k) + ':</strong> ' + esc(s2State.plan[k]) + '</p>').join('') + '</div>';
+    } else planWrap.innerHTML = '';
+
+    // CAST annotation
+    if (castOn()) {
+      $('s2-write-cast').style.display = 'block';
+      $('s2-wc-c').textContent = s2State.cast.c || '—';
+      $('s2-wc-a').textContent = s2State.cast.a || '—';
+      $('s2-wc-s').textContent = s2State.cast.s || '—';
+      $('s2-wc-t').textContent = s2State.cast.t || '—';
+    } else $('s2-write-cast').style.display = 'none';
+
+    // Checklist (visible / collapsed / hidden)
+    const wrap = $('s2-write-checklist-wrap');
+    if (p.checklist === 'hidden') { wrap.style.display = 'none'; }
+    else {
+      wrap.style.display = 'block';
+      $('s2-write-checklist').innerHTML = p.checklist === 'collapsed'
+        ? '<details><summary style="cursor:pointer;color:var(--color-muted);font-weight:600;">Show checklist</summary><div>' + checklistPlain(q) + '</div></details>'
+        : checklistPlain(q);
+    }
+
+    // Timer
+    writeSecs = CFG.writingSecondsEssay; writeOverrun = false; writeHidden = false;
+    $('s2-write-hide').textContent = 'Hide timer';
+    $('s2-pacing-nudge').classList.remove('show');
+    pacingBoundaries = []; pacingFired = [];
+    if (p.pacing) {
+      let cum = 0;
+      CFG.pacingSegments.forEach((seg, i) => {
+        cum += seg.seconds;
+        const next = CFG.pacingSegments[i + 1];
+        if (next && cum < CFG.writingSecondsEssay) pacingBoundaries.push({ at: cum, next: next.label });
+      });
+      pacingFired = pacingBoundaries.map(() => false);
+    }
+    drawWriteTimer();
+    clearInterval(writeTimerId);
+    writeTimerId = setInterval(tickWrite, CFG.tickMs);
+    s2GoTo('write');
+  }
+
+  function checklistPlain(q) {
+    return q.checklist.map(it => '<p style="padding:5px 0;border-bottom:1px solid var(--color-border);font-size:0.88rem;">' + esc(it.text) + '</p>').join('');
+  }
+  function tickWrite() {
+    writeSecs--;
+    if (writeSecs <= 0 && !writeOverrun) writeOverrun = true;
+    // Segmented pacing nudges (Levels 1 & 2 only)
+    if (pacingBoundaries.length) {
+      const elapsed = CFG.writingSecondsEssay - writeSecs;
+      pacingBoundaries.forEach((b, i) => {
+        if (!pacingFired[i] && elapsed >= b.at) {
+          pacingFired[i] = true;
+          const n = $('s2-pacing-nudge');
+          n.textContent = 'It might be time to move into your ' + b.next.toLowerCase() + '.';
+          n.classList.add('show');
+        }
+      });
+    }
+    drawWriteTimer();
+  }
+  function drawWriteTimer() {
+    const el = $('s2-write-timer');
+    if (writeHidden) { el.textContent = '•••'; el.className = 'timer'; return; }
+    el.textContent = (writeOverrun ? '+' : '') + fmt(Math.abs(writeSecs));
+    el.className = 'timer' + (writeOverrun ? ' overrun' : (writeSecs <= 60 && writeSecs > 0 ? ' warning' : ''));
+  }
+  function fmt(s) { s = Math.max(0, s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+
+  // ── S6 Self-mark ────────────────────────────────────────────────────────────
+  function startSelfMark() {
+    clearInterval(writeTimerId);
+    const q = s2State.q;
+    $('s2-sm-marks').textContent = '20 marks';
+    $('s2-sm-stem').textContent = q.stemText;
+    $('s2-chain-complete').value = ''; $('s2-chain-broken').value = '';
+    $('s2-evidence-input').value = ''; $('s2-evidence-result').textContent = '';
+    s2State.selfMarks = {};
+    renderQuestionChecklist('s2-sm-checklist', q, true);
+    $('s2-sm-checklist').querySelectorAll('.s2-sm-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cid = btn.dataset.cid, val = btn.dataset.val;
+        s2State.selfMarks[cid] = val;
+        $('s2-sm-checklist').querySelectorAll('.s2-sm-btn[data-cid="' + cid + '"]').forEach(b => { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; });
+        const col = { done: 'var(--color-done)', undone: 'var(--color-undone)', unsure: 'var(--color-unsure)' }[val];
+        btn.style.background = col; btn.style.color = 'white'; btn.style.borderColor = col;
+        $('s2-sm-continue').disabled = q.checklist.some(it => !s2State.selfMarks[it.id]);
+      });
+    });
+    $('s2-sm-continue').disabled = true;
+    s2GoTo('selfmark');
+  }
+
+  // Deterministic evidence checker (brief §8, TC-07)
+  function normalise(t) {
+    return (t || '').toLowerCase()
+      .replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+      .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function checkEvidence() {
+    const pasted = normalise($('s2-evidence-input').value);
+    const out = $('s2-evidence-result');
+    if (pasted.length < CFG.evidence.minNormalisedChars) {
+      out.className = 'evidence-result'; out.textContent = 'Please paste a longer phrase.'; return;
+    }
+    for (const x of data.quotes) {
+      const nq = normalise(x.quote);
+      if (nq.indexOf(pasted) !== -1 || pasted.indexOf(nq) !== -1) {
+        out.className = 'evidence-result found';
+        out.textContent = 'Found — Act ' + x.act + ', Scene ' + x.scene + ', spoken by ' + x.speaker + '.';
+        return;
+      }
+    }
+    out.className = 'evidence-result not-found';
+    out.textContent = 'Not found in the quote bank. The bank is a sample of key quotations, not the whole play — this does not mean your quote is wrong.';
+  }
+
+  // ── S8 Calibration ──────────────────────────────────────────────────────────
+  function startCalibration() {
+    const q = s2State.q;
+    $('s2-cal-marks').textContent = '20 marks';
+    s2State.result = {};
+    $('s2-result-sliders').innerHTML = '<div class="confidence-block"><div class="panel-label">How well did you do — per criterion?</div>' + sliderSet('res', s2State.result) + '</div>';
+    wireSliders('res', s2State.result, () => {
+      if (allSet(s2State.result)) $('s2-attribution-block').style.display = 'block';
+    });
+    // attribution
+    $('s2-attribution-opts').innerHTML = CFG.attributionOptions.map(o =>
+      '<button class="btn-secondary s2-attr-btn" data-attr="' + esc(o) + '">' + esc(o) + '</button>').join('');
+    $('s2-attribution-opts').querySelectorAll('.s2-attr-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        s2State.attribution.choice = b.dataset.attr;
+        $('s2-attribution-opts').querySelectorAll('.s2-attr-btn').forEach(x => { x.style.background = ''; x.style.color = ''; });
+        b.style.background = 'var(--color-accent)'; b.style.color = 'white';
+        if (allSet(s2State.result)) revealGaps();
+      });
+    });
+    $('s2-attribution-note').value = '';
+    $('s2-attribution-block').style.display = 'none';
+    $('s2-cal-reveal').style.display = 'none';
+    s2GoTo('calibration');
+  }
+
+  function revealGaps() {
+    const q = s2State.q;
+    $('s2-cal-gaps').innerHTML = S2_CATS.map(cat => {
+      const c = s2State.confidence[cat], r = s2State.result[cat], gap = r - c;
+      const sign = gap > 0 ? '+' : '';
+      const col = gap > 0 ? 'var(--color-done)' : gap < 0 ? 'var(--color-undone)' : 'var(--color-muted)';
+      return '<div class="crit-gap-card"><span style="text-transform:capitalize;">' + cat + '</span>' +
+        '<span class="cg-val">' + c + '</span><span class="cg-val">' + r + '</span>' +
+        '<span class="cg-gap" style="color:' + col + ';">' + sign + gap + '</span></div>';
+    }).join('');
+    // objective rollup
+    const objAgg = {}; OBJECTIVES.forEach(o => objAgg[o] = []);
+    S2_CATS.forEach(cat => { objAgg[catObjective(q, cat)].push(s2State.result[cat]); });
+    const objLabels = { understanding: 'Understanding', representation: 'Representation', expression: 'Expression' };
+    $('s2-cal-rollup').innerHTML = OBJECTIVES.map(o => {
+      const arr = objAgg[o]; const avg = arr.length ? Math.round(arr.reduce((s, x) => s + x, 0) / arr.length) : 0;
+      return '<div class="cal-card"><div class="panel-label">' + objLabels[o] + '</div><div class="cal-rating">' + avg + '</div><div class="cal-label">avg result</div></div>';
+    }).join('');
+    $('s2-cal-reveal').style.display = 'block';
+  }
+
+  // ── S9 Syllabus audit ───────────────────────────────────────────────────────
+  function startSyllabus() {
+    s2State.syllabus = {};
+    $('s2-syllabus-list').innerHTML = data.syllabus.map(pt =>
+      '<div class="report-card" data-syl="' + pt.id + '"><p style="font-weight:600;margin-bottom:6px;">' + esc(pt.point) + '</p>' +
+      '<div style="display:flex;gap:var(--space-sm);align-items:flex-start;">' +
+      '<input class="s2-syl-note" data-syl="' + pt.id + '" type="text" placeholder="Which paragraph? What move?" style="flex:1;padding:6px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:6px;">' +
+      '<button class="btn-ghost s2-syl-na" data-syl="' + pt.id + '">Not addressed</button></div></div>').join('');
+    $('s2-syllabus-full').innerHTML = data.syllabus.map(pt => '<p>• ' + esc(pt.point) + '</p>').join('');
+    const check = () => { $('s2-syllabus-continue').disabled = !data.syllabus.every(pt => { const s = s2State.syllabus[pt.id]; return s && (s.status === 'not' || (s.note && s.note.trim())); }); };
+    $('s2-syllabus-list').querySelectorAll('.s2-syl-note').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const id = inp.dataset.syl;
+        s2State.syllabus[id] = { status: inp.value.trim() ? 'covered' : null, note: inp.value };
+        check();
+      });
+    });
+    $('s2-syllabus-list').querySelectorAll('.s2-syl-na').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.syl;
+        const cur = s2State.syllabus[id];
+        if (cur && cur.status === 'not') { s2State.syllabus[id] = { status: null, note: '' }; btn.style.background = ''; btn.style.color = ''; }
+        else { s2State.syllabus[id] = { status: 'not', note: '' }; btn.style.background = 'var(--color-muted)'; btn.style.color = 'white'; }
+        check();
+      });
+    });
+    $('s2-syllabus-continue').disabled = true;
+    s2GoTo('syllabus');
+  }
+
+  // ── S10 Compare & climb ─────────────────────────────────────────────────────
+  function startCompare() {
+    const q = s2State.q;
+    $('s2-cmp-marks').textContent = '20 marks';
+    $('s2-rubric-toggle').textContent = s2State.studentVoice ? 'Show official HSC wording' : 'Show in student voice';
+    renderBands(q);
+    renderRewardsImprovements(q);
+    $('s2-climb').style.display = s2State.bandLocated ? 'block' : 'none';
+    if (s2State.bandLocated) renderClimb(q);
+    s2GoTo('compare');
+  }
+
+  function renderBands(q) {
+    $('s2-cmp-bands').innerHTML = q.markingBands.map(b =>
+      '<div class="band-ladder-row' + (s2State.bandLocated === b.band ? ' selected' : '') + '" data-band="' + b.band + '">' +
+      '<span class="band-no">Band ' + b.band + '<br>' + b.range + '</span><span>' + renderRubric(b.descriptor) + '</span></div>').join('');
+    $('s2-cmp-bands').querySelectorAll('.band-ladder-row').forEach(row => {
+      row.addEventListener('click', () => {
+        s2State.bandLocated = parseInt(row.dataset.band);
+        renderBands(q); renderClimb(q); $('s2-climb').style.display = 'block';
+      });
+    });
+  }
+
+  function renderRewardsImprovements(q) {
+    $('s2-cmp-rewards').innerHTML = q.markerRewards.map((r, i) =>
+      tickRow('rw' + i, renderRubric(r), s2State.rewardsTicked['rw' + i])).join('');
+    $('s2-cmp-improvements').innerHTML = q.markerImprovements.map((r, i) =>
+      tickRow('im' + i, renderRubric(r), s2State.improvementsTicked['im' + i])).join('');
+    $('s2-cmp-rewards').querySelectorAll('.s2-tick').forEach(b => b.addEventListener('click', () => {
+      s2State.rewardsTicked[b.dataset.k] = !s2State.rewardsTicked[b.dataset.k]; toggleTick(b, s2State.rewardsTicked[b.dataset.k]);
+    }));
+    $('s2-cmp-improvements').querySelectorAll('.s2-tick').forEach(b => b.addEventListener('click', () => {
+      s2State.improvementsTicked[b.dataset.k] = !s2State.improvementsTicked[b.dataset.k]; toggleTick(b, s2State.improvementsTicked[b.dataset.k]);
+    }));
+  }
+  function tickRow(k, html, on) {
+    return '<div class="obj-item"><button class="btn-ghost s2-tick" data-k="' + k + '" style="padding:2px 8px;min-width:32px;' + (on ? 'background:var(--color-accent);color:white;' : '') + '">' + (on ? '✓' : '') + '</button><span>' + html + '</span></div>';
+  }
+  function toggleTick(b, on) { b.textContent = on ? '✓' : ''; b.style.background = on ? 'var(--color-accent)' : ''; b.style.color = on ? 'white' : ''; }
+
+  function renderClimb(q) {
+    const band = s2State.bandLocated;
+    if (band >= 5) {
+      $('s2-climb-pair').innerHTML = '<div class="climb-card above" style="grid-column:1/3;"><strong>Top band.</strong> ' + renderRubric(q.markingBands[0].descriptor) + '</div>';
+      $('s2-climb-move').innerHTML = '<strong>Consolidate.</strong> You have placed yourself in the top band — there is no Band 6. Keep doing what put you here: sustain interpretive sophistication and the metalanguage of drama across every paragraph.';
+      return;
+    }
+    const here = q.markingBands.find(b => b.band === band);
+    const above = q.markingBands.find(b => b.band === band + 1);
+    $('s2-climb-pair').innerHTML =
+      '<div class="climb-card"><div class="panel-label">You placed yourself: Band ' + here.band + '</div>' + renderRubric(here.descriptor) + '</div>' +
+      '<div class="climb-card above"><div class="panel-label">One band up: Band ' + above.band + '</div>' + renderRubric(above.descriptor) + '</div>';
+    // one concrete move, weighted to interpretation / metalanguage
+    const rewards = q.markerRewards;
+    let move = rewards.find(r => /analyse|metalanguage|dramatic|features|interpret|purpose/i.test(r)) || rewards[0];
+    $('s2-climb-move').innerHTML = '<strong>Your one move up:</strong> ' + renderRubric(move) + '. In student voice: stop retelling the plot and, in every body paragraph, name a dramatic technique, then its effect, then link it to ' + esc(q.concept) + '.';
+  }
+
+  // ── S11 Reflection ──────────────────────────────────────────────────────────
+  function startReflection() {
+    renderReflectionList();
+    $('s2-reflection-input').value = '';
+    s2GoTo('reflection');
+  }
+  function renderReflectionList() {
+    const el = $('s2-reflection-list');
+    el.innerHTML = s2State.reflections.length
+      ? '<ul style="padding-left:20px;">' + s2State.reflections.map((r, i) =>
+        '<li style="margin-bottom:6px;">' + esc(r) + ' <button data-ri="' + i + '" class="s2-refl-x" style="background:none;border:none;cursor:pointer;color:var(--color-muted);">✕</button></li>').join('') + '</ul>'
+      : '';
+    el.querySelectorAll('.s2-refl-x').forEach(b => b.addEventListener('click', () => { s2State.reflections.splice(+b.dataset.ri, 1); renderReflectionList(); }));
+  }
+
+  // ── Record attempt + S12 Report ─────────────────────────────────────────────
+  function recordAttempt() {
+    const q = s2State.q;
+    const gaps = {}; S2_CATS.forEach(c => gaps[c] = (s2State.result[c] != null && s2State.confidence[c] != null) ? s2State.result[c] - s2State.confidence[c] : null);
+    s2State.attributions = s2State.attributions || [];
+    s2State.attribution.note = ($('s2-attribution-note') && $('s2-attribution-note').value || '').slice(0, CFG.attributionNoteMaxChars);
+    s2State.attempts.push({
+      id: q.id, verb: q.verb, concept: q.concept, level: s2State.level,
+      authentic: q.isAuthenticPastQuestion, year: q.year || null,
+      gaps: gaps, attribution: Object.assign({}, s2State.attribution),
+      syllabus: JSON.parse(JSON.stringify(s2State.syllabus))
+    });
+  }
+
+  function startReport() {
+    $('s2-report-focus').innerHTML = s2State.reflections.length
+      ? s2State.reflections.map(r => '<li>' + esc(r) + '</li>').join('')
+      : '<li style="color:var(--color-muted);">Nothing added.</li>';
+
+    const last = s2State.attempts[s2State.attempts.length - 1];
+    $('s2-report-practised').innerHTML = s2State.attempts.length
+      ? s2State.attempts.map(a => '<p><strong>' + esc(a.verb) + '</strong> — ' + esc(a.concept) + ' · Level ' + a.level + (a.authentic ? ' · authentic ' + a.year : ' · practice') + '</p>').join('')
+      : '<p>No essays completed.</p>';
+
+    // Calibration snapshot (per-criterion gaps + attribution)
+    if (last) {
+      $('s2-report-calibration').innerHTML =
+        S2_CATS.map(c => { const g = last.gaps[c]; return '<p style="text-transform:capitalize;">' + c + ': gap ' + (g == null ? '—' : (g > 0 ? '+' : '') + g) + '</p>'; }).join('') +
+        '<p style="margin-top:8px;"><strong>Attribution:</strong> ' + esc(last.attribution.choice || '—') + (last.attribution.note ? ' — ' + esc(last.attribution.note) : '') + '</p>';
+    } else $('s2-report-calibration').textContent = 'No calibration data this session.';
+
+    // Syllabus coverage (from the last attempt)
+    $('s2-report-syllabus').innerHTML = data.syllabus.map(pt => {
+      const s = last && last.syllabus[pt.id];
+      const covered = s && s.status === 'covered';
+      return '<span class="coverage-pill ' + (covered ? 'done' : 'not-done') + '">' + esc(pt.shortLabel) + '</span>';
+    }).join('');
+
+    // Coverage map
+    const verbs = new Set(s2State.attempts.map(a => a.verb));
+    const concepts = new Set(s2State.attempts.map(a => a.concept));
+    $('s2-report-verbs').innerHTML = ALLOWED_VERBS.map(v => '<span class="coverage-pill ' + (verbs.has(v) ? 'done' : 'not-done') + '">' + esc(v) + '</span>').join('');
+    $('s2-report-concepts').innerHTML = concepts.size
+      ? [...concepts].map(c => '<span class="coverage-pill done">' + esc(c) + '</span>').join('')
+      : '<span class="coverage-pill not-done">none yet</span>';
+
+    s2GoTo('report');
+  }
+
+  // ── Micro-skill drill gym ───────────────────────────────────────────────────
+  const DRILLS = [
+    { id: 'thesis', title: 'Thesis in a few minutes', prompt: q => 'Write a thesis that answers this question in your own words.', check: q => 'Self-check against the argument checklist: does it stake one clear claim about ' + q.concept + ' and answer the whole question, not restate it?' },
+    { id: 'topic', title: 'Topic sentence', prompt: q => 'Write a topic sentence that names the concept and stakes a claim — not a plot point.', check: q => 'Does your sentence make an argument about ' + q.concept + ', rather than say what happens next in the play?' },
+    { id: 'recount', title: 'Recount to analysis', prompt: q => 'Take one plot sentence about the play and turn it into an analytical sentence that names a dramatic technique and its effect.', check: q => 'Does it name a technique (soliloquy, aside, dramatic irony, stage direction…) AND its effect, instead of retelling events?' },
+    { id: 'evidence', title: 'Evidence to effect', prompt: q => 'Pick a quotation from the quote bank. Name the technique, explain the effect, then link it to the question.', check: q => 'Chain check: technique → effect → link to ' + q.concept + '. Are all three present?' },
+    { id: 'judgement', title: 'Land the judgement', prompt: q => 'Write a closing judgement sentence that matches the directive verb "' + q.verb + '".', check: q => 'Does it reach a defended verdict (not description) matched to "' + q.verb + '"?' },
+    { id: 'clutter', title: 'Cut the clutter', prompt: q => 'Compress a wordy sentence from your writing without losing the point.', check: q => 'Is it shorter and clearer, with no lost meaning? Markers caution against verbose, convoluted expression.' }
+  ];
+  let drillTimerId = null;
+  function startDrillGym() {
+    s2State.drill.q = selectQuestion() || data.questions[0];
+    renderDrillPick();
+    s2GoTo('drill');
+  }
+  function renderDrillPick() {
+    $('s2-drill-run').style.display = 'none';
+    $('s2-drill-pick').style.display = 'block';
+    $('s2-drill-q').innerHTML = '<strong>Question:</strong> ' + esc(s2State.drill.q.stemText);
+    $('s2-drill-grid').innerHTML = DRILLS.map(d =>
+      '<div class="drill-card" data-drill="' + d.id + '"><h3>' + esc(d.title) + '</h3><p>' + esc(d.prompt(s2State.drill.q)) + '</p></div>').join('');
+    $('s2-drill-grid').querySelectorAll('.drill-card').forEach(c => c.addEventListener('click', () => runDrill(c.dataset.drill)));
+  }
+  function runDrill(id) {
+    const d = DRILLS.find(x => x.id === id); const q = s2State.drill.q;
+    s2State.drill.type = id;
+    $('s2-drill-pick').style.display = 'none';
+    $('s2-drill-run').style.display = 'block';
+    $('s2-drill-title').textContent = d.title;
+    $('s2-drill-stem').textContent = q.stemText;
+    $('s2-drill-prompt').textContent = d.prompt(q);
+    $('s2-drill-box').value = '';
+    $('s2-drill-check').style.display = 'none';
+    $('s2-drill-check').innerHTML = '<strong>Self-check:</strong> ' + esc(d.check(q));
+    let secs = CFG.drillSeconds;
+    const el = $('s2-drill-timer');
+    const draw = () => { el.textContent = fmt(secs); el.className = 'timer' + (secs <= 20 && secs > 0 ? ' warning' : secs <= 0 ? ' overrun' : ''); };
+    draw(); clearInterval(drillTimerId);
+    drillTimerId = setInterval(() => { secs--; if (secs < 0) { el.textContent = 'time'; clearInterval(drillTimerId); return; } draw(); }, CFG.tickMs);
+  }
+
+  // ── Boot / wiring ───────────────────────────────────────────────────────────
+  function applyDesktopGate() {
+    const s2Active = $('app-s2').style.display !== 'none';
+    if (!s2Active) return;
+    const gate = $('s2-desktop-gate'), main = $('s2-main');
+    if (window.innerWidth < CFG.layout.minViewportPx) { gate.classList.add('show'); main.style.display = 'none'; }
+    else { gate.classList.remove('show'); main.style.display = 'block'; }
+  }
+
+  function showSection(n) {
+    document.querySelectorAll('.section-tab').forEach(t => t.classList.toggle('active', t.dataset.section === String(n)));
+    $('main-app').style.display = n === 1 ? 'block' : 'none';
+    $('app-s2').style.display = n === 2 ? 'block' : 'none';
+    $('settings-btn').style.display = n === 1 ? 'block' : 'none';
+    if (n === 2) {
+      $('app-s2').classList.add('wide');
+      if (!s2State) { s2State = freshSession(); initSetup(); }
+      if (!loaded) { load().catch(err => { console.error(err); setError('s2-setup-error', 'Could not load the Section II materials. ' + err.message); }); }
+      applyDesktopGate();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.section-tab').forEach(t =>
+      t.addEventListener('click', () => showSection(parseInt(t.dataset.section))));
+    window.addEventListener('resize', applyDesktopGate);
+
+    // Question screen
+    $('s2-cast-next').addEventListener('click', advanceCast);
+    $('s2-q-continue').addEventListener('click', () => { startPlanScreen(); });
+    // Plan
+    $('s2-plan-continue').addEventListener('click', () => { capturePlan(); clearInterval(planTimerId); startWriteScreen(); });
+    // Write
+    $('s2-write-hide').addEventListener('click', () => { writeHidden = !writeHidden; $('s2-write-hide').textContent = writeHidden ? 'Show timer' : 'Hide timer'; drawWriteTimer(); });
+    $('s2-write-done').addEventListener('click', startSelfMark);
+    // Self-mark
+    $('s2-evidence-btn').addEventListener('click', checkEvidence);
+    $('s2-evidence-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkEvidence(); });
+    $('s2-sm-continue').addEventListener('click', () => { s2State.chain = { complete: $('s2-chain-complete').value, broken: $('s2-chain-broken').value }; startCalibration(); });
+    // Calibration
+    $('s2-cal-continue').addEventListener('click', startSyllabus);
+    // Syllabus
+    $('s2-syllabus-continue').addEventListener('click', startCompare);
+    // Compare
+    $('s2-rubric-toggle').addEventListener('click', () => { s2State.studentVoice = !s2State.studentVoice; startCompare(); });
+    $('s2-cmp-continue').addEventListener('click', () => { recordAttempt(); startReflection(); });
+    // Reflection
+    $('s2-reflection-add').addEventListener('click', () => { const v = $('s2-reflection-input').value.trim(); if (v) { s2State.reflections.push(v); $('s2-reflection-input').value = ''; renderReflectionList(); } });
+    $('s2-reflection-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('s2-reflection-add').click(); });
+    $('s2-reflection-report').addEventListener('click', startReport);
+    $('s2-reflection-skip').addEventListener('click', startReport);
+    // Report
+    $('s2-report-again').addEventListener('click', () => { nextQuestion(); });
+    $('s2-report-home').addEventListener('click', () => { s2State = freshSession(); initSetup(); s2GoTo('setup'); });
+    // Drill
+    $('s2-drill-newq').addEventListener('click', () => { s2State.drill.q = selectQuestion() || data.questions[0]; renderDrillPick(); });
+    $('s2-drill-exit').addEventListener('click', () => { clearInterval(drillTimerId); s2GoTo('setup'); });
+    $('s2-drill-selfcheck').addEventListener('click', () => { clearInterval(drillTimerId); $('s2-drill-check').style.display = 'block'; });
+    $('s2-drill-again').addEventListener('click', () => { clearInterval(drillTimerId); renderDrillPick(); });
+  });
+})();
 </script>
 </body>
 </html>
