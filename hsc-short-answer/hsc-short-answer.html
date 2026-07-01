@@ -395,12 +395,44 @@
       background: var(--color-accent); color: white; border-color: var(--color-accent);
     }
 
-    /* Persistent Section II nav bar (Home + Skip), on every screen */
-    #s2-navbar {
+    /* Persistent nav bar (Home + Skip), on every screen — both sections */
+    #s2-navbar, #s1-navbar {
       display: flex; justify-content: space-between; align-items: center;
       gap: var(--space-sm); margin-bottom: var(--space);
       padding-bottom: var(--space-sm); border-bottom: 1px solid var(--color-border);
     }
+
+    /* Self-mark reward/improvement tag: keep it a fixed pill, top-aligned, never
+       stretched to the height of a wrapped line. */
+    .sm-tag-row { display: flex; gap: 10px; align-items: flex-start; }
+    .src-tag { align-self: flex-start; }
+
+    /* Tick toggle in the compare lists — a real box, not a collapsing slit. */
+    .s2-tick {
+      flex: 0 0 auto; width: 26px; height: 26px; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; line-height: 1; border-radius: 6px;
+    }
+
+    /* Segmented pacing timeline (Levels 1 & 2 write screen) */
+    .pacing-bar { display: flex; gap: 3px; margin-bottom: var(--space); }
+    .pacing-seg {
+      position: relative; overflow: hidden; height: 30px;
+      border: 1px solid var(--color-border); border-radius: 6px;
+      background: white; display: flex; align-items: center; justify-content: center;
+    }
+    .pacing-fill {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+      background: var(--color-accent-light); transition: width 0.4s linear;
+    }
+    .pacing-lbl {
+      position: relative; z-index: 1; font-size: 0.68rem; font-weight: 600;
+      color: var(--color-muted); text-align: center; line-height: 1.1;
+      padding: 0 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .pacing-seg.active { border-color: var(--color-accent); box-shadow: 0 0 0 1px var(--color-accent) inset; }
+    .pacing-seg.active .pacing-lbl { color: var(--color-accent); }
+    .pacing-seg.done .pacing-lbl { color: var(--color-accent); }
 
     /* Criterion definition + live descriptor under each calibration slider */
     .crit-def { font-size: 0.82rem; color: var(--color-muted); margin-bottom: 4px; }
@@ -550,7 +582,12 @@
   <button class="section-tab" data-section="2">Section II<span class="section-tab-sub">Extended response</span></button>
 </div>
 
-<div class="app" id="main-app">
+<div class="app wide" id="main-app">
+
+  <div id="s1-navbar">
+    <button class="btn-ghost" id="s1-nav-home">⌂ Home</button>
+    <button class="btn-ghost" id="s1-nav-skip">Skip to next step →</button>
+  </div>
 
   <!-- ── SETUP ───────────────────────────────────────────────────────────── -->
   <section id="screen-setup" class="active">
@@ -900,6 +937,7 @@
           <button class="btn-secondary s2-mode-btn" data-mode="timedEssay">Timed exam essay</button>
           <button class="btn-secondary s2-mode-btn" data-mode="drill">Micro-skill drill gym</button>
         </div>
+        <p id="s2-mode-desc" style="margin-top:8px;font-size:0.9rem;color:var(--color-muted);"></p>
       </div>
 
       <div style="margin:var(--space) 0;">
@@ -1004,6 +1042,7 @@
           <button class="btn-primary" id="s2-write-done">Finished writing →</button>
         </div>
       </div>
+      <div id="s2-pacing-bar" class="pacing-bar" style="display:none;"></div>
       <div id="s2-pacing-nudge"></div>
       <div class="split-screen">
         <div>
@@ -1242,14 +1281,14 @@ const CONFIG = {
     drillSeconds: 240,              // 4 minutes per drill
     tickMs: 1000,                   // countdown redraw interval
 
-    // Levels 1 and 2 pacing segments, seconds, must sum to writingSecondsEssay
+    // Levels 1 and 2 pacing segments, seconds, must sum to writingSecondsEssay (2700 = 45 min)
     pacingSegments: [
-      { id: 'introThesis', label: 'Thesis and introduction', seconds: 300 },
-      { id: 'arg1', label: 'First argument', seconds: 600 },
-      { id: 'arg2', label: 'Second argument', seconds: 600 },
-      { id: 'arg3', label: 'Third argument', seconds: 600 },
-      { id: 'judgement', label: 'Judgement and conclusion', seconds: 300 },
-      { id: 'buffer', label: 'Checking time', seconds: 300 }
+      { id: 'introThesis', label: 'Thesis and introduction', seconds: 480 }, // 8 min
+      { id: 'arg1', label: 'First argument', seconds: 600 },                  // 10 min
+      { id: 'arg2', label: 'Second argument', seconds: 600 },                 // 10 min
+      { id: 'arg3', label: 'Third argument', seconds: 600 },                  // 10 min
+      { id: 'judgement', label: 'Judgement and conclusion', seconds: 300 },   // 5 min
+      { id: 'buffer', label: 'Editing and final check', seconds: 120 }        // 2 min
     ],
     segmentedPacing: { level1: true, level2: true, level3: false },
     nudgeAtSegmentEnd: true,
@@ -1344,11 +1383,11 @@ let app = {
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function goTo(screen) {
-  document.querySelectorAll('.app section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#main-app section').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('screen-' + screen);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
-  const wideScreens = ['reading','write','exam','exam-review'];
-  document.getElementById('main-app').classList.toggle('wide', wideScreens.includes(screen));
+  // Section I stays full-width on every screen, matching Section II.
+  document.getElementById('main-app').classList.add('wide');
 }
 
 function esc(str) {
@@ -1388,6 +1427,18 @@ function sourceHeadHtml(source) {
     '<div class="source-head-meta">' + meta.join('') + '</div>' +
   '</div>';
 }
+// The raw text often repeats the title as its first line; the title now lives in
+// the header, so drop a leading line that exactly matches it. Only an exact match
+// is removed, so dedications, subtitles and section headings are left intact.
+function stripLeadingTitle(txt, title) {
+  if (!txt || !title) return txt;
+  const core = title.replace(/\s*\([^)]*\)\s*$/, '').trim().toLowerCase();
+  if (!core) return txt;
+  const nl = txt.indexOf('\n');
+  const first = (nl === -1 ? txt : txt.slice(0, nl)).trim().toLowerCase();
+  if (first === core) return (nl === -1 ? '' : txt.slice(nl + 1)).replace(/^\n+/, '');
+  return txt;
+}
 function renderSource(el, source) {
   el.classList.remove('prose-source');
   if (!source) { el.textContent = '[Text not yet loaded]'; return; }
@@ -1395,10 +1446,10 @@ function renderSource(el, source) {
   if (source.isVisual) {
     el.classList.add('prose-source');
     el.innerHTML = head + '<p><em>[Visual text]</em></p><p>' +
-      esc(source.visualDescription || source.fullText || '') + '</p>';
+      esc(stripLeadingTitle(source.visualDescription || source.fullText || '', source.title)) + '</p>';
     return;
   }
-  const txt = source.fullText || '[Text not yet loaded]';
+  const txt = stripLeadingTitle(source.fullText || '[Text not yet loaded]', source.title);
   const isPoetry = (source.textType || '').toLowerCase().indexOf('poetry') !== -1;
   if (isPoetry) {
     // pre-wrap keeps the verse lines; header is block-level so it sits above cleanly.
@@ -1886,8 +1937,20 @@ function renderExamReview() {
   }).join('');
 }
 
+// Persistent Section I nav: Home returns to setup; Skip advances the current
+// screen by firing its primary forward action (force-enabled if gated).
+function skipS1() {
+  const active = document.querySelector('#main-app section.active');
+  if (!active) return;
+  const btn = [...active.querySelectorAll('.btn-primary')].find(b => b.offsetParent !== null);
+  if (btn) { btn.disabled = false; btn.click(); }
+}
+
 // ── SETUP SCREEN ──────────────────────────────────────────────────────────────
 function initSetup() {
+  document.getElementById('s1-nav-home').addEventListener('click', () => goTo('setup'));
+  document.getElementById('s1-nav-skip').addEventListener('click', skipS1);
+
   document.querySelectorAll('.level-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       app.level = parseInt(btn.dataset.level);
@@ -2642,6 +2705,12 @@ document.addEventListener('DOMContentLoaded', () => {
     3: 'Exam — question only, no CAST, plan on paper, a single straight 45-minute timer. The after-answer structures never fade.'
   };
 
+  const MODE_DESCS = {
+    essay: 'Practice a single essay — read one real Question 6, plan and write it end to end, then self-mark against the authentic rubric. Guided, at your own pace.',
+    timedEssay: 'Timed exam essay — the same full essay, but under exam conditions: a strict 45-minute writing timer, then self-mark.',
+    drill: 'Micro-skill drill gym — short, focused drills on one skill at a time (thesis, technique-and-effect, judgement), four minutes each, instead of a whole essay.'
+  };
+
   const LEVEL_PROFILE = {
     1: { cast: 'on', planning: 'full', pacing: true, checklist: 'visible', planningTimed: false },
     2: { cast: 'on', planning: 'light', pacing: true, checklist: 'collapsed', planningTimed: true },
@@ -2958,11 +3027,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── S0 Setup ────────────────────────────────────────────────────────────────
   function initSetup() {
     $('s2-level-desc').textContent = LEVEL_DESCS[s2State.level];
+    $('s2-mode-desc').textContent = MODE_DESCS[s2State.mode] || MODE_DESCS.essay;
     document.querySelectorAll('.s2-mode-btn').forEach(b => {
       b.addEventListener('click', () => {
         s2State.mode = b.dataset.mode;
         document.querySelectorAll('.s2-mode-btn').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
+        $('s2-mode-desc').textContent = MODE_DESCS[s2State.mode] || '';
       });
     });
     document.querySelectorAll('.s2-level-btn').forEach(b => {
@@ -3264,6 +3335,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       pacingFired = pacingBoundaries.map(() => false);
     }
+    buildPacingBar(p.pacing);
     drawWriteTimer();
     clearInterval(writeTimerId);
     writeTimerId = setInterval(tickWrite, CFG.tickMs);
@@ -3289,7 +3361,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+    updatePacingBar();
     drawWriteTimer();
+  }
+  function buildPacingBar(on) {
+    const bar = $('s2-pacing-bar');
+    if (!on) { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+    bar.style.display = 'flex';
+    bar.innerHTML = CFG.pacingSegments.map((s, i) =>
+      '<div class="pacing-seg" data-i="' + i + '" style="flex-grow:' + s.seconds + '" title="' + esc(s.label) + '">' +
+        '<span class="pacing-fill"></span><span class="pacing-lbl">' + esc(s.label) + '</span></div>').join('');
+    updatePacingBar();
+  }
+  function updatePacingBar() {
+    const bar = $('s2-pacing-bar');
+    if (!bar || bar.style.display === 'none' || !bar.children.length) return;
+    const elapsed = CFG.writingSecondsEssay - Math.max(0, writeSecs);
+    let cum = 0;
+    CFG.pacingSegments.forEach((s, i) => {
+      const start = cum, end = cum + s.seconds; cum = end;
+      const seg = bar.children[i]; if (!seg) return;
+      const fill = seg.querySelector('.pacing-fill');
+      let pct = 0;
+      if (elapsed >= end) pct = 100;
+      else if (elapsed > start) pct = ((elapsed - start) / s.seconds) * 100;
+      fill.style.width = pct + '%';
+      seg.classList.toggle('active', elapsed >= start && elapsed < end);
+      seg.classList.toggle('done', elapsed >= end);
+    });
   }
   function drawWriteTimer() {
     const el = $('s2-write-timer');
@@ -3466,9 +3565,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
   }
   function tickRow(k, html, on) {
-    return '<div class="obj-item"><button class="btn-ghost s2-tick" data-k="' + k + '" style="padding:2px 8px;min-width:32px;' + (on ? 'background:var(--color-accent);color:white;' : '') + '">' + (on ? '✓' : '') + '</button><span>' + html + '</span></div>';
+    return '<div class="obj-item"><button class="btn-ghost s2-tick" data-k="' + k + '"' + (on ? ' style="background:var(--color-accent);color:white;border-color:var(--color-accent);"' : '') + '>' + (on ? '✓' : '') + '</button><span>' + html + '</span></div>';
   }
-  function toggleTick(b, on) { b.textContent = on ? '✓' : ''; b.style.background = on ? 'var(--color-accent)' : ''; b.style.color = on ? 'white' : ''; }
+  function toggleTick(b, on) { b.textContent = on ? '✓' : ''; b.style.background = on ? 'var(--color-accent)' : ''; b.style.color = on ? 'white' : ''; b.style.borderColor = on ? 'var(--color-accent)' : ''; }
 
   function renderClimb(q) {
     const band = s2State.bandLocated;
