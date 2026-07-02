@@ -1,0 +1,141 @@
+[
+  {
+    "id": "crit-modB-001",
+    "critic": "Pedot",
+    "lens": "psychoanalytic",
+    "verified": "as taught in the unit",
+    "claim": "Ono engages in revision in the narrowest sense, trying to erase rather than understand his past",
+    "conceptTags": [
+      "memory",
+      "self-deception",
+      "revision",
+      "structural evasion"
+    ]
+  },
+  {
+    "id": "crit-modB-002",
+    "critic": "Pedot",
+    "lens": "psychoanalytic",
+    "verified": "as taught in the unit",
+    "claim": "Ono is unable to begin the process of re-writing History or his own story",
+    "conceptTags": [
+      "history",
+      "memory",
+      "evasion"
+    ]
+  },
+  {
+    "id": "crit-modB-003",
+    "critic": "Pedot",
+    "lens": "psychoanalytic",
+    "verified": "as taught in the unit",
+    "claim": "Ono's memories constitute the navel of the dream, an unknowable tangle at the centre of his narrative",
+    "conceptTags": [
+      "memory",
+      "self-deception",
+      "the unknowable",
+      "truth"
+    ]
+  },
+  {
+    "id": "crit-modB-004",
+    "critic": "Pedot",
+    "lens": "psychoanalytic",
+    "verified": "as taught in the unit",
+    "claim": "the desire to come to terms with the past is built on the illusion that one can paint the impossible picture, the impossible revision",
+    "conceptTags": [
+      "memory",
+      "art",
+      "self-deception",
+      "truth"
+    ]
+  },
+  {
+    "id": "crit-modB-005",
+    "critic": "Pedot",
+    "lens": "psychoanalytic",
+    "verified": "as taught in the unit",
+    "claim": "Ono is a man of vision and limited insight",
+    "conceptTags": [
+      "self-deception",
+      "insight",
+      "character"
+    ]
+  },
+  {
+    "id": "crit-modB-006",
+    "critic": "Timothy Wright",
+    "lens": "historical",
+    "verified": "verbatim from the article",
+    "claim": "critics tend to gloss over the subversiveness of Ishiguro's representation of history",
+    "conceptTags": [
+      "history",
+      "representation",
+      "context"
+    ]
+  },
+  {
+    "id": "crit-modB-007",
+    "critic": "Timothy Wright",
+    "lens": "historical",
+    "verified": "from the article title and thesis",
+    "claim": "the novel dramatises the lesson of history and the search for a homelike place in a transformed nation",
+    "conceptTags": [
+      "history",
+      "nation",
+      "tradition",
+      "change",
+      "context"
+    ]
+  },
+  {
+    "id": "crit-modB-008",
+    "critic": "Timothy Wright",
+    "lens": "historical",
+    "verified": "as taught in the unit",
+    "claim": "the novel examines how personal and national histories intertwine",
+    "conceptTags": [
+      "personal and national identity",
+      "history"
+    ]
+  },
+  {
+    "id": "crit-modB-009",
+    "critic": "Silvia Tellini",
+    "lens": "identity and nation",
+    "verified": "verbatim from the article",
+    "claim": "Ono's narrative is set against the backdrop of an ambiguous and contradictory society that has taken an abrupt turn towards a new direction in history",
+    "conceptTags": [
+      "ambiguity",
+      "contradiction",
+      "change",
+      "nation",
+      "context"
+    ]
+  },
+  {
+    "id": "crit-modB-010",
+    "critic": "Silvia Tellini",
+    "lens": "identity and nation",
+    "verified": "verbatim from the article",
+    "claim": "Ono occupies both the place of the subject and the subjected, which furnishes his fluid identity",
+    "conceptTags": [
+      "identity",
+      "fluid identity",
+      "nation"
+    ]
+  },
+  {
+    "id": "crit-modB-011",
+    "critic": "Silvia Tellini",
+    "lens": "identity and nation",
+    "verified": "as taught in the unit",
+    "claim": "Ono's identity crisis mirrors Japan's national crisis",
+    "conceptTags": [
+      "identity",
+      "personal and national identity",
+      "nation",
+      "crisis"
+    ]
+  }
+]

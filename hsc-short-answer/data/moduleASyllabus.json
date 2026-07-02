@@ -1,0 +1,41 @@
+{
+  "overarchingInquiryQuestion": "How does Campion's reframing of Keats through Fanny Brawne reposition the value of imagination, love and loss across time, medium and gendered perspective?",
+  "textualConcepts": [
+    {
+      "name": "Intertextuality",
+      "definition": "Every text is in dialogue with other texts. At Stage 6, students understand that intertextuality involves revisioning texts for critical and creative purposes, and invites consideration of a text's meaning and value across time.",
+      "unitElaboration": "Campion's Bright Star enters into deliberate dialogue with Keats's poetry, reframing his lyric voice through the perspective of Fanny Brawne and rebuilding Romantic preoccupations across a span of nearly two centuries. The work is evaluative rather than mere link spotting: students must judge what the later text enables in the earlier, where the texts collide, and how the contextual pressures of Regency lyric and contemporary feminist cinema produce meaningfully different versions of the same Romantic material."
+    },
+    {
+      "name": "Representation",
+      "definition": "Representation is the depiction of people, places, events, ideas and values through language, form and structure. At Stage 6, students understand that representation is always shaped by context, perspective and the conventions of a composer's chosen medium.",
+      "unitElaboration": "Keats represents love, mortality and imagination through the conventions of Romantic lyric, while Campion reframes that material through cinematic representation, focalised through Fanny. Students compare what each medium foregrounds and what it conceals, and analyse how representation is conditioned by Regency gender and class on the one hand and contemporary feminist cinematic practice on the other."
+    }
+  ],
+  "auditPoints": [
+    {
+      "id": "s1",
+      "text": "how composers are influenced by another text's concepts, contexts and values, and how this shapes meaning"
+    },
+    {
+      "id": "s2",
+      "text": "the resonances and dissonances between and within texts, and how a reframing of one text might mirror, align or collide with another"
+    },
+    {
+      "id": "s3",
+      "text": "how the comparative study has enhanced your understanding, appreciation and enjoyment of both texts, and how your own contextual knowledge shapes your perspective"
+    },
+    {
+      "id": "s4",
+      "text": "how language concepts such as motif, allusion and intertextuality connect and distinguish the texts, and how innovating with form and style shapes new meaning"
+    },
+    {
+      "id": "s5",
+      "text": "intertextuality as an evaluative judgement, not mere link spotting, about what the later text enables in the earlier and where the texts collide"
+    },
+    {
+      "id": "s6",
+      "text": "representation as shaped by context, perspective and medium, and what each text's form foregrounds or conceals"
+    }
+  ]
+}
