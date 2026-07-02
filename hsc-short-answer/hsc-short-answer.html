@@ -1355,19 +1355,19 @@
 </div><!-- #app-s2 -->
 
 <!-- ══ PAPER 2 — MODULE A / MODULE B (rendered by the shared module engine) ══ -->
-<div class="app" id="app-modA" style="display:none;">
-  <div id="modA-desktop-gate" class="mod-desktop-gate">
+<div class="app" id="app-moduleA" style="display:none;">
+  <div id="moduleA-desktop-gate" class="mod-desktop-gate">
     <h2>This tool is built for a laptop or desktop</h2>
     <p style="margin-top:var(--space-sm);">The Module A extended response practice needs a wider screen. Please switch to a laptop or desktop.</p>
   </div>
-  <div id="app-modA-main"></div>
+  <div id="app-moduleA-main"></div>
 </div>
-<div class="app" id="app-modB" style="display:none;">
-  <div id="modB-desktop-gate" class="mod-desktop-gate">
+<div class="app" id="app-moduleB" style="display:none;">
+  <div id="moduleB-desktop-gate" class="mod-desktop-gate">
     <h2>This tool is built for a laptop or desktop</h2>
     <p style="margin-top:var(--space-sm);">The Module B critical study practice needs a wider screen. Please switch to a laptop or desktop.</p>
   </div>
-  <div id="app-modB-main"></div>
+  <div id="app-moduleB-main"></div>
 </div>
 
 <script>
@@ -3906,8 +3906,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.section-tab').forEach(t => t.classList.toggle('active', t.dataset.section === String(n)));
     $('main-app').style.display = n === 1 ? 'block' : 'none';
     $('app-s2').style.display = n === 2 ? 'block' : 'none';
-    $('app-modA').style.display = n === 3 ? 'block' : 'none';
-    $('app-modB').style.display = n === 4 ? 'block' : 'none';
+    $('app-moduleA').style.display = n === 3 ? 'block' : 'none';
+    $('app-moduleB').style.display = n === 4 ? 'block' : 'none';
     $('settings-btn').style.display = n === 1 ? 'block' : 'none';
     if (n === 2) {
       $('app-s2').classList.add('wide');
@@ -3915,8 +3915,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!loaded) { load().catch(err => { console.error(err); setError('s2-setup-error', 'Could not load the Section II materials. ' + err.message); }); }
       applyDesktopGate();
     }
-    if (n === 3 && window.__moduleShow) { $('app-modA').classList.add('wide'); window.__moduleShow('moduleA'); }
-    if (n === 4 && window.__moduleShow) { $('app-modB').classList.add('wide'); window.__moduleShow('moduleB'); }
+    if (n === 3 && window.__moduleShow) { $('app-moduleA').classList.add('wide'); window.__moduleShow('moduleA'); }
+    if (n === 4 && window.__moduleShow) { $('app-moduleB').classList.add('wide'); window.__moduleShow('moduleB'); }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -4873,7 +4873,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Public show ─────────────────────────────────────────────────────────
     async function show() {
-      const gate = $(cfgKey === 'moduleA' ? 'modA-desktop-gate' : 'modB-desktop-gate');
+      const gate = $(cfgKey === 'moduleA' ? 'moduleA-desktop-gate' : 'moduleB-desktop-gate');
       if (window.innerWidth < cfg.layout.minViewportPx) { gate.classList.add('show'); mainEl.style.display = 'none'; return; }
       gate.classList.remove('show'); mainEl.style.display = 'block';
       if (!loaded) {
