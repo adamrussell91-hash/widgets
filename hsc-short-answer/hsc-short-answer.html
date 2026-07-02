@@ -339,6 +339,93 @@
       max-width: 1200px; margin: 0 auto var(--space); display: flex; gap: 8px;
       border-bottom: 2px solid var(--color-border); padding-bottom: 0;
     }
+    /* ── Paper-grouped tab bar (Paper 1 / Paper 2 brackets) ─────────────────── */
+    .paper-tabbar {
+      max-width: 1200px; margin: 0 auto var(--space); display: flex;
+      gap: var(--space); flex-wrap: wrap; align-items: flex-end;
+      border-bottom: 2px solid var(--color-border);
+    }
+    .paper-group { display: flex; flex-direction: column; gap: 4px; }
+    .paper-bracket {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--color-muted);
+      border: 1px solid var(--color-border); border-bottom: none;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 4px 12px; background: var(--color-accent-light);
+      text-align: center;
+    }
+    .paper-tab-row { display: flex; gap: 8px; }
+    .section-tab-disabled {
+      opacity: 0.45; cursor: not-allowed; font-style: italic;
+    }
+    .section-tab-disabled:hover { background: transparent; }
+
+    /* ── Module A/B extra panels ────────────────────────────────────────────── */
+    .judgement-lens {
+      background: #F0F7FF; border: 1px solid #B8D4F0; border-radius: var(--radius);
+      padding: var(--space-sm) var(--space); margin-bottom: var(--space); font-size: 0.88rem;
+    }
+    .judgement-lens .panel-label { color: #2B5A8C; }
+    .judgement-lens .jl-row { margin: 5px 0; line-height: 1.4; }
+    .judgement-lens .jl-head { font-weight: 700; color: #2B5A8C; }
+    .breaker-box, .usefulness-box, .critics-box, .concept-box, .resonance-box, .chain-box {
+      background: white; border: 1px solid var(--color-border);
+      border-radius: var(--radius); padding: var(--space-sm) var(--space);
+      margin-bottom: var(--space);
+    }
+    .concept-box { background: #FFFBEB; border-color: #F0D060; }
+    .concept-box .panel-label { color: #8B6914; }
+    .warn-box {
+      background: #FDECEA; border: 1px solid #E0A0A0; color: #8B2A2A;
+      border-radius: var(--radius); padding: 8px var(--space-sm);
+      margin: var(--space-sm) 0; font-size: 0.85rem; display: none;
+    }
+    .warn-box.show { display: block; }
+    .pin-tag {
+      font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+      background: var(--color-accent); color: white; border-radius: 8px;
+      padding: 1px 7px; margin-left: 6px;
+    }
+    .critic-row, .quote-row {
+      padding: 6px 0; border-bottom: 1px solid var(--color-border); font-size: 0.85rem;
+    }
+    .form-feature-chip {
+      display: inline-block; font-size: 0.78rem; padding: 3px 9px; margin: 3px;
+      border: 1px solid var(--color-border); border-radius: 14px;
+      background: white; cursor: pointer;
+    }
+    .form-feature-chip.on {
+      background: var(--color-accent); color: white; border-color: var(--color-accent);
+    }
+    .stimulus-block {
+      background: #FBF7EF; border-left: 3px solid var(--color-accent);
+      padding: var(--space-sm) var(--space); margin: var(--space-sm) 0;
+      white-space: pre-wrap; font-size: 0.9rem; line-height: 1.55;
+    }
+    .image-placeholder {
+      border: 2px dashed var(--color-border); border-radius: var(--radius);
+      padding: var(--space); text-align: center; color: var(--color-muted);
+      font-style: italic; margin: var(--space-sm) 0; font-size: 0.85rem;
+    }
+    .mod-desktop-gate {
+      display: none; text-align: center; padding: var(--space-lg) var(--space);
+      color: var(--color-muted);
+    }
+    .mod-desktop-gate.show { display: block; }
+    .prescribed-badge {
+      font-size: 0.8rem; color: var(--color-muted); margin-left: var(--space-sm);
+    }
+    /* Module engine layout helpers */
+    .split-layout { display: grid; grid-template-columns: 3fr 2fr; gap: var(--space); margin: var(--space) 0; align-items: start; }
+    @media (max-width: 1023px) { .split-layout { grid-template-columns: 1fr; } }
+    .split-left, .split-right { min-width: 0; }
+    .pacing-nudge {
+      display: none; background: var(--color-accent-light); color: var(--color-accent);
+      border-radius: var(--radius); padding: var(--space-sm) var(--space);
+      font-size: 0.9rem; margin: var(--space-sm) 0;
+    }
+    .pacing-nudge.show { display: block; }
+    .cal-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); margin-top: var(--space); }
     .section-tab {
       font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
       padding: 10px 20px; border: 1px solid var(--color-border); border-bottom: none;
@@ -576,10 +663,23 @@
   </div>
 </div>
 
-<!-- ── TOP-LEVEL SECTION TABS ─────────────────────────────────────────────── -->
-<div class="section-tabbar" id="section-tabbar">
-  <button class="section-tab active" data-section="1">Section I<span class="section-tab-sub">Short answer</span></button>
-  <button class="section-tab" data-section="2">Section II<span class="section-tab-sub">Extended response</span></button>
+<!-- ── TOP-LEVEL SECTION TABS (grouped by paper) ──────────────────────────── -->
+<div class="paper-tabbar" id="section-tabbar">
+  <div class="paper-group">
+    <div class="paper-bracket">Paper 1: Texts and Human Experiences</div>
+    <div class="paper-tab-row">
+      <button class="section-tab active" data-section="1">Section I<span class="section-tab-sub">Short answer</span></button>
+      <button class="section-tab" data-section="2">Section II<span class="section-tab-sub">Common Module essay</span></button>
+    </div>
+  </div>
+  <div class="paper-group">
+    <div class="paper-bracket">Paper 2: Modules</div>
+    <div class="paper-tab-row">
+      <button class="section-tab" data-section="3">Module A<span class="section-tab-sub">Textual Conversations</span></button>
+      <button class="section-tab" data-section="4">Module B<span class="section-tab-sub">Critical Study</span></button>
+      <button class="section-tab section-tab-disabled" data-section="5" disabled title="Coming soon">Module C<span class="section-tab-sub">Coming soon</span></button>
+    </div>
+  </div>
 </div>
 
 <div class="app wide" id="main-app">
@@ -1254,6 +1354,22 @@
   </div><!-- #s2-main -->
 </div><!-- #app-s2 -->
 
+<!-- ══ PAPER 2 — MODULE A / MODULE B (rendered by the shared module engine) ══ -->
+<div class="app" id="app-modA" style="display:none;">
+  <div id="modA-desktop-gate" class="mod-desktop-gate">
+    <h2>This tool is built for a laptop or desktop</h2>
+    <p style="margin-top:var(--space-sm);">The Module A extended response practice needs a wider screen. Please switch to a laptop or desktop.</p>
+  </div>
+  <div id="app-modA-main"></div>
+</div>
+<div class="app" id="app-modB" style="display:none;">
+  <div id="modB-desktop-gate" class="mod-desktop-gate">
+    <h2>This tool is built for a laptop or desktop</h2>
+    <p style="margin-top:var(--space-sm);">The Module B critical study practice needs a wider screen. Please switch to a laptop or desktop.</p>
+  </div>
+  <div id="app-modB-main"></div>
+</div>
+
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 const CONFIG = {
@@ -1310,6 +1426,64 @@ const CONFIG = {
       quotes: 'merchantQuotes.json',
       syllabus: 'syllabus.json'
     }
+  },
+
+  // ── Paper 2, Section I — Module A, Textual Conversations (Q1) ──────────────
+  moduleA: {
+    key: 'moduleA', sectionN: 3,
+    tabLabel: 'Module A',
+    fullHeading: 'Paper 2, Section I: Module A, Textual Conversations',
+    prescribedTexts: ['John Keats, The Complete Poems', 'Jane Campion, Bright Star (2009)'],
+    comparative: true,
+    totalMarks: 20, bandCount: 5,
+    writingSecondsEssay: 2400,   // 40 minutes (Paper 2)
+    planningSeconds: 300, drillSeconds: 240, tickMs: 1000,
+    pacingSegments: [
+      { id: 'introThesis', label: 'Thesis and introduction', seconds: 360 },
+      { id: 'conn1', label: 'First point of connection', seconds: 480 },
+      { id: 'conn2', label: 'Second point of connection', seconds: 480 },
+      { id: 'conn3', label: 'Third point of connection', seconds: 480 },
+      { id: 'judgement', label: 'Judgement and conclusion', seconds: 360 },
+      { id: 'buffer', label: 'Editing and final check', seconds: 240 }
+    ],
+    slider: { min: 0, max: 100, step: 1 },
+    attributionOptions: ['preparation', 'the question', 'effort', 'stress', 'luck'],
+    attributionNoteMaxChars: 200,
+    selection: { varietyWindow: 4, maxPickAttempts: 20 },
+    evidence: { minNormalisedChars: 8 },
+    layout: { minViewportPx: 1024 },
+    defaultLevel: 1,
+    dataFiles: { questions: 'moduleAQuestions.json', quotes: 'moduleAQuotes.json', syllabus: 'moduleASyllabus.json' },
+    features: { judgementLens: true, preparedBreaker: true, resonanceMap: true, conceptPanel: true, formSafeguards: true, evidenceUsefulness: true, evidenceChecker: false, criticsPanel: false, perspectiveCheck: false }
+  },
+
+  // ── Paper 2, Section II — Module B, Critical Study of Text ─────────────────
+  moduleB: {
+    key: 'moduleB', sectionN: 4,
+    tabLabel: 'Module B',
+    fullHeading: 'Paper 2, Section II: Module B, Critical Study of Text',
+    prescribedText: 'Kazuo Ishiguro, An Artist of the Floating World',
+    comparative: false,
+    totalMarks: 20, bandCount: 5,
+    writingSecondsEssay: 2400,   // 40 minutes (Paper 2)
+    planningSeconds: 300, drillSeconds: 240, tickMs: 1000,
+    pacingSegments: [
+      { id: 'introThesis', label: 'Thesis and introduction', seconds: 360 },
+      { id: 'arg1', label: 'First argument', seconds: 480 },
+      { id: 'arg2', label: 'Second argument', seconds: 480 },
+      { id: 'arg3', label: 'Third argument', seconds: 480 },
+      { id: 'judgement', label: 'Judgement and conclusion', seconds: 360 },
+      { id: 'buffer', label: 'Editing and final check', seconds: 240 }
+    ],
+    slider: { min: 0, max: 100, step: 1 },
+    attributionOptions: ['preparation', 'the question', 'effort', 'stress', 'luck'],
+    attributionNoteMaxChars: 200,
+    selection: { varietyWindow: 4, maxPickAttempts: 20 },
+    evidence: { minNormalisedChars: 8 },
+    layout: { minViewportPx: 1024 },
+    defaultLevel: 1,
+    dataFiles: { questions: 'moduleBQuestions.json', quotes: 'moduleBQuotes.json', critics: 'moduleBCritics.json', syllabus: 'moduleBSyllabus.json', stimulus: 'moduleBStimulus.json' },
+    features: { judgementLens: false, preparedBreaker: false, resonanceMap: false, conceptPanel: false, formSafeguards: false, evidenceUsefulness: false, evidenceChecker: true, criticsPanel: true, perspectiveCheck: true }
   }
 };
 
@@ -3728,9 +3902,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showSection(n) {
+    if (n === 5) return; // Module C — disabled placeholder
     document.querySelectorAll('.section-tab').forEach(t => t.classList.toggle('active', t.dataset.section === String(n)));
     $('main-app').style.display = n === 1 ? 'block' : 'none';
     $('app-s2').style.display = n === 2 ? 'block' : 'none';
+    $('app-modA').style.display = n === 3 ? 'block' : 'none';
+    $('app-modB').style.display = n === 4 ? 'block' : 'none';
     $('settings-btn').style.display = n === 1 ? 'block' : 'none';
     if (n === 2) {
       $('app-s2').classList.add('wide');
@@ -3738,6 +3915,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!loaded) { load().catch(err => { console.error(err); setError('s2-setup-error', 'Could not load the Section II materials. ' + err.message); }); }
       applyDesktopGate();
     }
+    if (n === 3 && window.__moduleShow) { $('app-modA').classList.add('wide'); window.__moduleShow('moduleA'); }
+    if (n === 4 && window.__moduleShow) { $('app-modB').classList.add('wide'); window.__moduleShow('moduleB'); }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -3784,5 +3963,939 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 })();
 </script>
+<!-- ══ Paper 2 module engine (Module A / Module B) ══ -->
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+//  Paper 2 shared module engine — Module A (Textual Conversations) and
+//  Module B (Critical Study). One config-driven controller per module.
+//  No model, no network beyond fetching the bundled JSON, nothing persisted.
+// ══════════════════════════════════════════════════════════════════════════
+(function () {
+  const $ = id => document.getElementById(id);
+
+  // ── Per-module static teaching content ────────────────────────────────────
+  const CONTENT = {
+    moduleA: {
+      categories: ['argument', 'connection', 'context', 'evidence', 'expression'],
+      objectives: ['understanding', 'evaluation', 'expression'],
+      objLabels: { understanding: 'Understanding', evaluation: 'Evaluation', expression: 'Expression' },
+      critDef: {
+        argument: 'One clear, conceptual thesis about the textual conversation that answers the whole question and runs through every paragraph.',
+        connection: 'Weaving both texts through each argument — resonance, dissonance, reframing, collision or extension — not one text then the other.',
+        context: 'Specific, differentiated social, historical and cultural context that actually drives the argument.',
+        evidence: 'Well-chosen, balanced evidence from BOTH Keats and Bright Star, analysed for a form feature.',
+        expression: 'Clear, controlled writing in a confident personal voice.'
+      },
+      setupCoach: 'A single 20-mark comparative essay on Keats’ poetry and Campion’s Bright Star. You read a real Question 1, plan and write by hand, then self-mark against the authentic rubric and marker feedback. The tool never gives you a mark — it holds up the yardstick.',
+      cast: [
+        { key: 'c', label: 'C — Command', help: 'Circle the directive verb. What does it demand of your response?', ph: 'e.g. evaluate — weigh the value and significance of the connection' },
+        { key: 'a', label: 'A — Anchor idea', help: 'Underline the concept at the centre of the question.', ph: 'e.g. the role of creativity in the textual conversation' },
+        { key: 's', label: 'S — Scope', help: 'Box the qualifiers and limiters — name BOTH prescribed texts, any stimulus extract, and the Module A frame.', ph: 'e.g. Keats’ poetry AND Bright Star; the extract; textual conversation' },
+        { key: 't', label: 'T — Thesis', help: 'State your line of argument about the textual conversation in your own words.', ph: 'In my own words, my argument about the conversation between the two texts is…' }
+      ],
+      judgementLens: {
+        'evaluate': { wants: 'a judgement of value or significance.', must: 'Your thesis must say why the connection matters.', avoid: 'Avoid only describing a shared idea.' },
+        'to what extent': { wants: 'a judgement of degree and limits.', must: 'Your thesis must say how far the claim is true and where it needs qualification.', avoid: 'Avoid simply agreeing.' },
+        'how do': { wants: 'mechanisms.', must: 'Your thesis must name how the texts create meaning through choices, forms and relationships.', avoid: 'Avoid listing themes.' },
+        'explain': { wants: 'a clear relationship or process.', must: 'Your thesis must make the connection understandable and purposeful.', avoid: 'Avoid assertion without cause and effect.' },
+        'in what ways': { wants: 'distinct methods or dimensions.', must: 'Your thesis must organise the ways the textual conversation operates.', avoid: 'Avoid one broad generalisation.' },
+        'analyse': { wants: 'parts, techniques and relationships broken down.', must: 'Your thesis must identify what will be examined and why it matters.', avoid: 'Avoid plot summary.' },
+        'assess': { wants: 'criteria and a judgement of effectiveness.', must: 'Your thesis must name the standard being used and the final judgement.', avoid: 'Avoid vague praise.' },
+        'how effectively': { wants: 'criteria and a judgement of effectiveness.', must: 'Your thesis must name the standard being used and the final judgement.', avoid: 'Avoid vague praise.' }
+      },
+      relationshipTypes: ['resonance', 'dissonance', 'reframing', 'collision', 'extension'],
+      formFeatures: {
+        poetry: ['sonnet structure', 'ode structure', 'stanza form', 'volta', 'sound', 'rhythm', 'imagery', 'apostrophe', 'ballad form', 'speaker or voice'],
+        film: ['focalisation', 'framing', 'mise en scene', 'editing', 'sound', 'lighting', 'performance', 'costuming', 'camera movement', 'shot composition']
+      },
+      conceptDict: [
+        { keys: ['creativ'], means: 'How each text values making art and the imagination as ways of shaping meaning.', weak: 'Both texts are about being creative.', strong: 'Keats’ self-conscious lyric craft and Campion’s cinematic reframing each stake a different claim about what creativity is worth, and the conversation between them reweighs that value across time and medium.', avoid: 'Avoid treating “creativity” as a theme both texts simply “have”.' },
+        { keys: ['imagination', 'romantic'], means: 'The Romantic privileging of the imagination as a way of knowing and transcending.', weak: 'Keats likes imagination and so does the film.', strong: 'Campion refracts Keats’ privileging of the imagination through Fanny’s embodied, gendered perspective, so the later text both honours and pressures the earlier text’s idealism.', avoid: 'Avoid a generalised “imagination is important” claim with no textual grip.' },
+        { keys: ['mortal', 'death', 'transien', 'loss'], means: 'Human transience — the pressure of time, illness and death on love and art.', weak: 'Both texts are sad because Keats dies.', strong: 'Keats’ lyric confrontation with his own extinction is reframed by Campion into a shared, anticipatory grief, so the conversation shifts mortality from private lyric fear to a relationship’s felt loss.', avoid: 'Avoid recounting Keats’ biography instead of analysing representation.' },
+        { keys: ['love', 'intima'], means: 'How each text represents love — idealised, embodied, gendered.', weak: 'Both texts are love stories.', strong: 'The film’s tactile, reciprocal love answers and complicates the more idealised, solitary desire of the poetry, so the pairing tests what love means across medium and gender.', avoid: 'Avoid reducing the pairing to a single word, “love”.' },
+        { keys: ['gender', 'fanny', 'women', 'female'], means: 'How gender and female perspective are represented and reframed.', weak: 'The film gives Fanny a bigger role.', strong: 'Campion’s feminist focalisation through Fanny reframes the male Romantic gaze of the poetry, recovering a female creativity (her stitching, her butterflies) the lyric tradition marginalised.', avoid: 'Avoid the narrow claim that Campion merely “redresses” Fanny’s reputation.' },
+        { keys: ['nature'], means: 'The Romantic representation of nature and the sublime.', weak: 'Both texts have nature in them.', strong: 'Keats’ sublime, symbolic nature is recast by Campion into an intimate, domestic natural world, so the conversation relocates the sublime from cosmic vision to lived, seasonal detail.', avoid: 'Avoid listing natural images without judging their changed function.' },
+        { keys: ['beauty', 'truth'], means: 'The relationship between beauty, truth and art.', weak: 'Keats says beauty is truth.', strong: 'The urn’s aphoristic equation of beauty and truth is pressured by the film’s attention to bodily, temporary experience, so the pairing debates whether art’s permanence consoles or falsifies.', avoid: 'Avoid quoting “beauty is truth” without analysing what each text does with it.' },
+        { keys: ['artist', 'artistry'], means: 'The figure of the artist and the making of art.', weak: 'Both texts are about an artist.', strong: 'Keats’ “negative capability” ideal of the self-erasing poet is dramatised and questioned by Campion’s portrait of the working, dying artist, so the conversation weighs the myth of the artist against the labour and cost of art.', avoid: 'Avoid biography; analyse how each text constructs the artist.' }
+      ],
+      quoteRow: q => '<div class="quote-row"><strong>' + (esc(q.text || '') + (q.poemTitle ? ', ' + esc(q.poemTitle) : q.scene ? ', ' + esc(q.scene) : '')) + (q.locator ? ' (' + esc(q.locator) + ')' : '') + (q.speaker ? ' — ' + esc(q.speaker) : '') + ':</strong> ' + esc(q.quote) + '</div>',
+      thesisStems: q => {
+        const c = q.concept;
+        switch (fam(q.verb)) {
+          case 'evaluate': return ['The conversation between Keats and Bright Star reveals that ' + c + ' matters because…', 'To a great / limited extent, the later text’s treatment of ' + c + '…'];
+          case 'analyse': return ['Both texts represent ' + c + ', but through…', 'By… the pairing analyses ' + c + '…'];
+          case 'explain': return ['The textual conversation shows ' + c + ' when…', 'Keats and Campion each represent ' + c + ' by…'];
+          default: return ['The pairing effectively reframes ' + c + ' by…', 'Read together, the two texts…'];
+        }
+      },
+      drills: [
+        { id: 'thesis', cat: 'argument', title: 'Thesis in a few minutes', prompt: q => 'Write a conceptual thesis about the textual conversation this question raises — not a thematic label.', check: q => 'Does it stake one clear claim about the conversation over ' + q.concept + ', rather than restate the question?' },
+        { id: 'topic', cat: 'connection', title: 'Topic sentence', prompt: q => 'Write a topic sentence naming ONE point of connection between the two texts — not a plot point in either.', check: q => 'Does it name a connection (resonance, dissonance, reframing, collision, extension) rather than describe one text?' },
+        { id: 'integrate', cat: 'connection', title: 'Integrate the pair', prompt: q => 'Given a sentence about ONE text only, rewrite it to bring in the OTHER text within the same or next sentence.', check: q => 'Do both texts now appear, linked to the conversation, closing the single-text gap markers flag?' },
+        { id: 'evidence', cat: 'evidence', title: 'Evidence to effect', prompt: q => 'Take a quotation from the bank: name the form feature, explain its effect, then link it across to the other text.', check: q => 'Chain check: form feature → effect → link across to the other text. All three present?' },
+        { id: 'judgement', cat: 'argument', title: 'Land the judgement', prompt: q => 'Write a closing judgement sentence that matches the directive verb “' + q.verb + '”.', check: q => 'Does it reach a defended verdict (not description) matched to “' + q.verb + '”?' },
+        { id: 'clutter', cat: 'expression', title: 'Cut the clutter', prompt: q => 'Compress a wordy sentence from your writing without losing the point.', check: q => 'Shorter and clearer with no lost meaning?' }
+      ],
+      dict: [
+        { phrase: 'Evaluates skilfully', plain: 'You weigh the connection up with real judgement and show, with control and insight, why it matters.' },
+        { phrase: 'Explains skilfully', plain: 'You show clearly and insightfully how the texts converse, staying in control throughout.' },
+        { phrase: 'textual conversation', plain: 'The genuine dialogue between the two texts — how one resonates with, reframes or collides with the other.' },
+        { phrase: 'textual connections', plain: 'The genuine links between the two texts — resonance, dissonance, reframing, collision, extension.' },
+        { phrase: 'resonances and dissonances', plain: 'Where the texts agree and echo (resonance) and where they pull apart or clash (dissonance).' },
+        { phrase: 'well-selected and detailed references', plain: 'Short, exact evidence from BOTH texts, chosen on purpose to prove your point.' },
+        { phrase: 'well-informed understanding', plain: 'You clearly know the texts, their contexts, forms and ideas, and use that knowledge to argue.' },
+        { phrase: 'insightful response', plain: 'You notice what an ordinary reader misses and say something genuinely thoughtful.' },
+        { phrase: 'conceptual', plain: 'You get to the big idea behind the pairing — why the conversation matters — not just what each text is about.' },
+        { phrase: 'thematic', plain: 'Reducing the pairing to a single topic word (like “love”) instead of arguing about the conversation. Markers penalise this.' },
+        { phrase: 'balanced', plain: 'Roughly even, detailed treatment of BOTH texts — not favouring the film over Keats’ poetry.' },
+        { phrase: 'integrated', plain: 'Both texts woven through each paragraph, not one text then the other in separate halves.' },
+        { phrase: 'context', plain: 'Specific social, historical and cultural background that actually drives your argument, not generalised filler.' },
+        { phrase: 'form', plain: 'The made-ness of each text — sonnet, ode, volta, imagery for poetry; framing, editing, mise en scene for film — and how it shapes meaning.' },
+        { phrase: 'metalanguage', plain: 'The correct terms for how each form works, used to show how meaning is made.' },
+        { phrase: 'the earlier text', plain: 'Keats’ poetry — the text the later one responds to.' },
+        { phrase: 'the later text', plain: 'Campion’s Bright Star — the text that reframes the earlier one.' }
+      ]
+    },
+
+    moduleB: {
+      categories: ['argument', 'interpretation', 'analysis', 'evidence', 'perspectives', 'judgement', 'expression'],
+      objectives: ['understanding', 'distinctiveQualities', 'expression'],
+      objLabels: { understanding: 'Understanding', distinctiveQualities: 'Distinctive qualities', expression: 'Expression' },
+      critDef: {
+        argument: 'One clear, conceptual and personal thesis driven by the key words — not plot or character.',
+        interpretation: 'Your own rich, informed reading of the text’s ideas, moving beyond summary.',
+        analysis: 'Showing HOW Ishiguro constructs meaning — a distinctive technique and its effect.',
+        evidence: 'Well-chosen micro evidence from across the whole novel, tied to your point.',
+        perspectives: 'A critic’s view integrated in your own words — support, extend or challenge — not dropped in.',
+        judgement: 'A defended verdict matched to the verb, reaching textual integrity or significance.',
+        expression: 'Clear, controlled writing in a confident personal voice.'
+      },
+      setupCoach: 'A single 20-mark critical study essay on Ishiguro’s An Artist of the Floating World. You read a real Module B question, plan and write by hand, then self-mark against the authentic rubric and marker feedback. The tool never gives you a mark — it holds up the yardstick.',
+      cast: [
+        { key: 'c', label: 'C — Command', help: 'Circle the directive verb. What does it demand of your response?', ph: 'e.g. evaluate — reach a defended verdict, not description' },
+        { key: 'a', label: 'A — Anchor idea', help: 'Underline the concept at the centre of the question.', ph: 'e.g. textual integrity; unreliability; tradition' },
+        { key: 's', label: 'S — Scope', help: 'Box the qualifiers — name the prescribed text, any extract, whether the question calls for the perspectives of others, and the Module B frame.', ph: 'e.g. the novel; the closing extract; perspectives of others?' },
+        { key: 't', label: 'T — Thesis', help: 'State your conceptual, personal line of argument in your own words.', ph: 'In my own words, my conceptual argument is…' }
+      ],
+      criticMethods: ['support', 'extend', 'challenge'],
+      criticRow: (c, pinned) => '<div class="critic-row"><strong>' + esc(c.critic) + '</strong> <span style="color:var(--color-muted);font-size:0.78rem;">(' + esc(c.lens) + ')</span>' + (pinned ? '<span class="pin-tag">pinned</span>' : '') + '<br>' + esc(c.claim) + '</div>',
+      quoteRow: q => '<div class="quote-row"><strong>' + esc(q.section || '') + (q.page ? ', p.' + esc(String(q.page)) : '') + (q.speaker ? ' — ' + esc(q.speaker) : '') + ':</strong> ' + esc(q.quote) + '</div>',
+      thesisStems: q => {
+        const c = q.concept;
+        switch (fam(q.verb)) {
+          case 'evaluate': return ['Through its distinctive construction, the novel…', 'To a great / limited extent, Ishiguro’s treatment of ' + c + '…'];
+          case 'to what extent': return ['To a great / limited extent, the novel… because…', 'Ishiguro’s construction makes the claim about ' + c + ' largely / only partly true because…'];
+          default: return ['My study of the novel has altered and expanded my understanding of ' + c + ' by…', 'Ishiguro constructs ' + c + ' through…'];
+        }
+      },
+      drills: [
+        { id: 'thesis', cat: 'argument', title: 'Thesis in a few minutes', prompt: q => 'Write a conceptual, personal thesis using the key words of this question — not a plot or character summary.', check: q => 'Does it stake a conceptual claim about ' + q.concept + ' with a personal voice?' },
+        { id: 'topic', cat: 'analysis', title: 'Topic sentence', prompt: q => 'Write a topic sentence that names a distinctive quality of the text and stakes a conceptual claim — not a plot point.', check: q => 'Does it name a construction feature AND make an argument, not describe events?' },
+        { id: 'recount', cat: 'analysis', title: 'Recount to analysis', prompt: q => 'Turn a plot-summary sentence into an analytical one that names a distinctive construction technique and its effect.', check: q => 'Does it name a technique (unreliable narration, non-linear structure, motif…) AND its effect, not retell events?' },
+        { id: 'micro', cat: 'evidence', title: 'Micro evidence', prompt: q => 'Replace a broad plot reference with a single well-chosen phrase or image, analysed.', check: q => 'Is it one precise phrase/image analysed for effect, rather than a plot summary?' },
+        { id: 'critic', cat: 'perspectives', title: 'Integrate a critic', prompt: q => 'Take a verified critic claim from the bank and write a support / extend / challenge sentence weaving it into your argument.', check: q => 'Is the critic named, in your own words, and clearly set to support, extend or challenge?' },
+        { id: 'context', cat: 'perspectives', title: 'Deploy the context', prompt: q => 'Write a sentence deploying one specific dual-context claim (post-war Japan OR Thatcher’s Britain) without a crude one-to-one Thatcher–Ono equivalence.', check: q => 'Is the context specific and purposeful, avoiding a crude equivalence?' },
+        { id: 'judgement', cat: 'judgement', title: 'Land the judgement', prompt: q => 'Write a closing judgement sentence that matches the directive verb “' + q.verb + '” and reaches textual integrity or significance.', check: q => 'Does it reach a defended verdict matched to “' + q.verb + '” and touch integrity/significance?' },
+        { id: 'clutter', cat: 'expression', title: 'Cut the clutter', prompt: q => 'Compress a wordy sentence from your writing without losing the point.', check: q => 'Shorter and clearer with no lost meaning?' }
+      ],
+      dict: [
+        { phrase: 'Evaluates skilfully', plain: 'You weigh it up with real judgement and show, with control and insight, how well the novel does what the question asks.' },
+        { phrase: 'Skilfully evaluates', plain: 'You weigh it up with real judgement and show, with control and insight, how far the statement is true of the novel.' },
+        { phrase: 'Explains skilfully', plain: 'You show clearly and insightfully how the novel works, staying in control throughout.' },
+        { phrase: 'textual integrity', plain: 'The way the whole novel hangs together — how its construction, ideas and language form a unified, significant whole.' },
+        { phrase: 'distinctive qualities', plain: 'What makes Ishiguro’s writing his own — understated prose, unreliable narration, non-linear structure, motif.' },
+        { phrase: 'unreliable narration', plain: 'Ono’s self-serving, self-correcting telling, which makes us doubt his version of events.' },
+        { phrase: 'construction', plain: 'How the novel is deliberately built — structure, narrative voice, time, motif — not just what happens.' },
+        { phrase: 'well-selected and detailed textual references', plain: 'Short, exact micro evidence from across the whole novel, chosen on purpose to prove your point.' },
+        { phrase: 'well-informed understanding', plain: 'You clearly know the novel, its contexts, form and ideas, and use that to argue.' },
+        { phrase: 'insightful response', plain: 'You notice what an ordinary reader misses and say something genuinely thoughtful.' },
+        { phrase: 'conceptual', plain: 'You argue about the big ideas the novel raises, not the plot or the characters as people.' },
+        { phrase: 'personal voice', plain: 'It sounds like you — a real reader with an informed view, not a memorised template.' },
+        { phrase: 'perspectives of others', plain: 'Critics’ readings, investigated and evaluated, then integrated in your own words to develop YOUR view.' },
+        { phrase: 'context', plain: 'Post-war Japan and Thatcher’s Britain — used specifically and purposefully, without a crude Thatcher–Ono equation.' },
+        { phrase: 'significance', plain: 'Why the novel still matters — its enduring value and meaning beyond its plot.' },
+        { phrase: 'plot and character', plain: 'Retelling what happens or describing people. Markers reward conceptual argument about construction instead.' }
+      ]
+    }
+  };
+
+  // Verb family (shared).
+  function fam(verb) {
+    if (verb === 'analyse' || verb === 'how does') return 'analyse';
+    if (verb === 'explain' || verb === 'in what ways') return 'explain';
+    if (verb === 'evaluate' || verb === 'to what extent') return 'evaluate';
+    if (verb === 'how has your study altered and expanded') return 'altered';
+    return 'assess';
+  }
+
+  const CONF_BANDS = [
+    'You don’t feel able to do this yet.',
+    'You could attempt it, but it might fall short.',
+    'You can partly do this, but you’re not sure.',
+    'You’re fairly confident you can do this.',
+    'You’re confident you can do this well.'
+  ];
+  const RESULT_BANDS = [
+    'Looking back, you don’t think you managed this.',
+    'You managed only a little of this.',
+    'You partly managed this.',
+    'You mostly managed this.',
+    'You’re confident you did this well.'
+  ];
+  function bandIndex(v) { return v <= 20 ? 0 : v <= 40 ? 1 : v <= 60 ? 2 : v <= 80 ? 3 : 4; }
+
+  const LEVEL_DESCS = {
+    1: 'Foundation, Guided Build — CAST always on, full planning scaffold, banks browsable, segmented pacing, rubric visible.',
+    2: 'Consolidation, Supported Draft — CAST on by default, light thesis and skeleton planner, short planning window, segmented pacing.',
+    3: 'Exam — question and any extract only, no CAST, plan on paper, a single straight 40-minute timer. The after-answer structures never fade.'
+  };
+  const MODE_DESCS = {
+    essay: 'Practice a single essay — read one real question, plan and write it end to end, then self-mark against the authentic rubric. Guided, at your own pace.',
+    timedEssay: 'Timed exam essay — the same full essay under exam conditions: a strict 40-minute writing timer, then self-mark.',
+    drill: 'Micro-skill drill gym — short, focused drills on one skill at a time, four minutes each, instead of a whole essay.'
+  };
+  const LEVEL_PROFILE = {
+    1: { cast: 'on', planning: 'full', pacing: true, checklist: 'visible', planningTimed: false, rubric: 'visible' },
+    2: { cast: 'on', planning: 'light', pacing: true, checklist: 'collapsed', planningTimed: true, rubric: 'collapsed' },
+    3: { cast: 'off', planning: 'none', pacing: false, checklist: 'hidden', planningTimed: true, rubric: 'hidden' }
+  };
+
+  // ── Controller factory ────────────────────────────────────────────────────
+  function makeController(cfgKey) {
+    const cfg = CONFIG[cfgKey];
+    const M = CONTENT[cfgKey];
+    const mainEl = $('app-' + cfgKey + '-main');
+    let data = { questions: [], quotes: [], critics: [], syllabus: null, stimulus: [] };
+    let loaded = false;
+    let st = fresh();
+    let timers = {};
+
+    function fresh() {
+      return {
+        mode: 'essay', level: cfg.defaultLevel, overrides: {},
+        servedFamilies: [], attempts: [], reflections: [], studentVoice: false,
+        q: null, cast: { c: '', a: '', s: '', t: '' },
+        breaker: { words: '', misfit: '', judgement: '' },
+        confidence: {}, result: {}, attribution: { choice: null, note: '' },
+        plan: {}, selfMarks: {}, chain: {}, usefulness: {}, usefulForm: [],
+        syllabus: {}, bandLocated: null, rewardsTicked: {}, improvementsTicked: {},
+        drill: { q: null, type: null }
+      };
+    }
+    function profile() {
+      const p = Object.assign({}, LEVEL_PROFILE[st.level]);
+      const o = st.overrides;
+      if (o.cast) p.cast = o.cast;
+      if (o.planning) p.planning = o.planning;
+      if (o.pacing) p.pacing = (o.pacing === 'on');
+      if (o.checklist) p.checklist = o.checklist;
+      return p;
+    }
+    function castOn() {
+      if (st.level === 1) return true;
+      if (st.level === 3 && !st.overrides.cast) return false;
+      return profile().cast === 'on';
+    }
+    const clearT = () => { Object.values(timers).forEach(t => clearInterval(t)); timers = {}; };
+    const render = html => { clearT(); mainEl.innerHTML = html; window.scrollTo(0, 0); };
+    const fmt = s => { s = Math.max(0, s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+    const esc2 = esc;
+
+    // ── Rubric translation layer (local dictionary) ─────────────────────────
+    function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function renderRubric(text) {
+      let s = esc2(text || '');
+      const dict = M.dict.slice().sort((a, b) => b.phrase.length - a.phrase.length);
+      if (st.studentVoice) {
+        dict.forEach(e => { s = s.replace(new RegExp(escRe(esc2(e.phrase)), 'gi'), esc2(e.plain)); });
+        return s;
+      }
+      const tokens = [];
+      dict.forEach(e => {
+        s = s.replace(new RegExp('(' + escRe(esc2(e.phrase)) + ')', 'gi'), m => {
+          const i = tokens.length;
+          tokens.push('<span class="rubric-hl" data-dict="' + esc2(e.phrase) + '">' + m +
+            '<span class="rubric-card"><strong>Plain English:</strong> ' + esc2(e.plain) + '</span></span>');
+          return '' + i + '';
+        });
+      });
+      return s.replace(/(\d+)/g, (_, i) => tokens[+i]);
+    }
+
+    // ── Data load ───────────────────────────────────────────────────────────
+    function catsOf(q) {
+      const order = M.categories, seen = [];
+      order.forEach(c => { if (q.checklist.some(it => it.category === c)) seen.push(c); });
+      return seen;
+    }
+    function catObjective(q, cat) {
+      const it = q.checklist.find(c => c.category === cat);
+      return it ? it.objective : M.objectives[0];
+    }
+    function servable(e) {
+      if (e.enabled === false) return false;
+      if (e.requiresExtract && !e.stimulusText) return false;
+      return true;
+    }
+    async function load() {
+      if (loaded) return true;
+      const base = CONFIG.dataPath, f = cfg.dataFiles;
+      const jobs = [fetch(base + f.questions).then(r => r.json()), fetch(base + f.quotes).then(r => r.json()), fetch(base + f.syllabus).then(r => r.json())];
+      if (f.critics) jobs.push(fetch(base + f.critics).then(r => r.json())); else jobs.push(Promise.resolve([]));
+      if (f.stimulus) jobs.push(fetch(base + f.stimulus).then(r => r.json())); else jobs.push(Promise.resolve([]));
+      const [q, quotes, syllabus, critics, stimulus] = await Promise.all(jobs);
+      // attach stimulus text onto matching question entries (Module B)
+      if (stimulus && stimulus.length) {
+        const byId = {}; stimulus.forEach(s => byId[s.questionId] = s.stimulusText);
+        q.forEach(e => { if (byId[e.id] && !e.stimulusText) e.stimulusText = byId[e.id]; });
+      }
+      data = { questions: q, quotes: quotes || [], critics: critics || [], syllabus: syllabus, stimulus: stimulus || [] };
+      loaded = true;
+      return true;
+    }
+
+    // ── Selection ───────────────────────────────────────────────────────────
+    function selectQuestion() {
+      let pool = data.questions.filter(servable);
+      const o = st.overrides;
+      if (o.verbFamily) pool = pool.filter(e => fam(e.verb) === o.verbFamily);
+      if (!pool.length) return null;
+      const distinct = new Set(pool.map(e => fam(e.verb))).size;
+      const win = Math.min(cfg.selection.varietyWindow, distinct);
+      const recent = st.servedFamilies.slice(-win);
+      let cands = pool.filter(e => recent.indexOf(fam(e.verb)) === -1);
+      if (!cands.length) cands = pool;
+      const pick = cands[Math.floor(Math.random() * cands.length)];
+      st.servedFamilies.push(fam(pick.verb));
+      return pick;
+    }
+
+    // ── Persistent header ───────────────────────────────────────────────────
+    function texts() { return cfg.comparative ? cfg.prescribedTexts.join('  ·  ') : cfg.prescribedText; }
+    function header(showSkip) {
+      return '<div id="' + cfgKey + '-navbar" style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-sm);margin-bottom:var(--space);padding-bottom:var(--space-sm);border-bottom:1px solid var(--color-border);">' +
+        '<button class="btn-ghost" data-nav="home">⌂ Setup</button>' +
+        (showSkip ? '<button class="btn-ghost" data-nav="skip">Skip to next step →</button>' : '<span></span>') +
+        '</div>';
+    }
+    function marksBar() {
+      return '<div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-sm);">' +
+        '<span class="marks-badge">20 marks</span>' +
+        '<span class="prescribed-badge">' + esc2(texts()) + '</span></div>';
+    }
+    function wireNav() {
+      mainEl.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => {
+        if (b.dataset.nav === 'home') { clearT(); initSetup(); }
+        else skipToNext();
+      }));
+    }
+
+    // ── Setup ───────────────────────────────────────────────────────────────
+    function initSetup() {
+      render(
+        '<h1>' + esc2(cfg.fullHeading) + '</h1>' +
+        '<p class="coach">' + esc2(M.setupCoach) + '</p>' +
+        '<div style="margin:var(--space) 0;"><h2>Mode</h2><div class="btn-row" id="' + cfgKey + '-mode-btns" style="margin-top:6px;">' +
+        [['essay', 'Single essay'], ['timedEssay', 'Timed exam essay'], ['drill', 'Drill gym']].map(([v, l]) =>
+          '<button class="btn-secondary s-mode-btn' + (st.mode === v ? ' active' : '') + '" data-mode="' + v + '">' + l + '</button>').join('') +
+        '</div><p class="coach" id="' + cfgKey + '-mode-desc" style="margin-top:6px;font-size:0.9rem;">' + esc2(MODE_DESCS[st.mode]) + '</p></div>' +
+        '<div style="margin:var(--space) 0;"><h2>Level</h2><div class="btn-row" id="' + cfgKey + '-level-btns" style="margin-top:6px;">' +
+        [[1, '1 · Foundation'], [2, '2 · Consolidation'], [3, '3 · Exam']].map(([v, l]) =>
+          '<button class="btn-secondary s-level-btn' + (st.level === v ? ' active' : '') + '" data-level="' + v + '">' + l + '</button>').join('') +
+        '</div><p class="coach" id="' + cfgKey + '-level-desc" style="margin-top:6px;font-size:0.9rem;">' + esc2(LEVEL_DESCS[st.level]) + '</p></div>' +
+        '<details style="margin:var(--space) 0;"><summary style="cursor:pointer;font-weight:600;color:var(--color-muted);">Optional overrides</summary><div id="' + cfgKey + '-override-body" style="display:flex;flex-wrap:wrap;gap:var(--space-sm);margin-top:var(--space-sm);"></div></details>' +
+        '<div class="spinner" id="' + cfgKey + '-setup-spinner" style="display:none;">Loading materials…</div>' +
+        '<div class="error-msg" id="' + cfgKey + '-setup-error"></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-start-btn">Get a question</button></div>'
+      );
+      mainEl.querySelectorAll('.s-mode-btn').forEach(b => b.addEventListener('click', () => {
+        st.mode = b.dataset.mode;
+        mainEl.querySelectorAll('.s-mode-btn').forEach(x => x.classList.toggle('active', x === b));
+        $(cfgKey + '-mode-desc').textContent = MODE_DESCS[st.mode];
+      }));
+      mainEl.querySelectorAll('.s-level-btn').forEach(b => b.addEventListener('click', () => {
+        st.level = parseInt(b.dataset.level);
+        mainEl.querySelectorAll('.s-level-btn').forEach(x => x.classList.toggle('active', x === b));
+        $(cfgKey + '-level-desc').textContent = LEVEL_DESCS[st.level];
+      }));
+      const ob = $(cfgKey + '-override-body');
+      ob.innerHTML = [
+        ovSel('CAST deconstruction', 'cast', [['', 'Level default'], ['on', 'On'], ['off', 'Off']]),
+        ovSel('Planning scaffold', 'planning', [['', 'Level default'], ['full', 'Full'], ['light', 'Light'], ['none', 'None']]),
+        ovSel('Pacing', 'pacing', [['', 'Level default'], ['on', 'Segmented'], ['off', 'Straight 40 min']]),
+        ovSel('Checklist while writing', 'checklist', [['', 'Level default'], ['visible', 'Visible'], ['collapsed', 'Collapsed'], ['hidden', 'Hidden']]),
+        ovSel('Question verb', 'verbFamily', [['', 'Any verb']].concat(verbFamilyOpts()))
+      ].join('');
+      ob.querySelectorAll('select').forEach(sel => sel.addEventListener('change', () => {
+        const k = sel.dataset.key, v = sel.value;
+        if (!v) delete st.overrides[k]; else st.overrides[k] = v;
+      }));
+      $(cfgKey + '-start-btn').addEventListener('click', startFlow);
+    }
+    function verbFamilyOpts() {
+      const fams = {}; data.questions.forEach(e => { fams[fam(e.verb)] = true; });
+      const labels = { evaluate: 'Evaluate / to what extent', explain: 'Explain / in what ways', analyse: 'Analyse / how does', assess: 'Assess / how effectively', altered: 'How has your study altered and expanded' };
+      return Object.keys(labels).filter(k => fams[k]).map(k => [k, labels[k]]);
+    }
+    function ovSel(label, key, opts) {
+      return '<label style="display:flex;flex-direction:column;font-size:0.85rem;gap:4px;">' + esc2(label) +
+        '<select data-key="' + key + '" style="font-family:var(--font-body);padding:5px;border:1px solid var(--color-border);border-radius:6px;">' +
+        opts.map(([v, t]) => '<option value="' + v + '"' + (st.overrides[key] === v ? ' selected' : '') + '>' + esc2(t) + '</option>').join('') + '</select></label>';
+    }
+
+    async function startFlow() {
+      setError(cfgKey + '-setup-error', null);
+      if (!loaded) {
+        const sp = $(cfgKey + '-setup-spinner'); if (sp) sp.style.display = 'block';
+        try { await load(); } catch (err) { if (sp) sp.style.display = 'none'; setError(cfgKey + '-setup-error', 'Could not load the materials. ' + err.message); return; }
+        if (sp) sp.style.display = 'none';
+      }
+      if (st.mode === 'drill') { startDrill(); return; }
+      nextQuestion();
+    }
+    function nextQuestion() {
+      const q = selectQuestion();
+      if (!q) { initSetup(); setTimeout(() => setError(cfgKey + '-setup-error', 'No questions match that setting. Try Any verb.'), 0); return; }
+      Object.assign(st, { q: q, cast: { c: '', a: '', s: '', t: '' }, breaker: { words: '', misfit: '', judgement: '' }, confidence: {}, result: {}, attribution: { choice: null, note: '' }, plan: {}, selfMarks: {}, chain: {}, usefulness: {}, usefulForm: [], syllabus: {}, bandLocated: null, rewardsTicked: {}, improvementsTicked: {} });
+      questionScreen();
+    }
+
+    // ── Question screen (split: left question, right CAST/confidence) ─────────
+    function stimulusHtml(q) {
+      let h = '';
+      if (q.stimulusText) h += '<div class="stimulus-block">' + esc2(q.stimulusText) + '</div>';
+      if (cfgKey === 'moduleA' && q.year === 2021) h += '<div class="image-placeholder">Image stimulus placeholder. Adam will supply the image asset separately. Do not analyse this placeholder.</div>';
+      return h;
+    }
+    function judgementLensHtml(q) {
+      if (!cfg.features.judgementLens) return '';
+      const jl = M.judgementLens[q.verb]; if (!jl) return '';
+      let body;
+      if (st.level === 3) body = '<div class="jl-row">Have I made the judgement this verb requires?</div>';
+      else body = '<div class="jl-row"><span class="jl-head">This verb wants</span> ' + esc2(jl.wants) + '</div>' +
+        '<div class="jl-row"><span class="jl-head">Your judgement must</span> ' + esc2(jl.must.replace(/^Your thesis must /, '')) + '</div>' +
+        (st.level === 1 ? '<div class="jl-row"><span class="jl-head">Avoid</span> ' + esc2(jl.avoid.replace(/^Avoid /, '')) + '</div>' : '');
+      return '<div class="judgement-lens"><div class="panel-label">Judgement Lens — ' + esc2(q.verb) + '</div>' + body + '</div>';
+    }
+    function checklistGrouped(q, asSelfMark) {
+      const byObj = {}; M.objectives.forEach(o => byObj[o] = []);
+      q.checklist.forEach(it => { if (byObj[it.objective]) byObj[it.objective].push(it); });
+      return LEGEND + M.objectives.map(o => {
+        if (!byObj[o].length) return '';
+        return '<div class="objective-group"><div class="objective-head">' + esc2(M.objLabels[o]) + '</div>' +
+          byObj[o].map(it => {
+            const tag = '<span class="src-tag ' + it.source + '">' + it.source + '</span>';
+            if (asSelfMark) return '<div class="obj-item" style="flex-direction:column;align-items:stretch;"><div style="display:flex;gap:10px;">' + tag + '<span style="flex:1;">' + renderRubric(it.text) + '</span></div><div class="sm-btn-group" style="flex-direction:row;margin-top:6px;">' +
+              [['done', '✓ Yes'], ['unsure', '? Partly'], ['undone', '✗ No']].map(([v, l]) => '<button class="btn-secondary sm-btn" data-cid="' + it.id + '" data-val="' + v + '" style="padding:4px 10px;font-size:0.8rem;">' + l + '</button>').join('') + '</div></div>';
+            return '<div class="obj-item">' + tag + '<span>' + renderRubric(it.text) + '</span></div>';
+          }).join('') + '</div>';
+      }).join('');
+    }
+    const LEGEND = '<div class="rt-legend"><span class="src-tag reward">reward</span> a move markers rewarded in stronger responses. <span class="src-tag improvement">improvement</span> something markers said students needed to work on. Hover any <span class="rubric-hl" style="cursor:help;">underlined phrase<span class="rubric-card"><strong>Plain English:</strong> Hover a dotted-underlined phrase for a plain-English explanation.</span></span> for a plain-English explanation.</div>';
+
+    let castStep = 0;
+    function questionScreen() {
+      const q = st.q;
+      render(header(true) +
+        '<div class="split-layout"><div class="split-left">' +
+        marksBar() +
+        '<p style="font-size:0.85rem;color:var(--color-muted);">' + esc2(q.verb) + ' · ' + (cfg.comparative ? 'comparative essay' : 'critical study') + '</p>' +
+        judgementLensHtml(q) +
+        '<div class="report-card"><div class="panel-label">The question</div><p style="white-space:pre-wrap;">' + esc2(q.stemText) + '</p>' + stimulusHtml(q) + '</div>' +
+        '<div class="report-card"><div class="panel-label">Your answer will be assessed on how well you</div>' + q.assessmentCriteria.map(c => '<div class="obj-item">• ' + esc2(c) + '</div>').join('') + '</div>' +
+        (cfg.features.conceptPanel && st.level === 1 ? conceptPanelHtml(q) : '') +
+        '<div class="report-card"><div class="panel-label">Question checklist</div>' + checklistGrouped(q, false) + '</div>' +
+        '</div><div class="split-right">' +
+        '<div id="' + cfgKey + '-cast-wrap"></div>' +
+        '<div id="' + cfgKey + '-conf-wrap" style="display:none;"></div>' +
+        '</div></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-q-continue" disabled>Continue →</button></div>');
+      wireNav();
+      $(cfgKey + '-q-continue').addEventListener('click', afterQuestion);
+      if (castOn()) { castStep = 0; renderCast(); }
+      else { $(cfgKey + '-cast-wrap').style.display = 'none'; renderConfidence(); }
+    }
+    function conceptPanelHtml(q) {
+      const cl = (q.concept || '').toLowerCase();
+      const e = M.conceptDict.find(d => d.keys.some(k => cl.indexOf(k) !== -1)) || M.conceptDict[0];
+      return '<div class="concept-box"><div class="panel-label">Unpacking the concept (Foundation)</div>' +
+        '<p style="font-size:0.86rem;"><strong>What this idea means:</strong> ' + esc2(e.means) + '</p>' +
+        '<p style="font-size:0.86rem;"><strong>Weak version:</strong> ' + esc2(e.weak) + '</p>' +
+        '<p style="font-size:0.86rem;"><strong>Stronger ' + esc2(cfg.tabLabel) + ' version:</strong> ' + esc2(e.strong) + '</p>' +
+        '<p style="font-size:0.86rem;"><strong>Avoid:</strong> ' + esc2(e.avoid) + '</p>' +
+        '<p style="font-size:0.78rem;color:var(--color-muted);margin-top:6px;">This unpacks the idea. It will not write your thesis — that is yours.</p></div>';
+    }
+    function renderCast() {
+      const w = $(cfgKey + '-cast-wrap'); w.style.display = 'block';
+      const step = M.cast[castStep], last = castStep === M.cast.length - 1;
+      w.innerHTML = '<div class="cast-annotation-box"><div class="panel-label">CAST the question</div>' +
+        '<div class="step-dots" id="' + cfgKey + '-cast-dots">' + M.cast.map((_, i) => '<div class="step-dot ' + (i < castStep ? 'done' : i === castStep ? 'active' : '') + '"></div>').join('') + '</div>' +
+        '<p style="font-size:0.8rem;color:var(--color-muted);margin:6px 0;">Step ' + (castStep + 1) + ' of 4</p>' +
+        '<strong>' + esc2(step.label) + '</strong><p style="font-size:0.88rem;color:var(--color-muted);margin:6px 0;">' + esc2(step.help) + '</p>' +
+        (step.key === 't'
+          ? '<textarea id="' + cfgKey + '-cast-input" rows="3" placeholder="' + esc2(step.ph) + '" style="width:100%;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);resize:vertical;"></textarea>'
+          : '<input id="' + cfgKey + '-cast-input" type="text" placeholder="' + esc2(step.ph) + '" style="width:100%;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);">') +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-cast-next">' + (last ? 'Rate confidence →' : 'Next →') + '</button></div></div>';
+      const inp = $(cfgKey + '-cast-input'); if (inp) inp.value = st.cast[step.key] || '';
+      $(cfgKey + '-cast-next').addEventListener('click', () => {
+        const el = $(cfgKey + '-cast-input'); st.cast[step.key] = el ? el.value.trim() : '';
+        castStep++;
+        if (castStep < M.cast.length) renderCast();
+        else { $(cfgKey + '-cast-wrap').style.display = 'none'; renderConfidence(); }
+      });
+    }
+    function renderConfidence() {
+      const q = st.q, cats = catsOf(q);
+      const w = $(cfgKey + '-conf-wrap'); w.style.display = 'block';
+      w.innerHTML = '<div class="confidence-block"><div class="panel-label">Before you plan: how confident are you, per criterion?</div>' +
+        '<p style="font-size:0.85rem;color:var(--color-muted);">For this ' + esc2(q.verb) + ' question on ' + esc2(q.concept) + ', rate each criterion.</p>' +
+        sliderSet('conf', cats, st.confidence) + '</div>';
+      wireSliders('conf', cats, st.confidence, () => { $(cfgKey + '-q-continue').disabled = !allSet(cats, st.confidence); });
+    }
+    function sliderSet(prefix, cats, store) {
+      return cats.map(cat => '<div class="crit-slider-row"><div class="crit-label">' + esc2(cat) + '</div>' +
+        '<div class="crit-def">' + esc2(M.critDef[cat] || '') + '</div>' +
+        '<div class="slider-row"><input type="range" id="' + cfgKey + '-' + prefix + '-' + cat + '" min="' + cfg.slider.min + '" max="' + cfg.slider.max + '" step="' + cfg.slider.step + '" value="50" data-cat="' + cat + '">' +
+        '<span class="slider-value" id="' + cfgKey + '-' + prefix + '-' + cat + '-v">' + (store[cat] == null ? '—' : store[cat]) + '</span></div>' +
+        '<div class="crit-desc" id="' + cfgKey + '-' + prefix + '-' + cat + '-d">' + esc2(descFor(prefix, store[cat])) + '</div></div>').join('');
+    }
+    function descFor(prefix, val) { if (val == null) return 'Drag the slider — a plain-English description appears here.'; return (prefix === 'conf' ? CONF_BANDS : RESULT_BANDS)[bandIndex(val)]; }
+    function wireSliders(prefix, cats, store, onChange) {
+      cats.forEach(cat => {
+        const el = $(cfgKey + '-' + prefix + '-' + cat);
+        el.addEventListener('input', () => { store[cat] = parseInt(el.value); $(cfgKey + '-' + prefix + '-' + cat + '-v').textContent = store[cat]; $(cfgKey + '-' + prefix + '-' + cat + '-d').textContent = descFor(prefix, store[cat]); onChange(); });
+      });
+    }
+    function allSet(cats, store) { return cats.every(c => store[c] != null); }
+
+    function afterQuestion() {
+      if (cfg.features.preparedBreaker && st.level !== 3) preparedBreaker();
+      else startPlan();
+    }
+
+    // ── Prepared Response Breaker (Module A, gates L1/L2) ────────────────────
+    function preparedBreaker() {
+      const q = st.q;
+      render(header(true) + marksBar() +
+        '<h2>Break the prepared response</h2>' +
+        '<p class="coach">Before you plan, adapt to THIS exact question. Do not dump a memorised thesis.</p>' +
+        '<div class="report-card"><p style="white-space:pre-wrap;">' + esc2(q.stemText) + '</p></div>' +
+        '<div class="breaker-box"><label style="font-weight:600;">Question words I must reuse in my thesis</label><input id="' + cfgKey + '-brk-words" style="width:100%;padding:8px;margin-top:4px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);" placeholder="the exact words from this question…"></div>' +
+        '<div class="breaker-box"><label style="font-weight:600;">Prepared material that does NOT fit this question</label><input id="' + cfgKey + '-brk-misfit" style="width:100%;padding:8px;margin-top:4px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);" placeholder="what to cut or leave out…"></div>' +
+        '<div class="breaker-box"><label style="font-weight:600;">The judgement this verb (“' + esc2(q.verb) + '”) requires</label><input id="' + cfgKey + '-brk-judge" style="width:100%;padding:8px;margin-top:4px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);" placeholder="the judgement the directive verb demands…"></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-brk-continue" disabled>Continue to planning →</button></div>');
+      wireNav();
+      const check = () => { st.breaker = { words: $(cfgKey + '-brk-words').value.trim(), misfit: $(cfgKey + '-brk-misfit').value.trim(), judgement: $(cfgKey + '-brk-judge').value.trim() }; $(cfgKey + '-brk-continue').disabled = !(st.breaker.words && st.breaker.misfit && st.breaker.judgement); };
+      [cfgKey + '-brk-words', cfgKey + '-brk-misfit', cfgKey + '-brk-judge'].forEach(id => $(id).addEventListener('input', check));
+      $(cfgKey + '-brk-continue').addEventListener('click', startPlan);
+    }
+
+    // ── Plan ────────────────────────────────────────────────────────────────
+    function startPlan() {
+      const q = st.q, p = profile();
+      render(header(true) + marksBar() +
+        '<h2>Plan</h2><p style="font-size:0.85rem;color:var(--color-muted);">Level ' + st.level + ' · ' + p.planning + ' scaffold</p>' +
+        '<p class="coach">The plan is yours to build — the scaffold only holds the shape. Nothing here is your essay; you write that by hand.</p>' +
+        (p.planningTimed ? '<div class="timer" id="' + cfgKey + '-plan-timer"></div>' : '') +
+        judgementLensHtml(q) +
+        '<div id="' + cfgKey + '-plan-body">' + planBody(q, p.planning) + '</div>' +
+        (cfg.features.resonanceMap && p.planning !== 'none' ? '<div class="warn-box" id="' + cfgKey + '-reson-warn">This pattern may be drifting into isolated text discussion. Add or clarify the textual conversation.</div>' : '') +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-plan-continue">Move to writing →</button></div>');
+      wireNav();
+      if (p.planning !== 'none') wirePlan();
+      $(cfgKey + '-plan-continue').addEventListener('click', () => { capturePlan(); startWrite(); });
+      if (p.planningTimed) runCountdown($(cfgKey + '-plan-timer'), cfg.planningSeconds, 'plan done');
+    }
+    function planBody(q, mode) {
+      if (mode === 'none') return '<div class="report-card"><p>Plan on paper. Deconstruct the question, build your ' + (cfg.comparative ? 'conceptual thesis about the conversation' : 'conceptual thesis') + ', sketch topic sentences tied to the question, and map ' + (cfg.comparative ? 'balanced evidence from both texts' : 'micro evidence from across the whole novel') + ' — then write. No on-screen scaffold at this level.</p></div>';
+      const stems = M.thesisStems(q);
+      let h = '<div class="plan-slot"><div class="plan-slot-label">Thesis — answer the question in your own words</div>';
+      if (mode === 'full') h += '<p class="plan-stem">Sentence stems: ' + stems.map(esc2).join(' · ') + '</p>';
+      h += '<textarea rows="2" class="plan-field" data-k="thesis" placeholder="Your thesis…"></textarea></div>';
+      if (mode === 'full') {
+        for (let i = 1; i <= 3; i++) h += argBlock(i);
+        h += '<div class="plan-slot"><div class="plan-slot-label">Judgement — matched to the verb “' + esc2(q.verb) + '”</div><textarea rows="2" class="plan-field" data-k="judgement" placeholder="Your judgement…"></textarea></div>';
+        h += banksHtml(false, q);
+      } else {
+        h += '<div class="plan-slot"><div class="plan-slot-label">Argument headings (no stems) — one line each</div><textarea rows="3" class="plan-field" data-k="headings" placeholder="Argument 1…&#10;Argument 2…&#10;Argument 3…"></textarea></div>';
+        h += banksHtml(true, q);
+      }
+      return h;
+    }
+    function argBlock(i) {
+      if (cfg.comparative) {
+        return '<div class="arg-block"><div class="plan-slot"><div class="plan-slot-label">Argument ' + i + ' — point of connection (topic sentence)</div><input class="plan-field" data-k="arg' + i + 'ts" placeholder="One point of connection between the two texts…"></div>' +
+          '<div class="plan-slot"><div class="plan-slot-label">Relationship</div><select class="plan-field reson-sel" data-k="arg' + i + 'rel"><option value="">choose…</option>' + M.relationshipTypes.map(r => '<option value="' + r + '">' + r + '</option>').join('') + '</select></div>' +
+          '<div class="plan-slot"><div class="plan-slot-label">Keats evidence</div><input class="plan-field" data-k="arg' + i + 'evK" placeholder="Quotation / image from Keats…"></div>' +
+          '<div class="plan-slot"><div class="plan-slot-label">Bright Star evidence</div><input class="plan-field" data-k="arg' + i + 'evB" placeholder="Moment / technique from the film…"></div>' +
+          '<div class="plan-slot"><div class="plan-slot-label">Form feature named + how this shapes meaning</div><input class="plan-field reson-sel" data-k="arg' + i + 'an" placeholder="Name a form feature and its effect…"></div></div>';
+      }
+      return '<div class="arg-block"><div class="plan-slot"><div class="plan-slot-label">Argument ' + i + ' — topic sentence tied to the question</div><input class="plan-field" data-k="arg' + i + 'ts" placeholder="Conceptual claim…"></div>' +
+        '<div class="plan-slot"><div class="plan-slot-label">Distinctive quality / construction technique</div><input class="plan-field" data-k="arg' + i + 'dq" placeholder="e.g. unreliable narration, non-linear structure, motif…"></div>' +
+        '<div class="plan-slot"><div class="plan-slot-label">Micro evidence (from across the whole novel)</div><input class="plan-field" data-k="arg' + i + 'ev" placeholder="A precise phrase / image…"></div>' +
+        '<div class="plan-slot"><div class="plan-slot-label">How this shapes meaning</div><input class="plan-field" data-k="arg' + i + 'an" placeholder="The effect…"></div>' +
+        '<div class="plan-slot"><div class="plan-slot-label">Critical perspective or context (support / extend / challenge)</div><input class="plan-field" data-k="arg' + i + 'cr" placeholder="A critic in your own words, or a specific context claim…"></div></div>';
+    }
+    function banksHtml(collapsed, q) {
+      let h = '';
+      const quoteRows = pinnedThenRest(q).map(x => M.quoteRow(x)).join('');
+      if (collapsed) h += '<details style="margin-top:var(--space-sm);"><summary style="cursor:pointer;color:var(--color-muted);font-weight:600;">Quote bank (collapsed)</summary><div style="max-height:240px;overflow:auto;margin-top:6px;">' + quoteRows + '</div></details>';
+      else h += '<div class="report-card" style="margin-top:var(--space);"><div class="panel-label">Quote bank — browse while planning</div><div style="max-height:260px;overflow:auto;">' + quoteRows + '</div></div>';
+      if (cfg.features.criticsPanel) {
+        const critRows = pinnedThenRestCritics(q);
+        if (collapsed) h += '<details style="margin-top:var(--space-sm);"><summary style="cursor:pointer;color:var(--color-muted);font-weight:600;">Critics bank (collapsed)</summary><div style="max-height:240px;overflow:auto;margin-top:6px;">' + critRows + '</div></details>';
+        else h += '<div class="critics-box" style="margin-top:var(--space);"><div class="panel-label">Critics bank — pinned perspectives shown first</div><p style="font-size:0.78rem;color:var(--color-muted);">Integrate a critic in your own words as support, extend or challenge. Quote-dropping a critic is itself a fault.</p><div style="max-height:260px;overflow:auto;">' + critRows + '</div></div>';
+      }
+      return h;
+    }
+    function stimulusExcludedQuotes(q) {
+      const stim = normalise(q.stimulusText || '');
+      return data.quotes.filter(x => !(stim && stim.indexOf(normalise(x.quote)) !== -1));
+    }
+    function pinnedThenRest(q) {
+      const all = stimulusExcludedQuotes(q);
+      const pin = (q.preferredQuoteIds || []);
+      const pinned = pin.map(id => all.find(x => x.id === id)).filter(Boolean);
+      const rest = all.filter(x => pin.indexOf(x.id) === -1);
+      return pinned.concat(rest);
+    }
+    function pinnedThenRestCritics(q) {
+      const pin = (q.preferredCriticIds || []);
+      const pinned = pin.map(id => data.critics.find(c => c.id === id)).filter(Boolean);
+      const rest = data.critics.filter(c => pin.indexOf(c.id) === -1);
+      return pinned.map(c => M.criticRow(c, true)).join('') + rest.map(c => M.criticRow(c, false)).join('');
+    }
+    function wirePlan() {
+      mainEl.querySelectorAll('.reson-sel').forEach(el => el.addEventListener('change', checkResonance));
+      mainEl.querySelectorAll('.reson-sel').forEach(el => el.addEventListener('input', checkResonance));
+    }
+    function checkResonance() {
+      if (!cfg.features.resonanceMap) return;
+      let isolated = 0;
+      for (let i = 1; i <= 3; i++) {
+        const rel = mainEl.querySelector('[data-k="arg' + i + 'rel"]');
+        const an = mainEl.querySelector('[data-k="arg' + i + 'an"]');
+        const evK = mainEl.querySelector('[data-k="arg' + i + 'evK"]');
+        const evB = mainEl.querySelector('[data-k="arg' + i + 'evB"]');
+        if (!evK) continue;
+        const oneText = (!!evK.value.trim()) !== (!!evB.value.trim());
+        const noLink = !(rel && rel.value) && !(an && an.value.trim());
+        if (oneText && noLink) isolated++;
+      }
+      const warn = $(cfgKey + '-reson-warn'); if (warn) warn.classList.toggle('show', isolated >= 2);
+    }
+    function capturePlan() { mainEl.querySelectorAll('.plan-field').forEach(f => { st.plan[f.dataset.k] = f.value; }); }
+
+    // ── Write ───────────────────────────────────────────────────────────────
+    let writeSecs = 0, writeOverrun = false, writeHidden = false, pacingB = [], pacingF = [];
+    function startWrite() {
+      const q = st.q, p = profile();
+      render(header(true) + marksBar() +
+        '<h2>Write by hand</h2><p style="font-size:0.85rem;color:var(--color-muted);">Level ' + st.level + (p.pacing ? ' · segmented pacing' : ' · straight 40 minutes') + '</p>' +
+        '<div style="display:flex;align-items:center;gap:var(--space);flex-wrap:wrap;"><div class="timer" id="' + cfgKey + '-write-timer"></div><button class="btn-ghost" id="' + cfgKey + '-write-hide">Hide timer</button></div>' +
+        '<div class="pacing-bar" id="' + cfgKey + '-pacing-bar"></div>' +
+        '<div class="pacing-nudge" id="' + cfgKey + '-pacing-nudge"></div>' +
+        (castOn() ? '<div class="cast-annotation-box"><div class="panel-label">Your CAST</div>' + ['c', 'a', 's', 't'].map(k => '<div class="cast-row"><span class="cast-key">' + k.toUpperCase() + '</span>' + esc2(st.cast[k] || '—') + '</div>').join('') + '</div>' : '') +
+        (p.planning === 'full' && Object.keys(st.plan).some(k => st.plan[k]) ? '<div class="report-card"><div class="panel-label">Your plan</div>' + Object.keys(st.plan).filter(k => st.plan[k]).map(k => '<p style="font-size:0.85rem;margin:3px 0;"><strong>' + esc2(k) + ':</strong> ' + esc2(st.plan[k]) + '</p>').join('') + '</div>' : '') +
+        (p.checklist !== 'hidden' ? '<div class="report-card" id="' + cfgKey + '-write-checklist">' + (p.checklist === 'collapsed' ? '<details><summary style="cursor:pointer;color:var(--color-muted);font-weight:600;">Show checklist</summary><div>' + checklistPlain(q) + '</div></details>' : checklistPlain(q)) + '</div>' : '') +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-write-done">I’ve finished writing →</button></div>');
+      wireNav();
+      writeSecs = cfg.writingSecondsEssay; writeOverrun = false; writeHidden = false;
+      pacingB = []; pacingF = [];
+      if (p.pacing) { let cum = 0; cfg.pacingSegments.forEach((seg, i) => { cum += seg.seconds; const nx = cfg.pacingSegments[i + 1]; if (nx && cum < cfg.writingSecondsEssay) pacingB.push({ at: cum, next: nx.label }); }); pacingF = pacingB.map(() => false); }
+      buildPacingBar(p.pacing); drawWriteTimer();
+      timers.write = setInterval(tickWrite, cfg.tickMs);
+      $(cfgKey + '-write-hide').addEventListener('click', () => { writeHidden = !writeHidden; $(cfgKey + '-write-hide').textContent = writeHidden ? 'Show timer' : 'Hide timer'; drawWriteTimer(); });
+      $(cfgKey + '-write-done').addEventListener('click', startSelfMark);
+    }
+    function checklistPlain(q) { return '<p style="font-size:0.8rem;color:var(--color-muted);margin-bottom:6px;">Hover any dotted-underlined phrase for a plain-English explanation.</p>' + q.checklist.map(it => '<p style="padding:6px 0;border-bottom:1px solid var(--color-border);font-size:0.88rem;">' + renderRubric(it.text) + '</p>').join(''); }
+    function tickWrite() {
+      writeSecs--; if (writeSecs <= 0 && !writeOverrun) writeOverrun = true;
+      if (pacingB.length) { const el = cfg.writingSecondsEssay - writeSecs; pacingB.forEach((b, i) => { if (!pacingF[i] && el >= b.at) { pacingF[i] = true; const n = $(cfgKey + '-pacing-nudge'); n.textContent = 'It might be time to move into your ' + b.next.toLowerCase() + '.'; n.classList.add('show'); } }); }
+      updatePacingBar(); drawWriteTimer();
+    }
+    function buildPacingBar(on) { const bar = $(cfgKey + '-pacing-bar'); if (!on) { bar.style.display = 'none'; bar.innerHTML = ''; return; } bar.style.display = 'flex'; bar.innerHTML = cfg.pacingSegments.map(s => '<div class="pacing-seg" style="flex-grow:' + s.seconds + '" title="' + esc2(s.label) + '"><span class="pacing-fill"></span><span class="pacing-lbl">' + esc2(s.label) + '</span></div>').join(''); updatePacingBar(); }
+    function updatePacingBar() { const bar = $(cfgKey + '-pacing-bar'); if (!bar || bar.style.display === 'none' || !bar.children.length) return; const el = cfg.writingSecondsEssay - Math.max(0, writeSecs); let cum = 0; cfg.pacingSegments.forEach((s, i) => { const start = cum, end = cum + s.seconds; cum = end; const seg = bar.children[i]; if (!seg) return; const fill = seg.querySelector('.pacing-fill'); let pct = 0; if (el >= end) pct = 100; else if (el > start) pct = ((el - start) / s.seconds) * 100; fill.style.width = pct + '%'; seg.classList.toggle('active', el >= start && el < end); seg.classList.toggle('done', el >= end); }); }
+    function drawWriteTimer() { const el = $(cfgKey + '-write-timer'); if (!el) return; if (writeHidden) { el.textContent = '•••'; el.className = 'timer'; return; } el.textContent = (writeOverrun ? '+' : '') + fmt(Math.abs(writeSecs)); el.className = 'timer' + (writeOverrun ? ' overrun' : (writeSecs <= 60 && writeSecs > 0 ? ' warning' : '')); }
+    function runCountdown(el, secs, doneLabel) { if (!el) return; const draw = () => { el.textContent = fmt(secs); el.className = 'timer' + (secs <= 30 && secs > 0 ? ' warning' : secs <= 0 ? ' overrun' : ''); }; draw(); timers.plan = setInterval(() => { secs--; if (secs < 0) { el.textContent = doneLabel; clearInterval(timers.plan); return; } draw(); }, cfg.tickMs); }
+
+    // ── Self-mark ───────────────────────────────────────────────────────────
+    function startSelfMark() {
+      clearT();
+      const q = st.q;
+      st.selfMarks = {};
+      render(header(true) + marksBar() +
+        '<h2>Self-mark</h2><p class="coach">The tool never marks your essay. You hold it against the yardstick and locate yourself honestly.</p>' +
+        '<div class="report-card"><p style="white-space:pre-wrap;">' + esc2(q.stemText) + '</p></div>' +
+        chainProtocolHtml() +
+        evidenceHtml(q) +
+        '<div class="report-card"><div class="panel-label">Self-locate against the checklist</div><div id="' + cfgKey + '-sm-checklist">' + checklistGrouped(q, true) + '</div></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-sm-continue" disabled>Continue to calibration →</button></div>');
+      wireNav();
+      wireChain(); wireEvidence(q);
+      mainEl.querySelectorAll('.sm-btn').forEach(btn => btn.addEventListener('click', () => {
+        const cid = btn.dataset.cid, val = btn.dataset.val; st.selfMarks[cid] = val;
+        mainEl.querySelectorAll('.sm-btn[data-cid="' + cid + '"]').forEach(b => { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; });
+        const col = { done: 'var(--color-done)', undone: 'var(--color-undone)', unsure: 'var(--color-unsure)' }[val];
+        btn.style.background = col; btn.style.color = 'white'; btn.style.borderColor = col;
+        $(cfgKey + '-sm-continue').disabled = q.checklist.some(it => !st.selfMarks[it.id]);
+      }));
+      $(cfgKey + '-sm-continue').addEventListener('click', () => { startCalibration(); });
+    }
+    function chainProtocolHtml() {
+      if (cfg.comparative) {
+        return '<div class="chain-box"><div class="panel-label">Paired evidence chain — annotate your essay first</div>' +
+          '<p style="font-size:0.85rem;">On your handwritten essay, draw a <strong>triangle</strong> (label K for Keats or B for Bright Star) at each piece of evidence, a <strong>square</strong> at each stated effect, and a <strong>circle</strong> where you link across to the other text and the question. A healthy paragraph shows both a K and a B triangle, each with a square and a circle.</p>' +
+          '<label style="font-size:0.85rem;">Paragraphs where BOTH texts appear<input id="' + cfgKey + '-chain-both" style="width:100%;padding:6px;margin-top:3px;border:1px solid var(--color-border);border-radius:6px;" placeholder="e.g. 3 of 4"></label>' +
+          '<label style="font-size:0.85rem;display:block;margin-top:8px;">Complete chains (triangle → square → circle)<input id="' + cfgKey + '-chain-complete" style="width:100%;padding:6px;margin-top:3px;border:1px solid var(--color-border);border-radius:6px;"></label>' +
+          '<label style="font-size:0.85rem;display:block;margin-top:8px;">Broken chains or one-sided paragraphs<input id="' + cfgKey + '-chain-broken" style="width:100%;padding:6px;margin-top:3px;border:1px solid var(--color-border);border-radius:6px;"></label>' +
+          '<p style="font-size:0.78rem;color:var(--color-muted);margin-top:6px;">A one-sided paragraph points straight to the <em>connection</em> and <em>evidence</em> criteria.</p></div>';
+      }
+      return '<div class="chain-box"><div class="panel-label">Evidence chain — annotate your essay first</div>' +
+        '<p style="font-size:0.85rem;">On your handwritten essay, draw a <strong>triangle</strong> at each piece of micro evidence, a <strong>square</strong> where you name a distinctive quality and its effect, a <strong>circle</strong> where you link to concept / integrity / the question, and a <strong>diamond</strong> where you integrate a critic or context. Then underline, in another colour, the one sentence in your conclusion that states your judgement.</p>' +
+        '<label style="font-size:0.85rem;">Complete chains (triangle → square → circle)<input id="' + cfgKey + '-chain-complete" style="width:100%;padding:6px;margin-top:3px;border:1px solid var(--color-border);border-radius:6px;"></label>' +
+        '<label style="font-size:0.85rem;display:block;margin-top:8px;">Diamonds (critic / context integrated)<input id="' + cfgKey + '-chain-diamond" style="width:100%;padding:6px;margin-top:3px;border:1px solid var(--color-border);border-radius:6px;"></label>' +
+        '<label style="font-size:0.85rem;display:block;margin-top:8px;">Evidence spread across the four dated sections?<input id="' + cfgKey + '-chain-spread" style="width:100%;padding:6px;margin-top:3px;border:1px solid var(--color-border);border-radius:6px;"></label>' +
+        '<label style="font-size:0.85rem;display:flex;gap:8px;align-items:center;margin-top:8px;"><input type="checkbox" id="' + cfgKey + '-chain-judge"> I underlined one conclusion sentence that explicitly answers the verb.</label>' +
+        '<p style="font-size:0.78rem;color:var(--color-muted);margin-top:6px;">No underlined sentence means no judgement was reached — revisit the <em>judgement</em> criterion.</p></div>';
+    }
+    function wireChain() { /* values captured at calibration via readChain */ }
+    function readChain() {
+      const g = id => { const el = $(cfgKey + '-' + id); return el ? (el.type === 'checkbox' ? el.checked : el.value) : ''; };
+      st.chain = cfg.comparative
+        ? { both: g('chain-both'), complete: g('chain-complete'), broken: g('chain-broken') }
+        : { complete: g('chain-complete'), diamond: g('chain-diamond'), spread: g('chain-spread'), judgement: g('chain-judge') };
+    }
+    function evidenceHtml(q) {
+      if (cfg.features.evidenceUsefulness) {
+        const items = [['accurate', 'Is this evidence accurate enough?'], ['relevant', 'Is it relevant to this exact question?'], ['form', 'Have I analysed a form feature?'], ['conversation', 'Have I connected it to the textual conversation?'], ['verb', 'Have I used it to answer the directive verb?']];
+        return '<div class="usefulness-box"><div class="panel-label">Evidence Usefulness Check (no marks, no right answer)</div>' +
+          '<p style="font-size:0.82rem;color:var(--color-muted);">Test one piece of your evidence against these. Ticking is for your own honesty — nothing here is scored.</p>' +
+          items.map(([k, t]) => '<label style="display:flex;gap:8px;align-items:center;font-size:0.86rem;padding:4px 0;"><input type="checkbox" class="use-chk" data-k="' + k + '"> ' + esc2(t) + '</label>').join('') +
+          '<div id="' + cfgKey + '-use-form" style="display:none;margin-top:6px;"><p style="font-size:0.82rem;">Name at least one form feature you actually used:</p>' +
+          '<div><strong style="font-size:0.78rem;">Poetry:</strong> ' + M.formFeatures.poetry.map(f => '<span class="form-feature-chip" data-f="' + esc2(f) + '">' + esc2(f) + '</span>').join('') + '</div>' +
+          '<div style="margin-top:4px;"><strong style="font-size:0.78rem;">Film:</strong> ' + M.formFeatures.film.map(f => '<span class="form-feature-chip" data-f="' + esc2(f) + '">' + esc2(f) + '</span>').join('') + '</div></div>' +
+          '<div id="' + cfgKey + '-use-conv" style="display:none;margin-top:6px;font-size:0.82rem;color:#8B6914;">Does this evidence create resonance, dissonance, reframing, collision or extension? Make that explicit.</div></div>';
+      }
+      if (cfg.features.evidenceChecker) {
+        return '<div class="usefulness-box"><div class="panel-label">Optional evidence &amp; perspective check</div>' +
+          '<p style="font-size:0.82rem;color:var(--color-muted);">Paste a line from the novel or a critic’s exact claim to confirm the wording against the verified banks. This is an optional aid only — a “not found” result does NOT mean your integration is wrong. Ticking the checklist on your own honest self-assessment is always enough.</p>' +
+          '<div style="display:flex;gap:8px;margin-top:6px;"><input id="' + cfgKey + '-ev-input" style="flex:1;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);" placeholder="Paste a short quotation or critic claim…"><button class="btn-secondary" id="' + cfgKey + '-ev-btn">Check</button></div>' +
+          '<div class="evidence-result" id="' + cfgKey + '-ev-result"></div></div>';
+      }
+      return '';
+    }
+    function wireEvidence(q) {
+      if (cfg.features.evidenceUsefulness) {
+        mainEl.querySelectorAll('.use-chk').forEach(c => c.addEventListener('change', () => {
+          st.usefulness[c.dataset.k] = c.checked;
+          $(cfgKey + '-use-form').style.display = st.usefulness.form ? 'none' : 'block';
+          $(cfgKey + '-use-conv').style.display = st.usefulness.conversation ? 'none' : 'block';
+        }));
+        $(cfgKey + '-use-form').style.display = 'none'; $(cfgKey + '-use-conv').style.display = 'none';
+        mainEl.querySelectorAll('.form-feature-chip').forEach(ch => ch.addEventListener('click', () => {
+          ch.classList.toggle('on'); const f = ch.dataset.f; const i = st.usefulForm.indexOf(f);
+          if (i === -1) st.usefulForm.push(f); else st.usefulForm.splice(i, 1);
+        }));
+      }
+      if (cfg.features.evidenceChecker) {
+        const run = () => checkEvidence(q);
+        $(cfgKey + '-ev-btn').addEventListener('click', run);
+        $(cfgKey + '-ev-input').addEventListener('keydown', e => { if (e.key === 'Enter') run(); });
+      }
+    }
+    function checkEvidence(q) {
+      const pasted = normalise($(cfgKey + '-ev-input').value);
+      const out = $(cfgKey + '-ev-result');
+      if (pasted.length < cfg.evidence.minNormalisedChars) { out.className = 'evidence-result'; out.textContent = 'Please paste a longer phrase.'; return; }
+      for (const x of stimulusExcludedQuotes(q)) { const nq = normalise(x.quote); if (nq.indexOf(pasted) !== -1 || pasted.indexOf(nq) !== -1) { out.className = 'evidence-result found'; out.textContent = 'Found in the quote bank — ' + (x.section || x.poemTitle || '') + (x.speaker ? ', ' + x.speaker : '') + '.'; return; } }
+      for (const c of data.critics) { const nc = normalise(c.claim); if (nc.indexOf(pasted) !== -1 || pasted.indexOf(nc) !== -1) { out.className = 'evidence-result found'; out.textContent = 'Found in the critics bank — ' + c.critic + ' (' + c.lens + ' lens).'; return; } }
+      out.className = 'evidence-result not-found'; out.textContent = 'Not found in the verified banks. The banks are a curated sample, not everything — this does not mean your evidence or integration is wrong.';
+    }
+    function normalise(t) { return (t || '').toLowerCase().replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+    // ── Calibration ─────────────────────────────────────────────────────────
+    function startCalibration() {
+      readChain();
+      const q = st.q, cats = catsOf(q); st.result = {};
+      render(header(true) + marksBar() +
+        '<h2>Calibration</h2><p class="coach">Set how well you think you did on each criterion, beside your earlier confidence. The gap is the point.</p>' +
+        '<div class="confidence-block"><div class="panel-label">How well did you do — per criterion?</div>' + sliderSet('res', cats, st.result) + '</div>' +
+        '<div id="' + cfgKey + '-attr-block" style="display:none;"><div class="report-card"><div class="panel-label">What most shaped this result?</div><div class="btn-row" id="' + cfgKey + '-attr-opts">' + cfg.attributionOptions.map(o => '<button class="btn-secondary attr-btn" data-attr="' + esc2(o) + '">' + esc2(o) + '</button>').join('') + '</div>' +
+        '<textarea id="' + cfgKey + '-attr-note" rows="2" placeholder="Optional short note…" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);"></textarea></div></div>' +
+        '<div id="' + cfgKey + '-cal-reveal" style="display:none;"><div class="report-card"><div class="panel-label">Confidence vs result, per criterion</div><div id="' + cfgKey + '-cal-gaps"></div></div>' +
+        '<div class="cal-cards" id="' + cfgKey + '-cal-rollup"></div></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-cal-continue">Continue →</button></div>');
+      wireNav();
+      wireSliders('res', cats, st.result, () => { if (allSet(cats, st.result)) $(cfgKey + '-attr-block').style.display = 'block'; });
+      mainEl.querySelectorAll('.attr-btn').forEach(b => b.addEventListener('click', () => {
+        st.attribution.choice = b.dataset.attr; mainEl.querySelectorAll('.attr-btn').forEach(x => { x.style.background = ''; x.style.color = ''; }); b.style.background = 'var(--color-accent)'; b.style.color = 'white';
+        if (allSet(cats, st.result)) revealGaps(cats);
+      }));
+      $(cfgKey + '-cal-continue').addEventListener('click', () => { st.attribution.note = ($(cfgKey + '-attr-note').value || '').slice(0, cfg.attributionNoteMaxChars); startSyllabus(); });
+    }
+    function revealGaps(cats) {
+      const q = st.q;
+      $(cfgKey + '-cal-gaps').innerHTML = cats.map(cat => { const c = st.confidence[cat], r = st.result[cat], g = r - c; const sign = g > 0 ? '+' : ''; const col = g > 0 ? 'var(--color-done)' : g < 0 ? 'var(--color-undone)' : 'var(--color-muted)'; return '<div class="crit-gap-card"><span style="text-transform:capitalize;">' + cat + '</span><span class="cg-val">' + c + '</span><span class="cg-val">' + r + '</span><span class="cg-gap" style="color:' + col + ';">' + sign + g + '</span></div>'; }).join('');
+      const agg = {}; M.objectives.forEach(o => agg[o] = []); cats.forEach(cat => agg[catObjective(q, cat)].push(st.result[cat]));
+      $(cfgKey + '-cal-rollup').innerHTML = M.objectives.map(o => { const arr = agg[o]; const avg = arr.length ? Math.round(arr.reduce((s, x) => s + x, 0) / arr.length) : 0; return '<div class="cal-card"><div class="panel-label">' + esc2(M.objLabels[o]) + '</div><div class="cal-rating">' + avg + '</div><div class="cal-label">avg result</div></div>'; }).join('');
+      $(cfgKey + '-cal-reveal').style.display = 'block';
+    }
+
+    // ── Syllabus audit ──────────────────────────────────────────────────────
+    function startSyllabus() {
+      st.syllabus = {};
+      const syl = data.syllabus;
+      let prompts = syl.auditPoints.slice();
+      prompts.push({ id: 'oiq', text: 'Overarching inquiry question: ' + syl.overarchingInquiryQuestion });
+      if (syl.textualConcepts) syl.textualConcepts.forEach((tc, i) => prompts.push({ id: 'tc' + i, text: 'Textual concept — ' + tc.name + ': ' + tc.definition }));
+      render(header(true) + marksBar() +
+        '<h2>Syllabus audit</h2><p class="coach">When did you address the syllabus? How? Be explicit. This is brief reflection, not your essay.</p>' +
+        '<div id="' + cfgKey + '-syl-list">' + prompts.map(pt => '<div class="report-card"><p style="font-weight:600;margin-bottom:6px;">' + esc2(pt.text) + '</p><div style="display:flex;gap:var(--space-sm);align-items:flex-start;"><input class="syl-note" data-syl="' + pt.id + '" type="text" placeholder="Which paragraph? What move?" style="flex:1;padding:6px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:6px;"><button class="btn-ghost syl-na" data-syl="' + pt.id + '">Not addressed</button></div></div>').join('') + '</div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-syl-continue" disabled>Continue →</button></div>');
+      wireNav();
+      const ids = prompts.map(p => p.id);
+      const check = () => { $(cfgKey + '-syl-continue').disabled = !ids.every(id => { const s = st.syllabus[id]; return s && (s.status === 'not' || (s.note && s.note.trim())); }); };
+      mainEl.querySelectorAll('.syl-note').forEach(inp => inp.addEventListener('input', () => { st.syllabus[inp.dataset.syl] = { status: inp.value.trim() ? 'covered' : null, note: inp.value }; check(); }));
+      mainEl.querySelectorAll('.syl-na').forEach(btn => btn.addEventListener('click', () => { const id = btn.dataset.syl; const cur = st.syllabus[id]; if (cur && cur.status === 'not') { st.syllabus[id] = { status: null, note: '' }; btn.style.background = ''; btn.style.color = ''; } else { st.syllabus[id] = { status: 'not', note: '' }; btn.style.background = 'var(--color-muted)'; btn.style.color = 'white'; } check(); }));
+      $(cfgKey + '-syl-continue').addEventListener('click', startCompare);
+    }
+
+    // ── Compare & climb ─────────────────────────────────────────────────────
+    function startCompare() {
+      const q = st.q;
+      render(header(true) + marksBar() +
+        '<h2>Compare &amp; climb one band</h2><p class="coach">There is no model essay. You self-locate against the authentic rubric and marker feedback, then take one move up. If this is the descriptor you selected, the next descriptor asks for more.</p>' +
+        '<div class="btn-row"><button class="btn-ghost" id="' + cfgKey + '-voice-toggle">' + (st.studentVoice ? 'Show official HSC wording' : 'Show in student voice') + '</button></div>' +
+        (cfg.features.formSafeguards ? '<div class="report-card" style="font-size:0.82rem;color:var(--color-muted);">Across practice, do not build every essay from the same two or three Keats poems. Spread your evidence across Bright Star, When I Have Fears, La Belle Dame sans Merci, The Eve of St Agnes, Ode to a Nightingale, Ode on a Grecian Urn and To Autumn.</div>' : '') +
+        '<div class="report-card"><div class="panel-label">The five-band rubric — click the band you place yourself in</div><div id="' + cfgKey + '-bands"></div></div>' +
+        '<div class="split-layout"><div class="split-left"><div class="report-card"><div class="panel-label">Markers rewarded</div><div id="' + cfgKey + '-rewards"></div></div></div>' +
+        '<div class="split-right"><div class="report-card"><div class="panel-label">Markers said work on</div><div id="' + cfgKey + '-improvements"></div></div></div></div>' +
+        '<div id="' + cfgKey + '-climb" style="display:none;"><div class="report-card"><div class="panel-label">Climb one band</div><div class="climb-pair" id="' + cfgKey + '-climb-pair"></div><div id="' + cfgKey + '-climb-move" style="margin-top:var(--space-sm);"></div></div></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-cmp-continue">Continue to reflection →</button></div>');
+      wireNav();
+      renderBands(q); renderRI(q);
+      if (st.bandLocated) { $(cfgKey + '-climb').style.display = 'block'; renderClimb(q); }
+      $(cfgKey + '-voice-toggle').addEventListener('click', () => { st.studentVoice = !st.studentVoice; startCompare(); });
+      $(cfgKey + '-cmp-continue').addEventListener('click', () => { recordAttempt(); startReflection(); });
+    }
+    function renderBands(q) {
+      $(cfgKey + '-bands').innerHTML = q.markingBands.map(b => '<div class="band-ladder-row' + (st.bandLocated === b.band ? ' selected' : '') + '" data-band="' + b.band + '"><span class="band-no">Band ' + b.band + '<br>' + b.range + '</span><span>' + renderRubric(b.descriptor) + '</span></div>').join('');
+      mainEl.querySelectorAll('#' + cfgKey + '-bands .band-ladder-row').forEach(row => row.addEventListener('click', () => { st.bandLocated = parseInt(row.dataset.band); renderBands(q); $(cfgKey + '-climb').style.display = 'block'; renderClimb(q); }));
+    }
+    function renderRI(q) {
+      $(cfgKey + '-rewards').innerHTML = q.markerRewards.map((r, i) => tickRow('rw' + i, renderRubric(r), st.rewardsTicked['rw' + i])).join('');
+      $(cfgKey + '-improvements').innerHTML = q.markerImprovements.map((r, i) => tickRow('im' + i, renderRubric(r), st.improvementsTicked['im' + i])).join('');
+      mainEl.querySelectorAll('#' + cfgKey + '-rewards .tick').forEach(b => b.addEventListener('click', () => { st.rewardsTicked[b.dataset.k] = !st.rewardsTicked[b.dataset.k]; toggleTick(b, st.rewardsTicked[b.dataset.k]); }));
+      mainEl.querySelectorAll('#' + cfgKey + '-improvements .tick').forEach(b => b.addEventListener('click', () => { st.improvementsTicked[b.dataset.k] = !st.improvementsTicked[b.dataset.k]; toggleTick(b, st.improvementsTicked[b.dataset.k]); }));
+    }
+    function tickRow(k, html, on) { return '<div class="obj-item"><button class="btn-ghost tick" data-k="' + k + '"' + (on ? ' style="background:var(--color-accent);color:white;border-color:var(--color-accent);"' : '') + '>' + (on ? '✓' : '') + '</button><span>' + html + '</span></div>'; }
+    function toggleTick(b, on) { b.textContent = on ? '✓' : ''; b.style.background = on ? 'var(--color-accent)' : ''; b.style.color = on ? 'white' : ''; b.style.borderColor = on ? 'var(--color-accent)' : ''; }
+    function renderClimb(q) {
+      const band = st.bandLocated;
+      if (band >= 5) { $(cfgKey + '-climb-pair').innerHTML = '<div class="climb-card above" style="grid-column:1/3;"><strong>Top band.</strong> ' + renderRubric(q.markingBands[0].descriptor) + '</div>'; $(cfgKey + '-climb-move').innerHTML = '<strong>Consolidate.</strong> If this is the descriptor you selected, keep doing what put you here — sustain a ' + (cfg.comparative ? 'conceptual, balanced textual conversation' : 'conceptual argument about construction and integrity') + ' across every paragraph.'; return; }
+      const here = q.markingBands.find(b => b.band === band), above = q.markingBands.find(b => b.band === band + 1);
+      $(cfgKey + '-climb-pair').innerHTML = '<div class="climb-card"><div class="panel-label">If this is the descriptor you selected: Band ' + here.band + '</div>' + renderRubric(here.descriptor) + '</div><div class="climb-card above"><div class="panel-label">The next descriptor asks for: Band ' + above.band + '</div>' + renderRubric(above.descriptor) + '</div>';
+      const move = q.markerRewards.find(r => cfg.comparative ? /connect|convers|balanc|integrat|evaluat/i.test(r) : /construct|integrity|analys|conceptual|distinctive|perspective/i.test(r)) || q.markerRewards[0];
+      $(cfgKey + '-climb-move').innerHTML = '<strong>One move to try next time:</strong> ' + renderRubric(move) + '. This usually lifts the response because ' + (cfg.comparative ? 'Module A rewards sustained comparison and meaningful textual connection over isolated discussion of one text.' : 'Module B rewards conceptual analysis of construction and textual integrity over plot summary.');
+    }
+
+    // ── Reflection + report ─────────────────────────────────────────────────
+    function startReflection() {
+      render(header(true) + marksBar() +
+        '<h2>Reflection</h2><p class="coach">Optional. Build a “next time I want to focus on…” list in your own words.</p>' +
+        '<div style="display:flex;gap:8px;"><input id="' + cfgKey + '-refl-input" style="flex:1;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);" placeholder="Next time I want to focus on…"><button class="btn-secondary" id="' + cfgKey + '-refl-add">Add</button></div>' +
+        '<div id="' + cfgKey + '-refl-list" style="margin-top:var(--space-sm);"></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-refl-report">Finish session →</button><button class="btn-secondary" id="' + cfgKey + '-refl-again">Another question →</button></div>');
+      wireNav(); renderReflList();
+      $(cfgKey + '-refl-add').addEventListener('click', () => { const v = $(cfgKey + '-refl-input').value.trim(); if (v) { st.reflections.push(v); $(cfgKey + '-refl-input').value = ''; renderReflList(); } });
+      $(cfgKey + '-refl-input').addEventListener('keydown', e => { if (e.key === 'Enter') $(cfgKey + '-refl-add').click(); });
+      $(cfgKey + '-refl-report').addEventListener('click', startReport);
+      $(cfgKey + '-refl-again').addEventListener('click', nextQuestion);
+    }
+    function renderReflList() { const el = $(cfgKey + '-refl-list'); el.innerHTML = st.reflections.length ? '<ul style="padding-left:20px;">' + st.reflections.map((r, i) => '<li style="margin-bottom:6px;">' + esc2(r) + ' <button data-ri="' + i + '" class="refl-x" style="background:none;border:none;cursor:pointer;color:var(--color-muted);">✕</button></li>').join('') + '</ul>' : ''; el.querySelectorAll('.refl-x').forEach(b => b.addEventListener('click', () => { st.reflections.splice(+b.dataset.ri, 1); renderReflList(); })); }
+    function recordAttempt() {
+      const q = st.q, cats = catsOf(q), gaps = {}; cats.forEach(c => gaps[c] = (st.result[c] != null && st.confidence[c] != null) ? st.result[c] - st.confidence[c] : null);
+      st.attempts.push({ id: q.id, verb: q.verb, concept: q.concept, level: st.level, authentic: q.isAuthenticPastQuestion, year: q.year || null, gaps: gaps, attribution: Object.assign({}, st.attribution), syllabus: JSON.parse(JSON.stringify(st.syllabus)) });
+    }
+    function startReport() {
+      const last = st.attempts[st.attempts.length - 1];
+      render(header(false) +
+        '<h1>Session report</h1>' +
+        '<div class="report-card"><div class="panel-label">Essays completed</div>' + (st.attempts.length ? st.attempts.map(a => '<p><strong>' + esc2(a.verb) + '</strong> — ' + esc2(a.concept) + ' · Level ' + a.level + '</p>').join('') : '<p>No essays completed.</p>') + '</div>' +
+        '<div class="report-card"><div class="panel-label">Your focus list</div>' + (st.reflections.length ? '<ul style="padding-left:20px;">' + st.reflections.map(r => '<li>' + esc2(r) + '</li>').join('') + '</ul>' : '<p style="color:var(--color-muted);">Nothing added.</p>') + '</div>' +
+        (last ? '<div class="report-card"><div class="panel-label">Calibration (last essay)</div>' + Object.keys(last.gaps).map(c => '<p style="text-transform:capitalize;">' + c + ': gap ' + (last.gaps[c] == null ? '—' : (last.gaps[c] > 0 ? '+' : '') + last.gaps[c]) + '</p>').join('') + '<p style="margin-top:8px;"><strong>Attribution:</strong> ' + esc2(last.attribution.choice || '—') + (last.attribution.note ? ' — ' + esc2(last.attribution.note) : '') + '</p></div>' : '') +
+        '<div class="report-card"><div class="panel-label">Syllabus coverage (last essay)</div>' + coverageHtml(last) + '</div>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-rep-again">Another question →</button><button class="btn-secondary" id="' + cfgKey + '-rep-home">New session →</button></div>');
+      wireNav();
+      $(cfgKey + '-rep-again').addEventListener('click', nextQuestion);
+      $(cfgKey + '-rep-home').addEventListener('click', () => { st = fresh(); initSetup(); });
+    }
+    function coverageHtml(last) {
+      const pts = data.syllabus.auditPoints;
+      return pts.map((pt, i) => { const s = last && last.syllabus[pt.id]; const covered = s && s.status === 'covered'; return '<span class="coverage-pill ' + (covered ? 'done' : 'not-done') + '">point ' + (i + 1) + '</span>'; }).join('');
+    }
+
+    // ── Drill gym ───────────────────────────────────────────────────────────
+    function startDrill() { st.drill.q = selectQuestion() || data.questions.filter(servable)[0]; renderDrillPick(); }
+    function renderDrillPick() {
+      render(header(true) + marksBar() + '<h2>Micro-skill drill gym</h2>' +
+        '<div class="report-card"><strong>Question:</strong> ' + esc2(st.drill.q.stemText) + '</div>' +
+        '<div class="drill-grid" id="' + cfgKey + '-drill-grid">' + M.drills.map(d => '<div class="drill-card" data-drill="' + d.id + '"><h3>' + esc2(d.title) + '</h3><p>' + esc2(d.prompt(st.drill.q)) + '</p></div>').join('') + '</div>' +
+        '<div class="btn-row"><button class="btn-secondary" id="' + cfgKey + '-drill-newq">Another question →</button></div>');
+      wireNav();
+      mainEl.querySelectorAll('.drill-card').forEach(c => c.addEventListener('click', () => runDrill(c.dataset.drill)));
+      $(cfgKey + '-drill-newq').addEventListener('click', () => { st.drill.q = selectQuestion() || st.drill.q; renderDrillPick(); });
+    }
+    function runDrill(id) {
+      const d = M.drills.find(x => x.id === id), q = st.drill.q; st.drill.type = id;
+      const items = q.checklist.filter(it => it.category === d.cat);
+      render(header(true) + marksBar() + '<h2>' + esc2(d.title) + '</h2>' +
+        '<div class="timer" id="' + cfgKey + '-drill-timer"></div>' +
+        '<div class="report-card"><strong>Question:</strong> ' + esc2(q.stemText) + '</div>' +
+        '<p class="coach">' + esc2(d.prompt(q)) + '</p>' +
+        '<textarea id="' + cfgKey + '-drill-box" rows="4" style="width:100%;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);" placeholder="Draft here (nothing saved)…"></textarea>' +
+        '<div class="btn-row"><button class="btn-primary" id="' + cfgKey + '-drill-check">Show self-check →</button><button class="btn-secondary" id="' + cfgKey + '-drill-again">Another drill →</button></div>' +
+        '<div class="report-card" id="' + cfgKey + '-drill-selfcheck" style="display:none;"><strong>Self-check</strong> — hold your attempt against this question’s <em>' + esc2(d.cat) + '</em> checklist item' + (items.length > 1 ? 's' : '') + ':<div style="margin-top:6px;">' + items.map(it => '<p style="padding:5px 0;border-bottom:1px solid var(--color-border);font-size:0.9rem;">' + renderRubric(it.text) + '</p>').join('') + '</div><p style="margin-top:8px;color:var(--color-muted);">' + esc2(d.check(q)) + '</p></div>');
+      wireNav();
+      $(cfgKey + '-drill-check').addEventListener('click', () => { $(cfgKey + '-drill-selfcheck').style.display = 'block'; clearInterval(timers.drill); });
+      $(cfgKey + '-drill-again').addEventListener('click', () => { clearInterval(timers.drill); renderDrillPick(); });
+      let secs = cfg.drillSeconds; const el = $(cfgKey + '-drill-timer'); const draw = () => { el.textContent = fmt(secs); el.className = 'timer' + (secs <= 20 && secs > 0 ? ' warning' : secs <= 0 ? ' overrun' : ''); }; draw();
+      timers.drill = setInterval(() => { secs--; if (secs < 0) { el.textContent = 'time'; clearInterval(timers.drill); return; } draw(); }, cfg.tickMs);
+    }
+
+    // ── Skip ────────────────────────────────────────────────────────────────
+    function skipToNext() {
+      // Best-effort forward jump; each screen's primary button is the reliable path.
+      const primary = mainEl.querySelector('.btn-primary:not([disabled])');
+      if (primary) primary.click();
+    }
+
+    // ── Public show ─────────────────────────────────────────────────────────
+    async function show() {
+      const gate = $(cfgKey === 'moduleA' ? 'modA-desktop-gate' : 'modB-desktop-gate');
+      if (window.innerWidth < cfg.layout.minViewportPx) { gate.classList.add('show'); mainEl.style.display = 'none'; return; }
+      gate.classList.remove('show'); mainEl.style.display = 'block';
+      if (!loaded) {
+        try { await load(); } catch (err) { mainEl.innerHTML = '<div class="error-msg">Could not load the ' + esc2(cfg.tabLabel) + ' materials. ' + esc2(err.message) + '</div>'; return; }
+      }
+      if (!mainEl.innerHTML.trim()) initSetup();
+    }
+
+    return { show };
+  }
+
+  const controllers = {};
+  window.__moduleShow = function (key) {
+    if (!controllers[key]) {
+      controllers[key] = makeController(key);
+      window.addEventListener('resize', () => { if ($('app-' + key).style.display !== 'none') controllers[key].show(); });
+    }
+    controllers[key].show();
+  };
+})();
+
+</script>
+
 </body>
 </html>
