@@ -55,6 +55,8 @@
     "author": "Julie Paschkis",
     "textType": "visual",
     "isVisual": true,
+    "assetPath": "data/Images/short-illustration.png",
+    "assetSupplied": true,
     "fullText": null,
     "visualDescription": "A richly coloured illustration in a folk art style. At its centre, a small figure sits in a wooden boat on a sea made entirely of cursive text — waves and water rendered as lines of handwritten script in deep blue and teal. The figure holds a quill pen like a rudder or oar, navigating the sea of words. Fish leap from the text-waves; birds made of letter-forms fly overhead. The sky above shades from deep blue at the horizon to warm gold near the top, with stars and constellations that also resolve into letters when examined closely. The border of the illustration is decorated with an intricate pattern of vines, flowers and small animals, each one containing a tiny hidden word. The overall effect is of language as a living, breathing environment — at once vast and intimate, navigable and wild.",
     "conceptTags": ["creativity", "language", "human experience", "place"]
@@ -255,6 +257,8 @@
     "author": "Florian Schroeder",
     "textType": "visual",
     "isVisual": true,
+    "assetPath": "data/Images/short-photograph.png",
+    "assetSupplied": true,
     "fullText": null,
     "visualDescription": "A colour photograph of a makeshift outdoor workspace beside a mountain lake. A slim silver laptop sits open on a rough wooden dock or jetty, its screen glowing softly in the cool morning light. Behind it, the lake stretches out in still, mirror-like water that reflects the forested mountains rising steeply on the far shore. The mountains are capped with cloud, and the sky is pale and overcast, giving the scene a hushed, almost monochrome quality. A single empty wooden chair stands beside the dock, angled slightly toward the water rather than toward the screen. The laptop's keyboard is visible, unoccupied. The overall composition places technology — the flat, rectangular screen — in striking contrast with the organic, ancient scale of the landscape: the lake, the forest, the mountains. The photograph seems to ask what it means to work, to focus, to be present, when the world beyond the screen is this large.",
     "conceptTags": ["place", "creativity", "nature", "paradox"]
