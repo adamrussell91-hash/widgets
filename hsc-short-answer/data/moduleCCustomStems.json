@@ -1,0 +1,5 @@
+[
+  { "id": "cs-01", "signature": "imag|image|noref|nomentor", "stemTemplate": "Use the image below as the stimulus for a piece of formList writing that explores a moment of consequence." },
+  { "id": "cs-02", "signature": "imag|written|ref|mentor", "stemTemplate": "(a) Use the stimulus below as the starting point for a piece of formList writing.\n(b) Reflect on how your study of your prescribed texts has informed the crafting choices you made in part (a)." },
+  { "id": "cs-03", "signature": "disc,pers|choice|ref|nomentor", "stemTemplate": "(a) Choose one of the stimuli provided and use it as the starting point for a piece of formList writing.\n(b) Justify how your specific language choices in part (a) served your audience and purpose." }
+]
