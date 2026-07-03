@@ -477,8 +477,11 @@
     }
     .rt-legend .src-tag { display: inline-block; flex: none; padding: 1px 6px; margin: 0 2px; }
 
-    /* Section II level / mode buttons fill when active */
-    .s2-level-btn.active, .s2-mode-btn.active {
+    /* Level / mode selection buttons fill green when active.
+       Covers Section II (.s2-*) AND every module built by makeController
+       (.s-level-btn / .s-mode-btn) — so newly added modules inherit the fill. */
+    .s2-level-btn.active, .s2-mode-btn.active,
+    .s-level-btn.active, .s-mode-btn.active {
       background: var(--color-accent); color: white; border-color: var(--color-accent);
     }
 
@@ -677,7 +680,7 @@
     <div class="paper-tab-row">
       <button class="section-tab" data-section="3">Module A<span class="section-tab-sub">Textual Conversations</span></button>
       <button class="section-tab" data-section="4">Module B<span class="section-tab-sub">Critical Study</span></button>
-      <button class="section-tab section-tab-disabled" data-section="5" disabled title="Coming soon">Module C<span class="section-tab-sub">Coming soon</span></button>
+      <button class="section-tab" data-section="5">Module C<span class="section-tab-sub">Craft of Writing</span></button>
     </div>
   </div>
 </div>
@@ -1369,6 +1372,13 @@
   </div>
   <div id="app-moduleB-main"></div>
 </div>
+<div class="app" id="app-moduleC" style="display:none;">
+  <div id="moduleC-desktop-gate" class="mod-desktop-gate">
+    <h2>This tool is built for a laptop or desktop</h2>
+    <p style="margin-top:var(--space-sm);">The Module C craft of writing practice needs a wider screen. Please switch to a laptop or desktop.</p>
+  </div>
+  <div id="app-moduleC-main"></div>
+</div>
 
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────────────
@@ -1484,6 +1494,52 @@ const CONFIG = {
     defaultLevel: 1,
     dataFiles: { questions: 'moduleBQuestions.json', quotes: 'moduleBQuotes.json', critics: 'moduleBCritics.json', syllabus: 'moduleBSyllabus.json', stimulus: 'moduleBStimulus.json' },
     features: { judgementLens: false, preparedBreaker: false, resonanceMap: false, conceptPanel: false, formSafeguards: false, evidenceUsefulness: false, evidenceChecker: true, criticsPanel: true, perspectiveCheck: true }
+  },
+
+  moduleC: {
+    key: 'moduleC', sectionN: 5,
+    tabLabel: 'Module C',
+    fullHeading: 'Paper 2, Section III: Module C, The Craft of Writing',
+    totalMarks: 20, bandCount: 5,
+    writingSecondsPerMark: 120,
+    planningSeconds: 300, drillSeconds: 240, tickMs: 1000,
+    slider: { min: 0, max: 100, step: 1, initial: null },
+    attributionOptions: ['preparation', 'the question', 'effort', 'stress', 'familiarity with the shape'],
+    attributionNoteMaxChars: 200,
+    selection: { varietyWindow: 4, maxPickAttempts: 20 },
+    forms: ['imaginative', 'discursive', 'persuasive'],
+    frame: { level1: 'on-locked', level2: 'on-default', level3: 'off' },
+    segmentedPacing: { level1: true, level2: true, level3: false },
+    reflectionCategoryCount: 4,
+    syllabusPointCount: 6,
+    drillTypeCount: 9,
+    layout: { minViewportPx: 1024, leftPanelPercent: 60, rightPanelPercent: 40, gapPx: 24 },
+    nudgeAtSegmentEnd: true,
+    nudgeRepeat: false,
+    marginProtocolByForm: {
+      imaginative: { fourth: 'diamond', meaning: 'moment of conceptual insight' },
+      discursive: { fourth: 'diamond', meaning: 'turn from anecdote to earned idea' },
+      persuasive: { fourth: 'arrow', meaning: 'claim landed with warrant or rebuttal' }
+    },
+    scopeGuidanceByMarks: {
+      '20': 'about two pages foolscap',
+      '15': 'about one and a half pages foolscap',
+      '12': 'about one and a quarter pages foolscap',
+      '10': 'about one page foolscap',
+      '8': 'about three quarters of a page foolscap',
+      '5': 'about half a page foolscap'
+    },
+    poolPreview: { enabled: true },
+    customMode: { enabled: true, reflectionMaxMarks: 10, writingMinMarks: 10 },
+    defaultLevel: 1,
+    dataFiles: {
+      questions: 'moduleCQuestions.json',
+      stimulus: 'moduleCStimulus.json',
+      mentorTexts: 'moduleCMentorTexts.json',
+      rubrics: 'moduleCRubrics.json',
+      syllabus: 'moduleCSyllabus.json',
+      customStems: 'moduleCCustomStems.json'
+    }
   }
 };
 
@@ -3902,12 +3958,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showSection(n) {
-    if (n === 5) return; // Module C — disabled placeholder
     document.querySelectorAll('.section-tab').forEach(t => t.classList.toggle('active', t.dataset.section === String(n)));
     $('main-app').style.display = n === 1 ? 'block' : 'none';
     $('app-s2').style.display = n === 2 ? 'block' : 'none';
     $('app-moduleA').style.display = n === 3 ? 'block' : 'none';
     $('app-moduleB').style.display = n === 4 ? 'block' : 'none';
+    $('app-moduleC').style.display = n === 5 ? 'block' : 'none';
     $('settings-btn').style.display = n === 1 ? 'block' : 'none';
     if (n === 2) {
       $('app-s2').classList.add('wide');
@@ -3917,6 +3973,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (n === 3 && window.__moduleShow) { $('app-moduleA').classList.add('wide'); window.__moduleShow('moduleA'); }
     if (n === 4 && window.__moduleShow) { $('app-moduleB').classList.add('wide'); window.__moduleShow('moduleB'); }
+    if (n === 5 && window.__moduleShow) { $('app-moduleC').classList.add('wide'); window.__moduleShow('moduleC'); }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -4116,6 +4173,60 @@ document.addEventListener('DOMContentLoaded', () => {
         { phrase: 'significance', plain: 'Why the novel still matters — its enduring value and meaning beyond its plot.' },
         { phrase: 'plot and character', plain: 'Retelling what happens or describing people. Markers reward conceptual argument about construction instead.' }
       ]
+    },
+
+    moduleC: {
+      setupCoach: 'A single 20-mark Craft of Writing task. The question varies in form, stimulus, reflection and mark split — the Question Shape card always shows you exactly what you have been asked to produce. You plan and write by hand, then self-mark against the authentic rubric. The tool never gives you a mark — it holds up the yardstick.',
+      writingChecklistCategories: ['stimulus', 'idea', 'craft', 'form', 'structure-and-scope', 'expression-and-mechanics'],
+      reflectionChecklistCategories: ['choice', 'connection', 'evaluation', 'expression'],
+      critDef: {
+        stimulus: 'Taking one idea from the stimulus and developing it across the piece, so it drives the writing rather than being described or tacked on.',
+        idea: 'A clear controlling idea and conceptual insight, rather than a piece driven by plot and event.',
+        craft: 'A deliberate craft move learned from a mentor text, named and visible in the piece.',
+        form: 'Honouring the conventions of the chosen form, imaginative, discursive or persuasive.',
+        'structure-and-scope': 'Scope matched to the marks and time, with a shape that holds together start to finish.',
+        'expression-and-mechanics': 'Controlled expression, punctuation and sentence variety throughout.',
+        choice: 'Naming a specific craft decision in the student\'s own piece.',
+        connection: 'Tying that decision to a studied or mentor text with genuine influence.',
+        evaluation: 'Judging the effect of the choice rather than narrating the process.',
+        expression: 'Clarity and control in the reflection\'s own writing.'
+      },
+      frameSteps: [
+        { key: 'form', label: 'F — Form', help: 'Identify every form the question allows. Where a choice is offered, commit to one for a stated reason, then honour its conventions.', ph: 'This question allows… I am choosing… because…' },
+        { key: 'reflection', label: 'R — Reflection', help: 'Determine whether a reflection is required, what it asks, and which studied or mentor texts it expects you to draw on.', ph: 'A reflection is / is not required. It asks…' },
+        { key: 'allocation', label: 'A — Allocation', help: 'Read how the marks are split across parts and convert that into a time plan.', ph: 'The marks split as… so my time plan is…' },
+        { key: 'material', label: 'M — Material', help: 'Identify the stimulus type and decide how you will genuinely use it, not just refer to it.', ph: 'The stimulus is… I will use it by…' },
+        { key: 'entryIdea', label: 'E — Entry idea', help: 'State the controlling idea or concept your piece will explore, in your own words, before you write.', ph: 'My piece will explore the idea that…' }
+      ],
+      formSafeguardFeatures: {
+        imaginative: ['narrative voice', 'cumulative sentence', 'second person address', 'mise en abyme', 'in medias res', 'imagery', 'motif', 'symbolism', 'shifting time', 'dialogue', 'free indirect discourse', 'sentence rhythm', 'show not tell'],
+        discursive: ['oscillation between anecdote and idea', 'personal voice', 'intertextual reference', 'sectioned structure', 'register shift', 'extended metaphor', 'rhetorical question', 'open ended reflection', 'digression that earns its place'],
+        persuasive: ['thesis and stance', 'anecdote as evidence', 'inclusive language', 'rhetorical question', 'tricolon', 'high modality', 'counterargument and rebuttal', 'call to action', 'controlled tone']
+      },
+      stressTestBoxes: [
+        { key: 'wordsToHonour', label: 'The exact words from this question and stimulus my piece must honour' },
+        { key: 'formChoice', label: 'The form this question actually allows, and the one I am choosing' },
+        { key: 'preparedMisfit', label: 'Any prepared idea I am tempted to reuse, and the one part of it that does not fit this question' },
+        { key: 'bendPlan', label: 'How I will bend my idea so the stimulus drives it, or why I am starting fresh' }
+      ],
+      dict: [
+        { phrase: 'Skilfully responds to the stimulus', plain: 'You take one idea from the stimulus and grow it across the whole piece, so it drives the writing rather than sitting on top of it.' },
+        { phrase: 'Crafts language skilfully', plain: 'Your choices of voice, syntax and imagery are deliberate and the reader feels the effect without you pointing to it.' },
+        { phrase: 'Sophisticated and engaging', plain: 'There is a real idea underneath, the character and setting feel true, and the reader stays invested all the way through.' },
+        { phrase: 'Skilful control of language and structure', plain: 'Sentence length, vocabulary and paragraphing all vary on purpose and serve your point, start to finish.' },
+        { phrase: 'Stimulus is tacked on', plain: 'The stimulus is only mentioned or described, not developed. This usually limits the response because Module C rewards a stimulus that drives the piece.' },
+        { phrase: 'Crafting not present', plain: 'The language is competent but nothing feels like a deliberate choice. This usually limits the response because Module C rewards visible, purposeful craft.' },
+        { phrase: 'Cliche', plain: 'A ready made idea, character or phrase a reader has seen many times. Replace it with something precise and your own.' },
+        { phrase: 'Over plotting', plain: 'Too much action and event crowding out language craft and idea. This usually limits the response because Module C rewards insight over plot.' },
+        { phrase: 'Controlling idea', plain: 'The one concept your piece is really about, that a reader could name after reading it.' },
+        { phrase: 'Power and precision', plain: 'Every word earns its place and the writing hits hard because it is exact, not because it is loud.' },
+        { phrase: 'Discursive', plain: 'Exploratory writing that moves between personal experience and bigger ideas, thinking on the page rather than arguing to win.' },
+        { phrase: 'Imaginative', plain: 'Creative writing that carries an idea through character, setting and voice, not just a sequence of events.' },
+        { phrase: 'Persuasive', plain: 'Writing that takes a clear stance and moves the reader toward it with controlled, deliberate technique.' },
+        { phrase: 'Reflection that narrates', plain: 'A reflection that only retells what you did. Move to why the choice works and what it does to the reader.' },
+        { phrase: 'Deliberate craft choice', plain: 'A technique you chose on purpose for an effect, that you could point to and explain.' },
+        { phrase: 'Honours the form', plain: 'The piece uses the moves that belong to the form you chose and does not accidentally drift into another form.' }
+      ]
     }
   };
 
@@ -4292,6 +4403,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Setup ───────────────────────────────────────────────────────────────
     function initSetup() {
+      st.screen = 'setup';
       render(
         '<h1>' + esc2(cfg.fullHeading) + '</h1>' +
         '<p class="coach">' + esc2(M.setupCoach) + '</p>' +
@@ -4395,6 +4507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let castStep = 0;
     function questionScreen() {
+      st.screen = 'question';
       const q = st.q;
       render(header(true) +
         '<div class="split-layout"><div class="split-left">' +
@@ -4475,6 +4588,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Prepared Response Breaker (Module A, gates L1/L2) ────────────────────
     function preparedBreaker() {
+      st.screen = 'breaker';
       const q = st.q;
       render(header(true) + marksBar() +
         '<h2>Break the prepared response</h2>' +
@@ -4492,6 +4606,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Plan ────────────────────────────────────────────────────────────────
     function startPlan() {
+      st.screen = 'plan';
       const q = st.q, p = profile();
       render(header(true) + marksBar() +
         '<h2>Plan</h2><p style="font-size:0.85rem;color:var(--color-muted);">Level ' + st.level + ' · ' + p.planning + ' scaffold</p>' +
@@ -4589,9 +4704,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Write ───────────────────────────────────────────────────────────────
     let writeSecs = 0, writeOverrun = false, writeHidden = false, pacingB = [], pacingF = [];
     function startWrite() {
+      st.screen = 'write';
       const q = st.q, p = profile();
       render(header(true) + marksBar() +
         '<h2>Write by hand</h2><p style="font-size:0.85rem;color:var(--color-muted);">Level ' + st.level + (p.pacing ? ' · segmented pacing' : ' · straight 40 minutes') + '</p>' +
+        '<div class="report-card"><div class="panel-label">The question</div><p style="white-space:pre-wrap;">' + esc2(q.stemText) + '</p>' + stimulusHtml(q) + '</div>' +
         '<div style="display:flex;align-items:center;gap:var(--space);flex-wrap:wrap;"><div class="timer" id="' + cfgKey + '-write-timer"></div><button class="btn-ghost" id="' + cfgKey + '-write-hide">Hide timer</button></div>' +
         '<div class="pacing-bar" id="' + cfgKey + '-pacing-bar"></div>' +
         '<div class="pacing-nudge" id="' + cfgKey + '-pacing-nudge"></div>' +
@@ -4621,6 +4738,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Self-mark ───────────────────────────────────────────────────────────
     function startSelfMark() {
+      st.screen = 'selfmark';
       clearT();
       const q = st.q;
       st.selfMarks = {};
@@ -4689,8 +4807,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cfg.features.evidenceUsefulness) {
         mainEl.querySelectorAll('.use-chk').forEach(c => c.addEventListener('change', () => {
           st.usefulness[c.dataset.k] = c.checked;
-          $(cfgKey + '-use-form').style.display = st.usefulness.form ? 'none' : 'block';
-          $(cfgKey + '-use-conv').style.display = st.usefulness.conversation ? 'none' : 'block';
+          if (c.dataset.k === 'form') $(cfgKey + '-use-form').style.display = c.checked ? 'none' : 'block';
+          if (c.dataset.k === 'conversation') $(cfgKey + '-use-conv').style.display = c.checked ? 'none' : 'block';
         }));
         $(cfgKey + '-use-form').style.display = 'none'; $(cfgKey + '-use-conv').style.display = 'none';
         mainEl.querySelectorAll('.form-feature-chip').forEach(ch => ch.addEventListener('click', () => {
@@ -4716,6 +4834,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Calibration ─────────────────────────────────────────────────────────
     function startCalibration() {
+      st.screen = 'calibration';
       readChain();
       const q = st.q, cats = catsOf(q); st.result = {};
       render(header(true) + marksBar() +
@@ -4744,6 +4863,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Syllabus audit ──────────────────────────────────────────────────────
     function startSyllabus() {
+      st.screen = 'syllabus';
       st.syllabus = {};
       const syl = data.syllabus;
       let prompts = syl.auditPoints.slice();
@@ -4763,6 +4883,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Compare & climb ─────────────────────────────────────────────────────
     function startCompare() {
+      st.screen = 'compare';
       const q = st.q;
       render(header(true) + marksBar() +
         '<h2>Compare &amp; climb one band</h2><p class="coach">There is no model essay. You self-locate against the authentic rubric and marker feedback, then take one move up. If this is the descriptor you selected, the next descriptor asks for more.</p>' +
@@ -4802,6 +4923,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Reflection + report ─────────────────────────────────────────────────
     function startReflection() {
+      st.screen = 'reflection';
       render(header(true) + marksBar() +
         '<h2>Reflection</h2><p class="coach">Optional. Build a “next time I want to focus on…” list in your own words.</p>' +
         '<div style="display:flex;gap:8px;"><input id="' + cfgKey + '-refl-input" style="flex:1;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);" placeholder="Next time I want to focus on…"><button class="btn-secondary" id="' + cfgKey + '-refl-add">Add</button></div>' +
@@ -4819,6 +4941,7 @@ document.addEventListener('DOMContentLoaded', () => {
       st.attempts.push({ id: q.id, verb: q.verb, concept: q.concept, level: st.level, authentic: q.isAuthenticPastQuestion, year: q.year || null, gaps: gaps, attribution: Object.assign({}, st.attribution), syllabus: JSON.parse(JSON.stringify(st.syllabus)) });
     }
     function startReport() {
+      st.screen = 'report';
       const last = st.attempts[st.attempts.length - 1];
       render(header(false) +
         '<h1>Session report</h1>' +
@@ -4839,6 +4962,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Drill gym ───────────────────────────────────────────────────────────
     function startDrill() { st.drill.q = selectQuestion() || data.questions.filter(servable)[0]; renderDrillPick(); }
     function renderDrillPick() {
+      st.screen = 'drill';
       render(header(true) + marksBar() + '<h2>Micro-skill drill gym</h2>' +
         '<div class="report-card"><strong>Question:</strong> ' + esc2(st.drill.q.stemText) + '</div>' +
         '<div class="drill-grid" id="' + cfgKey + '-drill-grid">' + M.drills.map(d => '<div class="drill-card" data-drill="' + d.id + '"><h3>' + esc2(d.title) + '</h3><p>' + esc2(d.prompt(st.drill.q)) + '</p></div>').join('') + '</div>' +
@@ -4865,10 +4989,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── Skip ────────────────────────────────────────────────────────────────
+    // Mirrors Section II's skipToNext(): an explicit screen -> next-screen map,
+    // so Skip always advances even when the current screen's primary button
+    // is still disabled pending required input.
     function skipToNext() {
-      // Best-effort forward jump; each screen's primary button is the reliable path.
-      const primary = mainEl.querySelector('.btn-primary:not([disabled])');
-      if (primary) primary.click();
+      const map = {
+        setup: () => { if (st.mode === 'drill') startDrill(); else nextQuestion(); },
+        question: () => afterQuestion(),
+        breaker: () => startPlan(),
+        plan: () => { capturePlan(); startWrite(); },
+        write: () => startSelfMark(),
+        selfmark: () => startCalibration(),
+        calibration: () => {
+          const noteEl = $(cfgKey + '-attr-note');
+          if (noteEl) st.attribution.note = (noteEl.value || '').slice(0, cfg.attributionNoteMaxChars);
+          startSyllabus();
+        },
+        syllabus: () => startCompare(),
+        compare: () => { recordAttempt(); startReflection(); },
+        reflection: () => startReport(),
+        report: () => nextQuestion(),
+        drill: () => initSetup()
+      };
+      (map[st.screen] || initSetup)();
     }
 
     // ── Public show ─────────────────────────────────────────────────────────
@@ -4885,10 +5028,619 @@ document.addEventListener('DOMContentLoaded', () => {
     return { show };
   }
 
+  function makeModuleCController() {
+    const cfg = CONFIG.moduleC;
+    const M = CONTENT.moduleC;
+    const mainEl = $('app-moduleC-main');
+    let data = { questions: [], stimulus: [], mentorTexts: [], rubrics: {}, syllabus: null, customStems: [] };
+    let loaded = false;
+    let st = fresh();
+    let timers = {};
+
+    function fresh() {
+      return {
+        screen: null, mode: 'single', level: cfg.defaultLevel, overrides: {},
+        servedSignatures: [],
+        q: null, resolvedShape: null, chosenForm: null,
+        frame: { form: '', reflection: '', allocation: '', material: '', entryIdea: '' },
+        stressTest: { wordsToHonour: '', formChoice: '', preparedMisfit: '', bendPlan: '' },
+        confidence: {}, result: {}, attribution: { choice: null, note: '' },
+        plan: {}, selfMark: {}, syllabus: {}, reflections: [], attempts: [], bandLocated: null,
+        studentVoice: false
+      };
+    }
+
+    const clearT = () => { Object.values(timers).forEach(t => clearInterval(t)); timers = {}; };
+    const render = html => { clearT(); mainEl.innerHTML = html; window.scrollTo(0, 0); };
+    const esc2 = esc;
+
+    // ── Data load ───────────────────────────────────────────────────────────
+    async function load() {
+      if (loaded) return true;
+      const base = CONFIG.dataPath, f = cfg.dataFiles;
+      const [questions, stimulus, mentorTexts, rubrics, syllabus, customStems] = await Promise.all([
+        fetch(base + f.questions).then(r => r.json()),
+        fetch(base + f.stimulus).then(r => r.json()),
+        fetch(base + f.mentorTexts).then(r => r.json()),
+        fetch(base + f.rubrics).then(r => r.json()),
+        fetch(base + f.syllabus).then(r => r.json()),
+        fetch(base + f.customStems).then(r => r.json())
+      ]);
+      data = { questions, stimulus, mentorTexts, rubrics, syllabus, customStems };
+      loaded = true;
+      return true;
+    }
+
+    // ── Shape signature (for variety-window selection, Part 3) ───────────────
+    function shapeSignature(q) {
+      const forms = q.shape.formOptions.length > 1 ? 'choice' : q.shape.formOptions[0];
+      const stim = q.shape.stimulus.type;
+      const refl = q.shape.reflection.required ? 'ref' : 'noref';
+      return forms + '|' + stim + '|' + refl;
+    }
+
+    // ── Selection ───────────────────────────────────────────────────────────
+    function servable(q) {
+      if (q.shape.stimulus.type === 'image' && 'assetSupplied' in q.shape.stimulus && q.shape.stimulus.assetSupplied === false) return false;
+      return true;
+    }
+    function selectQuestion() {
+      const pool = data.questions.filter(servable);
+      if (!pool.length) return null;
+      const distinctSignatures = new Set(pool.map(shapeSignature)).size;
+      const win = Math.min(cfg.selection.varietyWindow, distinctSignatures);
+      const recent = st.servedSignatures.slice(-win);
+      let cands = pool.filter(q => recent.indexOf(shapeSignature(q)) === -1);
+      if (!cands.length) cands = pool;
+      const pick = cands[Math.floor(Math.random() * cands.length)];
+      st.servedSignatures.push(shapeSignature(pick));
+      return pick;
+    }
+
+    // ── Shape resolution: turns a bank question into everything the UI needs ─
+    function resolveStimulus(q) {
+      const s = q.shape.stimulus;
+      if (s.type === 'none') return null;
+      if (s.type === 'choice') {
+        return { type: 'choice', options: s.allowedStimulusIds.map(id => data.stimulus.find(e => e.id === id)), instruction: s.instruction };
+      }
+      if (s.stimulusId) {
+        const entry = data.stimulus.find(e => e.id === s.stimulusId);
+        return Object.assign({ instruction: s.instruction }, entry);
+      }
+      // authentic questions embed their stimulus inline rather than referencing the bank
+      return s;
+    }
+    function parseRange(range) {
+      const m = String(range).match(/^(\d+)(?:\s+to\s+(\d+))?$/);
+      if (!m) throw new Error('Unrecognised band range format: "' + range + '"');
+      const lo = parseInt(m[1], 10);
+      const hi = m[2] ? parseInt(m[2], 10) : lo;
+      return [lo, hi];
+    }
+    function scaleBand(band, partMarks, scaleMarks) {
+      // Most reflection-bearing questions have a writing part worth fewer than
+      // 20 marks, and several teacher-authored reflection parts are worth fewer
+      // than rubric-reflection's native 10 — so scaling is the common case, not
+      // an edge case. Rule (from the brief): keep the descriptor wording
+      // verbatim, scale each band's numeric range to the part marks, rounding
+      // to whole marks. When partMarks already equals scaleMarks, return the
+      // band unchanged (this is the majority case for single 20-mark writing
+      // parts and for rubrics already authored at their only usage size).
+      if (partMarks === scaleMarks) return band;
+      const [lo, hi] = parseRange(band.range);
+      const scale = partMarks / scaleMarks;
+      const scaledLo = Math.max(1, Math.round(lo * scale));
+      const scaledHi = Math.round(hi * scale);
+      const range = scaledLo === scaledHi ? String(scaledLo) : (scaledLo + ' to ' + scaledHi);
+      return Object.assign({}, band, { range });
+    }
+    function resolvePart(part) {
+      const rubric = data.rubrics[part.rubricId];
+      if (!rubric) throw new Error('Unknown rubricId "' + part.rubricId + '"');
+      const bands = rubric.bands.map(b => scaleBand(b, part.marks, rubric.scaleMarks));
+      return Object.assign({}, part, { rubric, bands });
+    }
+    function resolveShape(q) {
+      const stimulus = resolveStimulus(q);
+      const parts = q.shape.parts.map(resolvePart);
+      return {
+        formOptions: q.shape.formOptions,
+        stimulus,
+        reflection: q.shape.reflection,
+        parts,
+        totalMarks: q.shape.totalMarks
+      };
+    }
+
+    function formsLine() {
+      const opts = st.resolvedShape.formOptions;
+      if (opts.length === 1) return opts[0];
+      if (st.chosenForm) return st.chosenForm + ' (chosen)';
+      return 'Choose one, ' + opts.join(' or ');
+    }
+    function stimulusLine() {
+      const s = st.resolvedShape.stimulus;
+      if (!s) return 'No stimulus';
+      if (s.type === 'choice') return 'Choice of stimulus, develop an idea from the one you pick';
+      if (s.kind === 'image' || s.type === 'image') return 'Image stimulus, develop an idea from it';
+      return 'Written stimulus, develop an idea from it';
+    }
+    function reflectionLine() {
+      const r = st.resolvedShape.reflection;
+      return r.required ? 'Reflection required, worth ' + r.marks : 'No reflection';
+    }
+    function marksLine() {
+      const parts = st.resolvedShape.parts;
+      if (parts.length === 1) return 'Writing ' + parts[0].marks + ', total ' + st.resolvedShape.totalMarks;
+      return parts.map(p => (p.type === 'writing' ? 'Writing' : p.type === 'reflection' ? 'Reflection' : 'Analysis') + ' ' + p.marks).join(', ') + ', total ' + st.resolvedShape.totalMarks;
+    }
+    function scopeLine() {
+      return st.resolvedShape.parts.map(p => (cfg.scopeGuidanceByMarks[String(p.marks)] || '') ).filter(Boolean).join(' · ');
+    }
+    function questionShapeCardHtml() {
+      return '<div class="report-card" id="moduleC-shape-card">' +
+        '<div class="panel-label">Question Shape</div>' +
+        '<div class="obj-item">• Form: ' + esc2(formsLine()) + '</div>' +
+        '<div class="obj-item">• Stimulus: ' + esc2(stimulusLine()) + '</div>' +
+        '<div class="obj-item">• Reflection: ' + esc2(reflectionLine()) + '</div>' +
+        '<div class="obj-item">• Marks: ' + esc2(marksLine()) + '</div>' +
+        '<div class="obj-item" style="color:var(--color-muted);font-size:0.85rem;">• Scope guidance: ' + esc2(scopeLine()) + '</div>' +
+        '</div>';
+    }
+    function refreshShapeCard() {
+      const el = $('moduleC-shape-card');
+      if (el) el.outerHTML = questionShapeCardHtml();
+    }
+
+    function nextQuestion() {
+      const q = selectQuestion();
+      if (!q) return false;
+      st.q = q;
+      st.resolvedShape = resolveShape(q);
+      st.chosenForm = q.shape.formOptions.length === 1 ? q.shape.formOptions[0] : null;
+      st.frame = { form: '', reflection: '', allocation: '', material: '', entryIdea: '' };
+      st.stressTest = { wordsToHonour: '', formChoice: '', preparedMisfit: '', bendPlan: '' };
+      st.confidence = {}; st.result = {}; st.attribution = { choice: null, note: '' };
+      return true;
+    }
+
+    // ── Public show ─────────────────────────────────────────────────────────
+    async function show() {
+      const gate = $('moduleC-desktop-gate');
+      if (window.innerWidth < cfg.layout.minViewportPx) { gate.classList.add('show'); mainEl.style.display = 'none'; return; }
+      gate.classList.remove('show'); mainEl.style.display = 'block';
+      if (!loaded) {
+        try { await load(); } catch (err) { mainEl.innerHTML = '<div class="error-msg">Could not load the Module C materials. ' + esc2(err.message) + '</div>'; return; }
+      }
+      if (!mainEl.innerHTML.trim()) initSetup();
+    }
+
+    function initSetup() {
+      st.screen = 'setup';
+      render(
+        '<h1>' + esc2(cfg.fullHeading) + '</h1>' +
+        '<p class="coach">' + esc2(M.setupCoach) + '</p>' +
+        '<div style="margin:var(--space) 0;"><h2>Level</h2><div class="btn-row" id="moduleC-level-btns" style="margin-top:6px;">' +
+        [[1, '1 · Foundation'], [2, '2 · Consolidation'], [3, '3 · Exam']].map(([v, l]) =>
+          '<button class="btn-secondary s-level-btn' + (st.level === v ? ' active' : '') + '" data-level="' + v + '">' + l + '</button>').join('') +
+        '</div></div>' +
+        '<div class="spinner" id="moduleC-setup-spinner" style="display:none;">Loading materials…</div>' +
+        '<div class="error-msg" id="moduleC-setup-error"></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-start-btn">Get a question</button></div>'
+      );
+      mainEl.querySelectorAll('.s-level-btn').forEach(b => b.addEventListener('click', () => {
+        st.level = parseInt(b.dataset.level);
+        mainEl.querySelectorAll('.s-level-btn').forEach(x => x.classList.toggle('active', x === b));
+      }));
+      $('moduleC-start-btn').addEventListener('click', startFlow);
+    }
+    async function startFlow() {
+      const sp = $('moduleC-setup-spinner');
+      setError('moduleC-setup-error', null);
+      if (!loaded) {
+        sp.style.display = 'block';
+        try { await load(); } catch (err) { sp.style.display = 'none'; setError('moduleC-setup-error', 'Could not load the materials. ' + err.message); return; }
+        sp.style.display = 'none';
+      }
+      if (!nextQuestion()) { setError('moduleC-setup-error', 'No questions match right now. This should not happen with the full bank — check the console.'); return; }
+      questionScreen();
+    }
+    function stimulusBlockHtml() {
+      const s = st.resolvedShape.stimulus;
+      if (!s) return '';
+      if (s.type === 'choice') {
+        return '<div class="report-card"><div class="panel-label">Choose one stimulus</div>' +
+          s.options.map(o => stimulusEntryHtml(o)).join('') +
+          '<p style="font-size:0.85rem;color:var(--color-muted);">' + esc2(s.instruction) + '</p></div>';
+      }
+      return '<div class="report-card"><div class="panel-label">Stimulus</div>' + stimulusEntryHtml(s) +
+        '<p style="font-size:0.85rem;color:var(--color-muted);">' + esc2(s.instruction || '') + '</p></div>';
+    }
+    function stimulusEntryHtml(s) {
+      if (s.kind === 'image' || s.type === 'image') {
+        if (s.assetSupplied === false) return '<div class="image-placeholder">' + esc2(s.placeholderText || 'Image stimulus placeholder.') + '</div>';
+        return '<img src="' + esc2(s.assetPath) + '" alt="Stimulus image" style="max-width:100%;border-radius:var(--radius);">';
+      }
+      let h = '<div class="stimulus-block">' + esc2(s.stimulusText) + '</div>';
+      if (s.attribution) h += '<p style="font-size:0.8rem;color:var(--color-muted);">— ' + esc2(s.attribution) + '</p>';
+      return h;
+    }
+    function questionScreen() {
+      st.screen = 'question';
+      const q = st.q;
+      render(
+        '<div class="btn-row" style="justify-content:flex-start;margin-bottom:var(--space-sm);"><button class="btn-ghost" data-nav="home">⌂ Setup</button></div>' +
+        questionShapeCardHtml() +
+        '<div class="report-card"><div class="panel-label">The question</div><p style="white-space:pre-wrap;">' + esc2(q.stemText) + '</p></div>' +
+        stimulusBlockHtml() +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-q-continue">Continue →</button></div>'
+      );
+      mainEl.querySelectorAll('[data-nav="home"]').forEach(b => b.addEventListener('click', initSetup));
+      $('moduleC-q-continue').addEventListener('click', frameScreen);
+    }
+    function frameOn() {
+      if (st.level === 1) return true;
+      if (st.level === 2) return st.overrides.frame !== 'off';
+      return st.overrides.frame === 'on';
+    }
+    let frameStep = 0;
+    function frameScreen() {
+      st.screen = 'frame';
+      if (!frameOn()) { afterFrame(); return; }
+      frameStep = 0;
+      renderFrameStep();
+    }
+    function renderFrameStep() {
+      const step = M.frameSteps[frameStep], last = frameStep === M.frameSteps.length - 1;
+      render(
+        questionShapeCardHtml() +
+        '<div class="cast-annotation-box"><div class="panel-label">FRAME the question</div>' +
+        '<div class="step-dots">' + M.frameSteps.map((_, i) => '<div class="step-dot ' + (i < frameStep ? 'done' : i === frameStep ? 'active' : '') + '"></div>').join('') + '</div>' +
+        '<p style="font-size:0.8rem;color:var(--color-muted);margin:6px 0;">Step ' + (frameStep + 1) + ' of ' + M.frameSteps.length + '</p>' +
+        '<strong>' + esc2(step.label) + '</strong><p style="font-size:0.88rem;color:var(--color-muted);margin:6px 0;">' + esc2(step.help) + '</p>' +
+        '<textarea id="moduleC-frame-input" rows="2" placeholder="' + esc2(step.ph) + '" style="width:100%;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);resize:vertical;"></textarea>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-frame-next">' + (last ? 'Continue →' : 'Next →') + '</button></div></div>'
+      );
+      const inp = $('moduleC-frame-input'); inp.value = st.frame[step.key] || '';
+      $('moduleC-frame-next').addEventListener('click', () => {
+        st.frame[step.key] = $('moduleC-frame-input').value.trim();
+        frameStep++;
+        if (frameStep < M.frameSteps.length) renderFrameStep();
+        else afterFrame();
+      });
+    }
+    function afterFrame() {
+      formChooserScreen();
+    }
+    function needsFormChoice() {
+      return st.resolvedShape.formOptions.length > 1;
+    }
+    function stressTestRequired() {
+      return st.level === 1 || st.level === 2;
+    }
+    function formChooserScreen() {
+      st.screen = 'formChooser';
+      if (!needsFormChoice()) { st.chosenForm = st.resolvedShape.formOptions[0]; afterFormChoice(); return; }
+      if (stressTestRequired()) { stressTestScreen(); return; }
+      renderFormChoiceOnly();
+    }
+    function renderFormChoiceOnly() {
+      render(
+        questionShapeCardHtml() +
+        '<div class="report-card"><div class="panel-label">Choose your form</div>' +
+        '<div class="btn-row" id="moduleC-form-btns">' +
+        st.resolvedShape.formOptions.map(f => '<button class="btn-secondary s-mode-btn" data-form="' + f + '">' + f + '</button>').join('') +
+        '</div></div>'
+      );
+      mainEl.querySelectorAll('[data-form]').forEach(b => b.addEventListener('click', () => {
+        st.chosenForm = b.dataset.form;
+        afterFormChoice();
+      }));
+    }
+    function stressTestScreen() {
+      render(
+        questionShapeCardHtml() +
+        '<div class="report-card"><div class="panel-label">Before you choose a form: the prepared-piece stress test</div>' +
+        '<p class="coach">Do not walk in with a memorised piece and dump it regardless of the question. Answer honestly.</p>' +
+        M.stressTestBoxes.map(box =>
+          '<div class="plan-slot"><div class="plan-slot-label">' + esc2(box.label) + '</div>' +
+          '<textarea rows="2" class="stress-field" data-k="' + box.key + '" style="width:100%;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);"></textarea></div>'
+        ).join('') +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-stress-continue" disabled>Choose your form →</button></div></div>'
+      );
+      const check = () => {
+        mainEl.querySelectorAll('.stress-field').forEach(el => { st.stressTest[el.dataset.k] = el.value.trim(); });
+        $('moduleC-stress-continue').disabled = !Object.values(st.stressTest).every(v => v);
+      };
+      mainEl.querySelectorAll('.stress-field').forEach(el => el.addEventListener('input', check));
+      $('moduleC-stress-continue').addEventListener('click', renderFormChoiceOnly);
+    }
+    function afterFormChoice() {
+      refreshShapeCard();
+      confidenceScreen();
+    }
+    function writingCategoriesFor(part) {
+      const stimulusPresent = st.resolvedShape.stimulus !== null;
+      return stimulusPresent ? M.writingChecklistCategories : M.writingChecklistCategories.filter(c => c !== 'stimulus');
+    }
+    function resolvedCategories() {
+      const cats = [];
+      st.resolvedShape.parts.forEach(part => {
+        if (part.type === 'writing') writingCategoriesFor(part).forEach(c => cats.push({ cat: c, partId: part.id, group: 'writing' }));
+        else if (part.type === 'reflection') M.reflectionChecklistCategories.forEach(c => cats.push({ cat: c, partId: part.id, group: 'reflection' }));
+        // 'analysis' parts (the 2022 shape) do not render confidence/result sliders in this plan's scope —
+        // deferred to Part 2 alongside the analysis rubric's self-mark screen.
+      });
+      return cats;
+    }
+    function sliderSet(prefix, cats, store) {
+      return cats.map(c => '<div class="crit-slider-row"><div class="crit-label">' + esc2(c.cat) + '</div>' +
+        '<div class="crit-def">' + esc2(M.critDef[c.cat] || '') + '</div>' +
+        '<div class="slider-row"><input type="range" id="moduleC-' + prefix + '-' + c.cat + '-' + c.partId + '" min="' + cfg.slider.min + '" max="' + cfg.slider.max + '" step="' + cfg.slider.step + '" value="50" data-key="' + c.cat + '__' + c.partId + '">' +
+        '<span class="slider-value" id="moduleC-' + prefix + '-' + c.cat + '-' + c.partId + '-v">' + (store[c.cat + '__' + c.partId] == null ? '—' : store[c.cat + '__' + c.partId]) + '</span></div></div>').join('');
+    }
+    function wireSliders(prefix, cats, store, onChange) {
+      cats.forEach(c => {
+        const key = c.cat + '__' + c.partId;
+        const el = $('moduleC-' + prefix + '-' + c.cat + '-' + c.partId);
+        el.addEventListener('input', () => {
+          store[key] = parseInt(el.value);
+          $('moduleC-' + prefix + '-' + c.cat + '-' + c.partId + '-v').textContent = store[key];
+          onChange();
+        });
+      });
+    }
+    function allSet(cats, store) { return cats.every(c => store[c.cat + '__' + c.partId] != null); }
+    function confidenceScreen() {
+      st.screen = 'confidence';
+      const cats = resolvedCategories();
+      render(
+        questionShapeCardHtml() +
+        '<div class="confidence-block"><div class="panel-label">Before you plan: how confident are you, per criterion?</div>' +
+        '<p style="font-size:0.85rem;color:var(--color-muted);">Rate each criterion for the ' + esc2(st.chosenForm) + ' piece' + (st.resolvedShape.reflection.required ? ' and the reflection' : '') + '.</p>' +
+        sliderSet('conf', cats, st.confidence) + '</div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-conf-continue" disabled>Continue to planning →</button></div>'
+      );
+      wireSliders('conf', cats, st.confidence, () => { $('moduleC-conf-continue').disabled = !allSet(cats, st.confidence); });
+      $('moduleC-conf-continue').addEventListener('click', () => { planScreen(); });
+    }
+    // ── Plan ────────────────────────────────────────────────────────────────
+    function planScreen() {
+      st.screen = 'plan';
+      render(
+        questionShapeCardHtml() +
+        '<h2>Plan</h2>' +
+        '<p class="coach">The plan is yours to build — sketch the shape before you write by hand. Nothing here is your piece.</p>' +
+        '<div class="plan-slot"><div class="plan-slot-label">Controlling idea</div><textarea rows="2" class="plan-field" data-k="idea" placeholder="The one idea this piece is really about…">' + esc2(st.plan.idea || '') + '</textarea></div>' +
+        '<div class="plan-slot"><div class="plan-slot-label">Structure / shape</div><textarea rows="3" class="plan-field" data-k="structure" placeholder="How the piece will move, section by section…">' + esc2(st.plan.structure || '') + '</textarea></div>' +
+        '<div class="plan-slot"><div class="plan-slot-label">Craft move you intend to use</div><textarea rows="2" class="plan-field" data-k="craft" placeholder="A technique from a mentor text you plan to use…">' + esc2(st.plan.craft || '') + '</textarea></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-plan-continue">Move to writing →</button></div>'
+      );
+      mainEl.querySelectorAll('.plan-field').forEach(f => f.addEventListener('input', () => { st.plan[f.dataset.k] = f.value; }));
+      $('moduleC-plan-continue').addEventListener('click', () => { writeIndex = 0; writeScreen(); });
+    }
+
+    // ── Write (per part) ───────────────────────────────────────────────────
+    let writeIndex = 0, writeSecs = 0, writeOverrun = false;
+    function partLabel(part) {
+      return part.type === 'writing' ? (st.chosenForm + ' piece') : part.type === 'reflection' ? 'Reflection' : 'Response';
+    }
+    function fmtC(s) { s = Math.max(0, s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+    function writeScreen() {
+      st.screen = 'write';
+      clearT();
+      const part = st.resolvedShape.parts[writeIndex];
+      render(
+        questionShapeCardHtml() +
+        '<h2>Write — ' + esc2(partLabel(part)) + ' (' + part.marks + ' marks)</h2>' +
+        '<div class="report-card"><div class="panel-label">The question</div><p style="white-space:pre-wrap;">' + esc2(st.q.stemText) + '</p></div>' +
+        '<div class="timer" id="moduleC-write-timer"></div>' +
+        '<p class="coach">Write this part by hand. Come back and press Done when you have finished it.</p>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-write-done">I’ve finished writing this part →</button></div>'
+      );
+      writeSecs = part.marks * cfg.writingSecondsPerMark; writeOverrun = false;
+      const el = $('moduleC-write-timer');
+      const draw = () => { el.textContent = (writeOverrun ? '+' : '') + fmtC(Math.abs(writeSecs)); el.className = 'timer' + (writeOverrun ? ' overrun' : (writeSecs <= 60 && writeSecs > 0 ? ' warning' : '')); };
+      draw();
+      timers.write = setInterval(() => { writeSecs--; if (writeSecs <= 0 && !writeOverrun) writeOverrun = true; draw(); }, cfg.tickMs);
+      $('moduleC-write-done').addEventListener('click', () => {
+        writeIndex++;
+        if (writeIndex < st.resolvedShape.parts.length) writeScreen();
+        else { writeIndex = 0; selfMarkScreen(); }
+      });
+      console.log('DEBUG writeScreen end');
+    }
+
+    // ── Self-mark (per part, craft-chain margin protocol) ─────────────────
+    function selfMarkScreen() {
+      st.screen = 'selfmark';
+      clearT();
+      const part = st.resolvedShape.parts[writeIndex];
+      const isWriting = part.type === 'writing';
+      const mp = isWriting ? cfg.marginProtocolByForm[st.chosenForm] : null;
+      const sm = st.selfMark[part.id] = st.selfMark[part.id] || { craftMove: '', bandChosen: null };
+      render(
+        questionShapeCardHtml() +
+        '<h2>Self-mark — ' + esc2(partLabel(part)) + '</h2>' +
+        '<p class="coach">The tool never marks your writing. You hold it against the yardstick and locate yourself honestly.</p>' +
+        (isWriting ?
+          '<div class="chain-box"><div class="panel-label">Craft-chain margin protocol — annotate your handwritten piece first</div>' +
+          '<p style="font-size:0.85rem;">Draw a <strong>triangle</strong> at each deliberate craft move, a <strong>square</strong> at the effect it creates, a <strong>circle</strong> where it links to the stimulus, and a <strong>' + esc2(mp.fourth) + '</strong> where you reach a ' + esc2(mp.meaning) + '.</p>' +
+          '<div class="plan-slot"><div class="plan-slot-label">Name the craft move you triangled — must be a real ' + esc2(st.chosenForm) + ' technique</div>' +
+          '<div class="btn-row" id="moduleC-sm-craft-chips">' + (M.formSafeguardFeatures[st.chosenForm] || []).map(f => '<span class="form-feature-chip' + (sm.craftMove === f ? ' on' : '') + '" data-f="' + esc2(f) + '">' + esc2(f) + '</span>').join('') + '</div></div></div>'
+          : '') +
+        '<div class="report-card"><div class="panel-label">Band ladder — click the band you place yourself in (' + part.marks + ' marks)</div><div id="moduleC-sm-bands">' +
+        part.bands.map(b => '<div class="band-ladder-row' + (sm.bandChosen === b.band ? ' selected' : '') + '" data-band="' + b.band + '"><span class="band-no">Band ' + b.band + '<br>' + esc2(b.range) + '</span><span>' + esc2(b.descriptor) + '</span></div>').join('') +
+        '</div></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-sm-continue" disabled>Continue →</button></div>'
+      );
+      const checkReady = () => { $('moduleC-sm-continue').disabled = !(sm.bandChosen != null && (!isWriting || sm.craftMove)); };
+      if (isWriting) {
+        mainEl.querySelectorAll('.form-feature-chip').forEach(ch => ch.addEventListener('click', () => {
+          sm.craftMove = ch.dataset.f;
+          mainEl.querySelectorAll('.form-feature-chip').forEach(x => x.classList.toggle('on', x === ch));
+          checkReady();
+        }));
+      }
+      mainEl.querySelectorAll('#moduleC-sm-bands .band-ladder-row').forEach(row => row.addEventListener('click', () => {
+        sm.bandChosen = parseInt(row.dataset.band);
+        mainEl.querySelectorAll('#moduleC-sm-bands .band-ladder-row').forEach(r => r.classList.toggle('selected', r === row));
+        checkReady();
+      }));
+      checkReady();
+      $('moduleC-sm-continue').addEventListener('click', () => {
+        writeIndex++;
+        if (writeIndex < st.resolvedShape.parts.length) selfMarkScreen();
+        else resultScreen();
+      });
+    }
+
+    // ── Result + attribution (calibration) ─────────────────────────────────
+    function resultScreen() {
+      st.screen = 'result';
+      clearT();
+      const cats = resolvedCategories();
+      st.result = {};
+      render(
+        questionShapeCardHtml() +
+        '<h2>Result</h2><p class="coach">Set how well you think you did on each criterion, beside your earlier confidence. The gap is the point.</p>' +
+        '<div class="confidence-block"><div class="panel-label">How well did you do — per criterion?</div>' + sliderSet('res', cats, st.result) + '</div>' +
+        '<div id="moduleC-attr-block" style="display:none;"><div class="report-card"><div class="panel-label">What most shaped this result?</div><div class="btn-row" id="moduleC-attr-opts">' + cfg.attributionOptions.map(o => '<button class="btn-secondary attr-btn" data-attr="' + esc2(o) + '">' + esc2(o) + '</button>').join('') + '</div>' +
+        '<textarea id="moduleC-attr-note" rows="2" maxlength="' + cfg.attributionNoteMaxChars + '" placeholder="Optional short note…" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);"></textarea></div></div>' +
+        '<div id="moduleC-cal-reveal" style="display:none;"><div class="report-card"><div class="panel-label">Confidence vs result, per criterion</div><div id="moduleC-cal-gaps"></div></div></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-result-continue">Continue →</button></div>'
+      );
+      wireSliders('res', cats, st.result, () => { if (allSet(cats, st.result)) { $('moduleC-attr-block').style.display = 'block'; revealGaps(cats); } });
+      mainEl.querySelectorAll('.attr-btn').forEach(b => b.addEventListener('click', () => {
+        st.attribution.choice = b.dataset.attr;
+        mainEl.querySelectorAll('.attr-btn').forEach(x => { x.style.background = ''; x.style.color = ''; });
+        b.style.background = 'var(--color-accent)'; b.style.color = 'white';
+      }));
+      $('moduleC-result-continue').addEventListener('click', () => {
+        st.attribution.note = ($('moduleC-attr-note') ? $('moduleC-attr-note').value : '').slice(0, cfg.attributionNoteMaxChars);
+        syllabusScreen();
+      });
+    }
+    function revealGaps(cats) {
+      $('moduleC-cal-gaps').innerHTML = cats.map(c => {
+        const key = c.cat + '__' + c.partId, conf = st.confidence[key], res = st.result[key], g = res - conf, sign = g > 0 ? '+' : '';
+        const col = g > 0 ? 'var(--color-done)' : g < 0 ? 'var(--color-undone)' : 'var(--color-muted)';
+        return '<div class="crit-gap-card"><span style="text-transform:capitalize;">' + esc2(c.cat) + '</span><span class="cg-val">' + conf + '</span><span class="cg-val">' + res + '</span><span class="cg-gap" style="color:' + col + ';">' + sign + g + '</span></div>';
+      }).join('');
+      $('moduleC-cal-reveal').style.display = 'block';
+    }
+
+    // ── Syllabus audit ──────────────────────────────────────────────────────
+    function syllabusScreen() {
+      st.screen = 'syllabus';
+      st.syllabus = {};
+      const syl = data.syllabus;
+      const prompts = syl.auditPoints.slice();
+      prompts.push({ id: 'oiq', text: 'Overarching inquiry question: ' + syl.overarchingInquiryQuestion });
+      render(
+        questionShapeCardHtml() +
+        '<h2>Syllabus audit</h2><p class="coach">When did you address the syllabus? How? Be explicit. This is brief reflection, not your piece.</p>' +
+        '<div id="moduleC-syl-list">' + prompts.map(pt => '<div class="report-card"><p style="font-weight:600;margin-bottom:6px;">' + esc2(pt.text) + '</p><div style="display:flex;gap:var(--space-sm);align-items:flex-start;"><input class="syl-note" data-syl="' + pt.id + '" type="text" placeholder="Which part? What move?" style="flex:1;padding:6px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:6px;"><button class="btn-ghost syl-na" data-syl="' + pt.id + '">Not addressed</button></div></div>').join('') + '</div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-syl-continue" disabled>Continue →</button></div>'
+      );
+      const ids = prompts.map(p => p.id);
+      const check = () => { $('moduleC-syl-continue').disabled = !ids.every(id => { const s = st.syllabus[id]; return s && (s.status === 'not' || (s.note && s.note.trim())); }); };
+      mainEl.querySelectorAll('.syl-note').forEach(inp => inp.addEventListener('input', () => { st.syllabus[inp.dataset.syl] = { status: inp.value.trim() ? 'covered' : null, note: inp.value }; check(); }));
+      mainEl.querySelectorAll('.syl-na').forEach(btn => btn.addEventListener('click', () => {
+        const id = btn.dataset.syl, cur = st.syllabus[id];
+        if (cur && cur.status === 'not') { st.syllabus[id] = { status: null, note: '' }; btn.style.background = ''; btn.style.color = ''; }
+        else { st.syllabus[id] = { status: 'not', note: '' }; btn.style.background = 'var(--color-muted)'; btn.style.color = 'white'; }
+        check();
+      }));
+      $('moduleC-syl-continue').addEventListener('click', compareScreen);
+    }
+
+    // ── Compare & climb one band ────────────────────────────────────────────
+    function compareScreen() {
+      st.screen = 'compare';
+      const part = st.resolvedShape.parts.find(p => p.type === 'writing') || st.resolvedShape.parts[0];
+      render(
+        questionShapeCardHtml() +
+        '<h2>Compare &amp; climb one band</h2><p class="coach">There is no model piece. You self-locate against the authentic rubric, then take one move up. If this is the descriptor you selected, the next descriptor asks for more.</p>' +
+        '<div class="btn-row"><button class="btn-ghost" id="moduleC-voice-toggle">' + (st.studentVoice ? 'Show official HSC wording' : 'Show in student voice') + '</button></div>' +
+        '<div class="report-card"><div class="panel-label">Rubric translation dictionary</div>' + M.dict.map(d => '<p style="padding:6px 0;border-bottom:1px solid var(--color-border);font-size:0.88rem;">' + (st.studentVoice ? esc2(d.plain) : '<span class="rubric-hl" title="' + esc2(d.plain) + '">' + esc2(d.phrase) + '</span>') + '</p>').join('') + '</div>' +
+        '<div class="report-card"><div class="panel-label">The five-band rubric — click the band you place yourself in</div><div id="moduleC-bands"></div></div>' +
+        '<div id="moduleC-climb" style="display:' + (st.bandLocated ? 'block' : 'none') + ';"><div class="report-card"><div class="panel-label">Climb one band</div><div class="climb-pair" id="moduleC-climb-pair"></div></div></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-cmp-continue">Continue to reflection →</button></div>'
+      );
+      const renderBandsC = () => {
+        $('moduleC-bands').innerHTML = part.bands.map(b => '<div class="band-ladder-row' + (st.bandLocated === b.band ? ' selected' : '') + '" data-band="' + b.band + '"><span class="band-no">Band ' + b.band + '<br>' + esc2(b.range) + '</span><span>' + esc2(b.descriptor) + '</span></div>').join('');
+        mainEl.querySelectorAll('#moduleC-bands .band-ladder-row').forEach(row => row.addEventListener('click', () => {
+          st.bandLocated = parseInt(row.dataset.band);
+          renderBandsC();
+          $('moduleC-climb').style.display = 'block';
+          renderClimbC();
+        }));
+      };
+      const renderClimbC = () => {
+        const band = st.bandLocated;
+        if (band >= part.bands.length) { $('moduleC-climb-pair').innerHTML = '<div class="climb-card above" style="grid-column:1/3;"><strong>Top band.</strong> ' + esc2(part.bands[part.bands.length - 1].descriptor) + '</div>'; return; }
+        const here = part.bands.find(b => b.band === band), above = part.bands.find(b => b.band === band + 1);
+        if (!here || !above) return;
+        $('moduleC-climb-pair').innerHTML = '<div class="climb-card"><div class="panel-label">If this is the descriptor you selected: Band ' + here.band + '</div>' + esc2(here.descriptor) + '</div><div class="climb-card above"><div class="panel-label">The next descriptor asks for: Band ' + above.band + '</div>' + esc2(above.descriptor) + '</div>';
+      };
+      renderBandsC();
+      if (st.bandLocated) renderClimbC();
+      $('moduleC-voice-toggle').addEventListener('click', () => { st.studentVoice = !st.studentVoice; compareScreen(); });
+      $('moduleC-cmp-continue').addEventListener('click', () => { recordAttempt(); reflectScreen(); });
+    }
+    function recordAttempt() {
+      const cats = resolvedCategories(), gaps = {};
+      cats.forEach(c => { const key = c.cat + '__' + c.partId; gaps[key] = (st.result[key] != null && st.confidence[key] != null) ? st.result[key] - st.confidence[key] : null; });
+      st.attempts.push({ id: st.q.id, form: st.chosenForm, level: st.level, gaps: gaps, attribution: Object.assign({}, st.attribution), syllabus: JSON.parse(JSON.stringify(st.syllabus)) });
+    }
+
+    // ── Reflection + report ─────────────────────────────────────────────────
+    function reflectScreen() {
+      st.screen = 'reflection';
+      render(
+        questionShapeCardHtml() +
+        '<h2>Reflection</h2><p class="coach">Optional. Build a "next time I want to focus on…" list in your own words.</p>' +
+        '<div style="display:flex;gap:8px;"><input id="moduleC-refl-input" style="flex:1;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);" placeholder="Next time I want to focus on…"><button class="btn-secondary" id="moduleC-refl-add">Add</button></div>' +
+        '<div id="moduleC-refl-list" style="margin-top:var(--space-sm);"></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-refl-report">Finish session →</button><button class="btn-secondary" id="moduleC-refl-again">Another question →</button></div>'
+      );
+      renderReflListC();
+      $('moduleC-refl-add').addEventListener('click', () => { const v = $('moduleC-refl-input').value.trim(); if (v) { st.reflections.push(v); $('moduleC-refl-input').value = ''; renderReflListC(); } });
+      $('moduleC-refl-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('moduleC-refl-add').click(); });
+      $('moduleC-refl-report').addEventListener('click', reportScreen);
+      $('moduleC-refl-again').addEventListener('click', () => { nextQuestion(); questionScreen(); });
+    }
+    function renderReflListC() {
+      const el = $('moduleC-refl-list');
+      el.innerHTML = st.reflections.length ? '<ul style="padding-left:20px;">' + st.reflections.map((r, i) => '<li style="margin-bottom:6px;">' + esc2(r) + ' <button data-ri="' + i + '" class="refl-x" style="background:none;border:none;cursor:pointer;color:var(--color-muted);">✕</button></li>').join('') + '</ul>' : '';
+      el.querySelectorAll('.refl-x').forEach(b => b.addEventListener('click', () => { st.reflections.splice(+b.dataset.ri, 1); renderReflListC(); }));
+    }
+    function reportScreen() {
+      st.screen = 'report';
+      const last = st.attempts[st.attempts.length - 1];
+      const syl = data.syllabus;
+      render(
+        '<h1>Session report</h1>' +
+        '<div class="report-card"><div class="panel-label">Pieces completed</div>' + (st.attempts.length ? st.attempts.map(a => '<p><strong>' + esc2(a.form || 'piece') + '</strong> · Level ' + a.level + '</p>').join('') : '<p>No pieces completed.</p>') + '</div>' +
+        '<div class="report-card"><div class="panel-label">Your focus list</div>' + (st.reflections.length ? '<ul style="padding-left:20px;">' + st.reflections.map(r => '<li>' + esc2(r) + '</li>').join('') + '</ul>' : '<p style="color:var(--color-muted);">Nothing added.</p>') + '</div>' +
+        (last ? '<div class="report-card"><div class="panel-label">Calibration (last piece)</div>' + Object.keys(last.gaps).map(k => '<p style="text-transform:capitalize;">' + esc2(k.split('__')[0]) + ': gap ' + (last.gaps[k] == null ? '—' : (last.gaps[k] > 0 ? '+' : '') + last.gaps[k]) + '</p>').join('') + '<p style="margin-top:8px;"><strong>Attribution:</strong> ' + esc2(last.attribution.choice || '—') + (last.attribution.note ? ' — ' + esc2(last.attribution.note) : '') + '</p></div>' : '') +
+        '<div class="report-card"><div class="panel-label">Syllabus coverage (last piece)</div>' + syl.auditPoints.map((pt, i) => { const s = last && last.syllabus[pt.id]; const covered = s && s.status === 'covered'; return '<span class="coverage-pill ' + (covered ? 'done' : 'not-done') + '">point ' + (i + 1) + '</span>'; }).join('') + '</div>' +
+        '<p style="font-size:0.82rem;color:var(--color-muted);">Screenshot this report to keep your own copy — nothing here is saved or downloadable.</p>' +
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-rep-again">Another question →</button><button class="btn-secondary" id="moduleC-rep-home">New session →</button></div>'
+      );
+      $('moduleC-rep-again').addEventListener('click', () => { nextQuestion(); questionScreen(); });
+      $('moduleC-rep-home').addEventListener('click', () => { st = fresh(); initSetup(); });
+    }
+
+    return { show };
+  }
+
   const controllers = {};
   window.__moduleShow = function (key) {
     if (!controllers[key]) {
-      controllers[key] = makeController(key);
+      controllers[key] = key === 'moduleC' ? makeModuleCController() : makeController(key);
       window.addEventListener('resize', () => { if ($('app-' + key).style.display !== 'none') controllers[key].show(); });
     }
     controllers[key].show();
