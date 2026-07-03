@@ -407,6 +407,10 @@
       padding: var(--space); text-align: center; color: var(--color-muted);
       font-style: italic; margin: var(--space-sm) 0; font-size: 0.85rem;
     }
+    .stimulus-image {
+      display: block; max-width: 100%; max-height: 60vh; width: auto; height: auto;
+      margin: var(--space-sm) auto; border-radius: var(--radius); object-fit: contain;
+    }
     .mod-desktop-gate {
       display: none; text-align: center; padding: var(--space-lg) var(--space);
       color: var(--color-muted);
@@ -1675,7 +1679,10 @@ function renderSource(el, source) {
   const head = sourceHeadHtml(source);
   if (source.isVisual) {
     el.classList.add('prose-source');
-    el.innerHTML = head + '<p><em>[Visual text]</em></p><p>' +
+    const visual = (source.assetPath && source.assetSupplied !== false)
+      ? '<img src="' + esc(source.assetPath) + '" alt="' + esc(source.title || 'Visual text') + '" class="stimulus-image">'
+      : '<p><em>[Visual text]</em></p>';
+    el.innerHTML = head + visual + '<p>' +
       esc(stripLeadingTitle(source.visualDescription || source.fullText || '', source.title)) + '</p>';
     return;
   }
@@ -4043,7 +4050,7 @@ document.addEventListener('DOMContentLoaded', () => {
         evidence: 'Well-chosen, balanced evidence from BOTH Keats and Bright Star, analysed for a form feature.',
         expression: 'Clear, controlled writing in a confident personal voice.'
       },
-      setupCoach: 'A single 20-mark comparative essay on Keats’ poetry and Campion’s Bright Star. You read a real Question 1, plan and write by hand, then self-mark against the authentic rubric and marker feedback. The tool never gives you a mark — it holds up the yardstick.',
+      setupCoach: 'A single 20-mark comparative essay on Keats’ poetry and Campion’s Bright Star. You plan and write a Module A question by hand, then self-mark against the authentic rubric and marker feedback.',
       cast: [
         { key: 'c', label: 'C — Command', help: 'Circle the directive verb. What does it demand of your response?', ph: 'e.g. evaluate — weigh the value and significance of the connection' },
         { key: 'a', label: 'A — Anchor idea', help: 'Underline the concept at the centre of the question.', ph: 'e.g. the role of creativity in the textual conversation' },
@@ -4127,7 +4134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         judgement: 'A defended verdict matched to the verb, reaching textual integrity or significance.',
         expression: 'Clear, controlled writing in a confident personal voice.'
       },
-      setupCoach: 'A single 20-mark critical study essay on Ishiguro’s An Artist of the Floating World. You read a real Module B question, plan and write by hand, then self-mark against the authentic rubric and marker feedback. The tool never gives you a mark — it holds up the yardstick.',
+      setupCoach: 'A single 20-mark critical study essay on Ishiguro’s An Artist of the Floating World. You plan and write a Module B question by hand, then self-mark against the authentic rubric and marker feedback.',
       cast: [
         { key: 'c', label: 'C — Command', help: 'Circle the directive verb. What does it demand of your response?', ph: 'e.g. evaluate — reach a defended verdict, not description' },
         { key: 'a', label: 'A — Anchor idea', help: 'Underline the concept at the centre of the question.', ph: 'e.g. textual integrity; unreliability; tradition' },
@@ -4176,7 +4183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     moduleC: {
-      setupCoach: 'A single 20-mark Craft of Writing task. The question varies in form, stimulus, reflection and mark split — the Question Shape card always shows you exactly what you have been asked to produce. You plan and write by hand, then self-mark against the authentic rubric. The tool never gives you a mark — it holds up the yardstick.',
+      setupCoach: 'A single 20-mark Craft of Writing task. The question varies in form, stimulus, reflection and mark split — the Question Shape card always shows you exactly what you have been asked to produce. You plan and write by hand, then self-mark against the authentic rubric.',
       writingChecklistCategories: ['stimulus', 'idea', 'craft', 'form', 'structure-and-scope', 'expression-and-mechanics'],
       reflectionChecklistCategories: ['choice', 'connection', 'evaluation', 'expression'],
       critDef: {
@@ -4476,7 +4483,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function stimulusHtml(q) {
       let h = '';
       if (q.stimulusText) h += '<div class="stimulus-block">' + esc2(q.stimulusText) + '</div>';
-      if (cfgKey === 'moduleA' && q.year === 2021) h += '<div class="image-placeholder">Image stimulus placeholder. Adam will supply the image asset separately. Do not analyse this placeholder.</div>';
+      if (q.assetPath) {
+        if (q.assetSupplied === false) h += '<div class="image-placeholder">' + esc2(q.placeholderText || 'Image stimulus placeholder.') + '</div>';
+        else h += '<img src="' + esc2(q.assetPath) + '" alt="Stimulus image" class="stimulus-image">';
+      }
       return h;
     }
     function judgementLensHtml(q) {
@@ -5205,6 +5215,41 @@ document.addEventListener('DOMContentLoaded', () => {
       return true;
     }
 
+    // ── Persistent header (Home + Skip) ────────────────────────────────────
+    function header(showSkip) {
+      return '<div id="moduleC-navbar" style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-sm);margin-bottom:var(--space);padding-bottom:var(--space-sm);border-bottom:1px solid var(--color-border);">' +
+        '<button class="btn-ghost" data-nav="home">⌂ Setup</button>' +
+        (showSkip ? '<button class="btn-ghost" data-nav="skip">Skip to next step →</button>' : '<span></span>') +
+        '</div>';
+    }
+    function wireNav() {
+      mainEl.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => {
+        if (b.dataset.nav === 'home') { clearT(); initSetup(); }
+        else skipToNext();
+      }));
+    }
+    // Explicit screen -> next-screen map (mirrors Section II's skipToNext), so
+    // Skip always advances even when the current screen's primary button is
+    // still disabled pending required input.
+    function skipToNext() {
+      const map = {
+        setup: () => startFlow(),
+        question: () => frameScreen(),
+        frame: () => afterFrame(),
+        formChooser: () => { if (needsFormChoice() && !st.chosenForm) st.chosenForm = st.resolvedShape.formOptions[0]; afterFormChoice(); },
+        confidence: () => planScreen(),
+        plan: () => { writeIndex = 0; writeScreen(); },
+        write: () => { writeIndex++; if (writeIndex < st.resolvedShape.parts.length) writeScreen(); else { writeIndex = 0; selfMarkScreen(); } },
+        selfmark: () => { writeIndex++; if (writeIndex < st.resolvedShape.parts.length) selfMarkScreen(); else resultScreen(); },
+        result: () => syllabusScreen(),
+        syllabus: () => compareScreen(),
+        compare: () => { recordAttempt(); reflectScreen(); },
+        reflection: () => reportScreen(),
+        report: () => { nextQuestion(); questionScreen(); }
+      };
+      (map[st.screen] || initSetup)();
+    }
+
     // ── Public show ─────────────────────────────────────────────────────────
     async function show() {
       const gate = $('moduleC-desktop-gate');
@@ -5260,7 +5305,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function stimulusEntryHtml(s) {
       if (s.kind === 'image' || s.type === 'image') {
         if (s.assetSupplied === false) return '<div class="image-placeholder">' + esc2(s.placeholderText || 'Image stimulus placeholder.') + '</div>';
-        return '<img src="' + esc2(s.assetPath) + '" alt="Stimulus image" style="max-width:100%;border-radius:var(--radius);">';
+        return '<img src="' + esc2(s.assetPath) + '" alt="Stimulus image" class="stimulus-image">';
       }
       let h = '<div class="stimulus-block">' + esc2(s.stimulusText) + '</div>';
       if (s.attribution) h += '<p style="font-size:0.8rem;color:var(--color-muted);">— ' + esc2(s.attribution) + '</p>';
@@ -5270,13 +5315,13 @@ document.addEventListener('DOMContentLoaded', () => {
       st.screen = 'question';
       const q = st.q;
       render(
-        '<div class="btn-row" style="justify-content:flex-start;margin-bottom:var(--space-sm);"><button class="btn-ghost" data-nav="home">⌂ Setup</button></div>' +
+        header(true) +
         questionShapeCardHtml() +
         '<div class="report-card"><div class="panel-label">The question</div><p style="white-space:pre-wrap;">' + esc2(q.stemText) + '</p></div>' +
         stimulusBlockHtml() +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-q-continue">Continue →</button></div>'
       );
-      mainEl.querySelectorAll('[data-nav="home"]').forEach(b => b.addEventListener('click', initSetup));
+      wireNav();
       $('moduleC-q-continue').addEventListener('click', frameScreen);
     }
     function frameOn() {
@@ -5294,6 +5339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFrameStep() {
       const step = M.frameSteps[frameStep], last = frameStep === M.frameSteps.length - 1;
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<div class="cast-annotation-box"><div class="panel-label">FRAME the question</div>' +
         '<div class="step-dots">' + M.frameSteps.map((_, i) => '<div class="step-dot ' + (i < frameStep ? 'done' : i === frameStep ? 'active' : '') + '"></div>').join('') + '</div>' +
@@ -5302,6 +5348,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '<textarea id="moduleC-frame-input" rows="2" placeholder="' + esc2(step.ph) + '" style="width:100%;padding:8px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:var(--radius);resize:vertical;"></textarea>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-frame-next">' + (last ? 'Continue →' : 'Next →') + '</button></div></div>'
       );
+      wireNav();
       const inp = $('moduleC-frame-input'); inp.value = st.frame[step.key] || '';
       $('moduleC-frame-next').addEventListener('click', () => {
         st.frame[step.key] = $('moduleC-frame-input').value.trim();
@@ -5327,12 +5374,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function renderFormChoiceOnly() {
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<div class="report-card"><div class="panel-label">Choose your form</div>' +
         '<div class="btn-row" id="moduleC-form-btns">' +
         st.resolvedShape.formOptions.map(f => '<button class="btn-secondary s-mode-btn" data-form="' + f + '">' + f + '</button>').join('') +
         '</div></div>'
       );
+      wireNav();
       mainEl.querySelectorAll('[data-form]').forEach(b => b.addEventListener('click', () => {
         st.chosenForm = b.dataset.form;
         afterFormChoice();
@@ -5340,6 +5389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function stressTestScreen() {
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<div class="report-card"><div class="panel-label">Before you choose a form: the prepared-piece stress test</div>' +
         '<p class="coach">Do not walk in with a memorised piece and dump it regardless of the question. Answer honestly.</p>' +
@@ -5349,6 +5399,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ).join('') +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-stress-continue" disabled>Choose your form →</button></div></div>'
       );
+      wireNav();
       const check = () => {
         mainEl.querySelectorAll('.stress-field').forEach(el => { st.stressTest[el.dataset.k] = el.value.trim(); });
         $('moduleC-stress-continue').disabled = !Object.values(st.stressTest).every(v => v);
@@ -5396,12 +5447,14 @@ document.addEventListener('DOMContentLoaded', () => {
       st.screen = 'confidence';
       const cats = resolvedCategories();
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<div class="confidence-block"><div class="panel-label">Before you plan: how confident are you, per criterion?</div>' +
         '<p style="font-size:0.85rem;color:var(--color-muted);">Rate each criterion for the ' + esc2(st.chosenForm) + ' piece' + (st.resolvedShape.reflection.required ? ' and the reflection' : '') + '.</p>' +
         sliderSet('conf', cats, st.confidence) + '</div>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-conf-continue" disabled>Continue to planning →</button></div>'
       );
+      wireNav();
       wireSliders('conf', cats, st.confidence, () => { $('moduleC-conf-continue').disabled = !allSet(cats, st.confidence); });
       $('moduleC-conf-continue').addEventListener('click', () => { planScreen(); });
     }
@@ -5409,6 +5462,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function planScreen() {
       st.screen = 'plan';
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<h2>Plan</h2>' +
         '<p class="coach">The plan is yours to build — sketch the shape before you write by hand. Nothing here is your piece.</p>' +
@@ -5417,6 +5471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '<div class="plan-slot"><div class="plan-slot-label">Craft move you intend to use</div><textarea rows="2" class="plan-field" data-k="craft" placeholder="A technique from a mentor text you plan to use…">' + esc2(st.plan.craft || '') + '</textarea></div>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-plan-continue">Move to writing →</button></div>'
       );
+      wireNav();
       mainEl.querySelectorAll('.plan-field').forEach(f => f.addEventListener('input', () => { st.plan[f.dataset.k] = f.value; }));
       $('moduleC-plan-continue').addEventListener('click', () => { writeIndex = 0; writeScreen(); });
     }
@@ -5432,9 +5487,11 @@ document.addEventListener('DOMContentLoaded', () => {
       clearT();
       const part = st.resolvedShape.parts[writeIndex];
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<h2>Write — ' + esc2(partLabel(part)) + ' (' + part.marks + ' marks)</h2>' +
         '<div class="report-card"><div class="panel-label">The question</div><p style="white-space:pre-wrap;">' + esc2(st.q.stemText) + '</p></div>' +
+        stimulusBlockHtml() +
         '<div class="timer" id="moduleC-write-timer"></div>' +
         '<p class="coach">Write this part by hand. Come back and press Done when you have finished it.</p>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-write-done">I’ve finished writing this part →</button></div>'
@@ -5444,12 +5501,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const draw = () => { el.textContent = (writeOverrun ? '+' : '') + fmtC(Math.abs(writeSecs)); el.className = 'timer' + (writeOverrun ? ' overrun' : (writeSecs <= 60 && writeSecs > 0 ? ' warning' : '')); };
       draw();
       timers.write = setInterval(() => { writeSecs--; if (writeSecs <= 0 && !writeOverrun) writeOverrun = true; draw(); }, cfg.tickMs);
+      wireNav();
       $('moduleC-write-done').addEventListener('click', () => {
         writeIndex++;
         if (writeIndex < st.resolvedShape.parts.length) writeScreen();
         else { writeIndex = 0; selfMarkScreen(); }
       });
-      console.log('DEBUG writeScreen end');
     }
 
     // ── Self-mark (per part, craft-chain margin protocol) ─────────────────
@@ -5461,6 +5518,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const mp = isWriting ? cfg.marginProtocolByForm[st.chosenForm] : null;
       const sm = st.selfMark[part.id] = st.selfMark[part.id] || { craftMove: '', bandChosen: null };
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<h2>Self-mark — ' + esc2(partLabel(part)) + '</h2>' +
         '<p class="coach">The tool never marks your writing. You hold it against the yardstick and locate yourself honestly.</p>' +
@@ -5475,6 +5533,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '</div></div>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-sm-continue" disabled>Continue →</button></div>'
       );
+      wireNav();
       const checkReady = () => { $('moduleC-sm-continue').disabled = !(sm.bandChosen != null && (!isWriting || sm.craftMove)); };
       if (isWriting) {
         mainEl.querySelectorAll('.form-feature-chip').forEach(ch => ch.addEventListener('click', () => {
@@ -5503,6 +5562,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const cats = resolvedCategories();
       st.result = {};
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<h2>Result</h2><p class="coach">Set how well you think you did on each criterion, beside your earlier confidence. The gap is the point.</p>' +
         '<div class="confidence-block"><div class="panel-label">How well did you do — per criterion?</div>' + sliderSet('res', cats, st.result) + '</div>' +
@@ -5511,6 +5571,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '<div id="moduleC-cal-reveal" style="display:none;"><div class="report-card"><div class="panel-label">Confidence vs result, per criterion</div><div id="moduleC-cal-gaps"></div></div></div>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-result-continue">Continue →</button></div>'
       );
+      wireNav();
       wireSliders('res', cats, st.result, () => { if (allSet(cats, st.result)) { $('moduleC-attr-block').style.display = 'block'; revealGaps(cats); } });
       mainEl.querySelectorAll('.attr-btn').forEach(b => b.addEventListener('click', () => {
         st.attribution.choice = b.dataset.attr;
@@ -5539,11 +5600,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const prompts = syl.auditPoints.slice();
       prompts.push({ id: 'oiq', text: 'Overarching inquiry question: ' + syl.overarchingInquiryQuestion });
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<h2>Syllabus audit</h2><p class="coach">When did you address the syllabus? How? Be explicit. This is brief reflection, not your piece.</p>' +
         '<div id="moduleC-syl-list">' + prompts.map(pt => '<div class="report-card"><p style="font-weight:600;margin-bottom:6px;">' + esc2(pt.text) + '</p><div style="display:flex;gap:var(--space-sm);align-items:flex-start;"><input class="syl-note" data-syl="' + pt.id + '" type="text" placeholder="Which part? What move?" style="flex:1;padding:6px;font-family:var(--font-body);border:1px solid var(--color-border);border-radius:6px;"><button class="btn-ghost syl-na" data-syl="' + pt.id + '">Not addressed</button></div></div>').join('') + '</div>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-syl-continue" disabled>Continue →</button></div>'
       );
+      wireNav();
       const ids = prompts.map(p => p.id);
       const check = () => { $('moduleC-syl-continue').disabled = !ids.every(id => { const s = st.syllabus[id]; return s && (s.status === 'not' || (s.note && s.note.trim())); }); };
       mainEl.querySelectorAll('.syl-note').forEach(inp => inp.addEventListener('input', () => { st.syllabus[inp.dataset.syl] = { status: inp.value.trim() ? 'covered' : null, note: inp.value }; check(); }));
@@ -5561,6 +5624,7 @@ document.addEventListener('DOMContentLoaded', () => {
       st.screen = 'compare';
       const part = st.resolvedShape.parts.find(p => p.type === 'writing') || st.resolvedShape.parts[0];
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<h2>Compare &amp; climb one band</h2><p class="coach">There is no model piece. You self-locate against the authentic rubric, then take one move up. If this is the descriptor you selected, the next descriptor asks for more.</p>' +
         '<div class="btn-row"><button class="btn-ghost" id="moduleC-voice-toggle">' + (st.studentVoice ? 'Show official HSC wording' : 'Show in student voice') + '</button></div>' +
@@ -5569,6 +5633,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '<div id="moduleC-climb" style="display:' + (st.bandLocated ? 'block' : 'none') + ';"><div class="report-card"><div class="panel-label">Climb one band</div><div class="climb-pair" id="moduleC-climb-pair"></div></div></div>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-cmp-continue">Continue to reflection →</button></div>'
       );
+      wireNav();
       const renderBandsC = () => {
         $('moduleC-bands').innerHTML = part.bands.map(b => '<div class="band-ladder-row' + (st.bandLocated === b.band ? ' selected' : '') + '" data-band="' + b.band + '"><span class="band-no">Band ' + b.band + '<br>' + esc2(b.range) + '</span><span>' + esc2(b.descriptor) + '</span></div>').join('');
         mainEl.querySelectorAll('#moduleC-bands .band-ladder-row').forEach(row => row.addEventListener('click', () => {
@@ -5600,12 +5665,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function reflectScreen() {
       st.screen = 'reflection';
       render(
+        header(true) +
         questionShapeCardHtml() +
         '<h2>Reflection</h2><p class="coach">Optional. Build a "next time I want to focus on…" list in your own words.</p>' +
         '<div style="display:flex;gap:8px;"><input id="moduleC-refl-input" style="flex:1;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius);font-family:var(--font-body);" placeholder="Next time I want to focus on…"><button class="btn-secondary" id="moduleC-refl-add">Add</button></div>' +
         '<div id="moduleC-refl-list" style="margin-top:var(--space-sm);"></div>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-refl-report">Finish session →</button><button class="btn-secondary" id="moduleC-refl-again">Another question →</button></div>'
       );
+      wireNav();
       renderReflListC();
       $('moduleC-refl-add').addEventListener('click', () => { const v = $('moduleC-refl-input').value.trim(); if (v) { st.reflections.push(v); $('moduleC-refl-input').value = ''; renderReflListC(); } });
       $('moduleC-refl-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('moduleC-refl-add').click(); });
@@ -5622,6 +5689,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const last = st.attempts[st.attempts.length - 1];
       const syl = data.syllabus;
       render(
+        header(false) +
         '<h1>Session report</h1>' +
         '<div class="report-card"><div class="panel-label">Pieces completed</div>' + (st.attempts.length ? st.attempts.map(a => '<p><strong>' + esc2(a.form || 'piece') + '</strong> · Level ' + a.level + '</p>').join('') : '<p>No pieces completed.</p>') + '</div>' +
         '<div class="report-card"><div class="panel-label">Your focus list</div>' + (st.reflections.length ? '<ul style="padding-left:20px;">' + st.reflections.map(r => '<li>' + esc2(r) + '</li>').join('') + '</ul>' : '<p style="color:var(--color-muted);">Nothing added.</p>') + '</div>' +
@@ -5630,6 +5698,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '<p style="font-size:0.82rem;color:var(--color-muted);">Screenshot this report to keep your own copy — nothing here is saved or downloadable.</p>' +
         '<div class="btn-row"><button class="btn-primary" id="moduleC-rep-again">Another question →</button><button class="btn-secondary" id="moduleC-rep-home">New session →</button></div>'
       );
+      wireNav();
       $('moduleC-rep-again').addEventListener('click', () => { nextQuestion(); questionScreen(); });
       $('moduleC-rep-home').addEventListener('click', () => { st = fresh(); initSetup(); });
     }
