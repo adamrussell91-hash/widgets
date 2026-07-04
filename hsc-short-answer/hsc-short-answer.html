@@ -5266,29 +5266,156 @@ document.addEventListener('DOMContentLoaded', () => {
       render(
         '<h1>' + esc2(cfg.fullHeading) + '</h1>' +
         '<p class="coach">' + esc2(M.setupCoach) + '</p>' +
+        (cfg.customMode && cfg.customMode.enabled ?
+          '<div style="margin:var(--space) 0;"><h2>Mode</h2><div class="btn-row" id="moduleC-mode-btns" style="margin-top:6px;">' +
+          [['single', 'Single question'], ['custom', 'Make your own']].map(([v, l]) =>
+            '<button class="btn-secondary s-mode-btn' + (st.mode === v ? ' active' : '') + '" data-modeval="' + v + '">' + l + '</button>').join('') +
+          '</div></div>' : '') +
         '<div style="margin:var(--space) 0;"><h2>Level</h2><div class="btn-row" id="moduleC-level-btns" style="margin-top:6px;">' +
         [[1, '1 · Foundation'], [2, '2 · Consolidation'], [3, '3 · Exam']].map(([v, l]) =>
           '<button class="btn-secondary s-level-btn' + (st.level === v ? ' active' : '') + '" data-level="' + v + '">' + l + '</button>').join('') +
         '</div></div>' +
         '<div class="spinner" id="moduleC-setup-spinner" style="display:none;">Loading materials…</div>' +
         '<div class="error-msg" id="moduleC-setup-error"></div>' +
-        '<div class="btn-row"><button class="btn-primary" id="moduleC-start-btn">Get a question</button></div>'
+        '<div class="btn-row"><button class="btn-primary" id="moduleC-start-btn">' + (st.mode === 'custom' ? 'Build my question →' : 'Get a question') + '</button></div>'
       );
       mainEl.querySelectorAll('.s-level-btn').forEach(b => b.addEventListener('click', () => {
         st.level = parseInt(b.dataset.level);
         mainEl.querySelectorAll('.s-level-btn').forEach(x => x.classList.toggle('active', x === b));
       }));
-      $('moduleC-start-btn').addEventListener('click', startFlow);
+      mainEl.querySelectorAll('#moduleC-mode-btns .s-mode-btn').forEach(b => b.addEventListener('click', () => {
+        st.mode = b.dataset.modeval;
+        initSetup();
+      }));
+      $('moduleC-start-btn').addEventListener('click', () => { if (st.mode === 'custom') customSetupScreen(); else startFlow(); });
+    }
+    async function ensureLoaded(errId) {
+      if (loaded) return true;
+      const sp = $('moduleC-setup-spinner');
+      if (sp) sp.style.display = 'block';
+      try { await load(); } catch (err) { if (sp) sp.style.display = 'none'; setError(errId, 'Could not load the materials. ' + err.message); return false; }
+      if (sp) sp.style.display = 'none';
+      return true;
     }
     async function startFlow() {
-      const sp = $('moduleC-setup-spinner');
       setError('moduleC-setup-error', null);
-      if (!loaded) {
-        sp.style.display = 'block';
-        try { await load(); } catch (err) { sp.style.display = 'none'; setError('moduleC-setup-error', 'Could not load the materials. ' + err.message); return; }
-        sp.style.display = 'none';
-      }
+      if (!(await ensureLoaded('moduleC-setup-error'))) return;
       if (!nextQuestion()) { setError('moduleC-setup-error', 'No questions match right now. This should not happen with the full bank — check the console.'); return; }
+      questionScreen();
+    }
+    // ── Make your own (Amendment K) ────────────────────────────────────────
+    // Resolves only against the fixed custom-stems bank — never fabricates a
+    // question. If the dialled shape has no matching stem, the student is
+    // told plainly and can adjust the dials, rather than being served an
+    // unrelated question.
+    const FORM_ABBR = { imaginative: 'imag', discursive: 'disc', persuasive: 'pers' };
+    function sampleN(arr, n) {
+      const pool = arr.slice();
+      const picks = [];
+      while (picks.length < n && pool.length) picks.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      return picks;
+    }
+    function customSignature(c) {
+      const formPart = cfg.forms.filter(f => c.forms.indexOf(f) !== -1).map(f => FORM_ABBR[f]).join(',');
+      return formPart + '|' + c.stimulusType + '|' + (c.reflMarks > 0 ? 'ref' : 'noref') + '|' + (c.mentor ? 'mentor' : 'nomentor');
+    }
+    function customSetupScreen() {
+      st.screen = 'customSetup';
+      const c = st.custom || (st.custom = { forms: [], stimulusType: 'written', reflMarks: 0, mentor: false });
+      const writingMarks = cfg.totalMarks - c.reflMarks;
+      render(
+        header(false) +
+        '<h1>Make your own</h1>' +
+        '<p class="coach">Dial in the shape of your own Module C question. This is resolved against a fixed bank of question templates — it never invents one on the fly, so not every combination has a match yet.</p>' +
+        '<div class="report-card"><div class="panel-label">Form — choose one or two</div><div class="btn-row" id="custom-form-btns">' +
+        cfg.forms.map(f => '<button class="btn-secondary s-mode-btn' + (c.forms.indexOf(f) !== -1 ? ' active' : '') + '" data-f="' + f + '">' + f + '</button>').join('') +
+        '</div></div>' +
+        '<div class="report-card"><div class="panel-label">Stimulus</div><div class="btn-row" id="custom-stim-btns">' +
+        [['written', 'Written'], ['image', 'Image'], ['choice', 'Choice of stimulus'], ['none', 'No stimulus']].map(([v, l]) =>
+          '<button class="btn-secondary s-mode-btn' + (c.stimulusType === v ? ' active' : '') + '" data-stim="' + v + '">' + l + '</button>').join('') +
+        '</div></div>' +
+        '<div class="report-card"><div class="panel-label">Response / Reflection split</div>' +
+        '<p style="font-size:0.85rem;color:var(--color-muted);">Starts at a single 20-mark response. Slide to trade marks into a reflection — it cannot go past an even 10/10 split.</p>' +
+        '<div class="slider-row"><input type="range" id="custom-reflmarks-slider" min="0" max="10" step="1" value="' + c.reflMarks + '">' +
+        '<span class="slider-value" id="custom-reflmarks-value">Response ' + writingMarks + ' · Reflection ' + c.reflMarks + '</span></div>' +
+        '<div class="btn-row" style="margin-top:8px;" id="custom-mentor-btns">' +
+        [[false, 'No mentor text'], [true, 'Reference a mentor text']].map(([v, l]) =>
+          '<button class="btn-secondary s-mode-btn' + (c.mentor === v ? ' active' : '') + '" data-mentor="' + v + '"' + (c.reflMarks === 0 ? ' disabled' : '') + '>' + l + '</button>').join('') +
+        '</div>' +
+        '</div>' +
+        '<div class="spinner" id="custom-spinner" style="display:none;">Loading materials…</div>' +
+        '<div class="error-msg" id="custom-error"></div>' +
+        '<div class="btn-row"><button class="btn-primary" id="custom-build-btn">Build my question →</button></div>'
+      );
+      wireNav();
+      mainEl.querySelectorAll('#custom-form-btns .s-mode-btn').forEach(b => b.addEventListener('click', () => {
+        const f = b.dataset.f, i = c.forms.indexOf(f);
+        if (i === -1) c.forms.push(f); else c.forms.splice(i, 1);
+        customSetupScreen();
+      }));
+      mainEl.querySelectorAll('#custom-stim-btns .s-mode-btn').forEach(b => b.addEventListener('click', () => { c.stimulusType = b.dataset.stim; customSetupScreen(); }));
+      const reflSlider = $('custom-reflmarks-slider');
+      reflSlider.addEventListener('input', () => {
+        const v = parseInt(reflSlider.value);
+        c.reflMarks = v;
+        $('custom-reflmarks-value').textContent = 'Response ' + (cfg.totalMarks - v) + ' · Reflection ' + v;
+      });
+      reflSlider.addEventListener('change', () => { if (c.reflMarks === 0) c.mentor = false; customSetupScreen(); });
+      mainEl.querySelectorAll('#custom-mentor-btns .s-mode-btn').forEach(b => b.addEventListener('click', () => {
+        if (c.reflMarks === 0) return;
+        c.mentor = b.dataset.mentor === 'true';
+        customSetupScreen();
+      }));
+      $('custom-build-btn').addEventListener('click', buildCustomFlow);
+    }
+    async function buildCustomFlow() {
+      const c = st.custom;
+      setError('custom-error', null);
+      if (!c.forms.length) { setError('custom-error', 'Choose at least one form.'); return; }
+      if (!(await ensureLoaded('custom-error'))) return;
+      const reflectionOn = c.reflMarks > 0;
+      const matches = data.customStems.filter(s => s.signature === customSignature(c));
+      if (!matches.length) { setError('custom-error', 'No custom stem is available yet for that exact combination. Try a different form, stimulus, reflection split or mentor-text choice.'); return; }
+      const stem = matches[Math.floor(Math.random() * matches.length)];
+      let stimulus;
+      if (c.stimulusType === 'none') {
+        stimulus = { type: 'none', stimulusId: null, instruction: null };
+      } else if (c.stimulusType === 'choice') {
+        const imgPool = data.stimulus.filter(s => s.kind === 'image' && s.assetSupplied !== false);
+        const writtenPool = data.stimulus.filter(s => s.kind === 'written');
+        if (!imgPool.length || !writtenPool.length) { setError('custom-error', 'Not enough stimuli available for a choice right now.'); return; }
+        const imgPick = imgPool[Math.floor(Math.random() * imgPool.length)];
+        const writtenPick = writtenPool[Math.floor(Math.random() * writtenPool.length)];
+        stimulus = { type: 'choice', allowedStimulusIds: [imgPick.id, writtenPick.id], instruction: 'Choose one of the two stimuli and develop an idea from it.' };
+      } else {
+        const pool = data.stimulus.filter(s => s.kind === c.stimulusType && s.assetSupplied !== false);
+        if (!pool.length) { setError('custom-error', 'No ' + c.stimulusType + ' stimulus is available right now.'); return; }
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        stimulus = { type: c.stimulusType, stimulusId: pick.id, instruction: 'Take an idea from it, do not merely describe it.' };
+      }
+      const writingMarks = cfg.totalMarks - c.reflMarks;
+      const parts = [{ id: 'p1', type: 'writing', marks: writingMarks, rubricId: 'rubric-writing', formOptions: c.forms.slice() }];
+      if (reflectionOn) parts.push({ id: 'p2', type: 'reflection', marks: c.reflMarks, rubricId: c.mentor ? 'rubric-reflection' : 'rubric-reflection-short', mentorTextExpected: c.mentor });
+      const formLabel = c.forms.length > 1 ? c.forms.join(' or ') : c.forms[0];
+      const stemText = stem.stemTemplate.replace(/formList/g, formLabel).replace(/stimulusInstruction/g, stimulus.instruction || '');
+      const q = {
+        id: 'custom-' + Date.now(),
+        stemText: stemText,
+        shape: {
+          formOptions: c.forms.slice(),
+          stimulus: stimulus,
+          reflection: reflectionOn ? { required: true, marks: c.reflMarks, prompt: null, mentorTextExpected: c.mentor } : { required: false, marks: 0, prompt: null, mentorTextExpected: false },
+          parts: parts,
+          totalMarks: cfg.totalMarks
+        }
+      };
+      st.q = q;
+      st.resolvedShape = resolveShape(q);
+      st.chosenForm = q.shape.formOptions.length === 1 ? q.shape.formOptions[0] : null;
+      st.frame = { form: '', reflection: '', allocation: '', material: '', entryIdea: '' };
+      st.stressTest = { wordsToHonour: '', formChoice: '', preparedMisfit: '', bendPlan: '' };
+      st.confidence = {}; st.result = {}; st.attribution = { choice: null, note: '' };
+      writeIndex = 0;
       questionScreen();
     }
     function stimulusBlockHtml() {
