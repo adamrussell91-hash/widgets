@@ -1,0 +1,1147 @@
+[
+  {
+    "id": "q-modA-001",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Line 1",
+    "quote": "Bright star, would I were stedfast as thou art",
+    "conceptTags": [
+      "steadfastness",
+      "constancy",
+      "sublime",
+      "apostrophe"
+    ]
+  },
+  {
+    "id": "q-modA-002",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Line 2",
+    "quote": "Not in lone splendour hung aloft the night",
+    "conceptTags": [
+      "isolation",
+      "sublime",
+      "dissonance",
+      "volta"
+    ]
+  },
+  {
+    "id": "q-modA-003",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Lines 5 to 6",
+    "quote": "The moving waters at their priestlike task of pure ablution round earth's human shores",
+    "conceptTags": [
+      "nature",
+      "ritual",
+      "purity",
+      "sublime"
+    ]
+  },
+  {
+    "id": "q-modA-004",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Line 9",
+    "quote": "No yet still stedfast, still unchangeable",
+    "conceptTags": [
+      "volta",
+      "steadfastness",
+      "change",
+      "humanity"
+    ]
+  },
+  {
+    "id": "q-modA-005",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Lines 10 to 11",
+    "quote": "Pillow'd upon my fair love's ripening breast, to feel for ever its soft fall and swell",
+    "conceptTags": [
+      "embodiment",
+      "love",
+      "sensory imagery",
+      "intimacy"
+    ]
+  },
+  {
+    "id": "q-modA-006",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Lines 12 to 13",
+    "quote": "Awake for ever in a sweet unrest, still, still to hear her tender-taken breath",
+    "conceptTags": [
+      "paradox",
+      "intimacy",
+      "permanence",
+      "breath"
+    ]
+  },
+  {
+    "id": "q-modA-007",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Line 14",
+    "quote": "And so live ever or else swoon to death",
+    "conceptTags": [
+      "mortality",
+      "paradox",
+      "transcendence",
+      "love"
+    ]
+  },
+  {
+    "id": "q-modA-008",
+    "text": "Keats",
+    "poemTitle": "When I Have Fears",
+    "locator": "Lines 1 to 2",
+    "quote": "When I have fears that I may cease to be before my pen has gleaned my teeming brain",
+    "conceptTags": [
+      "mortality",
+      "creativity",
+      "anxiety",
+      "legacy"
+    ]
+  },
+  {
+    "id": "q-modA-009",
+    "text": "Keats",
+    "poemTitle": "When I Have Fears",
+    "locator": "Lines 3 to 4",
+    "quote": "Before high-pilèd books, in charactery, hold like rich garners the full ripened grain",
+    "conceptTags": [
+      "legacy",
+      "harvest",
+      "creativity",
+      "metaphor"
+    ]
+  },
+  {
+    "id": "q-modA-010",
+    "text": "Keats",
+    "poemTitle": "When I Have Fears",
+    "locator": "Lines 5 to 6",
+    "quote": "When I behold, upon the night’s starred face, huge cloudy symbols of a high romance",
+    "conceptTags": [
+      "sublime",
+      "imagination",
+      "romance",
+      "symbolism"
+    ]
+  },
+  {
+    "id": "q-modA-011",
+    "text": "Keats",
+    "poemTitle": "When I Have Fears",
+    "locator": "Lines 9 to 10",
+    "quote": "And when I feel, fair creature of an hour, that I shall never look upon thee more",
+    "conceptTags": [
+      "love",
+      "transience",
+      "loss",
+      "time"
+    ]
+  },
+  {
+    "id": "q-modA-012",
+    "text": "Keats",
+    "poemTitle": "When I Have Fears",
+    "locator": "Lines 12 to 14",
+    "quote": "then on the shore of the wide world I stand alone, and think till love and fame to nothingness do sink",
+    "conceptTags": [
+      "isolation",
+      "mortality",
+      "fame",
+      "nothingness"
+    ]
+  },
+  {
+    "id": "q-modA-013",
+    "text": "Keats",
+    "poemTitle": "La Belle Dame sans Merci",
+    "locator": "Stanza 1",
+    "quote": "O what can ail thee, knight-at-arms, alone and palely loitering",
+    "conceptTags": [
+      "illness",
+      "isolation",
+      "ballad",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-014",
+    "text": "Keats",
+    "poemTitle": "La Belle Dame sans Merci",
+    "locator": "Stanza 1",
+    "quote": "The sedge has withered from the lake, and no birds sing",
+    "conceptTags": [
+      "decay",
+      "silence",
+      "nature",
+      "pathetic fallacy"
+    ]
+  },
+  {
+    "id": "q-modA-015",
+    "text": "Keats",
+    "poemTitle": "La Belle Dame sans Merci",
+    "locator": "Stanza 3",
+    "quote": "I see a lily on thy brow, with anguish moist and fever-dew",
+    "conceptTags": [
+      "illness",
+      "beauty",
+      "decay",
+      "floral imagery"
+    ]
+  },
+  {
+    "id": "q-modA-016",
+    "text": "Keats",
+    "poemTitle": "La Belle Dame sans Merci",
+    "locator": "Stanza 4",
+    "quote": "I met a lady in the meads, full beautiful, a faery's child",
+    "conceptTags": [
+      "femme fatale",
+      "supernatural",
+      "gender",
+      "enchantment"
+    ]
+  },
+  {
+    "id": "q-modA-017",
+    "text": "Keats",
+    "poemTitle": "La Belle Dame sans Merci",
+    "locator": "Stanza 8",
+    "quote": "And there I shut her wild wild eyes with kisses four",
+    "conceptTags": [
+      "gaze",
+      "desire",
+      "epizeuxis",
+      "ambiguity"
+    ]
+  },
+  {
+    "id": "q-modA-018",
+    "text": "Keats",
+    "poemTitle": "La Belle Dame sans Merci",
+    "locator": "Stanza 10",
+    "quote": "Pale kings and princes too, pale warriors, death-pale were they all",
+    "conceptTags": [
+      "mortality",
+      "thralldom",
+      "gothic",
+      "diacope"
+    ]
+  },
+  {
+    "id": "q-modA-019",
+    "text": "Keats",
+    "poemTitle": "The Eve of St Agnes",
+    "locator": "Stanza XXIII",
+    "quote": "Out went the taper as she hurried in; its little smoke, in pallid moonshine, died",
+    "conceptTags": [
+      "gothic",
+      "threshold",
+      "light",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-020",
+    "text": "Keats",
+    "poemTitle": "The Eve of St Agnes",
+    "locator": "Stanza XXIII",
+    "quote": "She closed the door, she panted, all akin to spirits of the air, and visions wide",
+    "conceptTags": [
+      "threshold",
+      "body",
+      "spirituality",
+      "imagination"
+    ]
+  },
+  {
+    "id": "q-modA-021",
+    "text": "Keats",
+    "poemTitle": "The Eve of St Agnes",
+    "locator": "Stanza XXIII",
+    "quote": "No utter'd syllable, or, woe betide",
+    "conceptTags": [
+      "silence",
+      "ritual",
+      "constraint",
+      "voice"
+    ]
+  },
+  {
+    "id": "q-modA-022",
+    "text": "Keats",
+    "poemTitle": "The Eve of St Agnes",
+    "locator": "Stanza XXIII",
+    "quote": "But to her heart, her heart was voluble",
+    "conceptTags": [
+      "body",
+      "voice",
+      "anadiplosis",
+      "interiority"
+    ]
+  },
+  {
+    "id": "q-modA-023",
+    "text": "Keats",
+    "poemTitle": "The Eve of St Agnes",
+    "locator": "Stanza XXIII",
+    "quote": "As though a tongueless nightingale should swell her throat in vain",
+    "conceptTags": [
+      "silence",
+      "nightingale",
+      "gender",
+      "suppressed voice"
+    ]
+  },
+  {
+    "id": "q-modA-024",
+    "text": "Keats",
+    "poemTitle": "The Eve of St Agnes",
+    "locator": "Stanza XXIII",
+    "quote": "and die, heart-stifled, in her dell",
+    "conceptTags": [
+      "mortality",
+      "suppressed voice",
+      "body",
+      "gothic"
+    ]
+  },
+  {
+    "id": "q-modA-025",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Lines 1 to 2",
+    "quote": "My heart aches, and a drowsy numbness pains my sense, as though of hemlock I had drunk",
+    "conceptTags": [
+      "pain",
+      "numbness",
+      "intoxication",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-026",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Lines 21 to 24",
+    "quote": "Fade far away, dissolve, and quite forget what thou among the leaves hast never known",
+    "conceptTags": [
+      "escape",
+      "forgetting",
+      "nature",
+      "transcendence"
+    ]
+  },
+  {
+    "id": "q-modA-027",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Lines 25 to 26",
+    "quote": "Where youth grows pale, and spectre-thin, and dies",
+    "conceptTags": [
+      "mortality",
+      "illness",
+      "youth",
+      "decay"
+    ]
+  },
+  {
+    "id": "q-modA-028",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Lines 32 to 33",
+    "quote": "Not charioted by Bacchus and his pards, but on the viewless wings of Poesy",
+    "conceptTags": [
+      "poetry",
+      "imagination",
+      "escape",
+      "transcendence"
+    ]
+  },
+  {
+    "id": "q-modA-029",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Lines 51 to 52",
+    "quote": "Darkling I listen; and, for many a time I have been half in love with easeful Death",
+    "conceptTags": [
+      "death",
+      "ambivalence",
+      "listening",
+      "nightingale"
+    ]
+  },
+  {
+    "id": "q-modA-030",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Lines 61 to 62",
+    "quote": "Thou wast not born for death, immortal Bird",
+    "conceptTags": [
+      "art",
+      "immortality",
+      "nature",
+      "apostrophe"
+    ]
+  },
+  {
+    "id": "q-modA-031",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Lines 79 to 80",
+    "quote": "Was it a vision, or a waking dream? Fled is that music: Do I wake or sleep",
+    "conceptTags": [
+      "negative capability",
+      "uncertainty",
+      "dream",
+      "music"
+    ]
+  },
+  {
+    "id": "q-modA-032",
+    "text": "Keats",
+    "poemTitle": "Ode on a Grecian Urn",
+    "locator": "Lines 1 to 2",
+    "quote": "Thou still unravish'd bride of quietness, thou foster-child of silence and slow time",
+    "conceptTags": [
+      "art",
+      "silence",
+      "time",
+      "apostrophe"
+    ]
+  },
+  {
+    "id": "q-modA-033",
+    "text": "Keats",
+    "poemTitle": "Ode on a Grecian Urn",
+    "locator": "Lines 11 to 12",
+    "quote": "Heard melodies are sweet, but those unheard are sweeter",
+    "conceptTags": [
+      "imagination",
+      "paradox",
+      "art",
+      "silence"
+    ]
+  },
+  {
+    "id": "q-modA-034",
+    "text": "Keats",
+    "poemTitle": "Ode on a Grecian Urn",
+    "locator": "Lines 17 to 20",
+    "quote": "Bold Lover, never, never canst thou kiss, though winning near the goal yet, do not grieve",
+    "conceptTags": [
+      "desire",
+      "stasis",
+      "art",
+      "paradox"
+    ]
+  },
+  {
+    "id": "q-modA-035",
+    "text": "Keats",
+    "poemTitle": "Ode on a Grecian Urn",
+    "locator": "Lines 27 to 30",
+    "quote": "For ever panting, and for ever young; all breathing human passion far above",
+    "conceptTags": [
+      "permanence",
+      "youth",
+      "passion",
+      "stasis"
+    ]
+  },
+  {
+    "id": "q-modA-036",
+    "text": "Keats",
+    "poemTitle": "Ode on a Grecian Urn",
+    "locator": "Lines 44 to 45",
+    "quote": "Thou, silent form, dost tease us out of thought as doth eternity: Cold Pastoral",
+    "conceptTags": [
+      "art",
+      "eternity",
+      "silence",
+      "ambiguity"
+    ]
+  },
+  {
+    "id": "q-modA-037",
+    "text": "Keats",
+    "poemTitle": "Ode on a Grecian Urn",
+    "locator": "Lines 49 to 50",
+    "quote": "Beauty is truth, truth beauty, that is all ye know on earth, and all ye need to know",
+    "conceptTags": [
+      "beauty",
+      "truth",
+      "art",
+      "chiasmus"
+    ]
+  },
+  {
+    "id": "q-modA-038",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Line 1",
+    "quote": "Season of mists and mellow fruitfulness",
+    "conceptTags": [
+      "autumn",
+      "ripeness",
+      "nature",
+      "sensory imagery"
+    ]
+  },
+  {
+    "id": "q-modA-039",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Line 2",
+    "quote": "Close bosom-friend of the maturing sun",
+    "conceptTags": [
+      "personification",
+      "nature",
+      "ripeness",
+      "time"
+    ]
+  },
+  {
+    "id": "q-modA-040",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Lines 7 to 8",
+    "quote": "To swell the gourd, and plump the hazel shells with a sweet kernel",
+    "conceptTags": [
+      "ripeness",
+      "abundance",
+      "sensory imagery",
+      "nature"
+    ]
+  },
+  {
+    "id": "q-modA-041",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Lines 21 to 22",
+    "quote": "Or by a cyder-press, with patient look, thou watchest the last oozings hours by hours",
+    "conceptTags": [
+      "patience",
+      "time",
+      "harvest",
+      "acceptance"
+    ]
+  },
+  {
+    "id": "q-modA-042",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Lines 23 to 24",
+    "quote": "Where are the songs of spring? Ay, where are they? Think not of them, thou hast thy music too",
+    "conceptTags": [
+      "music",
+      "season",
+      "acceptance",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-043",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Line 25",
+    "quote": "While barred clouds bloom the soft-dying day",
+    "conceptTags": [
+      "mortality",
+      "beauty",
+      "decline",
+      "paradox"
+    ]
+  },
+  {
+    "id": "q-modA-044",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Line 33",
+    "quote": "And gathering swallows twitter in the skies",
+    "conceptTags": [
+      "departure",
+      "season",
+      "transience",
+      "acceptance"
+    ]
+  },
+  {
+    "id": "q-modA-045",
+    "text": "Bright Star",
+    "scene": "The men's room",
+    "speaker": "Brown",
+    "quote": "Men's room, out. Poets got to do a bit of writing.",
+    "conceptTags": [
+      "gender",
+      "exclusion",
+      "Regency context",
+      "feminist dissonance"
+    ]
+  },
+  {
+    "id": "q-modA-046",
+    "text": "Bright Star",
+    "scene": "The men's room",
+    "speaker": "Fanny",
+    "quote": "My stitching has more merit and admirers than your two scribblings put together.",
+    "conceptTags": [
+      "female creativity",
+      "craft",
+      "agency",
+      "feminist lens"
+    ]
+  },
+  {
+    "id": "q-modA-047",
+    "text": "Bright Star",
+    "scene": "Poetry lesson",
+    "speaker": "Fanny",
+    "quote": "Would you teach me poetry? I'd like to understand it.",
+    "conceptTags": [
+      "learning",
+      "agency",
+      "poetry",
+      "intellectual partnership"
+    ]
+  },
+  {
+    "id": "q-modA-048",
+    "text": "Bright Star",
+    "scene": "Poetry lesson",
+    "speaker": "Keats",
+    "quote": "A poet is not at all poetical. He is the most un-poetical thing in existence.",
+    "conceptTags": [
+      "poetry",
+      "identity",
+      "negative capability",
+      "artistry"
+    ]
+  },
+  {
+    "id": "q-modA-049",
+    "text": "Bright Star",
+    "scene": "Poetry lesson",
+    "speaker": "Keats",
+    "quote": "He has no identity. He is continually filling some other body, the sun, the moon.",
+    "conceptTags": [
+      "negative capability",
+      "identity",
+      "poetry",
+      "imagination"
+    ]
+  },
+  {
+    "id": "q-modA-050",
+    "text": "Bright Star",
+    "scene": "Lake metaphor",
+    "speaker": "Keats",
+    "quote": "The point of diving in a lake is not immediately to swim to the shore.",
+    "conceptTags": [
+      "negative capability",
+      "sensation",
+      "uncertainty",
+      "poetry"
+    ]
+  },
+  {
+    "id": "q-modA-051",
+    "text": "Bright Star",
+    "scene": "Lake metaphor",
+    "speaker": "Keats",
+    "quote": "You do not work the lake out. It is an experience beyond thought.",
+    "conceptTags": [
+      "negative capability",
+      "sensation",
+      "experience",
+      "poetry"
+    ]
+  },
+  {
+    "id": "q-modA-052",
+    "text": "Bright Star",
+    "scene": "Wit discussion",
+    "speaker": "Keats",
+    "quote": "Men who say things that make you start without making you feel.",
+    "conceptTags": [
+      "feeling",
+      "wit",
+      "Romanticism",
+      "gender"
+    ]
+  },
+  {
+    "id": "q-modA-053",
+    "text": "Bright Star",
+    "scene": "Tom's illness",
+    "speaker": "Keats",
+    "quote": "The only good I can do is say how I love him.",
+    "conceptTags": [
+      "illness",
+      "love",
+      "mortality",
+      "family"
+    ]
+  },
+  {
+    "id": "q-modA-054",
+    "text": "Bright Star",
+    "scene": "Christmas dinner recitation",
+    "speaker": "Keats",
+    "quote": "When I have fears that I may cease to be before my pen has glean'd my teeming brain.",
+    "conceptTags": [
+      "mortality",
+      "recitation",
+      "legacy",
+      "creativity"
+    ]
+  },
+  {
+    "id": "q-modA-055",
+    "text": "Bright Star",
+    "scene": "Christmas dinner recitation",
+    "speaker": "Keats",
+    "quote": "Huge cloudy symbols of a high romance.",
+    "conceptTags": [
+      "imagination",
+      "recitation",
+      "romance",
+      "truncated life"
+    ]
+  },
+  {
+    "id": "q-modA-056",
+    "text": "Bright Star",
+    "scene": "Christmas dinner recitation",
+    "speaker": "Keats",
+    "quote": "I do apologize. I've gone blank.",
+    "conceptTags": [
+      "truncation",
+      "mortality",
+      "performance",
+      "failure"
+    ]
+  },
+  {
+    "id": "q-modA-057",
+    "text": "Bright Star",
+    "scene": "Poetry lesson",
+    "speaker": "Fanny",
+    "quote": "Out went the taper as she hurried in.",
+    "conceptTags": [
+      "Eve of St Agnes",
+      "recitation",
+      "gothic",
+      "intertextuality"
+    ]
+  },
+  {
+    "id": "q-modA-058",
+    "text": "Bright Star",
+    "scene": "Poetry lesson",
+    "speaker": "Fanny",
+    "quote": "Its little smoke, in pallid moonshine, died.",
+    "conceptTags": [
+      "Eve of St Agnes",
+      "recitation",
+      "mortality",
+      "gothic"
+    ]
+  },
+  {
+    "id": "q-modA-059",
+    "text": "Bright Star",
+    "scene": "Ode to a Nightingale recitation",
+    "speaker": "Keats",
+    "quote": "My heart aches, and a drowsy numbness pains my sense.",
+    "conceptTags": [
+      "nightingale",
+      "recitation",
+      "pain",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-060",
+    "text": "Bright Star",
+    "scene": "Ode to a Nightingale recitation",
+    "speaker": "Keats",
+    "quote": "I have been half in love with easeful Death.",
+    "conceptTags": [
+      "death",
+      "nightingale",
+      "recitation",
+      "ambivalence"
+    ]
+  },
+  {
+    "id": "q-modA-061",
+    "text": "Bright Star",
+    "scene": "Letters and butterflies",
+    "speaker": "Keats",
+    "quote": "I almost wish we were butterflies and lived but three summer days.",
+    "conceptTags": [
+      "butterflies",
+      "transience",
+      "love",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-062",
+    "text": "Bright Star",
+    "scene": "Letters and butterflies",
+    "speaker": "Keats",
+    "quote": "Three such days with you I could fill with more delight than 50 common years could ever contain.",
+    "conceptTags": [
+      "love",
+      "transience",
+      "intensity",
+      "time"
+    ]
+  },
+  {
+    "id": "q-modA-063",
+    "text": "Bright Star",
+    "scene": "Butterfly bedroom",
+    "speaker": "Fanny",
+    "quote": "I've begun a butterfly farm in my bedroom in honor of us.",
+    "conceptTags": [
+      "butterflies",
+      "female creativity",
+      "transience",
+      "art"
+    ]
+  },
+  {
+    "id": "q-modA-064",
+    "text": "Bright Star",
+    "scene": "Letters and longing",
+    "speaker": "Fanny",
+    "quote": "When I don't hear from him, it's as if I've died.",
+    "conceptTags": [
+      "love",
+      "absence",
+      "mortality",
+      "embodiment"
+    ]
+  },
+  {
+    "id": "q-modA-065",
+    "text": "Bright Star",
+    "scene": "Study recitation",
+    "speaker": "Keats",
+    "quote": "Pillowed upon my fair love's ripening breast.",
+    "conceptTags": [
+      "Bright Star",
+      "recitation",
+      "embodiment",
+      "intimacy"
+    ]
+  },
+  {
+    "id": "q-modA-066",
+    "text": "Bright Star",
+    "scene": "Study recitation",
+    "speaker": "Keats",
+    "quote": "To feel forever its soft swell and fall.",
+    "conceptTags": [
+      "Bright Star",
+      "recitation",
+      "breath",
+      "embodiment"
+    ]
+  },
+  {
+    "id": "q-modA-067",
+    "text": "Bright Star",
+    "scene": "Study recitation",
+    "speaker": "Fanny",
+    "quote": "Why do you say Not? Not in lone splendor?",
+    "conceptTags": [
+      "Bright Star",
+      "interpretation",
+      "volta",
+      "female voice"
+    ]
+  },
+  {
+    "id": "q-modA-068",
+    "text": "Bright Star",
+    "scene": "Illness",
+    "speaker": "Keats",
+    "quote": "There was a great rush of blood, such that I thought that I would suffocate.",
+    "conceptTags": [
+      "illness",
+      "body",
+      "mortality",
+      "consumption"
+    ]
+  },
+  {
+    "id": "q-modA-069",
+    "text": "Bright Star",
+    "scene": "Illness and letters",
+    "speaker": "Keats",
+    "quote": "How horrid was the chance of slipping into the ground instead of into your arms.",
+    "conceptTags": [
+      "mortality",
+      "love",
+      "body",
+      "illness"
+    ]
+  },
+  {
+    "id": "q-modA-070",
+    "text": "Bright Star",
+    "scene": "Illness",
+    "speaker": "Keats",
+    "quote": "I have coughed blood again. I fear the disease has the upper hand.",
+    "conceptTags": [
+      "illness",
+      "mortality",
+      "body",
+      "consumption"
+    ]
+  },
+  {
+    "id": "q-modA-071",
+    "text": "Bright Star",
+    "scene": "La Belle Dame duet",
+    "speaker": "Keats and Fanny",
+    "quote": "O what can ail thee, knight-at-arms, alone and palely loitering",
+    "conceptTags": [
+      "La Belle Dame",
+      "duet",
+      "recitation",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-072",
+    "text": "Bright Star",
+    "scene": "La Belle Dame duet",
+    "speaker": "Keats and Fanny",
+    "quote": "And sure in language strange she said I love thee true",
+    "conceptTags": [
+      "La Belle Dame",
+      "duet",
+      "love",
+      "femme fatale"
+    ]
+  },
+  {
+    "id": "q-modA-073",
+    "text": "Bright Star",
+    "scene": "Parting",
+    "speaker": "Keats",
+    "quote": "Autumn is coming.",
+    "conceptTags": [
+      "autumn",
+      "mortality",
+      "season",
+      "foreshadowing"
+    ]
+  },
+  {
+    "id": "q-modA-074",
+    "text": "Bright Star",
+    "scene": "Parting",
+    "speaker": "Keats",
+    "quote": "We have woven a web, you and I, attached to this world but a separate world of our own invention.",
+    "conceptTags": [
+      "love",
+      "art",
+      "shared world",
+      "creation"
+    ]
+  },
+  {
+    "id": "q-modA-075",
+    "text": "Bright Star",
+    "scene": "Parting",
+    "speaker": "Keats",
+    "quote": "Touch has a memory.",
+    "conceptTags": [
+      "embodiment",
+      "memory",
+      "love",
+      "sensation"
+    ]
+  },
+  {
+    "id": "q-modA-076",
+    "text": "Bright Star",
+    "scene": "News from Rome",
+    "speaker": "Severn's letter",
+    "quote": "Severn, Severn, lift me up for I am dying.",
+    "conceptTags": [
+      "death",
+      "Rome",
+      "illness",
+      "body"
+    ]
+  },
+  {
+    "id": "q-modA-077",
+    "text": "Bright Star",
+    "scene": "News from Rome",
+    "speaker": "Severn's letter",
+    "quote": "Don't breathe on me. It comes like ice.",
+    "conceptTags": [
+      "death",
+      "body",
+      "cold",
+      "illness"
+    ]
+  },
+  {
+    "id": "q-modA-078",
+    "text": "Bright Star",
+    "scene": "Final heath recitation",
+    "speaker": "Fanny",
+    "quote": "Bright star, would I were steadfast as thou art.",
+    "conceptTags": [
+      "final recitation",
+      "female voice",
+      "steadfastness",
+      "legacy"
+    ]
+  },
+  {
+    "id": "q-modA-079",
+    "text": "Bright Star",
+    "scene": "Final heath recitation",
+    "speaker": "Fanny",
+    "quote": "And so live ever, or else swoon to death.",
+    "conceptTags": [
+      "final recitation",
+      "mortality",
+      "legacy",
+      "grief"
+    ]
+  },
+  {
+    "id": "q-modA-080",
+    "text": "Bright Star",
+    "scene": "Closing credits",
+    "speaker": "Keats voiceover",
+    "quote": "Fled is that music. Do I wake or sleep?",
+    "conceptTags": [
+      "closing credits",
+      "nightingale",
+      "uncertainty",
+      "negative capability"
+    ]
+  },
+  {
+    "id": "q-modA-long-brightstar",
+    "text": "Keats",
+    "poemTitle": "Bright Star",
+    "locator": "Full sonnet (14 lines)",
+    "isVerifiedStanza": true,
+    "quote": "Bright star, would I were stedfast as thou art—\nNot in lone splendour hung aloft the night\nAnd watching, with eternal lids apart,\nLike nature's patient, sleepless Eremite,\nThe moving waters at their priestlike task\nOf pure ablution round earth's human shores,\nOr gazing on the new soft-fallen mask\nOf snow upon the mountains and the moors—\nNo—yet still stedfast, still unchangeable,\nPillow'd upon my fair love's ripening breast,\nTo feel for ever its soft fall and swell,\nAwake for ever in a sweet unrest,\nStill, still to hear her tender-taken breath,\nAnd so live ever—or else swoon to death.",
+    "conceptTags": [
+      "steadfastness",
+      "love",
+      "mortality",
+      "volta",
+      "sublime"
+    ]
+  },
+  {
+    "id": "q-modA-long-fears",
+    "text": "Keats",
+    "poemTitle": "When I Have Fears",
+    "locator": "Full sonnet (14 lines)",
+    "isVerifiedStanza": true,
+    "quote": "When I have fears that I may cease to be\nBefore my pen has gleaned my teeming brain,\nBefore high-pilèd books, in charactery,\nHold like rich garners the full ripened grain;\nWhen I behold, upon the night's starred face,\nHuge cloudy symbols of a high romance,\nAnd think that I may never live to trace\nTheir shadows with the magic hand of chance;\nAnd when I feel, fair creature of an hour,\nThat I shall never look upon thee more,\nNever have relish in the faery power\nOf unreflecting love—then on the shore\nOf the wide world I stand alone, and think\nTill love and fame to nothingness do sink.",
+    "conceptTags": [
+      "mortality",
+      "creativity",
+      "love",
+      "fame",
+      "isolation"
+    ]
+  },
+  {
+    "id": "q-modA-long-labelle",
+    "text": "Keats",
+    "poemTitle": "La Belle Dame sans Merci",
+    "locator": "Stanzas 9 to 11 (the dream and awakening)",
+    "isVerifiedStanza": true,
+    "quote": "And there she lullèd me asleep,\nAnd there I dreamed—Ah! woe betide!—\nThe latest dream I ever dreamt\nOn the cold hill side.\n\nI saw pale kings and princes too,\nPale warriors, death-pale were they all;\nThey cried—'La Belle Dame sans Merci\nThee hath in thrall!'\n\nI saw their starved lips in the gloam,\nWith horrid warning gapèd wide,\nAnd I awoke and found me here,\nOn the cold hill's side.",
+    "conceptTags": [
+      "dream",
+      "thralldom",
+      "mortality",
+      "femme fatale",
+      "gothic"
+    ]
+  },
+  {
+    "id": "q-modA-long-stagnes",
+    "text": "Keats",
+    "poemTitle": "The Eve of St Agnes",
+    "locator": "Stanza XXIII (Spenserian, 9 lines)",
+    "isVerifiedStanza": true,
+    "quote": "Out went the taper as she hurried in;\nIts little smoke, in pallid moonshine, died:\nShe closed the door, she panted, all akin\nTo spirits of the air, and visions wide:\nNo utter'd syllable, or, woe betide!\nBut to her heart, her heart was voluble,\nPaining with eloquence her balmy side;\nAs though a tongueless nightingale should swell\nHer throat in vain, and die, heart-stifled, in her dell.",
+    "conceptTags": [
+      "gothic",
+      "threshold",
+      "silence",
+      "suppressed voice",
+      "mortality"
+    ]
+  },
+  {
+    "id": "q-modA-long-nightingale",
+    "text": "Keats",
+    "poemTitle": "Ode to a Nightingale",
+    "locator": "Stanza 8 (final stanza, lines 71 to 80)",
+    "isVerifiedStanza": true,
+    "quote": "Forlorn! the very word is like a bell\nTo toll me back from thee to my sole self!\nAdieu! the fancy cannot cheat so well\nAs she is fam'd to do, deceiving elf.\nAdieu! adieu! thy plaintive anthem fades\nPast the near meadows, over the still stream,\nUp the hill-side; and now 'tis buried deep\nIn the next valley-glades:\nWas it a vision, or a waking dream?\nFled is that music:—Do I wake or sleep?",
+    "conceptTags": [
+      "negative capability",
+      "uncertainty",
+      "art",
+      "mortality",
+      "dream"
+    ]
+  },
+  {
+    "id": "q-modA-long-urn",
+    "text": "Keats",
+    "poemTitle": "Ode on a Grecian Urn",
+    "locator": "Stanza 5 (final stanza, lines 41 to 50)",
+    "isVerifiedStanza": true,
+    "quote": "O Attic shape! Fair attitude! with brede\nOf marble men and maidens overwrought,\nWith forest branches and the trodden weed;\nThou, silent form, dost tease us out of thought\nAs doth eternity: Cold Pastoral!\nWhen old age shall this generation waste,\nThou shalt remain, in midst of other woe\nThan ours, a friend to man, to whom thou say'st,\n\"Beauty is truth, truth beauty,—that is all\nYe know on earth, and all ye need to know.\"",
+    "conceptTags": [
+      "art",
+      "eternity",
+      "beauty",
+      "truth",
+      "stasis"
+    ]
+  },
+  {
+    "id": "q-modA-long-autumn",
+    "text": "Keats",
+    "poemTitle": "To Autumn",
+    "locator": "Stanza 1 (lines 1 to 11)",
+    "isVerifiedStanza": true,
+    "quote": "Season of mists and mellow fruitfulness,\nClose bosom-friend of the maturing sun;\nConspiring with him how to load and bless\nWith fruit the vines that round the thatch-eves run;\nTo bend with apples the moss'd cottage-trees,\nAnd fill all fruit with ripeness to the core;\nTo swell the gourd, and plump the hazel shells\nWith a sweet kernel; to set budding more,\nAnd still more, later flowers for the bees,\nUntil they think warm days will never cease,\nFor summer has o'er-brimm'd their clammy cells.",
+    "conceptTags": [
+      "autumn",
+      "ripeness",
+      "nature",
+      "abundance",
+      "transience"
+    ]
+  }
+]
