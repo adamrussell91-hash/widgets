@@ -642,7 +642,7 @@
     }
     .timeline-item {
       display: grid;
-      grid-template-columns: minmax(150px, 1fr) 18px minmax(220px, 1fr);
+      grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr);
       align-items: center;
       column-gap: 1.35rem;
       min-height: 3.2rem;
@@ -670,12 +670,13 @@
     }
     .timeline-copy {
       justify-self: start;
+      min-width: 0;
       font-family: "Italiana", serif;
       font-size: 1.72rem;
-      line-height: 1.08;
+      line-height: 1.18;
       letter-spacing: 0.03em;
       color: rgba(75, 51, 31, 0.94);
-      white-space: nowrap;
+      white-space: normal;
     }
     .bottom-actions {
       display: grid;
@@ -801,6 +802,68 @@
       border: 0;
       display: block;
       background: #fff;
+    }
+    .wishing-modal .modal-panel {
+      width: min(560px, 100%);
+      height: auto;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: clamp(2rem, 5vw, 3.2rem) clamp(1.6rem, 5vw, 2.6rem);
+    }
+    .wishing-content {
+      text-align: center;
+    }
+    .wishing-title {
+      font-family: "Italiana", serif;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--venue-brown);
+      margin: 0.6rem 0 1.1rem;
+    }
+    .wishing-copy {
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: clamp(1.05rem, 1.9vw, 1.25rem);
+      line-height: 1.6;
+      color: rgba(86, 58, 33, 0.90);
+      max-width: 34rem;
+      margin: 0 auto 1.8rem;
+    }
+    .wishing-details {
+      display: grid;
+      gap: 0.7rem;
+      max-width: 22rem;
+      margin: 0 auto 1.8rem;
+      padding: 1.2rem 1.4rem;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(188, 137, 54, 0.35);
+    }
+    .wishing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    .wishing-label {
+      font-family: "Forum", serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(88, 58, 30, 0.7);
+    }
+    .wishing-value {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.02rem;
+      letter-spacing: 0.03em;
+      color: var(--ink-deep);
+    }
+    .wishing-thanks {
+      font-family: "Imperial Script", cursive;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      color: var(--ink-deep);
+      margin: 0;
     }
     @keyframes floatDown {
       0% {
@@ -1420,28 +1483,75 @@
       color: var(--wax-rich);
       border-color: rgba(140,16,21,0.6);
     }
-    .photo-link {
+    .links-row {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 1.1rem;
+      justify-self: center;
+      margin-top: 0.35rem;
+    }
+    .link-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .link-caption {
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+      color: rgba(88, 58, 30, 0.62);
+      max-width: 9.5rem;
+      line-height: 1.3;
+    }
+    .detail-link {
+      appearance: none;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      justify-self: center;
-      margin-top: 0.35rem;
       font-family: "Forum", serif;
       font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #a9782f;
       text-decoration: none;
+      background: none;
+      cursor: pointer;
+      border: 0;
       border-bottom: 1px solid rgba(169,120,47,0.5);
-      padding-bottom: 3px;
+      padding: 0 0 3px;
       transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
     }
-    .photo-link:hover {
+    .detail-link:hover {
       color: var(--wax-rich);
       border-color: rgba(140,16,21,0.6);
     }
-    .photo-link svg { width: 17px; height: 17px; display: block; }
+    .detail-link svg { width: 17px; height: 17px; display: block; }
+    .links-divider {
+      flex: none;
+      width: 1px;
+      align-self: stretch;
+      background: linear-gradient(180deg, rgba(184,136,57,0), rgba(184,136,57,0.85), rgba(184,136,57,0));
+    }
+    .byo-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      font-weight: 700;
+      color: rgba(75, 51, 31, 0.98);
+    }
+    .byo-note svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+      flex: none;
+    }
     .timeline-copy a,
+    .timeline-link,
     .music-link {
       color: inherit;
       text-decoration: none;
@@ -1450,9 +1560,21 @@
       transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
     }
     .timeline-copy a:hover,
+    .timeline-link:hover,
     .music-link:hover {
       color: #a9782f;
       border-color: rgba(169,120,47,0.95);
+    }
+    .timeline-link {
+      appearance: none;
+      background: none;
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      cursor: pointer;
+      padding: 0 0 1px;
+      font: inherit;
+      letter-spacing: inherit;
     }
 
     /* Background-music mute / unmute toggle */
@@ -1574,14 +1696,40 @@
           <div class="detail-notes">
             <div class="detail-note">Smart casual attire is welcome.</div>
             <div class="detail-note">We'd love for you to capture the memories. We simply ask that photos remain off social media.</div>
-            <a class="photo-link" href="https://app.joinmymoment.com/moment/UiWk-3li8-jiv1-jC2Q-R59i" target="_blank" rel="noopener">
+            <div class="links-row">
+              <div class="link-col">
+                <a class="detail-link" href="https://app.joinmymoment.com/moment/UiWk-3li8-jiv1-jC2Q-R59i" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.6a1 1 0 0 1 .8-.4h6a1 1 0 0 1 .8.4L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-9Z"/>
+                    <circle cx="12" cy="13" r="3.2"/>
+                  </svg>
+                  Share your photos
+                </a>
+                <span class="link-caption">Capture the little moments</span>
+              </div>
+              <span class="links-divider" aria-hidden="true"></span>
+              <div class="link-col">
+                <button class="detail-link" id="openWishingWell" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4.2 8.3c0-1.3 1.7-2.3 3.8-2.3s3.8 1 3.8 2.3"/>
+                    <ellipse cx="8" cy="8.3" rx="4.4" ry="1.5"/>
+                    <path d="M4 9 5.4 18.6a1 1 0 0 0 1 .9h3.2a1 1 0 0 0 1-.9L12 9"/>
+                    <polygon points="23,1 19.5,11 17.5,6.5 13,4.5"/>
+                    <line x1="23" y1="1" x2="17.5" y2="6.5"/>
+                  </svg>
+                  Wishing Well
+                </button>
+                <span class="link-caption">Help us on our way</span>
+              </div>
+            </div>
+            <div class="detail-note byo-note">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.6a1 1 0 0 1 .8-.4h6a1 1 0 0 1 .8.4L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-9Z"/>
-                <circle cx="12" cy="13" r="3.2"/>
+                <path d="M7 3h10c0 4.5-1.2 8-5 8s-5-3.5-5-8Z"/>
+                <line x1="12" y1="11" x2="12" y2="19"/>
+                <line x1="8" y1="19.5" x2="16" y2="19.5"/>
               </svg>
-              Share your photos
-            </a>
-            <div class="detail-note">The venue is BYO.</div>
+              <strong>The venue is BYO.</strong>
+            </div>
           </div>
         </section>
         <section class="times-wrap">
@@ -1593,7 +1741,7 @@
             <div class="timeline-item">
               <div class="timeline-time">4:20 pm</div>
               <div class="timeline-dot"></div>
-              <div class="timeline-copy">Ceremony at the Obelisk, Cooks Hill</div>
+              <div class="timeline-copy"><button class="timeline-link" id="toCeremonyTimeline" type="button">Ceremony at the Obelisk, Cooks Hill</button></div>
             </div>
             <div class="timeline-item">
               <div class="timeline-time">5:00 pm</div>
@@ -1660,7 +1808,7 @@
             </div>
             <div class="order-row">
               <span class="order-time">4:30 pm</span>
-              <span class="order-text">Ceremony begins<em>Welcome by Celebrant Kez Tippett</em></span>
+              <span class="order-text">Ceremony begins<em>Welcome by celebrant Kez Tippett</em></span>
             </div>
             <span class="order-divider" aria-hidden="true"></span>
             <div class="order-speeches">
@@ -1710,6 +1858,26 @@
       <iframe id="rsvpFrame" data-src="https://mrrussellteaching.notion.site/ebd//f8d31efbc71d4d6290259b5ba3e774a7" allowfullscreen loading="lazy"></iframe>
     </div>
   </div>
+  <div class="modal wishing-modal" id="wishingModal" aria-hidden="true">
+    <div class="modal-panel wishing-panel">
+      <button class="modal-close" id="closeWishing" aria-label="Close Wishing Well">✕</button>
+      <div class="wishing-content">
+        <div class="ornament-line" aria-hidden="true">
+          <span class="ornament-mark">✦</span>
+        </div>
+        <h2 class="wishing-title">Wishing Well</h2>
+        <p class="wishing-copy">
+          Your presence is the only gift we could ask for. But should you wish to send us off with something extra, we'd be quietly delighted — every little bit finds its way into our honeymoon adventure to South Korea, later this year.
+        </p>
+        <div class="wishing-details">
+          <div class="wishing-row"><span class="wishing-label">Account Name</span><span class="wishing-value">Adam James Connerton Russell</span></div>
+          <div class="wishing-row"><span class="wishing-label">BSB</span><span class="wishing-value">306821</span></div>
+          <div class="wishing-row"><span class="wishing-label">Account Number</span><span class="wishing-value">6309682</span></div>
+        </div>
+        <p class="wishing-thanks">With all our love — Corey &amp; Adam</p>
+      </div>
+    </div>
+  </div>
   <script>
     var enterButton = document.getElementById('enterInvitation');
     var openRsvp    = document.getElementById('openRsvp');
@@ -1748,9 +1916,34 @@
     tabReception.addEventListener('click', showReception);
     if (toReception) toReception.addEventListener('click', showReception);
 
+    var toCeremonyTimeline = document.getElementById('toCeremonyTimeline');
+    if (toCeremonyTimeline) toCeremonyTimeline.addEventListener('click', showCeremony);
+
+    var openWishing  = document.getElementById('openWishingWell');
+    var closeWishing = document.getElementById('closeWishing');
+    var wishingModal = document.getElementById('wishingModal');
+
+    function openWishingModal() {
+      wishingModal.classList.add('open');
+      wishingModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeWishingModal() {
+      wishingModal.classList.remove('open');
+      wishingModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    openWishing.addEventListener('click', openWishingModal);
+    closeWishing.addEventListener('click', closeWishingModal);
+    wishingModal.addEventListener('click', function (e) {
+      if (e.target === wishingModal) closeWishingModal();
+    });
+
     var bgMusic     = document.getElementById('bgMusic');
     var musicToggle = document.getElementById('musicToggle');
-    var MUSIC_LEVEL = 0.55;
+    var MUSIC_LEVEL = 0.275;
     var musicFade   = null;
 
     function fadeMusicTo(target, ms) {
@@ -1773,9 +1966,9 @@
       bgMusic.volume = 0;
       var p = bgMusic.play();
       if (p && p.then) {
-        p.then(function () { fadeMusicTo(MUSIC_LEVEL, 5000); }).catch(function () {});
+        p.then(function () { fadeMusicTo(MUSIC_LEVEL, 12000); }).catch(function () {});
       } else {
-        fadeMusicTo(MUSIC_LEVEL, 5000);
+        fadeMusicTo(MUSIC_LEVEL, 12000);
       }
     }
 
@@ -1828,7 +2021,9 @@
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && rsvpModal.classList.contains('open')) closeModal();
+      if (e.key !== 'Escape') return;
+      if (rsvpModal.classList.contains('open')) closeModal();
+      if (wishingModal.classList.contains('open')) closeWishingModal();
     });
   </script>
 </body>
