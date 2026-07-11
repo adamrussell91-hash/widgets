@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draw</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;1,9..40,200&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f5f7;
+  --surface: rgba(255,255,255,0.72);
+  --surface-deep: rgba(255,255,255,0.92);
+  --border: rgba(0,0,0,0.07);
+  --border-strong: rgba(0,0,0,0.11);
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #aeaeb2;
+  --accent: #0071e3;
+  --green: #34c759;
+  --destructive: #ff3b30;
+  --radius: 20px;
+  --radius-sm: 10px;
+  --radius-xs: 7px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 16px 60px rgba(0,0,0,0.09), 0 2px 10px rgba(0,0,0,0.05);
+  --t: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+  font-weight: 300;
+}
+
+/* Subtle radial light from top */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(255,255,255,0.95) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 20% 100%, rgba(0,113,227,0.04) 0%, transparent 60%);
+}
+
+.app {
+  position: relative; z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ── Wordmark ── */
+.wordmark {
+  padding: 52px 0 36px;
+  display: flex; align-items: center; gap: 9px;
+}
+.wm-pip {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,113,227,0.14);
+}
+.wm-text {
+  font-size: 12px; font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* ── Glass panel base ── */
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(48px) saturate(1.9);
+  -webkit-backdrop-filter: blur(48px) saturate(1.9);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.glass::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.95) 35%, rgba(255,255,255,0.95) 65%, transparent 95%);
+  z-index: 1; pointer-events: none;
+}
+
+/* ── Hero Stage ── */
+.stage {
+  padding: 56px 48px 48px;
+  display: flex; flex-direction: column; align-items: center;
+  animation: riseIn 0.6s cubic-bezier(0.4,0,0.2,1) 0.05s both;
+}
+
+.stage-label {
+  font-size: 11px; font-weight: 400;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 22px;
+  min-height: 16px;
+  transition: color var(--t);
+}
+.stage-label.active { color: var(--accent); }
+
+/* Rolling name */
+.roll-track {
+  width: 100%; text-align: center;
+  min-height: 96px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+/* faint separator lines above/below name */
+.roll-track::before,
+.roll-track::after {
+  content: '';
+  position: absolute; left: 15%; right: 15%; height: 1px;
+  background: var(--border);
+}
+.roll-track::before { top: 0; }
+.roll-track::after  { bottom: 0; }
+
+.roll-name {
+  font-size: clamp(3rem, 7.5vw, 5.2rem);
+  font-weight: 200;
+  letter-spacing: -0.035em;
+  color: var(--text-tertiary);
+  line-height: 1;
+  transition: color 0.3s ease;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 8px;
+}
+.roll-name.live   { color: var(--text); }
+.roll-name.winner {
+  background: linear-gradient(145deg, #1d1d1f 0%, #3a3a3c 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* scanline shimmer */
+.roll-shimmer {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  border-radius: inherit; opacity: 0;
+  transition: opacity 0.2s;
+}
+.roll-shimmer.active { opacity: 1; }
+.roll-shimmer::after {
+  content: '';
+  position: absolute; left: 0; right: 0; height: 40px; top: -40px;
+  background: linear-gradient(to bottom, transparent, rgba(0,113,227,0.06), transparent);
+  animation: shimmerScan 0.32s linear infinite;
+}
+@keyframes shimmerScan {
+  to { top: calc(100% + 40px); }
+}
+
+.stage-meta {
+  font-size: 14px; color: var(--text-tertiary); font-weight: 300;
+  margin-top: 10px; min-height: 20px; text-align: center;
+}
+
+/* Multi-pick chips below name */
+.multi-chips {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center;
+  margin-top: 24px;
+}
+.m-chip {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surface-deep);
+  border: 1px solid var(--border-strong);
+  border-radius: 100px; padding: 7px 16px 7px 8px;
+  font-size: 14px; font-weight: 300;
+  box-shadow: var(--shadow-sm);
+  animation: chipUp 0.45s cubic-bezier(0.34,1.36,0.64,1) both;
+}
+.m-chip-n {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--text); color: var(--bg);
+  font-size: 10px; font-weight: 400;
+  display: flex; align-items: center; justify-content: center;
+}
+@keyframes chipUp {
+  from { transform: translateY(8px) scale(0.85); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Draw button */
+.btn-draw {
+  margin-top: 40px;
+  background: var(--accent);
+  color: #fff;
+  border: none; border-radius: 100px;
+  padding: 0 44px; height: 52px;
+  font-family: inherit; font-size: 15px; font-weight: 400;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  box-shadow: 0 2px 14px rgba(0,113,227,0.3);
+  transition: background var(--t), transform var(--t), box-shadow var(--t), opacity var(--t);
+}
+/* gloss on button */
+.btn-draw::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.13) 0%, transparent 55%);
+  border-radius: inherit; pointer-events: none;
+}
+.btn-draw:hover:not(:disabled) {
+  background: #0077ed;
+  transform: scale(1.012);
+  box-shadow: 0 4px 22px rgba(0,113,227,0.4);
+}
+.btn-draw:active:not(:disabled) { transform: scale(0.988); }
+.btn-draw:disabled { opacity: 0.38; cursor: not-allowed; }
+
+/* ── Lower grid ── */
+.lower {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* ── Panel internals ── */
+.panel { padding: 26px; }
+
+.p-label {
+  font-size: 11px; font-weight: 400;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 18px;
+}
+
+/* Roster input */
+.r-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+
+.field {
+  flex: 1;
+  background: rgba(0,0,0,0.038);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 9px 13px;
+  font-family: inherit; font-size: 14px; font-weight: 300;
+  color: var(--text); outline: none;
+  transition: border-color var(--t), box-shadow var(--t), background var(--t);
+  -webkit-appearance: none;
+}
+.field:focus {
+  background: rgba(0,113,227,0.028);
+  border-color: rgba(0,113,227,0.38);
+  box-shadow: 0 0 0 3px rgba(0,113,227,0.10);
+}
+.field::placeholder { color: var(--text-tertiary); }
+
+.btn-plus {
+  flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: rgba(0,0,0,0.038);
+  color: var(--text-secondary);
+  font-size: 20px; font-weight: 200; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background var(--t), color var(--t), border-color var(--t), transform 0.12s;
+}
+.btn-plus:hover  { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-plus:active { transform: scale(0.90); }
+
+.bulk-link {
+  display: inline-block;
+  font-size: 12px; font-weight: 400; color: var(--accent);
+  cursor: pointer; border: none; background: none; font-family: inherit;
+  margin-bottom: 8px; padding: 0;
+  transition: opacity var(--t);
+}
+.bulk-link:hover { opacity: 0.7; }
+
+.bulk-box {
+  display: none; flex-direction: column; gap: 8px; margin-bottom: 10px;
+}
+.bulk-box.open { display: flex; }
+
+.bulk-field {
+  background: rgba(0,0,0,0.038);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-family: 'DM Sans', monospace; font-size: 13px; font-weight: 300;
+  color: var(--text); resize: vertical; min-height: 76px; outline: none;
+  transition: border-color var(--t);
+}
+.bulk-field:focus { border-color: rgba(0,113,227,0.38); }
+
+.action-row { display: flex; gap: 14px; align-items: center; }
+
+.link-btn {
+  border: none; background: none; font-family: inherit;
+  font-size: 13px; font-weight: 400; color: var(--accent);
+  cursor: pointer; padding: 0;
+  transition: opacity var(--t);
+}
+.link-btn:hover { opacity: 0.7; }
+.link-btn.red { color: var(--destructive); }
+
+.sep { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* Roster list */
+.r-scroll {
+  max-height: 200px; overflow-y: auto;
+  margin: 0 -6px; padding: 0 6px;
+}
+.r-scroll::-webkit-scrollbar { width: 3px; }
+.r-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+.r-empty {
+  text-align: center; padding: 22px 0;
+  font-size: 13px; color: var(--text-tertiary); font-weight: 300;
+}
+
+.r-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 7px; border-radius: var(--radius-xs);
+  transition: background var(--t), opacity var(--t);
+}
+.r-item:hover { background: rgba(0,0,0,0.03); }
+.r-item.used { opacity: 0.3; }
+.r-item-name { flex: 1; font-size: 14px; font-weight: 300; }
+.r-item-tag  {
+  font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.r-del {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: none; background: none; color: var(--text-tertiary);
+  font-size: 16px; cursor: pointer; padding: 0; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: background var(--t), color var(--t), opacity var(--t);
+}
+.r-item:hover .r-del { opacity: 1; }
+.r-del:hover { background: rgba(255,59,48,0.1); color: var(--destructive); }
+
+.r-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 10px;
+}
+.r-stat { font-size: 12px; color: var(--text-tertiary); font-weight: 300; }
+
+/* ── Options ── */
+.opt-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+}
+.opt-row:first-of-type { padding-top: 0; }
+.opt-row:last-of-type  { border-bottom: none; padding-bottom: 0; }
+
+.opt-lhs {}
+.opt-l { font-size: 14px; font-weight: 300; }
+.opt-s { font-size: 12px; color: var(--text-tertiary); font-weight: 300; margin-top: 2px; }
+
+/* iOS toggle */
+.ios { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+.ios input { opacity:0; width:0; height:0; position:absolute; }
+.ios-track {
+  position: absolute; inset: 0; border-radius: 26px; cursor: pointer;
+  background: rgba(0,0,0,0.12);
+  transition: background 0.24s ease;
+}
+.ios-track::before {
+  content: '';
+  position: absolute;
+  width: 22px; height: 22px; border-radius: 50%; background: #fff;
+  top: 2px; left: 2px;
+  transition: transform 0.22s cubic-bezier(0.34,1.4,0.64,1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+}
+.ios input:checked + .ios-track { background: var(--green); }
+.ios input:checked + .ios-track::before { transform: translateX(18px); }
+
+/* Stepper */
+.stepper { display: flex; align-items: center; gap: 0; }
+.stp {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: rgba(0,0,0,0.04);
+  color: var(--text-secondary); font-size: 16px; font-weight: 300;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background var(--t); line-height: 1;
+}
+.stp:hover { background: rgba(0,0,0,0.09); }
+.stp-val {
+  min-width: 36px; text-align: center;
+  font-size: 16px; font-weight: 300;
+}
+
+/* Segmented speed */
+.seg {
+  display: flex; border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xs); overflow: hidden;
+}
+.seg-opt {
+  padding: 5px 12px; font-size: 12px; font-weight: 300; font-family: inherit;
+  border: none; background: transparent; cursor: pointer; color: var(--text-secondary);
+  transition: background var(--t), color var(--t);
+  border-right: 1px solid var(--border-strong);
+}
+.seg-opt:last-child { border-right: none; }
+.seg-opt.on { background: var(--accent); color: #fff; }
+
+/* ── Session log ── */
+.log-panel { grid-column: 1 / -1; }
+.log-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.log-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,0,0,0.04); border: 1px solid var(--border);
+  border-radius: 100px; padding: 5px 13px 5px 7px;
+  font-size: 13px; font-weight: 300;
+  animation: chipUp 0.42s cubic-bezier(0.34,1.36,0.64,1) both;
+}
+.log-n {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--text); color: var(--bg);
+  font-size: 10px; font-weight: 400;
+  display: flex; align-items: center; justify-content: center;
+}
+.log-footer {
+  display: flex; align-items: center; justify-content: space-between; margin-top: 14px;
+}
+
+/* ── Confetti ── */
+.conf-root { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+.cp {
+  position: absolute; top: -12px; border-radius: 2px;
+  animation: cpFall linear forwards; will-change: transform, opacity;
+}
+@keyframes cpFall { to { transform: translateY(106vh) rotate(600deg); opacity: 0; } }
+
+/* ── Animations ── */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lower .glass:nth-child(1) { animation: riseIn 0.55s cubic-bezier(0.4,0,0.2,1) 0.14s both; }
+.lower .glass:nth-child(2) { animation: riseIn 0.55s cubic-bezier(0.4,0,0.2,1) 0.20s both; }
+.lower .glass:nth-child(3) { animation: riseIn 0.55s cubic-bezier(0.4,0,0.2,1) 0.26s both; }
+
+@media (max-width: 580px) {
+  .lower { grid-template-columns: 1fr; }
+  .stage { padding: 36px 22px 32px; }
+  .roll-name { font-size: 2.8rem; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="wordmark">
+    <div class="wm-pip"></div>
+    <span class="wm-text">Class Draw</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="glass stage">
+    <div class="stage-label" id="stageLabel">Ready</div>
+
+    <div class="roll-track">
+      <div class="roll-shimmer" id="shimmer"></div>
+      <div class="roll-name" id="rollName">—</div>
+    </div>
+
+    <div class="stage-meta" id="stageMeta">Add students, then press Draw</div>
+    <div class="multi-chips" id="multiChips"></div>
+
+    <button class="btn-draw" id="drawBtn" onclick="draw()">Draw</button>
+  </div>
+
+  <div class="lower">
+
+    <!-- Roster -->
+    <div class="glass panel">
+      <div class="p-label">Roster</div>
+
+      <div class="r-input-row">
+        <input type="text" class="field" id="nameInput" placeholder="Student name" maxlength="52">
+        <button class="btn-plus" onclick="addName()" title="Add">+</button>
+      </div>
+
+      <button class="bulk-link" onclick="toggleBulk()">Bulk add</button>
+      <div class="bulk-box" id="bulkBox">
+        <textarea class="bulk-field" id="bulkField" rows="4" placeholder="One name per line&#10;Alice&#10;Bob&#10;Charlie"></textarea>
+        <div class="action-row">
+          <button class="link-btn" onclick="bulkAdd()">Add all</button>
+          <button class="link-btn red" onclick="clearRoster()">Clear roster</button>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="r-scroll" id="rScroll">
+        <div class="r-empty" id="rEmpty">No students yet</div>
+      </div>
+      <div class="r-footer">
+        <span class="r-stat" id="rStat">0 students</span>
+        <button class="link-btn red" id="resetExBtn" onclick="resetExclusions()" style="display:none; font-size:12px;">Reset drawn</button>
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="glass panel">
+      <div class="p-label">Options</div>
+
+      <div class="opt-row">
+        <div class="opt-lhs">
+          <div class="opt-l">No re-selection</div>
+          <div class="opt-s">Each student drawn once</div>
+        </div>
+        <label class="ios">
+          <input type="checkbox" id="noRepeat" checked onchange="renderRoster()">
+          <span class="ios-track"></span>
+        </label>
+      </div>
+
+      <div class="opt-row">
+        <div class="opt-l">Students to pick</div>
+        <div class="stepper">
+          <button class="stp" onclick="changeCount(-1)">−</button>
+          <div class="stp-val" id="pickCount">1</div>
+          <button class="stp" onclick="changeCount(1)">+</button>
+        </div>
+      </div>
+
+      <div class="opt-row">
+        <div class="opt-l">Roll speed</div>
+        <div class="seg" id="speedSeg">
+          <button class="seg-opt on" onclick="setSpeed(0,this)">Fast</button>
+          <button class="seg-opt" onclick="setSpeed(1,this)">Normal</button>
+          <button class="seg-opt" onclick="setSpeed(2,this)">Slow</button>
+        </div>
+      </div>
+
+      <div class="opt-row">
+        <div class="opt-l">Confetti</div>
+        <label class="ios">
+          <input type="checkbox" id="confettiOn" checked>
+          <span class="ios-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Session log -->
+    <div class="glass panel log-panel" id="logPanel" style="display:none;">
+      <div class="p-label">Session</div>
+      <div class="log-chips" id="logChips"></div>
+      <div class="log-footer">
+        <span class="r-stat" id="logStat"></span>
+        <button class="link-btn red" onclick="resetSession()" style="font-size:12px;">Clear session</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="conf-root" id="confRoot"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const delay = ms => new Promise(r => setTimeout(r, ms));
+function shuffle(a) {
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+
+let roster = [], excluded = new Set(), pickN = 1, speedIdx = 0, rolling = false, allWinners = [];
+const SPEEDS   = [36, 68, 115];
+const DURATION = [1300, 2000, 2700];
+
+function addName() {
+  const inp = $('nameInput'), v = inp.value.trim();
+  if (!v) return;
+  roster.push(v); inp.value = ''; inp.focus(); renderRoster();
+}
+$('nameInput').addEventListener('keydown', e => { if(e.key==='Enter') addName(); });
+
+function toggleBulk() { $('bulkBox').classList.toggle('open'); }
+function bulkAdd() {
+  const lines = $('bulkField').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  roster.push(...lines); $('bulkField').value = '';
+  $('bulkBox').classList.remove('open'); renderRoster();
+}
+function clearRoster() {
+  if(roster.length && !confirm('Clear all students?')) return;
+  roster=[]; excluded.clear(); allWinners=[]; renderRoster(); renderLog();
+}
+function removeName(i) {
+  excluded.delete(roster[i]); roster.splice(i,1); renderRoster();
+}
+function resetExclusions() { excluded.clear(); renderRoster(); }
+
+function getAvailable() {
+  return $('noRepeat').checked ? roster.filter(n=>!excluded.has(n)) : [...roster];
+}
+
+function renderRoster() {
+  const scroll = $('rScroll');
+  if (roster.length === 0) {
+    scroll.innerHTML = `<div class="r-empty">No students yet</div>`;
+  } else {
+    scroll.innerHTML = roster.map((n,i) => `
+      <div class="r-item ${excluded.has(n)?'used':''}">
+        <span class="r-item-name">${esc(n)}</span>
+        ${excluded.has(n)?'<span class="r-item-tag">drawn</span>':''}
+        <button class="r-del" onclick="removeName(${i})">×</button>
+      </div>`).join('');
+  }
+  const avail = getAvailable().length;
+  $('rStat').textContent = `${roster.length} students · ${avail} available`;
+  $('resetExBtn').style.display = excluded.size ? '' : 'none';
+  updateDraw();
+}
+
+function updateDraw() {
+  const avail = getAvailable().length;
+  const ok = avail >= pickN && pickN >= 1 && !rolling;
+  $('drawBtn').disabled = !ok;
+
+  if (rolling) return;
+  const rn = $('rollName');
+  if (roster.length === 0) {
+    $('stageMeta').textContent = 'Add students, then press Draw';
+    if (!rn.classList.contains('winner')) { rn.textContent = '—'; rn.className = 'roll-name'; }
+  } else if (avail === 0) {
+    $('stageMeta').textContent = 'All students drawn — reset to continue';
+  } else {
+    $('stageMeta').textContent = pickN === 1 ? 'Tap Draw to select a student' : `Tap Draw to select ${pickN} students`;
+  }
+}
+
+function changeCount(d) {
+  pickN = Math.max(1, Math.min(10, pickN+d));
+  $('pickCount').textContent = pickN; updateDraw();
+}
+
+function setSpeed(idx, el) {
+  speedIdx = idx;
+  document.querySelectorAll('.seg-opt').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+async function draw() {
+  const avail = getAvailable();
+  if (avail.length < pickN || rolling) return;
+
+  rolling = true; updateDraw();
+  $('multiChips').innerHTML = '';
+  $('stageLabel').textContent = 'Drawing…';
+  $('stageLabel').classList.add('active');
+
+  const rn = $('rollName'), shimmer = $('shimmer');
+  rn.classList.remove('winner'); rn.classList.add('live');
+  shimmer.classList.add('active');
+
+  const picks = shuffle(avail).slice(0, pickN);
+
+  for (let p = 0; p < picks.length; p++) {
+    await rollTo(rn, avail, picks[p]);
+    if (picks.length > 1) await delay(220);
+  }
+
+  shimmer.classList.remove('active');
+  rn.classList.remove('live'); rn.classList.add('winner');
+
+  if ($('noRepeat').checked) picks.forEach(n => excluded.add(n));
+  allWinners.push(...picks);
+
+  if (picks.length > 1) {
+    rn.textContent = `${picks.length} students`;
+    picks.forEach((name, i) => {
+      const el = document.createElement('div');
+      el.className = 'm-chip';
+      el.style.animationDelay = `${i*0.08}s`;
+      el.innerHTML = `<div class="m-chip-n">${i+1}</div>${esc(name)}`;
+      $('multiChips').appendChild(el);
+    });
+  }
+
+  $('stageLabel').textContent = picks.length === 1 ? 'Selected' : `${picks.length} Selected`;
+  $('stageLabel').classList.remove('active');
+  $('stageMeta').textContent = '';
+
+  renderRoster(); renderLog(picks);
+  if ($('confettiOn').checked) fireConfetti();
+
+  rolling = false; updateDraw();
+}
+
+function rollTo(el, pool, winner) {
+  return new Promise(resolve => {
+    const end = Date.now() + DURATION[speedIdx];
+    const iv  = SPEEDS[speedIdx];
+    function tick() {
+      if (Date.now() < end) {
+        el.textContent = pool[Math.floor(Math.random()*pool.length)];
+        setTimeout(tick, iv);
+      } else { el.textContent = winner; resolve(); }
+    }
+    tick();
+  });
+}
+
+function renderLog(newPicks) {
+  const panel = $('logPanel'), chips = $('logChips');
+  if (!allWinners.length) { panel.style.display='none'; return; }
+  panel.style.display = '';
+  if (newPicks) {
+    newPicks.forEach((name, i) => {
+      const el = document.createElement('div');
+      el.className = 'log-chip';
+      el.style.animationDelay = `${i*0.06}s`;
+      el.innerHTML = `<div class="log-n">?</div>${esc(name)}`;
+      chips.appendChild(el);
+    });
+    // renumber
+    chips.querySelectorAll('.log-n').forEach((n,i) => n.textContent = i+1);
+  }
+  $('logStat').textContent = `${allWinners.length} total draw${allWinners.length!==1?'s':''}`;
+}
+
+function resetSession() {
+  excluded.clear(); allWinners = [];
+  $('logChips').innerHTML = ''; $('multiChips').innerHTML = '';
+  $('logPanel').style.display = 'none';
+  $('rollName').textContent = '—'; $('rollName').className = 'roll-name';
+  $('stageLabel').textContent = 'Ready'; $('stageLabel').classList.remove('active');
+  renderRoster();
+}
+
+function fireConfetti() {
+  const root = $('confRoot'); root.innerHTML = '';
+  const pal = ['#0071e3','#34c759','#ff3b30','#ff9f0a','#af52de','#5ac8fa','#1d1d1f','#8e8e93'];
+  for (let i = 0; i < 88; i++) {
+    const p = document.createElement('div');
+    p.className = 'cp';
+    const s = 7 + Math.random()*9, d = 1.1+Math.random()*1.6, dl = Math.random()*0.5;
+    p.style.cssText = `left:${Math.random()*100}vw;width:${s}px;height:${s*(Math.random()>.5?.42:1)}px;
+      background:${pal[Math.floor(Math.random()*pal.length)]};
+      border-radius:${Math.random()>.55?'50%':'2px'};
+      transform:rotate(${Math.random()*360}deg);
+      animation-duration:${d}s;animation-delay:${dl}s;opacity:1;`;
+    root.appendChild(p);
+  }
+  setTimeout(()=>root.innerHTML='', 3000);
+}
+
+renderRoster();
+</script>
+</body>
+</html>
