@@ -1,0 +1,130 @@
+{
+  "src-2019-t1": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess"],
+    "markRange": [1, 5]
+  },
+  "src-2019-t2": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2019-t3": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2019-t4": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2020-t1": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2020-t2": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 5]
+  },
+  "src-2020-t3": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess"],
+    "markRange": [1, 5]
+  },
+  "src-2020-t4": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2020-t5": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2021-t1": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2021-t2": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess"],
+    "markRange": [1, 5]
+  },
+  "src-2021-t3": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2021-t4": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2021-t5": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2022-t2": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2022-t3": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2022-t4": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2022-t5": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2023-t1": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2023-t2": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2023-t3": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2023-t4": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2023-t5": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess"],
+    "markRange": [1, 5]
+  },
+  "src-2024-t2": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2024-t3": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2024-t4": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 5]
+  },
+  "src-2024-t5": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess"],
+    "markRange": [1, 5]
+  },
+  "src-2024-t6": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2025-t1": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2025-t2": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  },
+  "src-2025-t3": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess"],
+    "markRange": [1, 5]
+  },
+  "src-2025-t4": {
+    "verbs": ["identify", "explain", "how does", "analyse", "explain how", "evaluate", "assess", "justify", "compare", "to what extent"],
+    "markRange": [1, 7]
+  }
+}
