@@ -841,10 +841,9 @@
       border: 1px solid rgba(188, 137, 54, 0.35);
     }
     .wishing-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 1rem;
+      display: grid;
+      gap: 0.2rem;
+      text-align: left;
     }
     .wishing-label {
       font-family: "Forum", serif;
@@ -852,10 +851,11 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: rgba(88, 58, 30, 0.7);
+      white-space: nowrap;
     }
     .wishing-value {
       font-family: "Cormorant Garamond", serif;
-      font-size: 1.02rem;
+      font-size: 1.1rem;
       letter-spacing: 0.03em;
       color: var(--ink-deep);
     }
@@ -1705,7 +1705,7 @@
                   </svg>
                   Share your photos
                 </a>
-                <span class="link-caption">Capture the special moments</span>
+                <span class="link-caption">Capture the little moments</span>
               </div>
               <span class="links-divider" aria-hidden="true"></span>
               <div class="link-col">
@@ -1940,6 +1940,12 @@
     wishingModal.addEventListener('click', function (e) {
       if (e.target === wishingModal) closeWishingModal();
     });
+
+    // Hidden deep-link: visiting the site with #wishing-well in the URL
+    // (e.g. from the poster's QR code) auto-opens the Wishing Well modal.
+    if (window.location.hash === '#wishing-well') {
+      openWishingModal();
+    }
 
     var bgMusic     = document.getElementById('bgMusic');
     var musicToggle = document.getElementById('musicToggle');
