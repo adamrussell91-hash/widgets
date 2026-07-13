@@ -387,6 +387,7 @@
     body.entered .bg-sparkles {
       opacity: 0.5;
     }
+    .thankyou,
     .invitation {
       position: relative;
       min-height: 100vh;
@@ -401,6 +402,7 @@
       z-index: 3;
       pointer-events: none;
     }
+    body.entered .thankyou,
     body.entered .invitation {
       opacity: 1;
       transform: scale(1);
@@ -1091,6 +1093,13 @@
       .detail-note {
         font-size: 0.98rem;
       }
+      .links-row {
+        flex-wrap: wrap;
+        row-gap: 1.4rem;
+      }
+      .links-divider {
+        display: none;
+      }
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -1123,11 +1132,13 @@
 
       /* 5. The invitation entry blur (16px) on an entire section is expensive.
             Replace with a clean opacity + slight translateY — still elegant. */
+      .thankyou,
       .invitation {
         filter: none !important;
         transform: translateY(12px) !important;
         transition: opacity 3.0s var(--ease), transform 3.0s var(--ease) !important;
       }
+      body.entered .thankyou,
       body.entered .invitation {
         opacity: 1;
         transform: translateY(0) !important;
@@ -1212,7 +1223,7 @@
     @media (prefers-reduced-motion: reduce) {
       .bokeh span, .sparkle, .seal-light, .rsvp-button::after,
       .mobile-glow span, .card-sparkles .sparkle { animation: none; }
-      .landing, .invitation,
+      .landing, .thankyou, .invitation,
       .names, .invite-copy, .feature-media,
       .details, .times-wrap, .bottom-actions {
         transition: opacity 0.5s ease !important;
@@ -1269,9 +1280,13 @@
     }
 
     /* Panel switching */
+    .invitation { display: none; }
     .ceremony { display: none; }
+    body.show-reception .invitation { display: block; }
+    body.show-reception .thankyou { display: none; }
     body.show-ceremony .invitation { display: none; }
     body.show-ceremony .ceremony { display: block; }
+    body.show-ceremony .thankyou { display: none; }
 
     /* Pink ceremony backdrop */
     body.show-ceremony {
@@ -1646,8 +1661,70 @@
           </span>
         </button>
         <p class="landing-copy">
-          A warm evening of candlelight, music, and celebration awaits.
+          An evening of candlelight, music, and celebration we'll always treasure.
         </p>
+      </div>
+    </section>
+    <section class="thankyou" id="thankyou">
+      <div class="card">
+        <!-- Sparkles scattered across the thank you card -->
+        <div class="card-sparkles" aria-hidden="true">
+          <span class="sparkle"></span><span class="sparkle"></span>
+          <span class="sparkle"></span><span class="sparkle"></span>
+          <span class="sparkle"></span><span class="sparkle"></span>
+          <span class="sparkle"></span><span class="sparkle"></span>
+          <span class="sparkle"></span><span class="sparkle"></span>
+          <span class="sparkle"></span><span class="sparkle"></span>
+          <span class="sparkle"></span><span class="sparkle"></span>
+        </div>
+        <header class="names">
+          <h1 class="names-main">Thank You</h1>
+          <div class="ornament-line" aria-hidden="true">
+            <span class="ornament-mark">✦</span>
+          </div>
+        </header>
+        <section class="invite-copy">
+          <p class="small">With love, from Corey &amp; Adam</p>
+        </section>
+        <section class="feature-media">
+          <div class="media-frame">
+            <img
+              src="thankyou.jpg"
+              alt="A pencil sketch of the Obelisk at Cooks Hill, where Corey and Adam were married"
+            >
+          </div>
+        </section>
+        <section class="details">
+          <h2 class="venue">With Love &amp; Gratitude</h2>
+          <p class="detail-sub">
+            Thank you doesn't feel like quite enough. For the laughter, the dancing, the speeches that made us cry the good kind of tears, and for showing up and celebrating with us so wholeheartedly — we are overwhelmed with gratitude. Your generosity, whether a gift, a card, or simply your presence on the day, meant the absolute world to us. We feel so lucky to be surrounded by people like you.
+          </p>
+          <div class="detail-notes">
+            <div class="detail-note">We're still smiling, and still finding confetti.</div>
+            <div class="links-row">
+              <div class="link-col">
+                <a class="detail-link" href="https://bar-sol.square.site/" target="_blank" rel="noopener">Bar Sole</a>
+                <span class="link-caption">For those who'd love to dine there again</span>
+              </div>
+              <span class="links-divider" aria-hidden="true"></span>
+              <div class="link-col">
+                <a class="detail-link" href="https://www.crowdpleaser.com.au/Jadily?distance=30&amp;is_category_search=true&amp;search_location=%7B%22latitude%22%3A-32.7315527%2C%22longitude%22%3A151.5525086%2C%22state_code%22%3A%22New+South+Wales%22%2C%22state_abbreviation%22%3A%22NSW%22%2C%22country_code%22%3A%22AU%22%2C%22city%22%3A%22Maitland%22%2C%22name%22%3A%22Maitland%2C+New+South+Wales%22%7D&amp;search_specs=Guitar-Singers%2FMaitland-NSW&amp;search_terms=Guitar+Singers" target="_blank" rel="noopener">Jadily</a>
+                <span class="link-caption">For those who loved her music</span>
+              </div>
+              <span class="links-divider" aria-hidden="true"></span>
+              <div class="link-col">
+                <a class="detail-link" href="https://drive.google.com/drive/folders/1o2jPPM7m1KN8D_xMC4wC7nBMxUly3PN4?usp=share_link" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.6a1 1 0 0 1 .8-.4h6a1 1 0 0 1 .8.4L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-9Z"/>
+                    <circle cx="12" cy="13" r="3.2"/>
+                  </svg>
+                  Upload Photos &amp; Videos
+                </a>
+                <span class="link-caption">Share your photos and videos with us</span>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
     <section class="invitation" id="invitation">
@@ -1835,13 +1912,14 @@
     </section>
   </main>
   <nav class="tab-bar" id="tabBar" aria-label="Sections">
-    <button class="tab-btn active" id="tabReception" type="button">Reception</button>
+    <button class="tab-btn active" id="tabThankyou" type="button">Thank You</button>
+    <button class="tab-btn" id="tabReception" type="button">Reception</button>
     <button class="tab-btn" id="tabCeremony" type="button">Ceremony</button>
   </nav>
   <audio id="bgMusic" loop preload="none">
     <source src="jadily.mp3" type="audio/mpeg">
   </audio>
-  <button class="music-toggle" id="musicToggle" type="button" aria-label="Mute or unmute music">
+  <button class="music-toggle muted" id="musicToggle" type="button" aria-label="Mute or unmute music">
     <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/>
       <path d="M16 8.5a4 4 0 0 1 0 7"/>
@@ -1885,15 +1963,28 @@
     var closeRsvp   = document.getElementById('closeRsvp');
     var rsvpModal   = document.getElementById('rsvpModal');
     var rsvpFrame   = document.getElementById('rsvpFrame');
+    var tabThankyou  = document.getElementById('tabThankyou');
     var tabReception = document.getElementById('tabReception');
     var tabCeremony  = document.getElementById('tabCeremony');
     var toReception  = document.getElementById('toReception');
     var ceremonyEl   = document.getElementById('ceremony');
 
+    function setActiveTab(btn) {
+      [tabThankyou, tabReception, tabCeremony].forEach(function (b) {
+        b.classList.toggle('active', b === btn);
+      });
+    }
+
+    function showThankyou() {
+      document.body.classList.remove('show-reception', 'show-ceremony');
+      setActiveTab(tabThankyou);
+      window.scrollTo(0, 0);
+    }
+
     function showCeremony() {
       document.body.classList.add('show-ceremony');
-      tabCeremony.classList.add('active');
-      tabReception.classList.remove('active');
+      document.body.classList.remove('show-reception');
+      setActiveTab(tabCeremony);
       window.scrollTo(0, 0);
       // Re-run the slow fade-in every time the ceremony is opened.
       ceremonyEl.classList.remove('reveal');
@@ -1907,12 +1998,13 @@
     }
 
     function showReception() {
+      document.body.classList.add('show-reception');
       document.body.classList.remove('show-ceremony');
-      tabReception.classList.add('active');
-      tabCeremony.classList.remove('active');
+      setActiveTab(tabReception);
       window.scrollTo(0, 0);
     }
 
+    tabThankyou.addEventListener('click', showThankyou);
     tabCeremony.addEventListener('click', showCeremony);
     tabReception.addEventListener('click', showReception);
     if (toReception) toReception.addEventListener('click', showReception);
@@ -1968,17 +2060,6 @@
       }, ms / steps);
     }
 
-    function startMusic() {
-      if (!bgMusic) return;
-      bgMusic.volume = 0;
-      var p = bgMusic.play();
-      if (p && p.then) {
-        p.then(function () { fadeMusicTo(MUSIC_LEVEL, 12000); }).catch(function () {});
-      } else {
-        fadeMusicTo(MUSIC_LEVEL, 12000);
-      }
-    }
-
     if (musicToggle) {
       musicToggle.addEventListener('click', function () {
         if (musicToggle.classList.contains('muted')) {
@@ -1994,7 +2075,6 @@
     }
 
     enterButton.addEventListener('click', function () {
-      startMusic();
       document.body.classList.add('entering');
       setTimeout(function () {
         document.body.classList.add('entered');
