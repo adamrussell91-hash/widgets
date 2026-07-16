@@ -359,7 +359,19 @@ body{
 mark.hl{border-radius:4px;padding:1px 4px;color:#1b1c22;font-weight:600}
 .finding{padding:13px 0;border-bottom:1px solid var(--line-soft)}
 .finding:last-child{border:0}
-.finding .fq{font-family:'Newsreader',serif;font-style:italic;color:#33343d;margin:5px 0;font-size:15px}
+.finding .fq{font-family:'Newsreader',serif;font-style:italic;color:#33343d;margin:5px 0 10px;font-size:15px}
+.techrow{margin:14px 0 3px}
+.tr-head{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.tr-head .tn{font-weight:700;font-size:14px;color:var(--ink);margin-right:auto}
+.conf-pct{font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700;color:var(--ink-soft);flex:0 0 auto;min-width:34px;text-align:right}
+.conf-tier{font-size:10.5px;font-weight:700;color:var(--ink-faint);flex:0 0 auto;text-transform:uppercase;letter-spacing:.04em;min-width:88px;text-align:right}
+.conf-track{width:100%;height:7px;border-radius:99px;background:var(--line-soft);overflow:hidden}
+.conf-fill{position:relative;height:100%;width:0;border-radius:99px;transition:width 1s var(--ease);overflow:hidden}
+.conf-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.65) 50%,transparent 70%);transform:translateX(-120%)}
+.conf-fill.sheen::after{animation:sheen .9s var(--ease)}
+@keyframes sheen{to{transform:translateX(120%)}}
+.sf-expl{font-size:13px;color:var(--ink-soft);line-height:1.5;margin:6px 0 12px}
+.finding>.techrow:first-of-type{margin-top:0}
 .scorebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:var(--ink-soft);font-size:14.5px}
 .scorebar strong{font-family:'Newsreader',serif;font-size:24px;color:#15161c}
 .qcard{border-radius:16px;border:1px solid var(--line);background:#fff;padding:24px;text-align:center;margin-bottom:15px;box-shadow:0 2px 8px rgba(20,22,45,.06)}
@@ -2164,40 +2176,86 @@ Be specific and educational.`;
 });
 
 /* SCANNER */
+const CONF_FLOOR=20;
+function tint(hex,amt){
+  const n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  const mix=c=>Math.round(c+(255-c)*amt);
+  return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+}
+function confTier(c){ return c>=70?'Likely':c>=40?'Possible':'Worth considering'; }
+function parseGroups(raw){
+  let data; try{data=JSON.parse(raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim());}catch(e){return null;}
+  let arr=Array.isArray(data)?data:null;
+  if(!arr) for(const k of ['findings','quotes','results','items']) if(Array.isArray(data?.[k])){arr=data[k];break;}
+  if(!arr) return [];
+  // normalise: also accept a flat old-style [{technique,quote,explanation}] shape by grouping on quote
+  if(arr.length && arr[0] && !arr[0].techniques && arr[0].technique){
+    const byQuote={};
+    arr.forEach(f=>{ (byQuote[f.quote]=byQuote[f.quote]||[]).push({technique:f.technique,confidence:f.confidence??70,explanation:f.explanation}); });
+    arr=Object.entries(byQuote).map(([quote,techniques])=>({quote,techniques}));
+  }
+  return arr.map(g=>({quote:g.quote,techniques:(g.techniques||[]).filter(t=>Number(t.confidence)>=CONF_FLOOR&&findTech(t.technique)).sort((a,b)=>b.confidence-a.confidence)}))
+            .filter(g=>g.quote&&g.techniques.length);
+}
 document.getElementById('scan-btn').addEventListener('click',async()=>{
   const text=document.getElementById('scan-input').value.trim(); if(!text)return alert('Paste a passage.');
   if(text.length>3000)return alert('Keep it under 3000 characters.');
   const btn=document.getElementById('scan-btn'),box=document.getElementById('scan-box'),hl=document.getElementById('scan-hl'),find=document.getElementById('scan-find');
   btn.disabled=true;box.style.display='block';hl.innerHTML='<div class="loading"><div class="spin"></div>Scanning…</div>';find.innerHTML='';
   const techList=elements.map(e=>e.name).join(', ');
-  const p=`You are a rigorous literary techniques analyst. Scan the passage and identify techniques DELIBERATELY used for effect.
+  const p=`You are a rigorous literary techniques analyst. Scan the passage and identify techniques used for effect, rating your own confidence honestly rather than only reporting certainties.
 
-Techniques to consider (not exhaustive): ${techList}
+You MUST only use technique names from this exact list — do not invent, rename, or generalise a technique (e.g. no "Concrete Diction" or "Identity Assertion" if the closest real entry is "Diction" or "Ethos"); pick the closest matching real entry instead: ${techList}
 
 RULES:
-1. Only flag clear deliberate literary intent, not accidental resemblance.
-2. "like" is NOT a simile unless it introduces a genuine comparison.
-3. Don't flag generic word choice as diction without a distinctive pattern.
-4. Don't flag repetition unless something repeats at least twice.
-5. Only include techniques you are highly confident about.
+1. A single quoted excerpt can and often does exhibit MULTIPLE techniques at once — that's normal in literature, not an error. List each technique you notice for that excerpt as its own entry with its own confidence.
+2. Give every technique a confidence 0-100 reflecting how sure you are it's deliberately at work here, not just resemblance:
+   - 70-100: clearly and unambiguously present
+   - 40-69: a reasonable, defensible reading, but arguable or dependent on how the line is voiced/interpreted
+   - 15-39: a plausible minor or conditional reading (say what condition or context would make it true) — include these, don't self-censor to only "safe" answers
+3. Don't be shy about textbook-obvious devices (e.g. an actual rhetorical question, a clear metaphor, direct repetition) just because the passage is short — brevity is not evidence of absence.
+4. "like" is NOT a simile unless it introduces a genuine comparison.
+5. Don't flag generic word choice as diction without a distinctive pattern.
+6. Don't flag repetition unless something repeats at least twice.
+7. A short or plain passage may genuinely contain zero techniques even at low confidence — that's fine, don't invent something to fill the list.
 
 Passage:
 """${text}"""
 
-Return ONLY a valid JSON array (no markdown fences):
-[{"technique":"Name","quote":"exact short excerpt","explanation":"one sentence why"}]`;
+Return ONLY a valid JSON array (no markdown fences), grouped by excerpt, each technique with its own confidence and a short explanation (for lower-confidence reads, say what makes it arguable or what context would strengthen it):
+[{"quote":"exact short excerpt","techniques":[{"technique":"Name","confidence":85,"explanation":"one sentence why"}]}]`;
   try{
-    const reply=await aiCall([{role:'user',content:p}],1000);
-    let findings=[]; try{findings=JSON.parse(reply.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim());}
-    catch(e){hl.innerHTML='<em>Could not parse — try a shorter passage.</em>';btn.disabled=false;return;}
-    if(!findings.length){hl.innerHTML='<em>No clear techniques identified.</em>';btn.disabled=false;return;}
-    const getCol=n=>{const t=findTech(n);return t?FAMILY_COLORS[t.family]:'#888';};
+    let reply=await aiCall([{role:'user',content:p}],1400);
+    let groups=parseGroups(reply);
+    if(groups===null){hl.innerHTML='<em>Could not parse — try a shorter passage.</em>';btn.disabled=false;return;}
+    if(!groups.length){
+      reply=await aiCall([{role:'user',content:p}],1400);
+      const retry=parseGroups(reply);
+      if(retry&&retry.length) groups=retry;
+    }
+    if(!groups.length){hl.innerHTML='<em>No techniques cleared the confidence threshold on two passes — this passage may genuinely be plain, or try rephrasing/shortening it.</em>';btn.disabled=false;return;}
+    const getFam=n=>{const t=findTech(n);return t?t.family:'';};
+    const getCol=n=>FAMILY_COLORS[getFam(n)]||'#888';
     let h=esc(text);
-    findings.forEach(f=>{const safe=esc(f.quote);const col=getCol(f.technique);h=h.replace(safe,`<mark class="hl" style="background:${col}" title="${esc(f.technique)}">${safe}</mark>`);});
+    groups.forEach(g=>{const safe=esc(g.quote);const col=getCol(g.techniques[0].technique);h=h.replace(safe,`<mark class="hl" style="background:${col}" title="${g.techniques.map(t=>`${t.technique} (${Math.round(t.confidence)}%)`).join(', ')}">${safe}</mark>`);});
     hl.innerHTML=h.replace(/\n/g,'<br>');
-    find.innerHTML=findings.map(f=>{const t=findTech(f.technique);const fam=t?t.family:'';const fc=FAMILY_COLORS[fam]||'#888';
-      return `<div class="finding"><div><span class="famtag" style="background:${fc}">${esc(fam||'—')}</span><strong>${esc(f.technique)}</strong></div><div class="fq">“${esc(f.quote)}”</div><div style="font-size:13px;color:var(--ink-soft)">${esc(f.explanation)}</div></div>`;
+    find.innerHTML=groups.map(g=>{
+      const rows=g.techniques.map(t=>{
+        const fam=getFam(t.technique),fc=FAMILY_COLORS[fam]||'#888',c=Math.round(t.confidence);
+        return `<div class="techrow"><div class="tr-head"><span class="famtag" style="background:${fc}">${esc(fam||'—')}</span><span class="tn">${esc(t.technique)}</span><span class="conf-pct">${c}%</span><span class="conf-tier">${confTier(c)}</span></div>
+          <div class="conf-track"><div class="conf-fill" data-w="${c}" style="background:linear-gradient(90deg,${tint(fc,.7)},${fc})"></div></div>
+          <div class="sf-expl">${esc(t.explanation)}</div></div>`;
+      }).join('');
+      return `<div class="finding"><div class="fq">“${esc(g.quote)}”</div>${rows}</div>`;
     }).join('');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      find.querySelectorAll('.conf-fill').forEach((el,i)=>{
+        setTimeout(()=>{
+          el.style.width=el.dataset.w+'%';
+          el.addEventListener('transitionend',()=>el.classList.add('sheen'),{once:true});
+        },i*80);
+      });
+    }));
   }catch(e){hl.innerHTML=`<span class="warn">⚠ ${e.message}</span>`;}
   btn.disabled=false;
 });
