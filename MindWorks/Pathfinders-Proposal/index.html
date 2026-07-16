@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathfinders — Program Proposal and Pilot Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="pf-header">
+  <div class="pf-header__brand">
+    <img src="assets/SAC_CREST_COLOUR_RGB.png" alt="St Aloysius' College crest" class="pf-header__crest">
+    <div>
+      <div class="pf-header__college">St Aloysius' College</div>
+      <div class="pf-header__title">Pathfinders</div>
+    </div>
+  </div>
+  <div class="pf-header__meta">
+    <div class="pf-header__subtitle">Program Proposal and Pilot Brief</div>
+    <div class="pf-header__tag">Specialist Extension Pilot · Years 3 to 6</div>
+  </div>
+</header>
+
+<!-- ============ FLOATING NAV ============ -->
+<nav class="pf-nav" id="pf-nav">
+  <div class="pf-nav__track">
+    <div class="pf-nav__line"></div>
+    <!-- station buttons injected by script.js -->
+  </div>
+</nav>
+
+<!-- ============ SECTION 1 — OVERVIEW ============ -->
+<section id="sec-overview" class="pf-section pf-overview">
+  <div class="pf-eyebrow-badge">Pilot Proposal · Term III, 2026</div>
+  <h1 class="pf-overview__title">A five-week specialist sprint that turns high-potential thinking into a real pathway.</h1>
+  <p class="pf-overview__lead">Pathfinders places Years 3 to 6 students of high potential onto one of four specialist lines: Justice, Innovation, Expression and Reasoning, to tackle a single shared challenge, then present a viable first response to parents in Week 5.</p>
+  <blockquote class="pf-quote">"The shared method comes from Future Problem Solving. Each line supplies a specialist lens. The parent showcase supplies the authentic audience."</blockquote>
+
+  <div class="pf-stats" id="pf-stats"><!-- injected --></div>
+
+  <div class="pf-callout">
+    <div class="pf-callout__icon">→</div>
+    <div class="pf-callout__text"><strong>Student choice, staff guided.</strong> Students rank their preferred line. Final placement balances interest, readiness and group balance across streams of six to ten students.</div>
+  </div>
+</section>
+
+<!-- ============ SECTION 2 — THE MODEL ============ -->
+<section id="sec-model" class="pf-section pf-model">
+  <div class="pf-model__inner">
+    <div class="pf-model__intro">
+      <div class="pf-eyebrow pf-eyebrow--gold">The Shared Method</div>
+      <h2 class="pf-h2 pf-h2--onDark">One future scene. One thinking process. Four specialist responses.</h2>
+      <p class="pf-model__lead">Every line works through the same six stages. Select a stage to see what happens inside it, or press play to watch the process unfold.</p>
+    </div>
+
+    <div class="pf-stage-controls">
+      <button class="pf-play-btn" id="pf-autoplay-btn" type="button">▶ Play the process</button>
+      <div class="pf-stage-controls__quicktext" id="pf-stage-quicktext"></div>
+    </div>
+
+    <div class="pf-stage-track">
+      <div class="pf-stage-track__base"></div>
+      <div class="pf-stage-track__fill" id="pf-stage-fill"></div>
+      <div class="pf-stage-track__buttons" id="pf-stage-buttons"><!-- injected --></div>
+    </div>
+
+    <div class="pf-stage-detail pf-fadein" id="pf-stage-detail"></div>
+
+    <div class="pf-scene-panel">
+      <div class="pf-scene-panel__header">
+        <div class="pf-scene-panel__label">The future scene</div>
+        <div class="pf-scene-tabs" id="pf-scene-tabs"><!-- injected --></div>
+      </div>
+      <div id="pf-scene-content"><!-- injected --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3 — THE JOURNEY ============ -->
+<section id="sec-journey" class="pf-section pf-journey">
+  <div class="pf-journey__intro">
+    <div class="pf-eyebrow pf-eyebrow--green">Five Weeks</div>
+    <h2 class="pf-h2">The journey, week by week.</h2>
+    <p class="pf-body-lead">Total contact time: approximately five hours. All four lines run in parallel and share the same weekly stage, then diverge into their own specialist task. Hover any station for more detail.</p>
+  </div>
+
+  <div class="pf-journey__gridwrap" id="pf-journey-gridwrap">
+    <div class="pf-journey__grid" id="pf-journey-grid"><!-- injected --></div>
+  </div>
+
+  <div class="pf-journey__closer">↓ Week 5 concludes with the Parent-Facing Pathfinders Showcase</div>
+</section>
+
+<!-- ============ SECTION 4 — THE FOUR LINES ============ -->
+<section id="sec-lines" class="pf-section pf-lines">
+  <div class="pf-lines__inner">
+    <div class="pf-lines__intro">
+      <div class="pf-eyebrow">The Four Lines</div>
+      <h2 class="pf-h2">Select a line to see it in full.</h2>
+      <p class="pf-body-lead">Every line is summarised below. Select one to open its complete brief: competition link, criteria, skills, deep knowledge focus, and deliverable.</p>
+    </div>
+
+    <div class="pf-line-cards" id="pf-line-cards"><!-- injected --></div>
+    <div id="pf-line-detail"><!-- injected --></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 5 — BEYOND PATHFINDERS ============ -->
+<section id="sec-beyond" class="pf-section pf-beyond">
+  <div class="pf-beyond__intro">
+    <div class="pf-eyebrow pf-eyebrow--red">Beyond The Pilot</div>
+    <h2 class="pf-h2">Each line already runs onto a competition line.</h2>
+    <p class="pf-body-lead">These are real programs the College runs today, or is building. Select a stop for more detail.</p>
+  </div>
+
+  <div class="pf-note">In Week 3, senior student mentors, expert in the matching line, join each stream to model expert practice and push groups past their first ideas.</div>
+
+  <div class="pf-roads" id="pf-roads"><!-- injected --></div>
+</section>
+
+<!-- ============ SECTION 6 — SHOWCASE ============ -->
+<section id="sec-showcase" class="pf-section pf-showcase">
+  <div class="pf-showcase__inner">
+    <div class="pf-showcase__intro">
+      <div class="pf-eyebrow pf-eyebrow--gold">Week 5</div>
+      <h2 class="pf-h2 pf-h2--onDark">The parent-facing Pathfinders Showcase.</h2>
+      <p class="pf-model__lead">The Showcase presents each group's thinking, including what they would still improve with more time. Pathfinders is not marked; growth is observed against the College's four core growth areas.</p>
+    </div>
+
+    <div class="pf-showcase__cols">
+      <div class="pf-showcase__structure">
+        <h4 class="pf-label pf-label--muted">Showcase structure</h4>
+        <div id="pf-showcase-steps"><!-- injected --></div>
+      </div>
+      <div class="pf-showcase__questions">
+        <h4 class="pf-label pf-label--gold">What parents are asked to say</h4>
+        <div id="pf-parent-questions"><!-- injected --></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="pf-footer">
+  <div>
+    <div class="pf-footer__motto">Ad Majora Natus</div>
+    <div class="pf-footer__note">Pathfinders Pilot Proposal. Prepared for Senior Leadership review, Term III 2026</div>
+  </div>
+  <div class="pf-footer__address">St Aloysius' College · 47 Upper Pitt Street, Milsons Point NSW 2061</div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
