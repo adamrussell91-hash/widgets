@@ -83,7 +83,7 @@ Implementation follows test-driven development.
 - Quotas sum exactly to arbitrary requested counts.
 - Every quota differs from its expected count by less than one ball, apart from deterministic tie allocation.
 - The same seed produces the same shuffled targets and routes.
-- Different seeds change order without changing full-batch quotas.
+- Different seeds change assignment order and may move only tied largest-remainder seats between equally ranked bins; every quota remains within one ball of its expected count.
 - Every route has ten decisions and its number of right decisions equals its target bin.
 
 ### Controller tests
