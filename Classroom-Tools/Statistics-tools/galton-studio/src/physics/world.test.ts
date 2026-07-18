@@ -68,6 +68,15 @@ describe('createPhysicsWorld', () => {
     }
   });
 
+  it('labels each peg with its physical row', () => {
+    const physics = createPhysicsWorld();
+
+    physics.geometry.pegRows.forEach(({ row, pegs }) => {
+      const bodies = physics.bodies.pegs.filter((peg) => peg.plugin.galton.pegRow === row);
+      expect(bodies).toHaveLength(pegs.length);
+    });
+  });
+
   it('uses static Matter bodies for every part of the board', () => {
     const physics = createPhysicsWorld();
     const bodies = [
