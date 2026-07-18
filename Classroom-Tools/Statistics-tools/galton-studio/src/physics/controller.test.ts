@@ -174,6 +174,22 @@ describe('GaltonController', () => {
     expect(bodies.every((body) => body.plugin.galton.nextRouteRow === 0)).toBe(true);
   });
 
+  it('consumes at most one route decision for repeated contacts in a peg row', () => {
+    const instance = tracked();
+    const ball = releaseOne(instance);
+    const internal = instance as unknown as { guideCollisions(event: unknown): void };
+    const peg = instance.snapshot().apparatusGeometry!.pegRows[0]!.pegs[0];
+    const pegBody = ((instance as any).physics.bodies.pegs as Body[])
+      .find((body) => body.plugin.galton.pegRow === 0)!;
+    const pair = { bodyA: ball, bodyB: pegBody };
+
+    internal.guideCollisions({ pairs: [pair] });
+    internal.guideCollisions({ pairs: [pair] });
+
+    expect(ball.plugin.galton.nextRouteRow).toBe(1);
+    expect(peg).toBeDefined();
+  });
+
   it('regenerates only unreleased assignments after a Keep-mode change', () => {
     const instance = tracked();
     const released = releaseOne(instance);
@@ -539,28 +555,21 @@ describe('GaltonController', () => {
     expect(instance.snapshot()).toMatchObject({ hopperCount: 100, activeCount: 0, recycledCount: 2 });
   });
 
-  it('applies the exact capped guidance force only on an eligible targeted peg contact', () => {
+  it('applies the allocated bounded route impulse on an eligible targeted peg contact', () => {
     const guided = tracked({ ...neutral, skew: 1 });
     const ball = releaseOne(guided);
-    const targetBin = ball.plugin.galton.targetBin as number;
-    const geometry = createBoardGeometry();
-    const peg = geometry.pegRows.flatMap(({ pegs }) => pegs)
-      .sort((a, b) => Math.abs(b.x - geometry.bins[targetBin]!.centreX)
-        - Math.abs(a.x - geometry.bins[targetBin]!.centreX))[0]!;
+    const internal = guided as unknown as { guideCollisions(event: unknown): void };
+    const pegBody = ((guided as any).physics.bodies.pegs as Body[])
+      .find((body) => body.plugin.galton.pegRow === 0)!;
+    ball.plugin.galton.route = [-1];
     const applyForce = vi.spyOn(Body, 'applyForce');
-    Body.setPosition(ball, { x: peg.x, y: peg.y - BOARD.pegRadius - BOARD.ballRadius - 2 });
-    Body.setVelocity(ball, { x: 0, y: 2 });
-    Sleeping.set(ball, false);
 
-    advance(guided, 200);
+    internal.guideCollisions({ pairs: [{ bodyA: ball, bodyB: pegBody }] });
+    guided.step(1000 / 120);
 
     const call = applyForce.mock.calls.find(([subject]) => subject === ball);
     expect(call).toBeDefined();
-    const [, position, force] = call!;
-    const targetX = geometry.bins[targetBin]!.centreX;
-    const direction = Math.sign(targetX - position.x);
-    const distanceFactor = Math.min(1, Math.abs(targetX - position.x) / 220);
-    expect(force).toEqual({ x: direction * distanceFactor * 0.000018, y: 0 });
+    expect(call).toEqual([ball, ball.position, { x: -0.000055, y: 0 }]);
   });
 
   it('does not apply guidance on an untargeted peg contact', () => {
@@ -582,15 +591,10 @@ describe('GaltonController', () => {
     const guided = tracked({ ...neutral, skew: 1 });
     const targeted = releaseOne(guided);
     const other = guided.snapshot().ballBodies.find((body) => !body.plugin.galton.released)!;
+    const internal = guided as unknown as { guideCollisions(event: unknown): void };
     const applyForce = vi.spyOn(Body, 'applyForce');
-    Body.setPosition(targeted, { x: 200, y: 300 });
-    Body.setPosition(other, { x: 210, y: 300 });
-    Body.setVelocity(targeted, { x: 1, y: 0 });
-    Body.setVelocity(other, { x: -1, y: 0 });
-    Sleeping.set(targeted, false);
-    Sleeping.set(other, false);
 
-    guided.step(1000 / 120);
+    internal.guideCollisions({ pairs: [{ bodyA: targeted, bodyB: other }] });
 
     expect(applyForce.mock.calls.some(([subject]) => subject === targeted)).toBe(false);
   });
