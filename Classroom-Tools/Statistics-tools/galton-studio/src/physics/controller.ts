@@ -7,7 +7,8 @@ import {
   Sleeping,
   type IEventCollision,
 } from 'matter-js';
-import { buildExpectedPmf, modeFor, sampleBin } from '../model/distribution';
+import { buildBallAssignments, type BallAssignment } from '../model/allocation';
+import { buildExpectedPmf, modeFor } from '../model/distribution';
 import { createRng, type Rng } from '../model/prng';
 import {
   BATCH_SIZE,
@@ -194,6 +195,7 @@ export class GaltonController {
     this.seed = seed;
     this.rng = createRng(seed);
     this.loadPhysicalBalls(BATCH_SIZE);
+    this.assignUnreleasedBalls();
     this.warmUp();
     this.status = 'ready';
     this.accumulatorMs = 0;
@@ -207,6 +209,7 @@ export class GaltonController {
       this.moveHopper(settings.hopperPosition);
     }
     this.settings = cloneSettings(settings);
+    this.assignUnreleasedBalls();
     this.notify();
   }
 
@@ -265,6 +268,7 @@ export class GaltonController {
     this.rng = createRng(seed);
     Events.on(this.physics.engine, 'collisionStart', this.collisionHandler);
     this.loadPhysicalBalls(BATCH_SIZE);
+    this.assignUnreleasedBalls();
     this.warmUp();
   }
 
@@ -302,7 +306,22 @@ export class GaltonController {
     return positions;
   }
 
-  private createBall(x: number, y: number) {
+  private assignUnreleasedBalls() {
+    const waiting = [...this.balls.values()].filter(({ released }) => !released);
+    const assignments = buildBallAssignments(
+      buildExpectedPmf(this.settings),
+      waiting.length,
+      this.rng,
+    );
+    waiting.forEach(({ body }, index) => {
+      const assignment = assignments[index]!;
+      body.plugin.galton.targetBin = assignment.targetBin;
+      body.plugin.galton.route = [...assignment.route];
+      body.plugin.galton.nextRouteRow = 0;
+    });
+  }
+
+  private createBall(x: number, y: number, assignment?: BallAssignment) {
     const ballId = this.nextBallId;
     this.nextBallId += 1;
     const collisionRadius = (
@@ -323,7 +342,9 @@ export class GaltonController {
           ballId,
           released: false,
           settled: false,
-          targetBin: null,
+          targetBin: assignment?.targetBin ?? null,
+          route: [...(assignment?.route ?? [])],
+          nextRouteRow: 0,
         },
       },
     });
@@ -414,7 +435,6 @@ export class GaltonController {
     crossing.body.plugin.galton.released = true;
     const pmf = buildExpectedPmf(this.settings);
     const mode = modeFor(this.settings);
-    crossing.body.plugin.galton.targetBin = mode === 'guided' ? sampleBin(pmf, this.rng) : null;
     const previous = this.regimes.at(-1);
     if (previous && settingsMatch(previous, pmf, mode)) previous.released += 1;
     else this.regimes.push({ pmf: [...pmf], released: 1, mode });
@@ -463,12 +483,16 @@ export class GaltonController {
     }
     if (this.simulationTimeMs - state.outsideSinceMs < RECYCLE_DWELL_MS) return false;
 
+    const assignment: BallAssignment = {
+      targetBin: state.body.plugin.galton.targetBin as number,
+      route: [...(state.body.plugin.galton.route ?? [])],
+    };
     Composite.remove(this.physics.world, state.body);
     this.balls.delete(state.body.id);
     this.cancelReleaseTimers();
     this.closeGate();
     const replacementPosition = this.findReplacementPosition();
-    const replacement = this.createBall(replacementPosition.x, replacementPosition.y);
+    const replacement = this.createBall(replacementPosition.x, replacementPosition.y, assignment);
     Composite.add(this.physics.world, replacement);
     this.recycledCount += 1;
     if (this.status === 'settling') this.status = 'running';

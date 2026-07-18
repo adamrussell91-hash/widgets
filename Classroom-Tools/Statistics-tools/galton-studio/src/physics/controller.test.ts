@@ -162,14 +162,35 @@ describe('GaltonController', () => {
     expect(released.position).toEqual(releasedBefore);
   });
 
-  it('assigns guidance targets only to released balls in guided mode', () => {
-    const natural = tracked();
-    const guided = tracked({ ...neutral, skew: 0.7 });
+  it.each([
+    ['neutral', neutral],
+    ['skewed', { ...neutral, skew: 0.7 }],
+    ['heavy-tailed', { ...neutral, kurtosis: 6 }],
+  ])('preassigns balanced targets and routes in %s mode', (_label, settings) => {
+    const instance = tracked(settings);
+    const bodies = instance.snapshot().ballBodies;
+    expect(bodies.every((body) => Number.isInteger(body.plugin.galton.targetBin))).toBe(true);
+    expect(bodies.every((body) => body.plugin.galton.route?.length === 10)).toBe(true);
+    expect(bodies.every((body) => body.plugin.galton.nextRouteRow === 0)).toBe(true);
+  });
 
-    expect(releaseOne(natural).plugin.galton.targetBin).toBeNull();
-    const guidedBall = releaseOne(guided);
-    expect(guidedBall.plugin.galton.targetBin).toBeGreaterThanOrEqual(0);
-    expect(guidedBall.plugin.galton.targetBin).toBeLessThanOrEqual(10);
+  it('regenerates only unreleased assignments after a Keep-mode change', () => {
+    const instance = tracked();
+    const released = releaseOne(instance);
+    const releasedAssignment = {
+      targetBin: released.plugin.galton.targetBin,
+      route: [...(released.plugin.galton.route ?? [])],
+    };
+    const waitingBefore = instance.snapshot().ballBodies
+      .filter((body) => !body.plugin.galton.released)
+      .map((body) => body.plugin.galton.targetBin);
+    instance.setSettings({ ...neutral, skew: 0.8 });
+    const waitingAfter = instance.snapshot().ballBodies
+      .filter((body) => !body.plugin.galton.released)
+      .map((body) => body.plugin.galton.targetBin);
+    expect(released.plugin.galton.targetBin).toBe(releasedAssignment.targetBin);
+    expect(released.plugin.galton.route).toEqual(releasedAssignment.route);
+    expect(waitingAfter).not.toEqual(waitingBefore);
   });
 
   it('emits settled exactly once and preserves the original body, id, and transform in the Matter world', () => {
@@ -460,6 +481,12 @@ describe('GaltonController', () => {
   it('removes a lost active body after two seconds and physically replaces it in the hopper', () => {
     const instance = tracked();
     const lost = releaseOne(instance);
+    const originalIds = new Set(instance.snapshot().ballBodies.map(({ id }) => id));
+    const assignment = {
+      targetBin: lost.plugin.galton.targetBin,
+      route: [...(lost.plugin.galton.route ?? [])],
+    };
+    lost.plugin.galton.nextRouteRow = 4;
     Body.setPosition(lost, { x: -BOARD.ballRadius - 5, y: 300 });
     Body.setVelocity(lost, { x: 0, y: 0 });
 
@@ -474,7 +501,10 @@ describe('GaltonController', () => {
     expect(snapshot.activeCount).toBe(0);
     expect(snapshot.settledBins).toEqual([]);
     expect(snapshot.recycledCount).toBe(1);
-    const replacement = snapshot.ballBodies.find((body) => !body.plugin.galton.released)!;
+    const replacement = snapshot.ballBodies.find(({ id }) => !originalIds.has(id))!;
+    expect(replacement.plugin.galton.targetBin).toBe(assignment.targetBin);
+    expect(replacement.plugin.galton.route).toEqual(assignment.route);
+    expect(replacement.plugin.galton.nextRouteRow).toBe(0);
     const hopper = createBoardGeometry().hopper;
     expect(replacement.position.y).toBeGreaterThan(hopper.top);
     expect(replacement.position.y).toBeLessThan(hopper.bottom);
@@ -536,6 +566,7 @@ describe('GaltonController', () => {
   it('does not apply guidance on an untargeted peg contact', () => {
     const natural = tracked();
     const ball = releaseOne(natural);
+    ball.plugin.galton.targetBin = null;
     const peg = createBoardGeometry().pegRows[0]!.pegs[0]!;
     const applyForce = vi.spyOn(Body, 'applyForce');
     Body.setPosition(ball, { x: peg.x, y: peg.y - BOARD.pegRadius - BOARD.ballRadius - 2 });
