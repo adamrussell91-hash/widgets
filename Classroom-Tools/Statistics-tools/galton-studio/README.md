@@ -36,7 +36,7 @@ The Vite build uses relative asset paths, so the same build works for a user sit
 
 ### Model-driven physics
 
-Every distribution is model-driven and physically animated. The active probability mass function (PMF) allocates balanced seeded targets across each batch, including the centred, symmetric reference PMF and shaped PMFs requested through skewness or kurtosis controls. Real Matter.js bodies then collide with the physical board while bounded peg-contact steering keeps them on routes to those targets.
+Every distribution is model-driven and physically animated. The active probability mass function (PMF) allocates balanced seeded targets across each batch, including the binomial PMF affected by hopper position and shaped PMFs requested through skewness or kurtosis controls. Real Matter.js bodies then collide with the physical board while bounded peg-contact steering keeps them on routes to those targets.
 
 Observed variation is in each ball's path and arrival order. Full-batch target quotas are intentionally kept close to the active PMF expectation, making the comparison reliable enough for classroom discussion rather than claiming that an unmodified physical board would independently produce every requested distribution shape.
 
