@@ -1,4 +1,5 @@
 import { Bodies, Composite, Engine, type Body } from 'matter-js';
+import type { RouteDirection } from '../model/allocation';
 import { createBoardGeometry, BOARD, type BoardGeometry, type Point } from './geometry';
 
 export type BodyTag =
@@ -18,6 +19,9 @@ export interface GaltonBodyPlugin {
     released?: boolean;
     settled?: boolean;
     targetBin?: number | null;
+    pegRow?: number;
+    route?: RouteDirection[];
+    nextRouteRow?: number;
   };
 }
 
@@ -87,8 +91,11 @@ export function createPhysicsWorld(hopperPosition = 0): PhysicsWorld {
   engine.gravity.scale = 0.001;
 
   const geometry = createBoardGeometry(hopperPosition);
-  const pegs = geometry.pegRows.flatMap(({ pegs }) => pegs.map(({ x, y }) => (
-    Bodies.circle(x, y, BOARD.pegRadius, staticBodyOptions('peg'))
+  const pegs = geometry.pegRows.flatMap(({ row, pegs }) => pegs.map(({ x, y }) => (
+    Bodies.circle(x, y, BOARD.pegRadius, {
+      ...staticBodyOptions('peg'),
+      plugin: { galton: { tag: 'peg', pegRow: row } },
+    })
   )));
   const rails = [geometry.leftRail, geometry.rightRail].map(({ centre, width, height, angle }) => (
     Bodies.rectangle(centre.x, centre.y, width, height, { ...staticBodyOptions('rail'), angle })
