@@ -39,6 +39,8 @@ const MAX_STEERING_SPEED = 4;
 const MAX_STEERING_IMPULSE = 1;
 const STEERING_GAIN = 0.3;
 const PEG_ESCAPE_VERTICAL_SPEED = 0.5;
+const HOPPER_FEED_VERTICAL_SPEED = 2;
+const HOPPER_FEED_HORIZONTAL_SPEED = 1.5;
 
 export interface GaltonSnapshot {
   status: RunStatus;
@@ -49,9 +51,18 @@ export interface GaltonSnapshot {
   regimes: readonly DistributionRegime[];
   canRefill: boolean;
   recycledCount: number;
+  settlementDiagnostics: readonly BallSettlementDiagnostic[];
   apparatusGeometry?: BoardGeometry;
   gatePosition?: Point;
   gateOpen?: boolean;
+}
+
+export interface BallSettlementDiagnostic {
+  logicalBallId: number;
+  physicalBodyId: number;
+  targetBin: number | null;
+  settledBin: number;
+  matchesTarget: boolean;
 }
 
 export interface GaltonControllerOptions {
@@ -111,6 +122,7 @@ export class GaltonController {
   private rng!: Rng;
   private balls = new Map<number, BallState>();
   private settledBins: number[] = [];
+  private settlementDiagnostics: BallSettlementDiagnostic[] = [];
   private regimes: DistributionRegime[] = [];
   private cachedSnapshot: GaltonSnapshot | null = null;
   private listeners = new Set<SnapshotListener>();
@@ -149,6 +161,7 @@ export class GaltonController {
       regimes: this.regimes.map((regime) => ({ ...regime, pmf: [...regime.pmf] })),
       canRefill: this.status === 'complete' && states.length + BATCH_SIZE <= MAX_SETTLED_BALLS,
       recycledCount: this.recycledCount,
+      settlementDiagnostics: this.settlementDiagnostics.map((diagnostic) => ({ ...diagnostic })),
       apparatusGeometry: this.physics.geometry,
       gatePosition: { ...this.physics.bodies.gate.position },
       gateOpen: this.gateOpen,
@@ -215,6 +228,7 @@ export class GaltonController {
     this.pendingRouteImpulses = [];
     this.balls.clear();
     this.settledBins = [];
+    this.settlementDiagnostics = [];
     this.regimes = [];
     this.createBatchWorld(options.seed);
     this.notify();
@@ -459,6 +473,7 @@ export class GaltonController {
   private afterFixedStep() {
     this.flushRouteImpulses();
     this.captureGateCrossing();
+    this.applyHopperFeed();
     for (const state of [...this.balls.values()]) {
       if (!state.released || state.settledBin !== null) continue;
       if (this.recycleIfLost(state)) continue;
@@ -473,6 +488,21 @@ export class GaltonController {
     }
     this.updateCompletion();
     this.notify();
+  }
+
+  private applyHopperFeed() {
+    if (this.status !== 'running' || !this.gateOpen) return;
+    const waiting = [...this.balls.values()].filter(({ released }) => !released);
+    const next = waiting.reduce<BallState | null>((lowest, state) => (
+      lowest === null || state.body.position.y > lowest.body.position.y ? state : lowest
+    ), null);
+    if (!next) return;
+    const deltaX = this.physics.geometry.hopper.throatX - next.body.position.x;
+    Sleeping.set(next.body, false);
+    Body.setVelocity(next.body, {
+      x: Math.max(-HOPPER_FEED_HORIZONTAL_SPEED, Math.min(HOPPER_FEED_HORIZONTAL_SPEED, deltaX)),
+      y: Math.max(next.body.velocity.y, HOPPER_FEED_VERTICAL_SPEED),
+    });
   }
 
   private captureGateCrossing() {
@@ -581,6 +611,16 @@ export class GaltonController {
     state.settledBin = bin;
     state.body.plugin.galton.settled = true;
     this.settledBins.push(bin);
+    const targetBin = typeof state.body.plugin.galton.targetBin === 'number'
+      ? state.body.plugin.galton.targetBin
+      : null;
+    this.settlementDiagnostics.push({
+      logicalBallId: state.logicalBallId,
+      physicalBodyId: state.body.id,
+      targetBin,
+      settledBin: bin,
+      matchesTarget: targetBin === bin,
+    });
     Sleeping.set(state.body, true);
     Events.trigger(state.body, 'settled', { bin });
   }
