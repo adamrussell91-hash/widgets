@@ -325,7 +325,7 @@ export function ControlPanel({
       </div>
 
       <p className="control-panel__mode">
-        {mode === 'natural' ? 'Natural physics' : 'Guided demonstration'}
+        {mode === 'natural' ? 'Model-driven physics' : 'Shaped model-driven physics'}
       </p>
     </section>
   );

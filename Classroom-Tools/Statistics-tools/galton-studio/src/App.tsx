@@ -149,7 +149,7 @@ function ExperimentApp() {
               <p className="eyebrow">Physical apparatus</p>
               <h2 id="physical-board-heading">Physical Galton board</h2>
             </div>
-            <span className="mode-chip">{mode === 'natural' ? 'Natural physics' : 'Guided demonstration'}</span>
+            <span className="mode-chip">{mode === 'natural' ? 'Model-driven physics' : 'Shaped model-driven physics'}</span>
           </div>
           {snapshot.status === 'ready' && summary.count === 0 && snapshot.activeCount === 0 && (
             <aside className="prediction-prompt" aria-label="Prediction prompt">

@@ -6,6 +6,8 @@ export interface EducationPanelProps {
 }
 
 export function EducationPanel({ mode, hasMixedRegimes }: EducationPanelProps) {
+  const pmfFamily = mode === 'natural' ? 'centred, symmetric PMF' : 'shaped PMF';
+
   return (
     <section className="education-panel" aria-labelledby="interpretation-heading">
       <h3 id="interpretation-heading">Interpret the experiment</h3>
@@ -45,15 +47,20 @@ export function EducationPanel({ mode, hasMixedRegimes }: EducationPanelProps) {
           </p>
         )}
       </details>
-      {mode === 'guided' && (
-        <details open>
-          <summary role="button" style={{ minBlockSize: 44 }}>Why is this a Guided demonstration?</summary>
-          <p>
-            Guided mode uses small, controlled impulses because a physical board alone cannot
-            independently create every requested distribution shape.
-          </p>
-        </details>
-      )}
+      <details open>
+        <summary role="button" style={{ minBlockSize: 44 }}>Why is this model-driven physics?</summary>
+        <p>
+          The active {pmfFamily} creates a balanced allocation of seeded target bins for each batch.
+        </p>
+        <p>
+          Physical Matter.js bodies collide with the board; bounded peg-contact steering keeps them on
+          their assigned routes.
+        </p>
+        <p>
+          Paths and arrival order vary, while full-batch quotas are intentionally kept close to the
+          model expectation for classroom reliability.
+        </p>
+      </details>
     </section>
   );
 }
