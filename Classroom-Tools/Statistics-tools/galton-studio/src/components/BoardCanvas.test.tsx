@@ -68,6 +68,7 @@ function snapshot(): GaltonSnapshot {
     regimes: [],
     canRefill: false,
     recycledCount: 0,
+    settlementDiagnostics: [],
   };
 }
 

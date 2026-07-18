@@ -99,6 +99,7 @@ function snapshot(status: RunStatus, positions = [{ x: 123, y: 234 }, { x: 456, 
     regimes: [],
     canRefill: false,
     recycledCount: 0,
+    settlementDiagnostics: [],
   };
 }
 
