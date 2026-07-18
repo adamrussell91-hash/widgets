@@ -44,7 +44,7 @@ export function StatsPanel({ summary, mode, hasMixedRegimes }: StatsPanelProps) 
             ? 'Early result—expect instability'
             : 'Observed summary'}
       </p>
-      <p>{mode === 'natural' ? 'Natural physics' : 'Guided demonstration'}</p>
+      <p>{mode === 'natural' ? 'Model-driven physics' : 'Shaped model-driven physics'}</p>
       <p>{hasMixedRegimes ? 'Combined expected model' : 'Expected model'}</p>
 
       <dl className="statistics-panel__values">

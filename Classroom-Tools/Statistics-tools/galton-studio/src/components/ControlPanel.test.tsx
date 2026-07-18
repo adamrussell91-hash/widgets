@@ -60,7 +60,7 @@ describe('ControlPanel', () => {
     expect(screen.getByText('Heavier tails')).toBeInTheDocument();
     expect(screen.getByText('Slowest: 1 ball/s')).toBeInTheDocument();
     expect(screen.getByText('Fastest: 12 balls/s')).toBeInTheDocument();
-    expect(screen.getByText('Natural physics')).toBeInTheDocument();
+    expect(screen.getByText('Model-driven physics')).toBeInTheDocument();
   });
 
   it('describes the full qualitative scale for every slider', () => {
@@ -122,7 +122,7 @@ describe('ControlPanel', () => {
 
   it('uses the experiment mode supplied by the hook', () => {
     render(<ControlPanel {...props({ mode: 'guided' })} />);
-    expect(screen.getByText('Guided demonstration')).toBeInTheDocument();
+    expect(screen.getByText('Shaped model-driven physics')).toBeInTheDocument();
   });
 
   it('updates a slider from the keyboard', async () => {

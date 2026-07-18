@@ -12,6 +12,7 @@ describe('StatsPanel', () => {
     );
 
     expect(screen.getByText('Collecting data')).toBeInTheDocument();
+    expect(screen.getByText('Model-driven physics')).toBeInTheDocument();
     expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(4);
     expect(screen.getByText(/A statistic needs settled balls/)).toBeInTheDocument();
     expect(container).not.toHaveTextContent(/NaN|Infinity/);
@@ -66,7 +67,7 @@ describe('StatsPanel', () => {
     expect(container).not.toHaveTextContent(/NaN|Infinity/);
   });
 
-  it('uses accurate Guided demonstration and mixed-model teaching copy', () => {
+  it('uses accurate shaped model-driven and mixed-model teaching copy', () => {
     render(
       <StatsPanel
         summary={summarizeSettledBins([1, 2, 3])}
@@ -75,9 +76,9 @@ describe('StatsPanel', () => {
       />,
     );
 
-    expect(screen.getByText('Guided demonstration')).toBeInTheDocument();
+    expect(screen.getByText('Shaped model-driven physics')).toBeInTheDocument();
     expect(screen.getByText('Combined expected model')).toBeInTheDocument();
-    expect(screen.getByText(/small, controlled impulses/i)).toBeInTheDocument();
+    expect(screen.getByText(/bounded peg-contact steering/i)).toBeInTheDocument();
     expect(screen.getByText(/tail weight and the propensity for outliers/i)).toBeInTheDocument();
     expect(screen.getByText(/direction of the longer tail/i)).toBeInTheDocument();
     expect(screen.getByText(/red curve shows what the model expected/i)).toBeInTheDocument();

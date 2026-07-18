@@ -34,9 +34,11 @@ The Vite build uses relative asset paths, so the same build works for a user sit
 
 ## How to interpret the experiment
 
-### Natural physics and Guided demonstration
+### Model-driven physics
 
-With centred, symmetric, mesokurtic settings, **Natural physics** lets gravity and collisions determine every path. Asking one fixed physical board to produce arbitrary skewness or tail weight is not physically possible, so changed skewness or kurtosis uses the clearly labelled **Guided demonstration**. Guided mode keeps the collisions and falling motion, but adds small controlled impulses to make the requested shape visible. It is a model demonstration, not a claim that the unmodified apparatus would create that distribution by itself.
+Every distribution is model-driven and physically animated. The active probability mass function (PMF) allocates balanced seeded targets across each batch, including the centred, symmetric reference PMF and shaped PMFs requested through skewness or kurtosis controls. Real Matter.js bodies then collide with the physical board while bounded peg-contact steering keeps them on routes to those targets.
+
+Observed variation is in each ball's path and arrival order. Full-batch target quotas are intentionally kept close to the active PMF expectation, making the comparison reliable enough for classroom discussion rather than claiming that an unmodified physical board would independently produce every requested distribution shape.
 
 If parameters change while **Keep** is selected, the displayed expected model combines regimes, weighted by how many balls were released under each one. **Reset** instead starts a clean experiment with the new settings.
 

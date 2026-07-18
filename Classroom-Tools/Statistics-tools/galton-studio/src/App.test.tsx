@@ -73,7 +73,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Experiment controls' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Live statistics' })).toBeInTheDocument();
     expect(screen.getAllByRole('group', { name: /Bin \d+:/ })).toHaveLength(11);
-    expect(screen.getAllByText('Natural physics').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Model-driven physics').length).toBeGreaterThan(0);
     expect(screen.getByRole('button', { name: 'Run' })).toBeEnabled();
     expect(screen.getByText('Total observations')).toBeInTheDocument();
     expect(within(screen.getByRole('banner')).getByText('0 observations')).toBeInTheDocument();
