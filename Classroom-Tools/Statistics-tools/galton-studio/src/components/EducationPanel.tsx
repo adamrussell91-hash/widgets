@@ -6,7 +6,7 @@ export interface EducationPanelProps {
 }
 
 export function EducationPanel({ mode, hasMixedRegimes }: EducationPanelProps) {
-  const pmfFamily = mode === 'natural' ? 'centred, symmetric PMF' : 'shaped PMF';
+  const pmfFamily = mode === 'natural' ? 'binomial PMF' : 'shaped PMF';
 
   return (
     <section className="education-panel" aria-labelledby="interpretation-heading">

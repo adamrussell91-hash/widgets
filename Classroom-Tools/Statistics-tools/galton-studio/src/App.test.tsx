@@ -87,6 +87,20 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Interpret the experiment' })).toBeInTheDocument();
   });
 
+  it('labels and discloses a shaped model-driven PMF at the app render site', () => {
+    experiment.current = {
+      ...experiment.current,
+      settings: { ...experiment.current.settings, skew: 0.4 },
+      mode: 'guided',
+    };
+
+    render(<App />);
+
+    const board = screen.getByRole('region', { name: 'Physical Galton board' });
+    expect(within(board).getByText('Shaped model-driven physics')).toBeInTheDocument();
+    expect(screen.getByText(/active shaped PMF creates a balanced allocation/i)).toBeInTheDocument();
+  });
+
   it('removes the prediction prompt once the physical experiment begins', () => {
     const { rerender } = render(<App />);
     expect(screen.getByText('Before you run')).toBeInTheDocument();
