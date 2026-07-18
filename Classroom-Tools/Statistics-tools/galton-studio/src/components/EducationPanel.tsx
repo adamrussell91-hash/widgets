@@ -43,22 +43,27 @@ export function EducationPanel({ mode, hasMixedRegimes }: EducationPanelProps) {
         {hasMixedRegimes && (
           <p>
             The Combined expected model weights each set of parameters by the number of balls
-            released under it.
+            released under it. It describes the release-weighted expectation, but locked earlier
+            assignments mean a Keep change does not create a single whole-run quota bound.
           </p>
         )}
       </details>
       <details open>
         <summary role="button" style={{ minBlockSize: 44 }}>Why is this model-driven physics?</summary>
         <p>
-          The active {pmfFamily} creates a balanced allocation of seeded target bins for each batch.
+          The active {pmfFamily} creates seeded largest-remainder target quotas for each fixed-PMF
+          allocation segment: a new or refilled batch, or the still-unassigned waiting balls after a
+          genuine Keep change. Within that segment, each bin target is less than one ball from its
+          PMF expectation.
         </p>
         <p>
-          Physical Matter.js bodies collide with the board; bounded peg-contact steering keeps them on
-          their assigned routes.
+          A bounded hopper-feed velocity correction meters unreleased bodies through the open physical
+          gate. Released Matter.js bodies then receive bounded peg-contact impulses plus continuous
+          bounded between-row horizontal velocity correction toward their assigned absolute routes.
         </p>
         <p>
-          Paths and arrival order vary, while full-batch quotas are intentionally kept close to the
-          model expectation for classroom reliability.
+          Steering stops above the collection area. Collisions, funnels, dividers, and the physical
+          resting classifier determine the recorded bin; a miss is reported, never relabelled.
         </p>
       </details>
     </section>

@@ -36,11 +36,11 @@ The Vite build uses relative asset paths, so the same build works for a user sit
 
 ### Model-driven physics
 
-Every distribution is model-driven and physically animated. The active probability mass function (PMF) allocates balanced seeded targets across each batch, including the binomial PMF affected by hopper position and shaped PMFs requested through skewness or kurtosis controls. Real Matter.js bodies then collide with the physical board while bounded peg-contact steering keeps them on routes to those targets.
+Every distribution is model-driven and physically animated. The active probability mass function (PMF) creates seeded largest-remainder target quotas for each fixed-PMF allocation segment. A segment is a newly loaded or refilled batch, or the still-unassigned waiting balls reallocated after a genuine **Keep** change. Within that segment, each bin target differs from its PMF expectation by less than one ball. The guarantee does not extend to one cumulative quota bound across a locked prefix and a later, different PMF.
 
-Observed variation is in each ball's path and arrival order. Full-batch target quotas are intentionally kept close to the active PMF expectation, making the comparison reliable enough for classroom discussion rather than claiming that an unmodified physical board would independently produce every requested distribution shape.
+A bounded hopper-feed velocity correction meters the lowest unreleased body through the open physical gate. Once released, each real Matter.js body collides with the board and receives bounded peg-contact impulses plus continuous bounded between-row horizontal velocity correction toward a continuous absolute route. Steering stops above the funnels and collection area. The physical resting classifier records the bin where the body actually settles; a target mismatch is exposed in controller diagnostics and is never hidden by relabelling or repositioning the body.
 
-If parameters change while **Keep** is selected, the displayed expected model combines regimes, weighted by how many balls were released under each one. **Reset** instead starts a clean experiment with the new settings.
+If parameters change while **Keep** is selected, released logical balls retain their assignments and regime identity, while eligible waiting balls receive a new fixed-PMF allocation segment. The displayed expected model combines regimes, weighted by how many logical balls were first released under each one. That curve is a release-weighted expectation, not a claim that the mixed run has a single largest-remainder quota. **Reset** instead starts a clean experiment with the new settings.
 
 ### Descriptive statistics
 
