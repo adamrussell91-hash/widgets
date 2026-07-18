@@ -143,7 +143,7 @@ function createBins(): readonly BinGeometry[] {
 }
 
 function createFunnels(dividerXs: readonly number[]): readonly FunnelGeometry[] {
-  return Object.freeze(dividerXs.slice(1, -1).flatMap((dividerX) => ([
+  const interior = dividerXs.slice(1, -1).flatMap((dividerX) => ([
     Object.freeze({
       start: frozenPoint(dividerX, BOARD.funnelTop),
       end: frozenPoint(dividerX - BOARD.funnelHalfSpan, BOARD.binTop),
@@ -154,7 +154,22 @@ function createFunnels(dividerXs: readonly number[]): readonly FunnelGeometry[] 
       end: frozenPoint(dividerX + BOARD.funnelHalfSpan, BOARD.binTop),
       width: BOARD.funnelWidth,
     }),
-  ])));
+  ]));
+  const left = dividerXs[0]!;
+  const right = dividerXs.at(-1)!;
+  return Object.freeze([
+    Object.freeze({
+      start: frozenPoint(left - BOARD.funnelHalfSpan * 3, BOARD.funnelTop),
+      end: frozenPoint(left, BOARD.binTop),
+      width: BOARD.funnelWidth,
+    }),
+    ...interior,
+    Object.freeze({
+      start: frozenPoint(right + BOARD.funnelHalfSpan * 3, BOARD.funnelTop),
+      end: frozenPoint(right, BOARD.binTop),
+      width: BOARD.funnelWidth,
+    }),
+  ]);
 }
 
 export function createBoardGeometry(hopperPosition = 0): BoardGeometry {

@@ -68,23 +68,23 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByRole('heading', { level: 1, name: 'Galton Studio' })).toBeInTheDocument();
-    expect(screen.getByText('Probability made physical.')).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Physical Galton board' })).toBeInTheDocument();
+    expect(screen.getByText('See a distribution take shape.')).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Galton board' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Experiment controls' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Live statistics' })).toBeInTheDocument();
     expect(screen.getAllByRole('group', { name: /Bin \d+:/ })).toHaveLength(11);
-    expect(screen.getAllByText('Model-driven physics').length).toBeGreaterThan(0);
+    expect(screen.getByText('Classic bell curve')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Run' })).toBeEnabled();
     expect(screen.getByText('Total observations')).toBeInTheDocument();
     expect(within(screen.getByRole('banner')).getByText('0 observations')).toBeInTheDocument();
     expect(screen.getByText('Before you run')).toBeInTheDocument();
-    expect(screen.getByText('Which bin do you predict will collect the most balls—and why?')).toBeInTheDocument();
+    expect(screen.getByText('Which bin will collect the most balls?')).toBeInTheDocument();
     expect(screen.getByRole('list', { name: 'Values directly beneath the board bins' })).toBeInTheDocument();
     expect(
-      within(screen.getByRole('region', { name: 'Physical Galton board' }))
+      within(screen.getByRole('region', { name: 'Galton board' }))
         .getByRole('list', { name: 'Bin details beside the board' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Interpret the experiment' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Quick guide' })).toBeInTheDocument();
   });
 
   it('labels and discloses a shaped model-driven PMF at the app render site', () => {
@@ -96,9 +96,9 @@ describe('App', () => {
 
     render(<App />);
 
-    const board = screen.getByRole('region', { name: 'Physical Galton board' });
-    expect(within(board).getByText('Shaped model-driven physics')).toBeInTheDocument();
-    expect(screen.getByText(/active shaped PMF creates seeded largest-remainder target quotas/i))
+    const board = screen.getByRole('region', { name: 'Galton board' });
+    expect(within(board).getByText('Custom distribution')).toBeInTheDocument();
+    expect(screen.getByText(/Your shape controls change the expected distribution/i))
       .toBeInTheDocument();
   });
 
@@ -119,7 +119,7 @@ describe('App', () => {
     render(<App />);
 
     const controls = screen.getByRole('region', { name: 'Experiment controls' });
-    const board = screen.getByRole('region', { name: 'Physical Galton board' });
+    const board = screen.getByRole('region', { name: 'Galton board' });
     const statistics = screen.getByRole('complementary', { name: 'Live statistics' });
 
     expect(controls.compareDocumentPosition(board) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -239,8 +239,8 @@ describe('App', () => {
     expect(screen.getByRole('link', { name: 'Skip to experiment' })).toHaveAttribute('href', '#experiment');
   });
 
-  it('shows the deployed distribution-correction build identifier', () => {
+  it('does not expose an internal build identifier in the interface', () => {
     render(<App />);
-    expect(screen.getByText('Distribution fix build 2')).toBeInTheDocument();
+    expect(screen.queryByText(/build \d+/i)).not.toBeInTheDocument();
   });
 });

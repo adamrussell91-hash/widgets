@@ -1,12 +1,12 @@
 :root {
-  --ink: #18364b;
+  --ink: #142b51;
   --muted: #536f80;
-  --paper: #edf6fa;
-  --glass: rgba(255, 255, 255, 0.62);
-  --glass-border: rgba(255, 255, 255, 0.92);
-  --cobalt: #1259a6;
-  --teal: #087fa7;
-  --theory: #cf3038;
+  --paper: #fbfaf6;
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.96);
+  --cobalt: #376fb7;
+  --teal: #376fb7;
+  --theory: #f68620;
   --focus: #075d96;
   --text-secondary: #506d7e;
   --line: rgba(73, 119, 145, 0.22);
@@ -58,10 +58,10 @@ body {
   margin: 0;
   background-color: var(--paper);
   background-image:
-    linear-gradient(rgba(48, 110, 143, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(48, 110, 143, 0.045) 1px, transparent 1px);
-  background-size: 22px 22px;
-  font-size: 16px;
+    radial-gradient(circle at 8% 10%, rgba(240, 207, 172, 0.3), transparent 27rem),
+    radial-gradient(circle at 92% 30%, rgba(234, 231, 218, 0.72), transparent 32rem);
+  background-attachment: fixed;
+  font-size: 17px;
   line-height: 1.55;
   text-rendering: optimizeLegibility;
 }
@@ -795,6 +795,250 @@ p {
 
 .app-fallback__panel p:not(.eyebrow) {
   color: var(--muted);
+}
+
+/* Warm glass laboratory theme */
+.app-shell {
+  inline-size: min(100%, 1740px);
+  padding-block-start: 22px;
+}
+
+.app-header,
+.control-panel,
+.board-panel,
+.statistics-panel,
+.app-fallback__panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.54)),
+    rgba(255, 255, 255, 0.58);
+  box-shadow:
+    0 24px 70px rgba(20, 43, 81, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(167, 171, 185, 0.18);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+}
+
+.app-header::before,
+.control-panel::before,
+.board-panel::before,
+.statistics-panel::before {
+  position: absolute;
+  inset: 1px 1px auto;
+  block-size: 34%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
+  content: '';
+  pointer-events: none;
+}
+
+.app-header > *,
+.control-panel > *,
+.board-panel > *,
+.statistics-panel > * {
+  position: relative;
+}
+
+.app-header {
+  padding: 18px 22px 18px 28px;
+  border-radius: 24px;
+}
+
+.app-header__subtitle {
+  color: #424860;
+  font-size: 1.05rem;
+}
+
+.app-header__build {
+  display: none;
+}
+
+.eyebrow {
+  color: #6a7080;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+}
+
+h1 {
+  font-size: clamp(2rem, 3vw, 2.75rem);
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.12rem;
+}
+
+.experiment-layout {
+  grid-template-columns: minmax(280px, 0.76fr) minmax(540px, 2.1fr) minmax(300px, 0.82fr);
+  gap: 18px;
+}
+
+.control-panel,
+.board-panel,
+.statistics-panel {
+  border-radius: 24px;
+}
+
+.control-panel,
+.statistics-panel {
+  padding: 28px;
+}
+
+.board-panel {
+  padding: 20px;
+}
+
+.board-stage {
+  border: 1px solid rgba(167, 171, 185, 0.28);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.46);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 12px 30px rgba(20, 43, 81, 0.06);
+}
+
+.button--primary,
+.control-panel__actions button:first-child,
+.app-fallback button {
+  color: #142b51;
+  background: #f68620;
+  box-shadow: 0 10px 26px rgba(246, 134, 32, 0.24);
+}
+
+.button--primary:hover:not(:disabled),
+.control-panel__actions button:first-child:hover:not(:disabled),
+.app-fallback button:hover:not(:disabled) {
+  background: #f49338;
+}
+
+.button,
+.control-panel__actions button {
+  min-block-size: 48px;
+  border-radius: 13px;
+  font-size: 1rem;
+}
+
+.button--quiet,
+.control-panel__actions button:not(:first-child),
+.control-panel__segmented label {
+  border-color: rgba(167, 171, 185, 0.34);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94);
+}
+
+.mode-chip {
+  border-color: rgba(246, 134, 32, 0.26);
+  color: #8b480b;
+  background: rgba(240, 207, 172, 0.42);
+  font-size: 0.95rem;
+}
+
+.prediction-prompt,
+.statistics-panel__note,
+.bin-readouts > p {
+  border-color: rgba(246, 134, 32, 0.3);
+  color: #424860;
+  background: rgba(240, 207, 172, 0.26);
+}
+
+.prediction-prompt strong {
+  color: #8b480b;
+}
+
+.control-panel__range {
+  padding-block: 17px;
+}
+
+.control-panel__label-row label,
+.control-panel__segmented legend,
+.control-panel__overlay label {
+  color: #142b51;
+  font-size: 1.05rem;
+}
+
+.control-panel__label-row output {
+  color: #a8540a;
+  font-size: 1.03rem;
+}
+
+.control-panel input[type='range'],
+.control-panel__segmented input,
+.control-panel__overlay input {
+  accent-color: #f68620;
+}
+
+.control-panel__description,
+.control-panel__endpoints,
+.statistics-panel > p,
+.statistics-panel__values dt,
+.statistics-panel__values .statistics-panel__definition,
+.education-panel details p,
+.board-panel__legend {
+  color: #424860;
+  font-size: 1rem;
+}
+
+.control-panel__description {
+  margin-block-end: 0;
+}
+
+.control-panel__regions,
+.control-panel__change-summary,
+.control-panel__mode {
+  display: none;
+}
+
+.statistics-panel__values dd {
+  color: #142b51;
+  font-size: 1.08rem;
+}
+
+.education-panel {
+  margin-block-start: 24px;
+}
+
+.education-panel details {
+  border: 1px solid rgba(167, 171, 185, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.education-panel details:nth-of-type(5) {
+  border-inline-start: 1px solid rgba(167, 171, 185, 0.24);
+  padding-inline-start: 0;
+}
+
+.education-panel summary {
+  padding-inline: 12px;
+  font-size: 1rem;
+  font-weight: 680;
+}
+
+.education-panel details p {
+  padding-inline: 12px;
+}
+
+.board-bin-readouts__desktop li {
+  color: #424860;
+  font-size: 0.96rem;
+}
+
+.board-bin-readouts strong {
+  color: #142b51;
+}
+
+.legend-dot {
+  background: #376fb7;
+}
+
+.legend-line--theory {
+  background: #f68620;
 }
 
 @media (max-width: 1180px) {

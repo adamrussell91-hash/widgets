@@ -75,12 +75,12 @@ describe('createBoardGeometry', () => {
     expect(right.bins).toEqual(centre.bins);
   });
 
-  it('defines paired physical funnel guides above each internal bin divider', () => {
+  it('defines paired internal guides and outer lips that close the side gaps', () => {
     const geometry = createBoardGeometry();
 
-    expect(geometry.funnels).toHaveLength((BIN_COUNT - 1) * 2);
+    expect(geometry.funnels).toHaveLength((BIN_COUNT - 1) * 2 + 2);
     geometry.dividerXs.slice(1, -1).forEach((dividerX, index) => {
-      const pair = geometry.funnels.slice(index * 2, index * 2 + 2);
+      const pair = geometry.funnels.slice(1 + index * 2, 1 + index * 2 + 2);
       expect(pair.map(({ start }) => start)).toEqual([
         { x: dividerX, y: BOARD.funnelTop },
         { x: dividerX, y: BOARD.funnelTop },
@@ -89,6 +89,8 @@ describe('createBoardGeometry', () => {
       expect(pair[1]!.end.x).toBeGreaterThan(dividerX);
       expect(pair.every(({ end }) => end.y === BOARD.binTop)).toBe(true);
     });
+    expect(geometry.funnels[0]!.end.x).toBe(geometry.dividerXs[0]);
+    expect(geometry.funnels.at(-1)!.end.x).toBe(geometry.dividerXs.at(-1));
   });
 
   it.each([-1, -0.35, 0, 0.6, 1])(
