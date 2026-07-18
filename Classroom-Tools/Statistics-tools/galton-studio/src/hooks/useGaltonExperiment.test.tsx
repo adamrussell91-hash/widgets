@@ -43,6 +43,7 @@ const mocks = vi.hoisted(() => {
       regimes: [],
       canRefill: false,
       recycledCount: 0,
+      settlementDiagnostics: [],
     } as GaltonSnapshot;
   }
 
@@ -117,6 +118,7 @@ function makeSnapshot(overrides: Partial<GaltonSnapshot> = {}): GaltonSnapshot {
     regimes: [],
     canRefill: false,
     recycledCount: 0,
+    settlementDiagnostics: [],
     ...overrides,
   };
 }
