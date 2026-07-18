@@ -31,6 +31,35 @@ function runPhysicalBatch(
 ) {
   const instance = new GaltonController({ seed, settings });
   track(instance);
+  const releasedPositionMutations: { method: 'setPosition' | 'translate'; ballId?: number }[] = [];
+  const setPosition = Body.setPosition;
+  const translate = Body.translate;
+  vi.spyOn(Body, 'setPosition').mockImplementation((subject, position) => {
+    if (
+      releasedPositionMutations.length === 0
+      && subject.label === 'ball'
+      && subject.plugin.galton.released
+    ) {
+      releasedPositionMutations.push({
+        method: 'setPosition',
+        ballId: subject.plugin.galton.ballId,
+      });
+    }
+    setPosition(subject, position);
+  });
+  vi.spyOn(Body, 'translate').mockImplementation((subject, translation) => {
+    if (
+      releasedPositionMutations.length === 0
+      && subject.label === 'ball'
+      && subject.plugin.galton.released
+    ) {
+      releasedPositionMutations.push({
+        method: 'translate',
+        ballId: subject.plugin.galton.ballId,
+      });
+    }
+    translate(subject, translation);
+  });
   const physicalBodies = [...instance.snapshot().ballBodies];
   const assignedTargets = physicalBodies.map((body) => body.plugin.galton.targetBin as number);
   const geometry = instance.snapshot().apparatusGeometry!;
@@ -74,9 +103,10 @@ function runPhysicalBatch(
         settledSoFar: instance.snapshot().settledBins,
       })}`,
     ).toBe(true);
+    expect(releasedPositionMutations, `released ball ${index} was repositioned`).toEqual([]);
   }
 
-  return { instance, physicalBodies, assignedTargets };
+  return { instance, physicalBodies, assignedTargets, releasedPositionMutations };
 }
 
 describe('GaltonController physical distribution', () => {
@@ -85,6 +115,7 @@ describe('GaltonController physical distribution', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => {
     instances.splice(0).forEach((instance) => instance.destroy());
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -101,9 +132,11 @@ describe('GaltonController physical distribution', () => {
 
       expect(snapshot.status).toBe('complete');
       expect(snapshot.settledBins).toHaveLength(100);
+      expect(mismatches).toEqual([]);
       expect(histogram(snapshot.settledBins), JSON.stringify(mismatches)).toEqual(
         histogram(result.assignedTargets),
       );
+      expect(result.releasedPositionMutations).toEqual([]);
       expect(snapshot.ballBodies.every((body) => body.plugin.galton.settled)).toBe(true);
       expect(snapshot.ballBodies).toEqual(result.physicalBodies);
     },
