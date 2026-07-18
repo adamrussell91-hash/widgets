@@ -20,7 +20,6 @@ import {
 import {
   BOARD,
   createBoardGeometry,
-  routeCorridorX,
   type BoardGeometry,
   type Point,
 } from './geometry';
@@ -35,10 +34,6 @@ const CLOSED_GATE_MASK = 0xffffffff;
 const BALL_COLLISION_SIDES = 24;
 const BALL_COLLISION_SKIN = 0.6;
 const ROUTE_IMPULSE = 0.000055;
-const MAX_STEERING_SPEED = 4;
-const MAX_STEERING_IMPULSE = 1;
-const STEERING_GAIN = 0.3;
-const PEG_ESCAPE_VERTICAL_SPEED = 0.5;
 const HOPPER_FEED_VERTICAL_SPEED = 2;
 const HOPPER_FEED_HORIZONTAL_SPEED = 1.5;
 
@@ -477,7 +472,6 @@ export class GaltonController {
     for (const state of [...this.balls.values()]) {
       if (!state.released || state.settledBin !== null) continue;
       if (this.recycleIfLost(state)) continue;
-      this.applyCorrectiveSteering(state);
       const bin = classifySettledBall(
         state.body,
         this.physics.geometry,
@@ -560,50 +554,6 @@ export class GaltonController {
       if (direction !== -1 && direction !== 1) continue;
       Body.applyForce(ball, ball.position, { x: direction * ROUTE_IMPULSE, y: 0 });
     }
-  }
-
-  private applyCorrectiveSteering(state: BallState) {
-    const { body } = state;
-    if (
-      !state.released
-      || state.settledBin !== null
-      || body.position.y < BOARD.pegTop
-      || body.position.y >= BOARD.funnelTop
-      || body.position.x < -BOARD.ballRadius
-      || body.position.x > BOARD.width + BOARD.ballRadius
-    ) return;
-    const targetBin = body.plugin.galton.targetBin;
-    if (typeof targetBin !== 'number') return;
-    const progress = Math.max(0, Math.min(
-      1,
-      (body.position.y - BOARD.pegTop) / (BOARD.funnelTop - BOARD.pegTop),
-    ));
-    const route = body.plugin.galton.route ?? [];
-    const desiredX = routeCorridorX(this.physics.geometry, route, targetBin, progress);
-    let desiredVelocityX = Math.max(-MAX_STEERING_SPEED, Math.min(
-      MAX_STEERING_SPEED,
-      (desiredX - body.position.x) * STEERING_GAIN,
-    ));
-    const consumedRow = (body.plugin.galton.nextRouteRow ?? 0) - 1;
-    const escapeDirection = route[consumedRow];
-    if (
-      Math.abs(body.velocity.y) < PEG_ESCAPE_VERTICAL_SPEED
-      && (escapeDirection === -1 || escapeDirection === 1)
-    ) {
-      desiredVelocityX = escapeDirection * Math.max(
-        Math.abs(desiredVelocityX),
-        MAX_STEERING_SPEED / 2,
-      );
-    }
-    const impulseX = Math.max(-MAX_STEERING_IMPULSE, Math.min(
-      MAX_STEERING_IMPULSE,
-      desiredVelocityX - body.velocity.x,
-    ));
-    Sleeping.set(body, false);
-    Body.setVelocity(body, {
-      x: body.velocity.x + impulseX,
-      y: body.velocity.y,
-    });
   }
 
   private settle(state: BallState, bin: number) {

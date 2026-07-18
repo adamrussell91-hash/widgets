@@ -747,6 +747,22 @@ describe('GaltonController', () => {
     expect(call).toEqual([ball, ball.position, { x: -0.000055, y: 0 }]);
   });
 
+  it('does not steer a released ball during free flight', () => {
+    const instance = tracked({ ...neutral, skew: 1 });
+    const ball = releaseOne(instance);
+    Body.setPosition(ball, {
+      x: BOARD.width / 2 - 80,
+      y: BOARD.pegTop + 120,
+    });
+    Body.setVelocity(ball, { x: 0.4, y: 2 });
+    Sleeping.set(ball, false);
+    const setVelocity = vi.spyOn(Body, 'setVelocity');
+
+    instance.step(1000 / 120);
+
+    expect(setVelocity.mock.calls.filter(([subject]) => subject === ball)).toEqual([]);
+  });
+
   it('does not apply guidance on an untargeted peg contact', () => {
     const natural = tracked();
     const ball = releaseOne(natural);
