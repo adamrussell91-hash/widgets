@@ -17,7 +17,13 @@ import {
   type ExperimentSettings,
   type RunStatus,
 } from '../model/types';
-import { BOARD, createBoardGeometry, type BoardGeometry, type Point } from './geometry';
+import {
+  BOARD,
+  createBoardGeometry,
+  routeCorridorX,
+  type BoardGeometry,
+  type Point,
+} from './geometry';
 import { classifySettledBall, type SettlingMemory } from './settling';
 import { createPhysicsWorld, type PhysicsWorld } from './world';
 
@@ -29,7 +35,6 @@ const CLOSED_GATE_MASK = 0xffffffff;
 const BALL_COLLISION_SIDES = 24;
 const BALL_COLLISION_SKIN = 0.6;
 const ROUTE_IMPULSE = 0.000055;
-const ROUTE_LOOKAHEAD = 1.5;
 const MAX_STEERING_SPEED = 4;
 const MAX_STEERING_IMPULSE = 1;
 const STEERING_GAIN = 0.3;
@@ -539,27 +544,12 @@ export class GaltonController {
     ) return;
     const targetBin = body.plugin.galton.targetBin;
     if (typeof targetBin !== 'number') return;
-    const target = this.physics.geometry.bins[targetBin];
-    if (!target) return;
     const progress = Math.max(0, Math.min(
       1,
       (body.position.y - BOARD.pegTop) / (BOARD.funnelTop - BOARD.pegTop),
     ));
-    const targetX = target.centreX;
     const route = body.plugin.galton.route ?? [];
-    const routeProgress = Math.min(route.length, progress * route.length + ROUTE_LOOKAHEAD);
-    const completeDecisions = Math.floor(routeProgress);
-    let desiredX = this.physics.geometry.hopper.throatX;
-    for (let row = 0; row < completeDecisions; row += 1) {
-      desiredX += (route[row] ?? 0) * BOARD.pegGap / 2;
-    }
-    if (completeDecisions < route.length) {
-      desiredX += (route[completeDecisions] ?? 0)
-        * BOARD.pegGap / 2
-        * (routeProgress - completeDecisions);
-    } else {
-      desiredX = targetX;
-    }
+    const desiredX = routeCorridorX(this.physics.geometry, route, targetBin, progress);
     let desiredVelocityX = Math.max(-MAX_STEERING_SPEED, Math.min(
       MAX_STEERING_SPEED,
       (desiredX - body.position.x) * STEERING_GAIN,

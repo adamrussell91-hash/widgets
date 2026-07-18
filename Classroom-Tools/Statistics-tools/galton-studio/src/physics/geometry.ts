@@ -1,4 +1,5 @@
 import { BIN_COUNT } from '../model/types';
+import type { RouteDirection } from '../model/allocation';
 
 export interface Point {
   x: number;
@@ -72,6 +73,41 @@ export const BOARD = {
   funnelWidth: 5,
   funnelHalfSpan: 10,
 } as const;
+
+export function routeCorridorX(
+  geometry: BoardGeometry,
+  route: readonly RouteDirection[],
+  targetBin: number,
+  progress: number,
+): number {
+  const target = geometry.bins[targetBin];
+  if (!target) throw new RangeError(`Target bin must be between 0 and ${BIN_COUNT - 1}`);
+  const boundedProgress = Math.max(0, Math.min(1, progress));
+  const decisionCount = BIN_COUNT - 1;
+  const routeProgress = Math.min(
+    decisionCount,
+    boundedProgress * decisionCount + 1.5 * Math.sin(Math.PI * boundedProgress),
+  );
+  const completeDecisions = Math.min(decisionCount, Math.floor(routeProgress));
+  let latticeX = BOARD.width / 2;
+  for (let row = 0; row < completeDecisions; row += 1) {
+    latticeX += (route[row] ?? 0) * BOARD.pegGap / 2;
+  }
+  if (completeDecisions < decisionCount) {
+    latticeX += (route[completeDecisions] ?? 0)
+      * BOARD.pegGap / 2
+      * (routeProgress - completeDecisions);
+  }
+  const routeEndX = route.slice(0, decisionCount).reduce(
+    (x, direction) => x + direction * BOARD.pegGap / 2,
+    BOARD.width / 2,
+  );
+  const hopperOffset = geometry.hopper.throatX - BOARD.width / 2;
+  const hopperBlend = Math.max(0, 1 - boundedProgress / 0.25);
+  return latticeX
+    + (target.centreX - routeEndX) * boundedProgress
+    + hopperOffset * hopperBlend;
+}
 
 function frozenPoint(x: number, y: number): Point {
   return Object.freeze({ x, y });
