@@ -16,6 +16,7 @@ export interface GaltonBodyPlugin {
   galton: {
     tag: BodyTag;
     ballId?: number;
+    logicalBallId?: number;
     released?: boolean;
     settled?: boolean;
     targetBin?: number | null;

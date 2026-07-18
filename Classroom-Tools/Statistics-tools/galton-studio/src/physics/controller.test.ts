@@ -1,6 +1,7 @@
 import { Bodies, Body, Composite, Events, Sleeping } from 'matter-js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ExperimentSettings } from '../model/types';
+import { buildExpectedPmf } from '../model/distribution';
+import { BIN_COUNT, type ExperimentSettings } from '../model/types';
 import { BOARD, createBoardGeometry } from './geometry';
 import { GaltonController } from './controller';
 
@@ -40,6 +41,34 @@ function releaseBatch(instance: GaltonController) {
     });
     instance.step(1000 / 120);
   }
+}
+
+function releaseCount(instance: GaltonController, count: number, releaseRate = neutral.releaseRate) {
+  instance.run();
+  for (let released = 0; released < count; released += 1) {
+    if (released > 0) vi.advanceTimersByTime(Math.ceil(1000 / releaseRate));
+    const ball = instance.snapshot().ballBodies.find((body) => !body.plugin.galton.released)!;
+    Body.setPosition(ball, {
+      x: 125 + (released % 10) * 52,
+      y: 175 + Math.floor(released / 10) * 36,
+    });
+    instance.step(1000 / 120);
+  }
+}
+
+function assignmentByBodyId(instance: GaltonController, released: boolean) {
+  return new Map(instance.snapshot().ballBodies
+    .filter((body) => body.plugin.galton.released === released)
+    .map((body) => [body.id, {
+      targetBin: body.plugin.galton.targetBin,
+      route: [...(body.plugin.galton.route ?? [])],
+    }]));
+}
+
+function histogram(values: readonly number[]) {
+  const counts = Array(BIN_COUNT).fill(0) as number[];
+  values.forEach((value) => { counts[value] += 1; });
+  return counts;
 }
 
 function arrangeActiveBallsInBins(instance: GaltonController) {
@@ -218,6 +247,56 @@ describe('GaltonController', () => {
     expect(released.plugin.galton.route).toEqual(releasedAssignment.route);
     expect(waitingAfter).not.toEqual(waitingBefore);
   });
+
+  it.each([0, 1, 17, 50, 99])(
+    'preserves every waiting assignment at release cut %i when only release rate changes',
+    (cut) => {
+      const instance = tracked();
+      releaseCount(instance, cut);
+      const waitingBefore = assignmentByBodyId(instance, false);
+
+      instance.setSettings({ ...neutral, releaseRate: 12 });
+
+      expect(assignmentByBodyId(instance, false)).toEqual(waitingBefore);
+    },
+  );
+
+  it.each([0, 1, 17, 50, 99])(
+    'preserves every waiting assignment at release cut %i when only change behavior changes',
+    (cut) => {
+      const instance = tracked();
+      releaseCount(instance, cut);
+      const waitingBefore = assignmentByBodyId(instance, false);
+
+      instance.setSettings({ ...neutral, changeBehavior: 'reset' });
+
+      expect(assignmentByBodyId(instance, false)).toEqual(waitingBefore);
+    },
+  );
+
+  it.each([0, 1, 17, 50, 99])(
+    'allocates the waiting segment against the new PMF at release cut %i without changing its prefix',
+    (cut) => {
+      const instance = tracked();
+      releaseCount(instance, cut);
+      const releasedBefore = assignmentByBodyId(instance, true);
+      const nextSettings = { ...neutral, skew: 0.8 };
+
+      instance.setSettings(nextSettings);
+
+      expect(assignmentByBodyId(instance, true)).toEqual(releasedBefore);
+      const targets = instance.snapshot().ballBodies
+        .filter((body) => !body.plugin.galton.released)
+        .map((body) => body.plugin.galton.targetBin as number);
+      const counts = histogram(targets);
+      const pmf = buildExpectedPmf(nextSettings);
+      counts.forEach((count, bin) => {
+        const expected = pmf[bin]! * targets.length;
+        expect(count).toBeGreaterThanOrEqual(Math.floor(expected));
+        expect(count).toBeLessThanOrEqual(Math.ceil(expected));
+      });
+    },
+  );
 
   it('emits settled exactly once and preserves the original body, id, and transform in the Matter world', () => {
     const instance = tracked();
@@ -534,6 +613,67 @@ describe('GaltonController', () => {
     const hopper = createBoardGeometry().hopper;
     expect(replacement.position.y).toBeGreaterThan(hopper.top);
     expect(replacement.position.y).toBeLessThan(hopper.bottom);
+  });
+
+  it('keeps a recycled logical assignment locked across settings changes and counts its regime once', () => {
+    const instance = tracked();
+    const lost = releaseOne(instance);
+    const logicalBallId = lost.plugin.galton.logicalBallId;
+    const assignment = {
+      targetBin: lost.plugin.galton.targetBin,
+      route: [...(lost.plugin.galton.route ?? [])],
+    };
+    const originalBodyIds = new Set(instance.snapshot().ballBodies.map(({ id }) => id));
+    Body.setPosition(lost, { x: -BOARD.ballRadius - 5, y: 300 });
+    Body.setVelocity(lost, { x: 0, y: 0 });
+
+    advance(instance, 2_050);
+    const replacement = instance.snapshot().ballBodies.find(({ id }) => !originalBodyIds.has(id))!;
+    instance.setSettings({ ...neutral, skew: 0.8 });
+
+    expect(logicalBallId).toEqual(expect.any(Number));
+    expect(replacement.plugin.galton.logicalBallId).toBe(logicalBallId);
+    expect(replacement.plugin.galton.targetBin).toBe(assignment.targetBin);
+    expect(replacement.plugin.galton.route).toEqual(assignment.route);
+    expect(instance.snapshot().regimes.reduce((sum, regime) => sum + regime.released, 0)).toBe(1);
+
+    vi.advanceTimersByTime(Math.ceil(1000 / neutral.releaseRate));
+    Body.setPosition(replacement, {
+      x: instance.snapshot().apparatusGeometry!.hopper.throatX,
+      y: BOARD.hopperBottom + BOARD.ballRadius + 2,
+    });
+    instance.step(1000 / 120);
+
+    expect(replacement.plugin.galton.released).toBe(true);
+    expect(instance.snapshot().regimes.reduce((sum, regime) => sum + regime.released, 0)).toBe(1);
+    expect(instance.snapshot().regimes).toMatchObject([{ released: 1, mode: 'natural' }]);
+  });
+
+  it('completes a recycled logical batch with 100 observations and 100 regime releases', () => {
+    const instance = tracked();
+    const lost = releaseOne(instance);
+    const logicalBallId = lost.plugin.galton.logicalBallId;
+    Body.setPosition(lost, { x: -BOARD.ballRadius - 5, y: 300 });
+    Body.setVelocity(lost, { x: 0, y: 0 });
+    advance(instance, 2_050);
+
+    vi.advanceTimersByTime(Math.ceil(1000 / neutral.releaseRate));
+    releaseBatch(instance);
+    arrangeActiveBallsInBins(instance);
+    instance.snapshot().ballBodies.forEach((body) => {
+      body.sleepThreshold = 1_000;
+      Sleeping.set(body, false);
+    });
+    advance(instance, 3_000);
+
+    const snapshot = instance.snapshot();
+    expect(snapshot.status).toBe('complete');
+    expect(snapshot.settledBins).toHaveLength(100);
+    expect(snapshot.regimes.reduce((sum, regime) => sum + regime.released, 0)).toBe(100);
+    expect(snapshot.ballBodies.filter((body) => (
+      body.plugin.galton.logicalBallId === logicalBallId
+    ))).toHaveLength(1);
+    expect(new Set(snapshot.ballBodies.map((body) => body.plugin.galton.logicalBallId)).size).toBe(100);
   });
 
   it('gives simultaneous lost balls distinct non-overlapping replacement positions', () => {
