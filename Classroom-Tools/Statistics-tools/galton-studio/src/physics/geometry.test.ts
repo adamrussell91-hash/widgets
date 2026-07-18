@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { buildRoute } from '../model/allocation';
+import { createRng } from '../model/prng';
 import { BIN_COUNT } from '../model/types';
-import { BOARD, createBoardGeometry } from './geometry';
+import { BOARD, createBoardGeometry, routeCorridorX } from './geometry';
 
 describe('createBoardGeometry', () => {
   it('defines the 720-by-800 apparatus and its ten triangular peg rows', () => {
@@ -87,5 +89,30 @@ describe('createBoardGeometry', () => {
       expect(pair[1]!.end.x).toBeGreaterThan(dividerX);
       expect(pair.every(({ end }) => end.y === BOARD.binTop)).toBe(true);
     });
+  });
+
+  it.each([-1, -0.35, 0, 0.6, 1])(
+    'builds a continuous absolute route from hopper position %s to its assigned bin',
+    (hopperPosition) => {
+      const geometry = createBoardGeometry(hopperPosition);
+      for (const targetBin of [0, 1, 5, 9, 10]) {
+        const route = buildRoute(targetBin, createRng(8_100 + targetBin));
+        const corridor = Array.from({ length: 1_001 }, (_, index) => (
+          routeCorridorX(geometry, route, targetBin, index / 1_000)
+        ));
+
+        expect(corridor[0]).toBeCloseTo(geometry.hopper.throatX, 10);
+        expect(corridor.at(-1)).toBeCloseTo(geometry.bins[targetBin]!.centreX, 10);
+        corridor.slice(1).forEach((x, index) => {
+          expect(Math.abs(x - corridor[index]!)).toBeLessThan(1);
+        });
+      }
+    },
+  );
+
+  it('lands at the assigned absolute bin even if route metadata is incomplete', () => {
+    const geometry = createBoardGeometry(1);
+    expect(routeCorridorX(geometry, [1, -1], 8, 1))
+      .toBeCloseTo(geometry.bins[8]!.centreX, 10);
   });
 });

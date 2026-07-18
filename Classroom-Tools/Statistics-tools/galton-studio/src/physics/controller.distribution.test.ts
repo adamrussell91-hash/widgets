@@ -18,6 +18,18 @@ const scenarios: { label: string; seed: number; settings: ExperimentSettings }[]
   { label: 'right-skewed', seed: 4_203, settings: { ...neutral, skew: 0.8 } },
   { label: 'low-kurtosis', seed: 4_204, settings: { ...neutral, kurtosis: 1.8 } },
   { label: 'high-kurtosis', seed: 4_205, settings: { ...neutral, kurtosis: 6 } },
+  { label: 'left hopper boundary', seed: 4_301, settings: { ...neutral, hopperPosition: -1 } },
+  { label: 'left intermediate hopper', seed: 4_302, settings: {
+    ...neutral,
+    hopperPosition: -0.5,
+    skew: -0.6,
+  } },
+  { label: 'right intermediate hopper', seed: 4_303, settings: {
+    ...neutral,
+    hopperPosition: 0.5,
+    kurtosis: 6,
+  } },
+  { label: 'right hopper boundary', seed: 4_304, settings: { ...neutral, hopperPosition: 1 } },
 ];
 
 function histogram(bins: readonly number[]) {
