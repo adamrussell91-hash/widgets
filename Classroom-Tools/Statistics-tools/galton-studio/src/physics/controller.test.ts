@@ -331,6 +331,31 @@ describe('GaltonController', () => {
     expect(ball.isStatic).toBe(false);
   });
 
+  it('diagnoses a physical target miss by logical ball without relabelling the settled bin', () => {
+    const instance = tracked();
+    const ball = releaseOne(instance);
+    const targetBin = ball.plugin.galton.targetBin as number;
+    const physicalBin = targetBin === 10 ? 9 : targetBin + 1;
+    const bin = createBoardGeometry().bins[physicalBin]!;
+    ball.sleepThreshold = 1_000;
+    Body.setPosition(ball, { x: bin.centreX, y: bin.bottom - 20 });
+    Body.setVelocity(ball, { x: 0, y: 0 });
+    Sleeping.set(ball, false);
+
+    for (let frame = 0; frame < 160 && !ball.plugin.galton.settled; frame += 1) {
+      instance.step(1000 / 120);
+    }
+
+    expect(instance.snapshot().settledBins).toEqual([physicalBin]);
+    expect(instance.snapshot().settlementDiagnostics).toEqual([{
+      logicalBallId: ball.plugin.galton.logicalBallId,
+      physicalBodyId: ball.id,
+      targetBin,
+      settledBin: physicalBin,
+      matchesTarget: false,
+    }]);
+  });
+
   it('reset cancels pending releases and a second run does not schedule twice', () => {
     const instance = tracked();
     instance.run();
