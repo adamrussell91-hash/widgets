@@ -107,6 +107,7 @@ function ExperimentApp() {
           <p className="eyebrow">Interactive probability laboratory</p>
           <h1>Galton Studio</h1>
           <p className="app-header__subtitle">Probability made physical.</p>
+          <p className="app-header__build">Distribution fix build 2</p>
         </div>
 
         <div className="run-strip" aria-label="Experiment status and actions">

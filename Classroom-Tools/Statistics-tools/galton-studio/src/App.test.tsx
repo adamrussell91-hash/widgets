@@ -238,4 +238,9 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByRole('link', { name: 'Skip to experiment' })).toHaveAttribute('href', '#experiment');
   });
+
+  it('shows the deployed distribution-correction build identifier', () => {
+    render(<App />);
+    expect(screen.getByText('Distribution fix build 2')).toBeInTheDocument();
+  });
 });

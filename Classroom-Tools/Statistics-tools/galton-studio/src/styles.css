@@ -198,6 +198,14 @@ p {
   font-size: 1rem;
 }
 
+.app-header__build {
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .eyebrow {
   margin-block-end: var(--space-1);
   color: #42677f;
