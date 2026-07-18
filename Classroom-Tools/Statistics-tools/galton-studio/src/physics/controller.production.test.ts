@@ -156,6 +156,11 @@ function expectTruthfulPhysicalCompletion(result: ReturnType<typeof runProductio
   expect(totalReleases(snapshot)).toBe(100);
   expect(result.maxActiveCount).toBeGreaterThan(1);
   expect(result.releasedPositionMutations).toEqual([]);
+  if (result.recycled === null) {
+    expect(snapshot.ballBodies).toEqual(result.initialBodies);
+    expect(new Set(snapshot.settlementDiagnostics.map(({ physicalBodyId }) => physicalBodyId)))
+      .toEqual(new Set(result.initialBodies.map(({ id }) => id)));
+  }
 }
 
 describe('GaltonController production-timing distribution evidence', () => {
@@ -176,9 +181,6 @@ describe('GaltonController production-timing distribution evidence', () => {
       });
 
       expectTruthfulPhysicalCompletion(result);
-      expect(result.instance.snapshot().ballBodies).toEqual(result.initialBodies);
-      expect(new Set(result.instance.snapshot().settlementDiagnostics.map(({ physicalBodyId }) => physicalBodyId)))
-        .toEqual(new Set(result.initialBodies.map(({ id }) => id)));
     },
     90_000,
   );
@@ -213,7 +215,11 @@ describe('GaltonController production-timing distribution evidence', () => {
     const settlement = snapshot.settlementDiagnostics.find(({ logicalBallId }) => (
       logicalBallId === recycled.logicalBallId
     ))!;
+    const retainedOriginalIds = new Set(result.initialBodies
+      .map(({ id }) => id)
+      .filter((id) => id !== recycled.originalBodyId));
     expect(replacement.id).not.toBe(recycled.originalBodyId);
+    expect(snapshot.ballBodies.filter(({ id }) => retainedOriginalIds.has(id))).toHaveLength(99);
     expect(replacement.plugin.galton.targetBin).toBe(recycled.targetBin);
     expect(replacement.plugin.galton.route).toEqual(recycled.route);
     expect(settlement).toMatchObject({
