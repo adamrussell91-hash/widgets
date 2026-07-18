@@ -86,14 +86,27 @@ describe('balanced ball allocation', () => {
     const quotaSignatures = allocations.map((targets) => {
       const quotas = Array(11).fill(0) as number[];
       targets.forEach((target) => { quotas[target] += 1; });
-      quotas.forEach((quota, bin) => {
-        expect(quota).toBeGreaterThanOrEqual(bin < 3 ? 0 : 0);
-        expect(quota).toBeLessThanOrEqual(bin < 3 ? 1 : 0);
-      });
+      quotas.slice(0, 3).forEach((quota) => expect([0, 1]).toContain(quota));
+      expect(quotas.slice(3)).toEqual(Array(8).fill(0));
       return quotas.join(',');
     });
 
     expect(new Set(quotaSignatures).size).toBeGreaterThan(1);
+    expect(new Set(allocations.map((targets) => targets.join(','))).size).toBeGreaterThan(1);
+  });
+
+  it('keeps non-tied quota seats fixed across seeds while shuffling assignment order', () => {
+    const pmf = [0.51, 0.29, 0.2, 0, 0, 0, 0, 0, 0, 0, 0];
+    const allocations = Array.from({ length: 12 }, (_, seed) => (
+      allocateTargetBins(pmf, 7, createRng(seed + 1))
+    ));
+    const quotaSignatures = allocations.map((targets) => {
+      const quotas = Array(11).fill(0) as number[];
+      targets.forEach((target) => { quotas[target] += 1; });
+      return quotas.join(',');
+    });
+
+    expect(new Set(quotaSignatures)).toEqual(new Set(['4,2,1,0,0,0,0,0,0,0,0']));
     expect(new Set(allocations.map((targets) => targets.join(','))).size).toBeGreaterThan(1);
   });
 
