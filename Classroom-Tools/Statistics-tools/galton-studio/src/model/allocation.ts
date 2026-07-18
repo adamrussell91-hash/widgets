@@ -8,6 +8,9 @@ export interface BallAssignment {
   route: RouteDirection[];
 }
 
+/** Upper bound for the public allocation API, chosen to keep array construction predictable. */
+export const MAX_ALLOCATION_COUNT = 1_000_000;
+
 function normalizedPmf(pmf: readonly number[]): number[] {
   const weights = Array.from({ length: BIN_COUNT }, (_, bin) => {
     const value = pmf[bin] ?? 0;
@@ -26,6 +29,10 @@ function shuffle<T>(values: T[], rng: Rng): T[] {
 }
 
 export function allocateTargetBins(pmf: readonly number[], count: number, rng: Rng): number[] {
+  if (!Number.isFinite(count)) throw new RangeError('Allocation count must be finite');
+  if (count > MAX_ALLOCATION_COUNT) {
+    throw new RangeError(`Allocation count must not exceed ${MAX_ALLOCATION_COUNT}`);
+  }
   const size = Math.max(0, Math.floor(count));
   const probabilities = normalizedPmf(pmf);
   const expected = probabilities.map((probability) => probability * size);
