@@ -78,7 +78,7 @@ describe('StatsPanel', () => {
 
     expect(screen.getByText('Shaped model-driven physics')).toBeInTheDocument();
     expect(screen.getByText('Combined expected model')).toBeInTheDocument();
-    expect(screen.getByText(/bounded peg-contact steering/i)).toBeInTheDocument();
+    expect(screen.getByText(/bounded peg-contact impulses/i)).toBeInTheDocument();
     expect(screen.getByText(/tail weight and the propensity for outliers/i)).toBeInTheDocument();
     expect(screen.getByText(/direction of the longer tail/i)).toBeInTheDocument();
     expect(screen.getByText(/red curve shows what the model expected/i)).toBeInTheDocument();

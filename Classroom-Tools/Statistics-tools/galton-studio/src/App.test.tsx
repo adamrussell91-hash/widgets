@@ -98,7 +98,8 @@ describe('App', () => {
 
     const board = screen.getByRole('region', { name: 'Physical Galton board' });
     expect(within(board).getByText('Shaped model-driven physics')).toBeInTheDocument();
-    expect(screen.getByText(/active shaped PMF creates a balanced allocation/i)).toBeInTheDocument();
+    expect(screen.getByText(/active shaped PMF creates seeded largest-remainder target quotas/i))
+      .toBeInTheDocument();
   });
 
   it('removes the prediction prompt once the physical experiment begins', () => {
