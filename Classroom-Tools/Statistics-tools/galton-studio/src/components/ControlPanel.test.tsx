@@ -38,9 +38,9 @@ describe('ControlPanel', () => {
     render(<ControlPanel {...props()} />);
 
     const expected = [
-      ['Hopper position', '-1', '1', '0.05', '0.00'],
-      ['Skewness', '-1', '1', '0.05', '0.00'],
-      ['Pearson kurtosis', '1.8', '6', '0.1', '3.0'],
+      ['Starting position', '-1', '1', '0.05', '0.00'],
+      ['Shape', '-1', '1', '0.05', '0.00'],
+      ['Tail weight', '1.8', '6', '0.1', '3.0'],
       ['Release rate', '1', '12', '1', '6 balls/s'],
     ] as const;
 
@@ -52,77 +52,41 @@ describe('ControlPanel', () => {
       expect(within(input.closest('.control-panel__range')!).getByText(output)).toBeInTheDocument();
     }
 
-    expect(screen.getByText('Left entry')).toBeInTheDocument();
-    expect(screen.getByText('Right entry')).toBeInTheDocument();
-    expect(screen.getByText('Longer left tail')).toBeInTheDocument();
-    expect(screen.getByText('Longer right tail')).toBeInTheDocument();
-    expect(screen.getByText('Lighter tails')).toBeInTheDocument();
-    expect(screen.getByText('Heavier tails')).toBeInTheDocument();
-    expect(screen.getByText('Slowest: 1 ball/s')).toBeInTheDocument();
-    expect(screen.getByText('Fastest: 12 balls/s')).toBeInTheDocument();
-    expect(screen.getByText('Model-driven physics')).toBeInTheDocument();
+    expect(screen.getByText('Left')).toBeInTheDocument();
+    expect(screen.getByText('Right')).toBeInTheDocument();
+    expect(screen.getByText('Left tail')).toBeInTheDocument();
+    expect(screen.getByText('Right tail')).toBeInTheDocument();
+    expect(screen.getByText('Fewer extremes')).toBeInTheDocument();
+    expect(screen.getByText('More extremes')).toBeInTheDocument();
   });
 
   it('describes the full qualitative scale for every slider', () => {
     render(<ControlPanel {...props()} />);
 
-    expect(screen.getByRole('slider', { name: 'Hopper position' })).toHaveAccessibleDescription(
-      '−1 shifts entry left; 0 is centred; 1 shifts entry right.',
+    expect(screen.getByRole('slider', { name: 'Starting position' })).toHaveAccessibleDescription(
+      'Move where the balls enter the board.',
     );
-    expect(screen.getByRole('slider', { name: 'Skewness' })).toHaveAccessibleDescription(
-      '−1 gives a longer left tail; 0 is symmetric; 1 gives a longer right tail.',
+    expect(screen.getByRole('slider', { name: 'Shape' })).toHaveAccessibleDescription(
+      'Stretch the distribution toward either side.',
     );
-    expect(screen.getByRole('slider', { name: 'Pearson kurtosis' })).toHaveAccessibleDescription(
-      '1.8 has lighter tails; 3 is mesokurtic; 6 has heavier tails.',
+    expect(screen.getByRole('slider', { name: 'Tail weight' })).toHaveAccessibleDescription(
+      'Control how often balls reach the outer bins.',
     );
     expect(screen.getByRole('slider', { name: 'Release rate' })).toHaveAccessibleDescription(
-      '1 ball per second is slowest; 12 balls per second is fastest.',
+      'Choose how quickly balls are released.',
     );
   });
 
-  it('marks Observe, Explore, and Fast regions on the release-rate scale', () => {
+  it('keeps the release-rate control concise', () => {
     render(<ControlPanel {...props()} />);
 
-    const regions = screen.getByRole('list', { name: 'Release rate regions' });
-    expect(within(regions).getByText('Observe')).toBeInTheDocument();
-    expect(within(regions).getByText('1–3')).toBeInTheDocument();
-    expect(within(regions).getByText('Explore')).toBeInTheDocument();
-    expect(within(regions).getByText('4–8')).toBeInTheDocument();
-    expect(within(regions).getByText('Fast')).toBeInTheDocument();
-    expect(within(regions).getByText('9–12')).toBeInTheDocument();
+    expect(screen.queryByRole('list', { name: 'Release rate regions' })).not.toBeInTheDocument();
     expect(screen.getByText('6 balls/s')).toBeInTheDocument();
   });
 
-  it('reacts to entry position, asymmetry, and tail-weight adjustments', () => {
-    const { rerender } = render(<ControlPanel {...props()} />);
-
-    expect(screen.getByRole('region', { name: 'What changed?' })).toHaveTextContent(
-      'Entry is centred. The target is symmetric. Tails use the mesokurtic reference (Pearson 3).',
-    );
-    expect(screen.queryByRole('status', { name: 'What changed?' })).not.toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'What changed?' })).not.toHaveAttribute('aria-atomic');
-
-    rerender(
-      <ControlPanel
-        {...props({
-          settings: {
-            ...settings,
-            hopperPosition: 0.4,
-            skew: -0.6,
-            kurtosis: 5,
-          },
-        })}
-      />,
-    );
-
-    expect(screen.getByRole('region', { name: 'What changed?' })).toHaveTextContent(
-      'Entry moves right. The target has a longer left tail. Heavier tails increase the propensity for extreme-bin outcomes.',
-    );
-  });
-
-  it('uses the experiment mode supplied by the hook', () => {
+  it('does not add a technical mode explanation to the controls', () => {
     render(<ControlPanel {...props({ mode: 'guided' })} />);
-    expect(screen.getByText('Shaped model-driven physics')).toBeInTheDocument();
+    expect(screen.queryByText(/model-driven physics/i)).not.toBeInTheDocument();
   });
 
   it('updates a slider from the keyboard', async () => {
@@ -130,7 +94,7 @@ describe('ControlPanel', () => {
     const onSettingsChange = vi.fn();
     render(<ControlPanel {...props({ onSettingsChange })} />);
 
-    await user.click(screen.getByRole('slider', { name: 'Skewness' }));
+    await user.click(screen.getByRole('slider', { name: 'Shape' }));
     await user.keyboard('{ArrowRight}');
 
     expect(onSettingsChange).toHaveBeenLastCalledWith({ skew: 0.05 });

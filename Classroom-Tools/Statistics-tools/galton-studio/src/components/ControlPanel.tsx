@@ -104,34 +104,6 @@ function RangeControl({
   );
 }
 
-function direction(value: number, negative: string, neutral: string, positive: string): string {
-  if (value < -0.025) return negative;
-  if (value > 0.025) return positive;
-  return neutral;
-}
-
-export function describeParameterChanges(settings: ExperimentSettings): string {
-  const entry = direction(
-    settings.hopperPosition,
-    'Entry moves left.',
-    'Entry is centred.',
-    'Entry moves right.',
-  );
-  const shape = direction(
-    settings.skew,
-    'The target has a longer left tail.',
-    'The target is symmetric.',
-    'The target has a longer right tail.',
-  );
-  const tails = settings.kurtosis < 2.95
-    ? 'Lighter tails reduce the propensity for extreme-bin outcomes.'
-    : settings.kurtosis > 3.05
-      ? 'Heavier tails increase the propensity for extreme-bin outcomes.'
-      : 'Tails use the mesokurtic reference (Pearson 3).';
-
-  return `${entry} ${shape} ${tails}`;
-}
-
 function ActionButton({ children, onClick }: { children: ReactNode; onClick(): void }) {
   return <button type="button" onClick={onClick}>{children}</button>;
 }
@@ -139,7 +111,6 @@ function ActionButton({ children, onClick }: { children: ReactNode; onClick(): v
 export function ControlPanel({
   settings,
   status,
-  mode,
   settledCount,
   canRefill,
   overlayVisible,
@@ -205,41 +176,41 @@ export function ControlPanel({
 
       <RangeControl
         id="hopper-position"
-        label="Hopper position"
+        label="Starting position"
         value={settings.hopperPosition}
         min={-1}
         max={1}
         step={0.05}
         output={settings.hopperPosition.toFixed(2)}
-        description="−1 shifts entry left; 0 is centred; 1 shifts entry right."
-        minimumLabel="Left entry"
-        maximumLabel="Right entry"
+        description="Move where the balls enter the board."
+        minimumLabel="Left"
+        maximumLabel="Right"
         onChange={updateNumber('hopperPosition')}
       />
       <RangeControl
         id="skewness"
-        label="Skewness"
+        label="Shape"
         value={settings.skew}
         min={-1}
         max={1}
         step={0.05}
         output={settings.skew.toFixed(2)}
-        description="−1 gives a longer left tail; 0 is symmetric; 1 gives a longer right tail."
-        minimumLabel="Longer left tail"
-        maximumLabel="Longer right tail"
+        description="Stretch the distribution toward either side."
+        minimumLabel="Left tail"
+        maximumLabel="Right tail"
         onChange={updateNumber('skew')}
       />
       <RangeControl
         id="pearson-kurtosis"
-        label="Pearson kurtosis"
+        label="Tail weight"
         value={settings.kurtosis}
         min={1.8}
         max={6}
         step={0.1}
         output={settings.kurtosis.toFixed(1)}
-        description="1.8 has lighter tails; 3 is mesokurtic; 6 has heavier tails."
-        minimumLabel="Lighter tails"
-        maximumLabel="Heavier tails"
+        description="Control how often balls reach the outer bins."
+        minimumLabel="Fewer extremes"
+        maximumLabel="More extremes"
         onChange={updateNumber('kurtosis')}
       />
       <RangeControl
@@ -250,24 +221,11 @@ export function ControlPanel({
         max={12}
         step={1}
         output={`${settings.releaseRate} balls/s`}
-        description="1 ball per second is slowest; 12 balls per second is fastest."
-        minimumLabel="Slowest: 1 ball/s"
-        maximumLabel="Fastest: 12 balls/s"
-        regions={[
-          { label: 'Observe', range: '1–3' },
-          { label: 'Explore', range: '4–8' },
-          { label: 'Fast', range: '9–12' },
-        ]}
+        description="Choose how quickly balls are released."
+        minimumLabel="Slow"
+        maximumLabel="Fast"
         onChange={updateNumber('releaseRate')}
       />
-
-      <section
-        className="control-panel__change-summary"
-        aria-labelledby="what-changed-heading"
-      >
-        <h3 id="what-changed-heading">What changed?</h3>
-        <p>{describeParameterChanges(settings)}</p>
-      </section>
 
       <fieldset className="control-panel__segmented">
         <legend>On parameter change</legend>
@@ -324,9 +282,6 @@ export function ControlPanel({
         {!overlayAvailable && <p>Available when all balls have settled.</p>}
       </div>
 
-      <p className="control-panel__mode">
-        {mode === 'natural' ? 'Model-driven physics' : 'Shaped model-driven physics'}
-      </p>
     </section>
   );
 }

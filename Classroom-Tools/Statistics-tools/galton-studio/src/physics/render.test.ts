@@ -116,7 +116,7 @@ function frame(status: RunStatus, positions?: Array<{ x: number; y: number }>): 
 }
 
 describe('renderBoard', () => {
-  it('covers the complete logical board with opaque graph paper at the start of every frame', () => {
+  it('covers the complete logical board with a warm-white field at the start of every frame', () => {
     const canvas = recordedCanvas();
 
     renderBoard(canvas.context, frame('running'));
@@ -126,7 +126,7 @@ describe('renderBoard', () => {
       y: 0,
       width: BOARD.width,
       height: BOARD.height,
-      fillStyle: '#edf6fa',
+      fillStyle: '#fbfaf6',
     });
   });
 
@@ -137,21 +137,18 @@ describe('renderBoard', () => {
 
     expect(canvas.arcs.filter(({ radius }) => radius === BOARD.pegRadius)).toHaveLength(55);
     expect(canvas.fillRects.filter(({ height }) => height === BOARD.binBottom - BOARD.binTop)).toHaveLength(11);
-    const dividerStrokes = canvas.strokes.filter(({ strokeStyle }) => strokeStyle === '#78909c');
+    const dividerStrokes = canvas.strokes.filter(({ strokeStyle, lineWidth }) => (
+      strokeStyle === '#8d93a2' && lineWidth === BOARD.dividerWidth
+    ));
     expect(dividerStrokes).toHaveLength(12);
   });
 
-  it('draws four restrained mounting screws at the acrylic face corners', () => {
+  it('does not decorate the flat board with faux mounting screws', () => {
     const canvas = recordedCanvas();
 
     renderBoard(canvas.context, frame('ready'));
 
-    expect(canvas.arcs.filter(({ radius }) => radius === 4)).toEqual([
-      { x: 34, y: 20, radius: 4 },
-      { x: BOARD.width - 34, y: 20, radius: 4 },
-      { x: 34, y: BOARD.height - 20, radius: 4 },
-      { x: BOARD.width - 34, y: BOARD.height - 20, radius: 4 },
-    ]);
+    expect(canvas.arcs.filter(({ radius }) => radius === 4)).toEqual([]);
   });
 
   it('draws every shared funnel segment and the gate at its actual physical position', () => {
@@ -168,7 +165,9 @@ describe('renderBoard', () => {
 
     renderBoard(canvas.context, renderFrame);
 
-    const funnelStrokes = canvas.strokes.filter(({ strokeStyle }) => strokeStyle === '#617985');
+    const funnelStrokes = canvas.strokes.filter(({ strokeStyle, lineWidth }) => (
+      strokeStyle === '#8d93a2' && lineWidth === BOARD.funnelWidth
+    ));
     expect(funnelStrokes).toHaveLength(geometry.funnels.length);
     expect(canvas.translations).toContainEqual({
       x: geometry.hopper.gateOpenX,
@@ -218,11 +217,11 @@ describe('renderBoard', () => {
 
     renderBoard(canvas.context, frame(status));
 
-    expect(canvas.strokes.some(({ strokeStyle }) => strokeStyle === '#cf3038')).toBe(false);
-    expect(canvas.fillRects.some(({ fillStyle }) => fillStyle === 'rgba(18, 89, 166, 0.18)')).toBe(false);
+    expect(canvas.strokes.some(({ strokeStyle }) => strokeStyle === '#f68620')).toBe(false);
+    expect(canvas.fillRects.some(({ fillStyle }) => fillStyle === 'rgba(246, 134, 32, 0.12)')).toBe(false);
   });
 
-  it('draws expected-frequency bars and the classic-red curve only for a visible completed overlay', () => {
+  it('draws expected-frequency bars and the orange curve only for a visible completed overlay', () => {
     const hidden = recordedCanvas();
     const visible = recordedCanvas();
     const hiddenFrame = frame('complete');
@@ -231,9 +230,9 @@ describe('renderBoard', () => {
     renderBoard(hidden.context, hiddenFrame);
     renderBoard(visible.context, frame('complete'));
 
-    expect(hidden.strokes.some(({ strokeStyle }) => strokeStyle === '#cf3038')).toBe(false);
-    expect(visible.fillRects.filter(({ fillStyle }) => fillStyle === 'rgba(18, 89, 166, 0.18)')).toHaveLength(11);
-    expect(visible.strokes.some(({ strokeStyle, dash }) => strokeStyle === '#cf3038' && dash.length === 0)).toBe(true);
+    expect(hidden.strokes.some(({ strokeStyle }) => strokeStyle === '#f68620')).toBe(false);
+    expect(visible.fillRects.filter(({ fillStyle }) => fillStyle === 'rgba(246, 134, 32, 0.12)')).toHaveLength(11);
+    expect(visible.strokes.some(({ strokeStyle, dash }) => strokeStyle === '#f68620' && dash.length === 0)).toBe(true);
   });
 
   it('scales expected probability bars to the settled-ball frequency', () => {
@@ -248,20 +247,12 @@ describe('renderBoard', () => {
     expect(fortySettled.fillRects[0]!.height).toBeCloseTo(twentySettled.fillRects[0]!.height * 2);
   });
 
-  it('fades the post-run model label and shows it immediately under reduced motion', () => {
-    const animated = recordedCanvas();
-    const reduced = recordedCanvas();
-    const animatedFrame = frame('complete');
-    animatedFrame.overlayProgress = 0.25;
-    const reducedFrame = frame('complete');
-    reducedFrame.overlayProgress = 0;
-    reducedFrame.reducedMotion = true;
+  it('keeps explanatory labels outside the board so they cannot overlap the apparatus', () => {
+    const canvas = recordedCanvas();
 
-    renderBoard(animated.context, animatedFrame);
-    renderBoard(reduced.context, reducedFrame);
+    renderBoard(canvas.context, frame('complete'));
 
-    expect(animated.texts.find(({ text }) => text === 'Theoretical model')?.alpha).toBe(0.25);
-    expect(reduced.texts.find(({ text }) => text === 'Theoretical model')?.alpha).toBe(1);
+    expect(canvas.texts).toEqual([]);
   });
 
   it('uses monotone cubic controls through bin centres with the exact theoretical stroke', () => {
@@ -290,6 +281,6 @@ describe('renderBoard', () => {
       expect(control2Y).toBeGreaterThanOrEqual(expectedEndY);
       expect(endY).toBe(expectedEndY);
     });
-    expect(canvas.strokes.at(-1)).toMatchObject({ strokeStyle: '#cf3038', lineWidth: 2.25, dash: [] });
+    expect(canvas.strokes.at(-1)).toMatchObject({ strokeStyle: '#f68620', lineWidth: 3, dash: [] });
   });
 });

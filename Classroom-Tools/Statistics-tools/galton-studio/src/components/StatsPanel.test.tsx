@@ -12,7 +12,7 @@ describe('StatsPanel', () => {
     );
 
     expect(screen.getByText('Collecting data')).toBeInTheDocument();
-    expect(screen.getByText('Model-driven physics')).toBeInTheDocument();
+    expect(screen.getByText('Classic bell-curve settings')).toBeInTheDocument();
     expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(4);
     expect(screen.getByText(/A statistic needs settled balls/)).toBeInTheDocument();
     expect(container).not.toHaveTextContent(/NaN|Infinity/);
@@ -41,7 +41,7 @@ describe('StatsPanel', () => {
     expect(screen.queryByText('Early result—expect instability')).not.toBeInTheDocument();
   });
 
-  it('shows live descriptive statistics with the required mathematical names', () => {
+  it('shows live descriptive statistics with classroom-friendly names', () => {
     render(
       <StatsPanel
         summary={summarizeSettledBins([1, 2, 3, 4, 5, 6, 7, 8])}
@@ -51,12 +51,9 @@ describe('StatsPanel', () => {
     );
 
     expect(screen.getByText('Mean bin')).toBeInTheDocument();
-    expect(screen.getByText('Population standard deviation')).toBeInTheDocument();
-    expect(screen.getByText(
-      'The square root of the mean squared deviation, using all settled balls and dividing by N.',
-    )).toBeInTheDocument();
-    expect(screen.getByText('Observed skewness')).toBeInTheDocument();
-    expect(screen.getByText('Pearson kurtosis')).toBeInTheDocument();
+    expect(screen.getByText('Spread')).toBeInTheDocument();
+    expect(screen.getByText('Skew')).toBeInTheDocument();
+    expect(screen.getByText('Tail weight')).toBeInTheDocument();
   });
 
   it('explains why moments are undefined for a constant sample', () => {
@@ -67,7 +64,7 @@ describe('StatsPanel', () => {
     expect(container).not.toHaveTextContent(/NaN|Infinity/);
   });
 
-  it('uses accurate shaped model-driven and mixed-model teaching copy', () => {
+  it('uses short, accessible custom-shape teaching copy', () => {
     render(
       <StatsPanel
         summary={summarizeSettledBins([1, 2, 3])}
@@ -76,12 +73,9 @@ describe('StatsPanel', () => {
       />,
     );
 
-    expect(screen.getByText('Shaped model-driven physics')).toBeInTheDocument();
-    expect(screen.getByText('Combined expected model')).toBeInTheDocument();
-    expect(screen.getByText(/bounded peg-contact impulses/i)).toBeInTheDocument();
-    expect(screen.getByText(/tail weight and the propensity for outliers/i)).toBeInTheDocument();
-    expect(screen.getByText(/direction of the longer tail/i)).toBeInTheDocument();
-    expect(screen.getByText(/red curve shows what the model expected/i)).toBeInTheDocument();
-    expect(screen.getByText('How should I read skewness?')).toHaveStyle({ minBlockSize: '44px' });
+    expect(screen.getByText('Custom shape settings')).toBeInTheDocument();
+    expect(screen.getByText('Includes balls from earlier settings')).toBeInTheDocument();
+    expect(screen.getByText('Shape and tails')).toHaveStyle({ minBlockSize: '44px' });
+    expect(screen.getByText(/orange line shows the shape/i)).toBeInTheDocument();
   });
 });

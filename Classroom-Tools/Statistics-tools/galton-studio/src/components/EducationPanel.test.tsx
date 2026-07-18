@@ -5,28 +5,24 @@ import { EducationPanel } from './EducationPanel';
 afterEach(cleanup);
 
 describe('EducationPanel', () => {
-  it('discloses the exact quota scope and every material physical correction', () => {
+  it('explains the experiment in three short topics', () => {
     render(<EducationPanel mode="natural" hasMixedRegimes={false} />);
 
-    expect(screen.getByText(/active binomial PMF creates/i)).toBeInTheDocument();
-    expect(screen.getByText(/each fixed-PMF allocation segment/i)).toBeInTheDocument();
-    expect(screen.getByText(/bounded hopper-feed velocity correction/i)).toBeInTheDocument();
-    expect(screen.getByText(/bounded peg-contact impulses/i)).toBeInTheDocument();
-    expect(screen.getByText(/continuous bounded between-row horizontal velocity correction/i))
-      .toBeInTheDocument();
-    expect(screen.getByText(/steering stops above the collection area/i)).toBeInTheDocument();
+    expect(screen.getByText('Shape and tails')).toBeInTheDocument();
+    expect(screen.getByText('Observed and expected')).toBeInTheDocument();
+    expect(screen.getByText('Reading the numbers')).toBeInTheDocument();
+    expect(screen.queryByText(/PMF|velocity correction|quota/i)).not.toBeInTheDocument();
   });
 
-  it('discloses the shaped PMF family for shaped distributions', () => {
+  it('explains custom shape controls without technical jargon', () => {
     render(<EducationPanel mode="guided" hasMixedRegimes={false} />);
 
-    expect(screen.getByText(/active shaped PMF creates/i)).toBeInTheDocument();
-    expect(screen.getByText(/bounded peg-contact impulses/i)).toBeInTheDocument();
+    expect(screen.getByText(/shape controls change the expected distribution/i)).toBeInTheDocument();
   });
 
-  it('does not claim a whole-run quota bound for a mixed Keep run', () => {
+  it('plainly identifies a mixed-settings run', () => {
     render(<EducationPanel mode="guided" hasMixedRegimes />);
 
-    expect(screen.getByText(/does not create a single whole-run quota bound/i)).toBeInTheDocument();
+    expect(screen.getByText(/includes every group of settings used/i)).toBeInTheDocument();
   });
 });

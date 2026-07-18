@@ -43,7 +43,7 @@ describe('createPhysicsWorld', () => {
     expect(physics.bodies.pegs).toHaveLength(55);
     expect(physics.bodies.rails).toHaveLength(2);
     expect(physics.bodies.dividers).toHaveLength(BIN_COUNT + 1);
-    expect(physics.bodies.funnels).toHaveLength((BIN_COUNT - 1) * 2);
+    expect(physics.bodies.funnels).toHaveLength((BIN_COUNT - 1) * 2 + 2);
     expect(physics.bodies.hopperWalls).toHaveLength(6);
     expect(physics.bodies.floor.isStatic).toBe(true);
     expect(physics.bodies.gate.isStatic).toBe(true);
@@ -61,7 +61,7 @@ describe('createPhysicsWorld', () => {
       physics.bodies.gate,
     ];
 
-    expect(bodies).toHaveLength(55 + 2 + (BIN_COUNT + 1) + (BIN_COUNT - 1) * 2 + 1 + 6 + 1);
+    expect(bodies).toHaveLength(55 + 2 + (BIN_COUNT + 1) + (BIN_COUNT - 1) * 2 + 2 + 1 + 6 + 1);
     for (const body of bodies) {
       expect(body.label).toBe(body.plugin.galton.tag);
       expect(body.plugin.galton.tag).toMatch(/^(peg|rail|divider|funnel|floor|hopper-wall|gate)$/);

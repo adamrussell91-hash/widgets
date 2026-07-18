@@ -20,6 +20,7 @@ import {
 import {
   BOARD,
   createBoardGeometry,
+  routeCorridorX,
   type BoardGeometry,
   type Point,
 } from './geometry';
@@ -33,7 +34,12 @@ const RECYCLE_DWELL_MS = 2_000;
 const CLOSED_GATE_MASK = 0xffffffff;
 const BALL_COLLISION_SIDES = 24;
 const BALL_COLLISION_SKIN = 0.6;
-const ROUTE_IMPULSE = 0.000055;
+const CONTACT_EXIT_MAX_HORIZONTAL_SPEED = 4;
+const CONTACT_CORRIDOR_GAIN = 0.18;
+const CONTACT_EXIT_DOWNWARD_SPEED = 1.2;
+const STUCK_CONTACT_DWELL_MS = 700;
+const STUCK_CONTACT_MAX_SPEED = 0.5;
+const STUCK_RELEASE_FORCE = 0.00002;
 const HOPPER_FEED_VERTICAL_SPEED = 2;
 const HOPPER_FEED_HORIZONTAL_SPEED = 1.5;
 
@@ -82,6 +88,11 @@ interface BallState {
   settledBin: number | null;
   settling: SettlingMemory;
   outsideSinceMs: number | null;
+  pegContact: {
+    pegBodyId: number | null;
+    startedAtMs: number | null;
+    lastSeenAtMs: number | null;
+  };
 }
 
 interface PausedGateSchedule {
@@ -137,6 +148,7 @@ export class GaltonController {
   private destroyed = false;
   private pendingRouteImpulses: { ball: Body; row: number }[] = [];
   private readonly collisionHandler = (event: IEventCollision<Engine>) => this.guideCollisions(event);
+  private readonly collisionEndHandler = (event: IEventCollision<Engine>) => this.endPegContacts(event);
 
   constructor(options: GaltonControllerOptions) {
     this.seed = options.seed;
@@ -309,6 +321,8 @@ export class GaltonController {
     this.physics.engine.positionIterations = 20;
     this.rng = createRng(seed);
     Events.on(this.physics.engine, 'collisionStart', this.collisionHandler);
+    Events.on(this.physics.engine, 'collisionActive', this.collisionHandler);
+    Events.on(this.physics.engine, 'collisionEnd', this.collisionEndHandler);
     this.loadPhysicalBalls(BATCH_SIZE);
     this.assignUnreleasedBalls();
     this.warmUp();
@@ -413,6 +427,7 @@ export class GaltonController {
       settledBin: null,
       settling: { bin: null, enteredAtMs: null },
       outsideSinceMs: null,
+      pegContact: { pegBodyId: null, startedAtMs: null, lastSeenAtMs: null },
     });
     return body;
   }
@@ -472,6 +487,7 @@ export class GaltonController {
     for (const state of [...this.balls.values()]) {
       if (!state.released || state.settledBin !== null) continue;
       if (this.recycleIfLost(state)) continue;
+      this.releaseIfStuckOnPeg(state);
       const bin = classifySettledBall(
         state.body,
         this.physics.geometry,
@@ -532,11 +548,71 @@ export class GaltonController {
       if (!ball || other.label !== 'peg') continue;
       const state = this.balls.get(ball.id);
       const targetBin = ball.plugin.galton.targetBin;
+      if (state?.released && state.settledBin === null) this.recordPegContact(state, other.id);
       if (!state?.released || state.settledBin !== null || typeof targetBin !== 'number') continue;
       const pegRow = other.plugin.galton.pegRow;
       if (typeof pegRow !== 'number') continue;
       this.applyRouteImpulse(ball, pegRow);
     }
+  }
+
+  private recordPegContact(state: BallState, pegBodyId: number) {
+    const contact = state.pegContact;
+    if (contact.pegBodyId !== pegBodyId || contact.startedAtMs === null) {
+      contact.pegBodyId = pegBodyId;
+      contact.startedAtMs = this.simulationTimeMs;
+    }
+    contact.lastSeenAtMs = this.simulationTimeMs;
+  }
+
+  private endPegContacts(event: IEventCollision<Engine>) {
+    for (const { bodyA, bodyB } of event.pairs) {
+      const ball = bodyA.label === 'ball' ? bodyA : bodyB.label === 'ball' ? bodyB : null;
+      const other = ball === bodyA ? bodyB : bodyA;
+      if (!ball || other.label !== 'peg') continue;
+      const state = this.balls.get(ball.id);
+      if (!state || state.pegContact.pegBodyId !== other.id) continue;
+      state.pegContact = { pegBodyId: null, startedAtMs: null, lastSeenAtMs: null };
+    }
+  }
+
+  private releaseIfStuckOnPeg(state: BallState) {
+    const { body, pegContact } = state;
+    if (pegContact.startedAtMs === null && body.speed <= STUCK_CONTACT_MAX_SPEED) {
+      const contactRadius = BOARD.ballRadius + BOARD.pegRadius + 1.5;
+      const nearbyPeg = this.physics.bodies.pegs.find((peg) => (
+        Math.hypot(body.position.x - peg.position.x, body.position.y - peg.position.y)
+          <= contactRadius
+      ));
+      if (nearbyPeg) {
+        pegContact.pegBodyId = nearbyPeg.id;
+        pegContact.startedAtMs = this.simulationTimeMs;
+        pegContact.lastSeenAtMs = this.simulationTimeMs;
+      }
+    }
+    if (
+      pegContact.startedAtMs === null
+      || pegContact.lastSeenAtMs === null
+      || this.simulationTimeMs - pegContact.startedAtMs < STUCK_CONTACT_DWELL_MS
+      || body.speed > STUCK_CONTACT_MAX_SPEED
+      || body.position.y < BOARD.pegTop
+      || body.position.y >= BOARD.funnelTop
+    ) return;
+    const peg = this.physics.bodies.pegs.find(({ id }) => id === pegContact.pegBodyId);
+    const routeRow = peg?.plugin.galton.pegRow;
+    const routeDirection = typeof routeRow === 'number'
+      ? body.plugin.galton.route?.[routeRow]
+      : undefined;
+    const offsetDirection = peg && Math.abs(body.position.x - peg.position.x) > 0.25
+      ? Math.sign(body.position.x - peg.position.x)
+      : routeDirection;
+    Sleeping.set(body, false);
+    Body.applyForce(body, body.position, { x: 0, y: STUCK_RELEASE_FORCE });
+    Body.setVelocity(body, {
+      x: (offsetDirection === -1 ? -1 : 1) * 1.5,
+      y: 1.2,
+    });
+    state.pegContact = { pegBodyId: null, startedAtMs: null, lastSeenAtMs: null };
   }
 
   private applyRouteImpulse(ball: Body, row: number) {
@@ -552,7 +628,22 @@ export class GaltonController {
     for (const { ball, row } of this.pendingRouteImpulses.splice(0)) {
       const direction = ball.plugin.galton.route?.[row];
       if (direction !== -1 && direction !== 1) continue;
-      Body.applyForce(ball, ball.position, { x: direction * ROUTE_IMPULSE, y: 0 });
+      const targetBin = ball.plugin.galton.targetBin;
+      if (typeof targetBin !== 'number') continue;
+      const route = ball.plugin.galton.route ?? [];
+      const progress = Math.min(1, (row + 1) / this.physics.geometry.pegRows.length);
+      const desiredX = routeCorridorX(this.physics.geometry, route, targetBin, progress);
+      const desiredVelocityX = Math.max(
+        -CONTACT_EXIT_MAX_HORIZONTAL_SPEED,
+        Math.min(CONTACT_EXIT_MAX_HORIZONTAL_SPEED, (
+          desiredX - ball.position.x
+        ) * CONTACT_CORRIDOR_GAIN),
+      );
+      Sleeping.set(ball, false);
+      Body.setVelocity(ball, {
+        x: desiredVelocityX,
+        y: CONTACT_EXIT_DOWNWARD_SPEED,
+      });
     }
   }
 
@@ -719,6 +810,8 @@ export class GaltonController {
     this.cancelReleaseTimers();
     if (!this.physics) return;
     Events.off(this.physics.engine, 'collisionStart', this.collisionHandler);
+    Events.off(this.physics.engine, 'collisionActive', this.collisionHandler);
+    Events.off(this.physics.engine, 'collisionEnd', this.collisionEndHandler);
     Composite.clear(this.physics.world, false, true);
     Engine.clear(this.physics.engine);
   }

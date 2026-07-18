@@ -104,10 +104,9 @@ function ExperimentApp() {
       <a className="skip-link" href="#experiment">Skip to experiment</a>
       <header className="app-header">
         <div className="app-header__brand">
-          <p className="eyebrow">Interactive probability laboratory</p>
+          <p className="eyebrow">Interactive statistics lab</p>
           <h1>Galton Studio</h1>
-          <p className="app-header__subtitle">Probability made physical.</p>
-          <p className="app-header__build">Distribution fix build 2</p>
+          <p className="app-header__subtitle">See a distribution take shape.</p>
         </div>
 
         <div className="run-strip" aria-label="Experiment status and actions">
@@ -147,15 +146,15 @@ function ExperimentApp() {
         <section className="board-panel" aria-labelledby="physical-board-heading">
           <div className="board-panel__heading">
             <div>
-              <p className="eyebrow">Physical apparatus</p>
-              <h2 id="physical-board-heading">Physical Galton board</h2>
+              <p className="eyebrow">Live experiment</p>
+              <h2 id="physical-board-heading">Galton board</h2>
             </div>
-            <span className="mode-chip">{mode === 'natural' ? 'Model-driven physics' : 'Shaped model-driven physics'}</span>
+            <span className="mode-chip">{mode === 'natural' ? 'Classic bell curve' : 'Custom distribution'}</span>
           </div>
           {snapshot.status === 'ready' && summary.count === 0 && snapshot.activeCount === 0 && (
             <aside className="prediction-prompt" aria-label="Prediction prompt">
               <strong>Before you run</strong>
-              <span>Which bin do you predict will collect the most balls—and why?</span>
+              <span>Which bin will collect the most balls?</span>
             </aside>
           )}
           <div className="board-stage">
@@ -173,7 +172,7 @@ function ExperimentApp() {
           <BoardBinReadouts bins={summary.bins} />
           <div className="board-panel__legend" aria-label="Board legend">
             <span><i className="legend-dot legend-dot--observed" /> Observed balls</span>
-            <span><i className="legend-line legend-line--theory" /> Theoretical model after completion</span>
+            <span><i className="legend-line legend-line--theory" /> Expected shape</span>
           </div>
         </section>
 

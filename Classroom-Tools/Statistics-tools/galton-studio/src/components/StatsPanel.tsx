@@ -44,19 +44,18 @@ export function StatsPanel({ summary, mode, hasMixedRegimes }: StatsPanelProps) 
             ? 'Early result—expect instability'
             : 'Observed summary'}
       </p>
-      <p>{mode === 'natural' ? 'Model-driven physics' : 'Shaped model-driven physics'}</p>
-      <p>{hasMixedRegimes ? 'Combined expected model' : 'Expected model'}</p>
+      <p>{mode === 'natural' ? 'Classic bell-curve settings' : 'Custom shape settings'}</p>
+      {hasMixedRegimes && <p>Includes balls from earlier settings</p>}
 
       <dl className="statistics-panel__values">
         <Statistic label="Total observations" value={summary.count} digits={0} />
         <Statistic label="Mean bin" value={summary.mean} />
         <Statistic
-          label="Population standard deviation"
+          label="Spread"
           value={summary.standardDeviation}
-          note="The square root of the mean squared deviation, using all settled balls and dividing by N."
         />
-        <Statistic label="Observed skewness" value={summary.skewness} />
-        <Statistic label="Pearson kurtosis" value={summary.pearsonKurtosis} />
+        <Statistic label="Skew" value={summary.skewness} />
+        <Statistic label="Tail weight" value={summary.pearsonKurtosis} />
       </dl>
       {[summary.mean, summary.standardDeviation, summary.skewness, summary.pearsonKurtosis]
         .some((value) => value === null || !Number.isFinite(value)) && (

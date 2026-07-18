@@ -212,20 +212,18 @@ describe('GaltonController', () => {
     const pegBody = ((instance as any).physics.bodies.pegs as Body[])
       .find((body) => body.plugin.galton.pegRow === 0)!;
     const pair = { bodyA: ball, bodyB: pegBody };
-    const applyForce = vi.spyOn(Body, 'applyForce');
+    const setVelocity = vi.spyOn(Body, 'setVelocity');
 
     internal.guideCollisions({ pairs: [pair] });
     internal.guideCollisions({ pairs: [pair] });
     instance.step(1000 / 120);
 
-    const routeForces = applyForce.mock.calls.filter(([subject, , force]) => (
-      subject === ball
-      && force.x === direction * 0.000055
-      && force.y === 0
+    const routeExits = setVelocity.mock.calls.filter(([subject, velocity]) => (
+      subject === ball && Math.sign(velocity.x) === direction
     ));
 
     expect(ball.plugin.galton.nextRouteRow).toBe(1);
-    expect(routeForces).toHaveLength(1);
+    expect(routeExits).toHaveLength(1);
     expect(peg).toBeDefined();
   });
 
@@ -730,29 +728,33 @@ describe('GaltonController', () => {
     expect(instance.snapshot()).toMatchObject({ hopperCount: 100, activeCount: 0, recycledCount: 2 });
   });
 
-  it('applies the allocated bounded route impulse on an eligible targeted peg contact', () => {
+  it('leaves an eligible peg contact in the allocated direction at bounded speed', () => {
     const guided = tracked({ ...neutral, skew: 1 });
     const ball = releaseOne(guided);
     const internal = guided as unknown as { guideCollisions(event: unknown): void };
     const pegBody = ((guided as any).physics.bodies.pegs as Body[])
       .find((body) => body.plugin.galton.pegRow === 0)!;
     ball.plugin.galton.route = [-1];
-    const applyForce = vi.spyOn(Body, 'applyForce');
+    const setVelocity = vi.spyOn(Body, 'setVelocity');
 
     internal.guideCollisions({ pairs: [{ bodyA: ball, bodyB: pegBody }] });
     guided.step(1000 / 120);
 
-    const call = applyForce.mock.calls.find(([subject]) => subject === ball);
+    const call = setVelocity.mock.calls.find(([subject]) => subject === ball);
     expect(call).toBeDefined();
-    expect(call).toEqual([ball, ball.position, { x: -0.000055, y: 0 }]);
+    expect(call![0]).toBe(ball);
+    expect(call![1].x).toBeLessThanOrEqual(-1);
+    expect(call![1].x).toBeGreaterThanOrEqual(-4);
+    expect(Number.isFinite(call![1].y)).toBe(true);
   });
 
   it('does not steer a released ball during free flight', () => {
     const instance = tracked({ ...neutral, skew: 1 });
     const ball = releaseOne(instance);
+    (instance as unknown as { pendingRouteImpulses: unknown[] }).pendingRouteImpulses = [];
     Body.setPosition(ball, {
-      x: BOARD.width / 2 - 80,
-      y: BOARD.pegTop + 120,
+      x: BOARD.width / 2,
+      y: BOARD.pegTop + 105,
     });
     Body.setVelocity(ball, { x: 0.4, y: 2 });
     Sleeping.set(ball, false);
@@ -761,6 +763,54 @@ describe('GaltonController', () => {
     instance.step(1000 / 120);
 
     expect(setVelocity.mock.calls.filter(([subject]) => subject === ball)).toEqual([]);
+  });
+
+  it('applies one small downward release force after sustained low-speed peg contact', () => {
+    const instance = tracked();
+    const ball = releaseOne(instance);
+    const pegBody = ((instance as any).physics.bodies.pegs as Body[])
+      .find((body) => body.plugin.galton.pegRow === 2)!;
+    const internal = instance as unknown as { guideCollisions(event: unknown): void };
+    ball.plugin.galton.targetBin = null;
+    Body.setPosition(ball, { x: pegBody.position.x, y: pegBody.position.y });
+    const applyForce = vi.spyOn(Body, 'applyForce');
+
+    for (let frame = 0; frame < 100; frame += 1) {
+      Body.setVelocity(ball, { x: 0, y: 0 });
+      internal.guideCollisions({ pairs: [{ bodyA: ball, bodyB: pegBody }] });
+      instance.step(1000 / 120);
+    }
+
+    const releaseForces = applyForce.mock.calls
+      .filter(([subject, , force]) => subject === ball && force.y > 0)
+      .map(([, , force]) => force);
+    expect(releaseForces).toHaveLength(1);
+    expect(Math.abs(releaseForces[0]!.x)).toBeLessThanOrEqual(0.00001);
+    expect(releaseForces[0]!.y).toBeGreaterThan(0);
+    expect(releaseForces[0]!.y).toBeLessThanOrEqual(0.00003);
+  });
+
+  it('does not release a slow ball after only a brief peg contact', () => {
+    const instance = tracked();
+    const ball = releaseOne(instance);
+    const pegBody = ((instance as any).physics.bodies.pegs as Body[])
+      .find((body) => body.plugin.galton.pegRow === 2)!;
+    const internal = instance as unknown as {
+      guideCollisions(event: unknown): void;
+      endPegContacts(event: unknown): void;
+    };
+    ball.plugin.galton.targetBin = null;
+    internal.guideCollisions({ pairs: [{ bodyA: ball, bodyB: pegBody }] });
+    internal.endPegContacts({ pairs: [{ bodyA: ball, bodyB: pegBody }] });
+    Body.setPosition(ball, { x: BOARD.width / 2 - 80, y: BOARD.pegTop + 120 });
+    Body.setVelocity(ball, { x: 0, y: 0 });
+    const applyForce = vi.spyOn(Body, 'applyForce');
+
+    advance(instance, 1_000);
+
+    expect(applyForce.mock.calls.some(([subject, , force]) => (
+      subject === ball && force.y > 0
+    ))).toBe(false);
   });
 
   it('does not apply guidance on an untargeted peg contact', () => {
@@ -788,6 +838,21 @@ describe('GaltonController', () => {
     internal.guideCollisions({ pairs: [{ bodyA: targeted, bodyB: other }] });
 
     expect(applyForce.mock.calls.some(([subject]) => subject === targeted)).toBe(false);
+  });
+
+  it('does not steer a targeted ball when it contacts a funnel', () => {
+    const instance = tracked();
+    const ball = releaseOne(instance);
+    const funnel = ((instance as any).physics.bodies.funnels as Body[])[0]!;
+    const internal = instance as unknown as { guideCollisions(event: unknown): void };
+    ball.plugin.galton.targetBin = 9;
+    Body.setPosition(ball, { x: BOARD.width / 2, y: BOARD.funnelTop });
+    const setVelocity = vi.spyOn(Body, 'setVelocity');
+
+    internal.guideCollisions({ pairs: [{ bodyA: ball, bodyB: funnel }] });
+    instance.step(1000 / 120);
+
+    expect(setVelocity.mock.calls.filter(([subject]) => subject === ball)).toEqual([]);
   });
 
   it('enters settling after the last hopper ball crosses', () => {
@@ -930,6 +995,7 @@ describe('GaltonController', () => {
   it('re-sleeps a previously reawakened counted body when completion is reached', () => {
     const instance = tracked();
     releaseBatch(instance);
+    (instance as unknown as { pendingRouteImpulses: unknown[] }).pendingRouteImpulses = [];
     const [early, ...remaining] = instance.snapshot().ballBodies;
     const geometry = createBoardGeometry();
     const bin = geometry.bins[0]!;
