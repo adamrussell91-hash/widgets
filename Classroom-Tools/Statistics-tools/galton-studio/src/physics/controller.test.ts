@@ -177,16 +177,26 @@ describe('GaltonController', () => {
   it('consumes at most one route decision for repeated contacts in a peg row', () => {
     const instance = tracked();
     const ball = releaseOne(instance);
+    const direction = ball.plugin.galton.route![0]!;
     const internal = instance as unknown as { guideCollisions(event: unknown): void };
     const peg = instance.snapshot().apparatusGeometry!.pegRows[0]!.pegs[0];
     const pegBody = ((instance as any).physics.bodies.pegs as Body[])
       .find((body) => body.plugin.galton.pegRow === 0)!;
     const pair = { bodyA: ball, bodyB: pegBody };
+    const applyForce = vi.spyOn(Body, 'applyForce');
 
     internal.guideCollisions({ pairs: [pair] });
     internal.guideCollisions({ pairs: [pair] });
+    instance.step(1000 / 120);
+
+    const routeForces = applyForce.mock.calls.filter(([subject, , force]) => (
+      subject === ball
+      && force.x === direction * 0.000055
+      && force.y === 0
+    ));
 
     expect(ball.plugin.galton.nextRouteRow).toBe(1);
+    expect(routeForces).toHaveLength(1);
     expect(peg).toBeDefined();
   });
 
