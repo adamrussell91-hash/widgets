@@ -28,6 +28,12 @@ const RECYCLE_DWELL_MS = 2_000;
 const CLOSED_GATE_MASK = 0xffffffff;
 const BALL_COLLISION_SIDES = 24;
 const BALL_COLLISION_SKIN = 0.6;
+const ROUTE_IMPULSE = 0.000055;
+const ROUTE_LOOKAHEAD = 1.5;
+const MAX_STEERING_SPEED = 4;
+const MAX_STEERING_IMPULSE = 1;
+const STEERING_GAIN = 0.3;
+const PEG_ESCAPE_VERTICAL_SPEED = 0.5;
 
 export interface GaltonSnapshot {
   status: RunStatus;
@@ -101,6 +107,7 @@ export class GaltonController {
   private visibilitySuspended = false;
   private gateOpen = false;
   private destroyed = false;
+  private pendingRouteImpulses: { ball: Body; row: number }[] = [];
   private readonly collisionHandler = (event: IEventCollision<Engine>) => this.guideCollisions(event);
 
   constructor(options: GaltonControllerOptions) {
@@ -183,6 +190,7 @@ export class GaltonController {
     this.pausedGateSchedule = null;
     this.visibilityGateSchedule = null;
     this.gateOpen = false;
+    this.pendingRouteImpulses = [];
     this.balls.clear();
     this.settledBins = [];
     this.regimes = [];
@@ -258,6 +266,7 @@ export class GaltonController {
     this.disposeWorld();
     this.listeners.clear();
     this.balls.clear();
+    this.pendingRouteImpulses = [];
     this.cachedSnapshot = null;
     this.destroyed = true;
   }
@@ -408,10 +417,12 @@ export class GaltonController {
   }
 
   private afterFixedStep() {
+    this.flushRouteImpulses();
     this.captureGateCrossing();
     for (const state of [...this.balls.values()]) {
       if (!state.released || state.settledBin !== null) continue;
       if (this.recycleIfLost(state)) continue;
+      this.applyCorrectiveSteering(state);
       const bin = classifySettledBall(
         state.body,
         this.physics.geometry,
@@ -453,11 +464,86 @@ export class GaltonController {
       const state = this.balls.get(ball.id);
       const targetBin = ball.plugin.galton.targetBin;
       if (!state?.released || state.settledBin !== null || typeof targetBin !== 'number') continue;
-      const targetX = this.physics.geometry.bins[targetBin]!.centreX;
-      const direction = Math.sign(targetX - ball.position.x);
-      const distanceFactor = Math.min(1, Math.abs(targetX - ball.position.x) / 220);
-      Body.applyForce(ball, ball.position, { x: direction * distanceFactor * 0.000018, y: 0 });
+      const pegRow = other.plugin.galton.pegRow;
+      if (typeof pegRow !== 'number') continue;
+      this.applyRouteImpulse(ball, pegRow);
     }
+  }
+
+  private applyRouteImpulse(ball: Body, row: number) {
+    const nextRouteRow = ball.plugin.galton.nextRouteRow ?? 0;
+    if (row < nextRouteRow) return;
+    const direction = ball.plugin.galton.route?.[row];
+    if (direction !== -1 && direction !== 1) return;
+    ball.plugin.galton.nextRouteRow = row + 1;
+    this.pendingRouteImpulses.push({ ball, row });
+  }
+
+  private flushRouteImpulses() {
+    for (const { ball, row } of this.pendingRouteImpulses.splice(0)) {
+      const direction = ball.plugin.galton.route?.[row];
+      if (direction !== -1 && direction !== 1) continue;
+      Body.applyForce(ball, ball.position, { x: direction * ROUTE_IMPULSE, y: 0 });
+    }
+  }
+
+  private applyCorrectiveSteering(state: BallState) {
+    const { body } = state;
+    if (
+      !state.released
+      || state.settledBin !== null
+      || body.position.y < BOARD.pegTop
+      || body.position.y >= BOARD.funnelTop
+      || body.position.x < -BOARD.ballRadius
+      || body.position.x > BOARD.width + BOARD.ballRadius
+    ) return;
+    const targetBin = body.plugin.galton.targetBin;
+    if (typeof targetBin !== 'number') return;
+    const target = this.physics.geometry.bins[targetBin];
+    if (!target) return;
+    const progress = Math.max(0, Math.min(
+      1,
+      (body.position.y - BOARD.pegTop) / (BOARD.funnelTop - BOARD.pegTop),
+    ));
+    const targetX = target.centreX;
+    const route = body.plugin.galton.route ?? [];
+    const routeProgress = Math.min(route.length, progress * route.length + ROUTE_LOOKAHEAD);
+    const completeDecisions = Math.floor(routeProgress);
+    let desiredX = this.physics.geometry.hopper.throatX;
+    for (let row = 0; row < completeDecisions; row += 1) {
+      desiredX += (route[row] ?? 0) * BOARD.pegGap / 2;
+    }
+    if (completeDecisions < route.length) {
+      desiredX += (route[completeDecisions] ?? 0)
+        * BOARD.pegGap / 2
+        * (routeProgress - completeDecisions);
+    } else {
+      desiredX = targetX;
+    }
+    let desiredVelocityX = Math.max(-MAX_STEERING_SPEED, Math.min(
+      MAX_STEERING_SPEED,
+      (desiredX - body.position.x) * STEERING_GAIN,
+    ));
+    const consumedRow = (body.plugin.galton.nextRouteRow ?? 0) - 1;
+    const escapeDirection = route[consumedRow];
+    if (
+      Math.abs(body.velocity.y) < PEG_ESCAPE_VERTICAL_SPEED
+      && (escapeDirection === -1 || escapeDirection === 1)
+    ) {
+      desiredVelocityX = escapeDirection * Math.max(
+        Math.abs(desiredVelocityX),
+        MAX_STEERING_SPEED / 2,
+      );
+    }
+    const impulseX = Math.max(-MAX_STEERING_IMPULSE, Math.min(
+      MAX_STEERING_IMPULSE,
+      desiredVelocityX - body.velocity.x,
+    ));
+    Sleeping.set(body, false);
+    Body.setVelocity(body, {
+      x: body.velocity.x + impulseX,
+      y: body.velocity.y,
+    });
   }
 
   private settle(state: BallState, bin: number) {
