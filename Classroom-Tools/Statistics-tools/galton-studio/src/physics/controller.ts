@@ -64,6 +64,10 @@ export type SnapshotListener = () => void;
 interface BallState {
   body: Body;
   released: boolean;
+  logicalBallId: number;
+  assignmentLocked: boolean;
+  releaseCounted: boolean;
+  releaseRegime: Omit<DistributionRegime, 'released'> | null;
   settledBin: number | null;
   settling: SettlingMemory;
   outsideSinceMs: number | null;
@@ -74,12 +78,23 @@ interface PausedGateSchedule {
   remainingMs: number;
 }
 
+interface LogicalBallLifecycle {
+  logicalBallId: number;
+  assignmentLocked: boolean;
+  releaseCounted: boolean;
+  releaseRegime: Omit<DistributionRegime, 'released'> | null;
+}
+
 function cloneSettings(settings: ExperimentSettings): ExperimentSettings {
   return { ...settings };
 }
 
 function settingsMatch(a: DistributionRegime, pmf: number[], mode: DistributionRegime['mode']) {
   return a.mode === mode && a.pmf.every((value, index) => value === pmf[index]);
+}
+
+function pmfsMatch(a: readonly number[], b: readonly number[]) {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
 }
 
 export class GaltonController {
@@ -97,6 +112,7 @@ export class GaltonController {
   private accumulatorMs = 0;
   private simulationTimeMs = 0;
   private nextBallId = 1;
+  private nextLogicalBallId = 1;
   private recycledCount = 0;
   private releaseTimer: ReturnType<typeof setTimeout> | null = null;
   private safetyTimer: ReturnType<typeof setTimeout> | null = null;
@@ -186,6 +202,7 @@ export class GaltonController {
     this.accumulatorMs = 0;
     this.simulationTimeMs = 0;
     this.nextBallId = 1;
+    this.nextLogicalBallId = 1;
     this.recycledCount = 0;
     this.pausedGateSchedule = null;
     this.visibilityGateSchedule = null;
@@ -213,11 +230,13 @@ export class GaltonController {
 
   setSettings(settings: ExperimentSettings): void {
     if (this.destroyed) return;
+    const previousPmf = buildExpectedPmf(this.settings);
+    const nextPmf = buildExpectedPmf(settings);
     if (settings.hopperPosition !== this.settings.hopperPosition) {
       this.moveHopper(settings.hopperPosition);
     }
     this.settings = cloneSettings(settings);
-    this.assignUnreleasedBalls();
+    if (!pmfsMatch(previousPmf, nextPmf)) this.assignUnreleasedBalls();
     this.notify();
   }
 
@@ -316,7 +335,9 @@ export class GaltonController {
   }
 
   private assignUnreleasedBalls() {
-    const waiting = [...this.balls.values()].filter(({ released }) => !released);
+    const waiting = [...this.balls.values()].filter(({ released, assignmentLocked }) => (
+      !released && !assignmentLocked
+    ));
     const assignments = buildBallAssignments(
       buildExpectedPmf(this.settings),
       waiting.length,
@@ -330,9 +351,16 @@ export class GaltonController {
     });
   }
 
-  private createBall(x: number, y: number, assignment?: BallAssignment) {
+  private createBall(
+    x: number,
+    y: number,
+    assignment?: BallAssignment,
+    lifecycle?: LogicalBallLifecycle,
+  ) {
     const ballId = this.nextBallId;
     this.nextBallId += 1;
+    const logicalBallId = lifecycle?.logicalBallId ?? this.nextLogicalBallId;
+    if (!lifecycle) this.nextLogicalBallId += 1;
     const collisionRadius = (
       BOARD.ballRadius + BALL_COLLISION_SKIN
     ) / Math.cos(Math.PI / BALL_COLLISION_SIDES);
@@ -349,6 +377,7 @@ export class GaltonController {
         galton: {
           tag: 'ball',
           ballId,
+          logicalBallId,
           released: false,
           settled: false,
           targetBin: assignment?.targetBin ?? null,
@@ -361,6 +390,12 @@ export class GaltonController {
     this.balls.set(body.id, {
       body,
       released: false,
+      logicalBallId,
+      assignmentLocked: lifecycle?.assignmentLocked ?? false,
+      releaseCounted: lifecycle?.releaseCounted ?? false,
+      releaseRegime: lifecycle?.releaseRegime
+        ? { ...lifecycle.releaseRegime, pmf: [...lifecycle.releaseRegime.pmf] }
+        : null,
       settledBin: null,
       settling: { bin: null, enteredAtMs: null },
       outsideSinceMs: null,
@@ -443,12 +478,17 @@ export class GaltonController {
     if (!crossing) return;
 
     crossing.released = true;
+    crossing.assignmentLocked = true;
     crossing.body.plugin.galton.released = true;
-    const pmf = buildExpectedPmf(this.settings);
-    const mode = modeFor(this.settings);
-    const previous = this.regimes.at(-1);
-    if (previous && settingsMatch(previous, pmf, mode)) previous.released += 1;
-    else this.regimes.push({ pmf: [...pmf], released: 1, mode });
+    if (!crossing.releaseCounted) {
+      const pmf = buildExpectedPmf(this.settings);
+      const mode = modeFor(this.settings);
+      crossing.releaseCounted = true;
+      crossing.releaseRegime = { pmf: [...pmf], mode };
+      const previous = this.regimes.at(-1);
+      if (previous && settingsMatch(previous, pmf, mode)) previous.released += 1;
+      else this.regimes.push({ pmf: [...pmf], released: 1, mode });
+    }
 
     this.cancelReleaseTimers();
     this.closeGate();
@@ -578,7 +618,17 @@ export class GaltonController {
     this.cancelReleaseTimers();
     this.closeGate();
     const replacementPosition = this.findReplacementPosition();
-    const replacement = this.createBall(replacementPosition.x, replacementPosition.y, assignment);
+    const replacement = this.createBall(
+      replacementPosition.x,
+      replacementPosition.y,
+      assignment,
+      {
+        logicalBallId: state.logicalBallId,
+        assignmentLocked: true,
+        releaseCounted: state.releaseCounted,
+        releaseRegime: state.releaseRegime,
+      },
+    );
     Composite.add(this.physics.world, replacement);
     this.recycledCount += 1;
     if (this.status === 'settling') this.status = 'running';
