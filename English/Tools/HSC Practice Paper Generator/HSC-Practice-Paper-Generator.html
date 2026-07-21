@@ -626,9 +626,32 @@
       .settings-toggle, .btn-row, #settings-panel, .section-tabbar { display: none !important; }
       section.active { display: block; }
     }
+
+    #bug-report-link {
+      position: fixed;
+      bottom: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--color-muted);
+      opacity: 0.5;
+      z-index: 1000;
+      transition: opacity 0.15s ease;
+    }
+    #bug-report-link:hover, #bug-report-link:focus-visible { opacity: 1; }
+    #bug-report-link svg { width: 18px; height: 18px; }
+    @media print { #bug-report-link { display: none !important; } }
   </style>
 </head>
 <body>
+
+<a id="bug-report-link" href="https://mrrussellteaching.notion.site/f55e98f5973b4700b3d8a231a74a3dcc?pvs=105" target="_blank" rel="noopener noreferrer" title="Report a bug" aria-label="Report a bug">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v-.5a2.5 2.5 0 0 1 5 0V6"/><rect x="6" y="8" width="12" height="10" rx="4"/><path d="M6 12H3M21 12h-3M6 16l-2.5 2M18 16l2.5 2M6 9l-2-1.5M18 9l2-1.5M12 8v10"/></svg>
+</a>
 
 <button class="settings-toggle" id="settings-btn">⚙ Settings</button>
 <div id="settings-panel">
