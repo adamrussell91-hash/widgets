@@ -662,9 +662,23 @@ const RELATIONS = [
   {from:"Hyperbole",to:"Understatement",axis:"mirror"},
   {from:"Pathetic Fallacy",to:"Visual Imagery",axis:"cross"},
   {from:"Synaesthesia",to:"Visual Imagery",axis:"cross"},
+  {from:"Anthropomorphism",to:"Zoomorphism",axis:"mirror"},
+  {from:"Metaphor",to:"Zoomorphism",axis:"effect"},
+  {from:"Personification",to:"Animism",axis:"effect"},
+  {from:"Anthropomorphism",to:"Animism",axis:"effect"},
+  {from:"Pathetic Fallacy",to:"Animism",axis:"cross"},
+  {from:"Pathetic Fallacy",to:"Sympathetic Landscape",axis:"gradient"},
+  {from:"Visual Imagery",to:"Sympathetic Landscape",axis:"effect"},
+  {from:"Sympathetic Landscape",to:"Objective Correlative",axis:"effect"},
+  {from:"Pathetic Fallacy",to:"Objective Correlative",axis:"cross"},
+  {from:"Objective Correlative",to:"Symbol",axis:"effect"},
 ];
 
 const ETYMOLOGIES = {
+  "Animism":"From Latin anima, meaning breath, life or soul; the literary term is used here for representations of nonhuman agency and relational presence",
+  "Objective Correlative":"Critical phrase associated with T. S. Eliot's 1919 essay Hamlet and His Problems: external objects, situations or events correlate with and evoke emotion",
+  "Sympathetic Landscape":"English critical phrase for landscape made emotionally correspondent with human feeling, described by Jean Hagstrum as a visual accompaniment to emotion",
+  "Zoomorphism":"Greek zōon, animal, plus morphē, form; representation through animal form or qualities",
   "Metaphor":"Greek metaphorá: meta- (across) + phérein (to carry) — 'carrying meaning across'",
   "Simile":"Latin similis: 'like, resembling' — an explicit comparison",
   "Anaphora":"Greek anaphora: ana- (again) + phérein — 'carrying back'; repetition at line starts",
@@ -856,6 +870,10 @@ const taxonomyRoot = {
         T("Enargia","Vivid, detailed description that renders a scene or object so clearly it seems to exist before the reader's eyes.","Creates sensory immediacy and immersion; collapses the distance between reader and text so that description functions almost as presence.","Keats's 'To Autumn' describing the season's sights and textures with near-tactile vividness across every stanza.",["Ekphrasis","Sensory Accumulation","Visual Imagery","Hypotyposis","Pathetic Fallacy"]),
         T("Organic Imagery","Imagery that conveys internal physical sensations such as hunger, fatigue, fear or nausea.","Grounds emotion in visceral bodily experience.","a hollow ache spread through her chest",["A type of imagery for inner bodily states","alongside kinaesthetic and tactile imagery."]),
       ]},
+      {name:"Environment & Agency",type:"subgroup",info:{definition:"Ways texts make the nonhuman world active, relational, or emotionally responsive"},techniques:[
+        T("Animism","Representation of nonhuman beings, places, objects or forces as agentic, animate or relational participants rather than inert background","Distributes agency beyond human characters and foregrounds reciprocal relationships between people and the nonhuman world","The river is treated as an ancestor whose memory and choices shape the community",["Personification","Anthropomorphism","Pathetic Fallacy","Sympathetic Landscape"]),
+        T("Sympathetic Landscape","Landscape whose physical qualities correspond with a character's or text's emotional condition without necessarily giving nature human feelings","Makes setting a visual accompaniment to emotion and binds interior state to external scene","After the funeral, bare fields and drained winter light echo the mourner's desolation",["Pathetic Fallacy","Objective Correlative","Visual Imagery","Animism"]),
+      ]},
       {name:"Diction",type:"subgroup",info:{definition:"Choice and arrangement of words in writing"},techniques:[
         T("Connotation","Implied or associated meaning beyond literal definition","Adds layers of meaning and emotional resonance","Home (warmth, safety) vs. house (neutral)",["Denotation","Loaded Language"]),
         T("Denotation","Literal, dictionary definition of a word","Establishes precise, objective meaning","Rose: a prickly flowering plant; also romantic symbol",["Connotation","Abstract Diction"]),
@@ -978,6 +996,7 @@ const taxonomyRoot = {
         T("Conceit","Extended, elaborate metaphor; often intellectual or surprising","Creates ingenious or witty comparison","Donne comparing lovers' souls to a compass",["Extended Metaphor","Metaphor"]),
         T("Personification","Attributing human qualities to non-human things","Creates intimacy and emotional connection","The wind whispered secrets; the car refused to start",["Apostrophe","Anthropomorphism"]),
         T("Anthropomorphism","Giving animals or objects human characteristics","Creates accessibility and emotional engagement","The brave little toaster; the clever fox outsmarted them",["Personification","Transferred Epithet"]),
+        T("Zoomorphism","Representing a human or other nonanimal entity through animal form, traits, behaviour or imagery","Recasts identity through human animal comparison and can destabilise the boundary between human and animal","He prowled the corridor, shoulders hunched, teeth bared",["Anthropomorphism","Metaphor","Animal Symbolism"]),
         T("Apostrophe","Directly addressing someone absent or something non-human","Creates intimacy or dramatic intensity","O death, where is thy sting? Oh, foolish pride!",["Personification","Rhetorical Question"]),
         T("Metonymy","Substituting the name of something with that of something associated","Creates conciseness and interesting associations","The White House announced...; Hollywood loves violence",["Synecdoche","Metaphor"]),
         T("Synecdoche","Part stands for whole, or whole stands for part","Creates compressed reference and interesting perspectives","All hands on deck; lend a hand",["Metonymy","Metaphor"]),
@@ -1001,6 +1020,7 @@ const taxonomyRoot = {
         T("Archetype","Universal symbol or character type recognized across cultures","Creates instant resonance and deep psychological connection","The Hero, the Shadow, the Wise Mentor",["Symbol","Mythological Allusion"]),
         T("Colour Symbolism","Colors assigned particular meanings in specific contexts","Creates atmosphere and communicates symbolically","Red for passion/danger, white for purity, black for evil",["Symbol","Visual Imagery"]),
         T("Object Symbolism","Objects representing abstract ideas or themes","Creates concrete focus for abstract concepts","Mirrors symbolizing self-reflection; cages symbolizing entrapment",["Symbol","Metaphor"]),
+        T("Objective Correlative","A set of objects, a situation or a chain of events arranged to evoke a particular emotion through external sensory facts","Externalises emotion into concrete circumstance so feeling is evoked rather than directly stated","An untouched cup cooling beside a second empty chair conveys bereavement without naming grief",["Symbol","Pathetic Fallacy","Sympathetic Landscape","Visual Imagery"]),
         T("Animal Symbolism","Animals carrying particular meanings based on cultural knowledge","Creates instant association and meaning","Owls = wisdom, foxes = cunning, ravens = death",["Archetype","Symbolism"]),
         T("Mythological Allusion","Reference to myths or classical stories","Adds depth by invoking familiar cultural narratives","Calling someone a Trojan horse or referring to Pandora's box",["Archetype","Allusion"]),
         T("Biblical Allusion","Reference to biblical stories, characters, or concepts","Creates moral or spiritual resonance in secular texts","Garden of Eden representing paradise; Judas representing betrayal",["Archetype","Allusion"]),
@@ -1432,6 +1452,10 @@ const ORIGIN={
   "Trochee":"Greek",
   "Villanelle":"French",
   "Well-Made Play":"French",
+  "Animism":"Latin",
+  "Objective Correlative":"English",
+  "Sympathetic Landscape":"English",
+  "Zoomorphism":"Greek",
   "Zeugma":"Greek",
 };
 function inferLang(name){
