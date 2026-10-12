@@ -178,4 +178,3 @@ html[data-hub="life"] .hub-card {
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
   gap: var(--hub-tile-gap);
 }
-
