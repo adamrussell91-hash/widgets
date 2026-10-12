@@ -1,0 +1,9 @@
+{
+  "name": "hsc-practice-generator",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "validate:data": "node scripts/validate-module-c-data.js"
+  },
+  "devDependencies": { "playwright": "1.62.1" }
+}

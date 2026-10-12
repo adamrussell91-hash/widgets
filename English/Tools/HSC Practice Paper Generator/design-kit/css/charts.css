@@ -1,0 +1,117 @@
+/* Chart chrome. Series colours are tokens (--chart-slot-*).
+ * Rendering lives in the hub (Life chart-kit is the reference).
+ * Prefer ring, columns, area-line. Do not invent a second plot look.
+ * Catalog: LANGUAGE.md → Charts.
+ */
+
+.chart-card {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  font-size: var(--text-xs);
+  color: var(--chart-label);
+}
+
+.chart-legend__swatch {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: var(--radius-full);
+  background: var(--wave);
+}
+
+.chart-tip {
+  position: absolute;
+  z-index: 4;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--warm-white);
+  border: 1px solid var(--line);
+  box-shadow: var(--elev-2);
+  color: var(--chart-ink);
+  font-size: var(--text-xs);
+  pointer-events: none;
+}
+
+.metric-ring-track,
+[data-role="track"] {
+  stroke: var(--chart-track);
+}
+
+.line-chart {
+  display: block;
+  width: 100%;
+  aspect-ratio: 320 / 140;
+}
+
+.line-chart--dense {
+  aspect-ratio: 320 / 72;
+}
+
+.line-chart [data-role="area"] {
+  fill: var(--area-fill);
+}
+
+.line-chart [data-role="line"] {
+  fill: none;
+  stroke: var(--wave);
+  stroke-width: 2.75;
+}
+
+.line-chart [data-role="rolling"] {
+  fill: none;
+  stroke: var(--muted);
+  stroke-dasharray: 4 4;
+}
+
+.chart-guide {
+  stroke: var(--muted);
+  stroke-dasharray: 3 4;
+}
+
+.chart-day-label,
+.chart-value-label {
+  fill: var(--chart-label);
+  font-size: 0.4375rem;
+  font-family: var(--font-ui);
+}
+
+.column-chart {
+  display: block;
+  width: 100%;
+}
+
+.column-bar {
+  fill: var(--chart-slot-1);
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: var(--space-2);
+}
+
+.heatmap-tile {
+  aspect-ratio: 1;
+  border-radius: var(--radius-xs);
+  background: color-mix(in srgb, var(--marine) 8%, transparent);
+}
+
+.heatmap-tile[data-hit="true"] {
+  background: var(--wave);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-animating,
+  .metric-ring-fill {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
