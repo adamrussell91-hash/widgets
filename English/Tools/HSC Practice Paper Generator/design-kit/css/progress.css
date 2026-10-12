@@ -1,0 +1,318 @@
+/* Assessment progress: hero metrics, open stat strips, tracks, waffle counts,
+ * mark histograms, and stacked grade bands.
+ *
+ * Mark Spread and Marking Tracker are the references. Do not wrap every
+ * figure in its own glass tile — that is what made Spread feel boxy.
+ * Catalog: LANGUAGE.md → Progress.
+ */
+
+.hub-hero-metric {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  color: var(--depth);
+  font-variant-numeric: tabular-nums;
+}
+
+.hub-hero-metric__unit {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--wave);
+  letter-spacing: var(--tracking-tight);
+}
+
+.hub-hero-metric__lab {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--orca);
+}
+
+.hub-stat-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: baseline;
+}
+
+.hub-stat {
+  display: grid;
+  gap: var(--space-px);
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  text-align: right;
+}
+
+.hub-stat__value {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--depth);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+}
+
+.hub-stat__label {
+  font-size: var(--text-xs);
+  color: var(--orca);
+}
+
+/* Continuous pile / completion track — Marking Tracker. */
+.hub-track {
+  height: 0.875rem;
+  border-radius: var(--radius-full);
+  background: var(--shore);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.hub-track__fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--wave), var(--marine));
+}
+
+/* Count-of-N mosaic. These are marks, not glass tiles. Keep them small. */
+.hub-waffle {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(0.7rem, 1fr));
+  gap: var(--space-1);
+}
+
+.hub-waffle__cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--shallow) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--marine) 8%, transparent);
+}
+
+.hub-waffle__cell.is-on {
+  background: linear-gradient(160deg, var(--wave), var(--marine));
+  border-color: transparent;
+}
+
+.hub-waffle__cell.is-next {
+  background: var(--warning-surface);
+  border-color: var(--high-sea);
+}
+
+/* Mark histogram — columns, not a tile grid. */
+.hub-hist {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  height: 11.75rem;
+}
+
+.hub-hist__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+}
+
+.hub-hist__count {
+  height: var(--space-4);
+  margin-bottom: var(--space-1);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  color: var(--marine);
+  font-variant-numeric: tabular-nums;
+}
+
+.hub-hist__bar {
+  width: 100%;
+  min-height: 3px;
+  border-radius: var(--radius-xs) var(--radius-xs) 2px 2px;
+  background: color-mix(in srgb, var(--shallow) 26%, transparent);
+}
+
+.hub-hist__bar[data-band="A"] {
+  background: linear-gradient(180deg, var(--navy), var(--band-a));
+}
+
+.hub-hist__bar[data-band="B"] {
+  background: linear-gradient(180deg, var(--navy-2), var(--band-b));
+}
+
+.hub-hist__bar[data-band="C"] {
+  background: linear-gradient(180deg, var(--pastel-gold), var(--band-c));
+}
+
+.hub-hist__bar[data-band="D"] {
+  background: linear-gradient(180deg, var(--high-sea-hover), var(--band-d));
+}
+
+.hub-hist__axis {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.hub-hist__tick {
+  flex: 1;
+  text-align: center;
+  font-size: var(--text-2xs);
+  color: var(--shallow);
+  font-variant-numeric: tabular-nums;
+}
+
+.hub-hist__tick.is-on {
+  color: var(--marine);
+  font-weight: var(--weight-bold);
+}
+
+/* Stacked grade band — one bar, not four tiles. */
+.hub-band-stack {
+  display: flex;
+  height: 1.375rem;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--shallow) 22%, transparent);
+  border: 1px solid var(--line);
+}
+
+.hub-band-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+}
+
+.hub-band-seg[data-band="A"] { background: var(--band-a); color: var(--band-a-ink); }
+.hub-band-seg[data-band="B"] { background: var(--band-b); color: var(--band-b-ink); }
+.hub-band-seg[data-band="C"] { background: var(--band-c); color: var(--band-c-ink); }
+.hub-band-seg[data-band="D"] { background: var(--band-d); color: var(--band-d-ink); }
+
+.hub-band-row {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.hub-band-row__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.hub-band-row__name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--depth);
+}
+
+.hub-band-row__meta {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--orca);
+  font-variant-numeric: tabular-nums;
+}
+
+.hub-band-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  color: var(--orca);
+}
+
+.hub-band-legend__swatch {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 3px;
+  background: var(--band-a);
+}
+
+/* Spread page: one panel, two plots. Not two cards + a row of stat tiles. */
+.hub-spread {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.hub-spread__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.hub-spread__plots {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--space-8);
+}
+
+.hub-spread__plots > * + * {
+  padding-left: var(--space-8);
+  border-left: 1px solid var(--line);
+}
+
+.hub-composer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.hub-grade {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--paper);
+  color: var(--orca);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+}
+
+.hub-grade.is-on[data-band="A"] { background: var(--band-a); border-color: var(--band-a); color: var(--band-a-ink); }
+.hub-grade.is-on[data-band="B"] { background: var(--band-b); border-color: var(--band-b); color: var(--band-b-ink); }
+.hub-grade.is-on[data-band="C"] { background: var(--band-c); border-color: var(--band-c); color: var(--band-c-ink); }
+.hub-grade.is-on[data-band="D"] { background: var(--band-d); border-color: var(--band-d); color: var(--band-d-ink); }
+
+@media (max-width: 780px) {
+  .hub-spread__plots {
+    grid-template-columns: 1fr;
+  }
+
+  .hub-spread__plots > * + * {
+    padding-left: 0;
+    padding-top: var(--space-6);
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .hub-stat {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-track__fill,
+  .hub-hist__bar,
+  .hub-band-seg,
+  .hub-waffle__cell {
+    transition: none;
+  }
+}
+
